@@ -4,13 +4,16 @@ import Dash from 'react-native-dash'
 
 interface Props {
   renderDash?: boolean
+  currentStep: number
+  step: number
 }
 
-function Steps({ renderDash = true }: Props) {
+function Steps({ renderDash = true, currentStep, step }: Props) {
+  const active = step <= currentStep;
   return (
     <View style={styles.container}>
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>1</Text>
+      <View style={[styles.badge, active && styles.activeBadge]}>
+        <Text style={styles.badgeText}>{step}</Text>
       </View>
       {renderDash && <Dash
         dashGap={2}
@@ -29,7 +32,7 @@ const styles = StyleSheet.create({
     width: 18
   },
   badge: {
-    backgroundColor: '#51BC8E',
+    backgroundColor: '#9E9E9E',
     borderRadius: 9,
     width: 18,
     height: 18,
@@ -53,6 +56,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2,
     // borderRadius: 1,
     position: 'relative',
+  },
+  activeBadge: {
+    backgroundColor: '#51BC8E',
   }
 })
 
