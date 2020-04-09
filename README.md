@@ -1,3 +1,5 @@
-`yarn global add expo-cli`
-`yarn`
-`expo start`
+```
+yarn global add expo-cli
+yarn
+expo start
+```
