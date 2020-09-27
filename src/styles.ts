@@ -1,19 +1,27 @@
 import { StyleSheet, TextStyle } from "react-native";
 
+const fontDefaultColor: TextStyle = {
+  color: "#424242",
+};
+
 const fontNormal: TextStyle = {
   fontFamily: "Montserrat",
+  ...fontDefaultColor,
 };
 
 const fontBold: TextStyle = {
   fontFamily: "Montserrat-Bold",
+  ...fontDefaultColor,
 };
 
 const fontMedium: TextStyle = {
   fontFamily: "Montserrat-Medium",
+  ...fontDefaultColor,
 };
 
 const fontLight: TextStyle = {
   fontFamily: "Montserrat-Light",
+  ...fontDefaultColor,
 };
 
 const globalStyles = StyleSheet.create({
@@ -61,6 +69,36 @@ const globalStyles = StyleSheet.create({
   },
   pl1: {
     paddingStart: 20,
+  },
+  alignItemsCenter: {
+    alignItems: "center",
+  },
+  justifyContentEnd: {
+    justifyContent: "flex-end",
+  },
+  justifyContentCenter: {
+    justifyContent: "center",
+  },
+  p1: {
+    padding: 20,
+  },
+  p2: {
+    padding: 25,
+  },
+  p3: {
+    padding: 30,
+  },
+  textCenter: {
+    textAlign: "center",
+  },
+  pt1: {
+    paddingTop: 20,
+  },
+  pt3: {
+    paddingTop: 30,
+  },
+  pv1: {
+    paddingVertical: 20,
   },
 });
 

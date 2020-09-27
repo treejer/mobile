@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useFonts } from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Avatar from "./src/components/Avatar";
 import Button from "./src/components/Button";
@@ -9,6 +11,8 @@ import UserCard from "./src/components/UserCard";
 import Spacer from "./src/components/Spacer";
 import globalStyles from "./src/styles";
 import Steps from "./src/components/Steps";
+import OnboardingScreen from "./src/components/OnboardingScreen/OnboardingScreen";
+import Router from "./src/screens/Router";
 
 export default function App() {
   const [loaded] = useFonts({
@@ -23,7 +27,7 @@ export default function App() {
   }
   const currentStep = 1;
 
-  return (
+  const atashqal = (
     <View style={styles.container}>
       <Button caption="English" />
       <Spacer />
@@ -44,21 +48,37 @@ export default function App() {
 
       <Steps.Container currentStep={1} style={{ width: 300 }}>
         <Steps.Step step={1}>
-          <Text style={globalStyles.h4}>Trees per voucher</Text>
+          <View style={{ alignItems: "flex-start" }}>
+            <Text style={globalStyles.h4}>Trees per voucher</Text>
 
-          <Text style={globalStyles.normal}>Total vouchers to distribute</Text>
+            <Text style={[globalStyles.normal, globalStyles.pv1]}>
+              Total vouchers to distribute
+            </Text>
 
-          <Button caption="NEXT" />
+            <Button variant="primary" caption="NEXT" />
+          </View>
         </Steps.Step>
         <Steps.Step step={2} lastStep>
-          <Text style={globalStyles.h4}>Trees per voucher</Text>
+          <View style={{ alignItems: "flex-start" }}>
+            <Text style={globalStyles.h4}>Trees per voucher</Text>
 
-          <Text style={globalStyles.normal}>Total vouchers to distribute</Text>
+            <Text style={[globalStyles.normal, globalStyles.pv1]}>
+              Total vouchers to distribute
+            </Text>
 
-          <Button caption="NEXT" />
+            <Button variant="primary" caption="NEXT" />
+          </View>
         </Steps.Step>
       </Steps.Container>
     </View>
+  );
+
+  // return atashqal;
+
+  return (
+    <NavigationContainer>
+      <Router />
+    </NavigationContainer>
   );
 }
 
