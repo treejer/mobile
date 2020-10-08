@@ -5,13 +5,17 @@ import {
   Text,
   View,
   TouchableOpacityProps,
+  TextProps,
 } from "react-native";
+import { colors } from "../../constants";
 import globalStyles from "../../styles";
 
 interface Props extends TouchableOpacityProps {
   caption: string;
   variant?: "primary" | "cta";
   icon?: React.ComponentType<any>;
+  style?: TouchableOpacityProps["style"];
+  textStyle?: TextProps["style"];
 }
 
 function Button({
@@ -19,15 +23,22 @@ function Button({
   variant = "primary",
   icon,
   style = null,
+  textStyle = null,
   ...props
 }: Props) {
   return (
     <TouchableOpacity style={[styles[`${variant}Container`], style]} {...props}>
-      <Text style={[styles[`${variant}Text`], icon ? styles.hasIcon : {}]}>
+      <Text
+        style={[
+          styles[`${variant}Text`],
+          textStyle,
+          icon ? styles.hasIcon : {},
+        ]}
+      >
         {caption}
       </Text>
       {icon && (
-        <View style={styles[`${variant}IconWrapper`]}>
+        <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: "white",
           })}
@@ -41,7 +52,7 @@ const styles = StyleSheet.create({
   primaryContainer: {
     paddingVertical: 8,
     paddingHorizontal: 20,
-    backgroundColor: "#E5E7DB",
+    backgroundColor: colors.khakiDark,
     borderRadius: 25,
     borderColor: "#BDBDBD",
     borderWidth: 1,
@@ -52,31 +63,36 @@ const styles = StyleSheet.create({
   ctaContainer: {
     paddingVertical: 12,
     paddingHorizontal: 29,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "white",
     borderRadius: 32,
     shadowOffset: {
       width: 2,
       height: 6,
     },
+    elevation: 7,
     shadowRadius: 20,
-    shadowColor: "#000000",
+    shadowColor: "black",
     shadowOpacity: 0.15,
     flexDirection: "row",
     alignItems: "flex-start",
   },
   ctaText: {
-    color: "#424242",
+    color: colors.grayDarker,
   },
   ctaIconWrapper: {
-    backgroundColor: "#67B68C",
-    position: "absolute",
-    right: 4,
-    bottom: 4,
+    backgroundColor: colors.green,
+    // position: "absolute",
+    // right: 4,
+    // bottom: 4,
+    alignSelf: "center",
     width: 32,
     height: 32,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
+    marginRight: -24,
+    marginBottom: -10,
+    marginTop: -10,
   },
   hasIcon: {
     paddingRight: 21,

@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text } from "react-native";
+import { colors } from "../../constants";
 import { Times } from "../Icons";
 
 interface Props {
@@ -24,10 +25,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   primaryContainer: {
-    backgroundColor: "#E5E7DB",
+    backgroundColor: colors.khakiDark,
   },
   successContainer: {
-    backgroundColor: "#66B28A",
+    backgroundColor: colors.green,
   },
 });
 

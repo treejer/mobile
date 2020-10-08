@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
+import { colors } from "../../constants";
 
 interface Props {
   size?: number;
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   activeContainer: {
-    borderColor: "#66B28A",
+    borderColor: colors.green,
   },
 });
 

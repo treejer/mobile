@@ -13,6 +13,7 @@ import globalStyles from "./src/styles";
 import Steps from "./src/components/Steps";
 import OnboardingScreen from "./src/components/OnboardingScreen/OnboardingScreen";
 import Router from "./src/screens/Router";
+import MainTabs from "./src/screens/MainTabs";
 
 export default function App() {
   const [loaded] = useFonts({
@@ -77,7 +78,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Router />
+      {/* <Router /> */}
+      <MainTabs />
     </NavigationContainer>
   );
 }
@@ -85,7 +87,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,25 +1,26 @@
-import { StyleSheet, TextStyle } from "react-native";
+import { Platform, StatusBar, StyleSheet, TextStyle } from "react-native";
+import { colors } from "./constants";
 
-const fontDefaultColor: TextStyle = {
-  color: "#424242",
+export const fontDefaultColor: TextStyle = {
+  color: colors.grayDarker,
 };
 
-const fontNormal: TextStyle = {
+export const fontNormal: TextStyle = {
   fontFamily: "Montserrat",
   ...fontDefaultColor,
 };
 
-const fontBold: TextStyle = {
+export const fontBold: TextStyle = {
   fontFamily: "Montserrat-Bold",
   ...fontDefaultColor,
 };
 
-const fontMedium: TextStyle = {
+export const fontMedium: TextStyle = {
   fontFamily: "Montserrat-Medium",
   ...fontDefaultColor,
 };
 
-const fontLight: TextStyle = {
+export const fontLight: TextStyle = {
   fontFamily: "Montserrat-Light",
   ...fontDefaultColor,
 };
@@ -28,8 +29,24 @@ const globalStyles = StyleSheet.create({
   fill: {
     flex: 1,
   },
+  screenView: {
+    backgroundColor: colors.khaki,
+  },
+  safeArea: {
+    paddingTop: Platform.select({
+      ios: 25,
+      android: StatusBar.currentHeight,
+    }),
+  },
   horizontalStack: {
     flexDirection: "row",
+  },
+  justifyContentEvenly: {
+    justifyContent: "space-evenly",
+  },
+  small: {
+    fontSize: 12,
+    ...fontNormal,
   },
   body1: {
     ...fontLight,
@@ -99,6 +116,12 @@ const globalStyles = StyleSheet.create({
   },
   pv1: {
     paddingVertical: 20,
+  },
+  ph1: {
+    paddingHorizontal: 20,
+  },
+  mb1: {
+    marginBottom: 20,
   },
 });
 

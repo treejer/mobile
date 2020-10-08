@@ -96,6 +96,7 @@ function OnboardingScreen() {
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
+      navigation.navigate('SignUp')
       return;
     }
     carouselRef.current?.snapToNext();

@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
       height: 6,
     },
     shadowRadius: 20,
-    shadowColor: "#000000",
+    shadowColor: "black",
     shadowOpacity: 0.1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "white",
     borderRadius: 10,
   },
   textWrapper: {

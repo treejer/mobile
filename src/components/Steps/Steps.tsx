@@ -1,5 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View, Text, ViewProps } from "react-native";
+import { color } from "react-native-reanimated";
+import { colors } from "../../constants";
 import globalStyles from "../../styles";
 
 interface StepProps {
@@ -26,17 +28,24 @@ const StepContext = React.createContext({ currentStep: 1 });
 
 function StepNumber({ renderLine, step }: StepNumberProps) {
   const { currentStep } = React.useContext(StepContext);
-  const active = step <= currentStep;
+  const active = step < currentStep;
+  const isCurrentStep = step === currentStep;
   return (
     <View style={styles.container}>
-      <View style={[styles.badge, active && styles.activeBadge]}>
+      <View
+        style={[
+          styles.badge,
+          active && styles.activeBadge,
+          isCurrentStep && styles.currentStepBadge,
+        ]}
+      >
         <Text style={styles.badgeText}>{step}</Text>
       </View>
       {renderLine && (
         <View
           style={[
             {
-              backgroundColor: active ? "#66B28A" : "#9E9E9E",
+              backgroundColor: active ? colors.green : colors.gray,
             },
             styles.line,
           ]}
@@ -77,7 +86,7 @@ const styles = StyleSheet.create({
     width: 18,
   },
   badge: {
-    backgroundColor: "#9E9E9E",
+    backgroundColor: colors.gray,
     borderRadius: 9,
     width: 18,
     height: 18,
@@ -91,7 +100,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   activeBadge: {
-    backgroundColor: "#51BC8E",
+    backgroundColor: colors.green,
+  },
+  currentStepBadge: {
+    backgroundColor: colors.grayLight,
   },
   line: {
     marginVertical: 4,
@@ -106,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   stepContentContainer: {
-    paddingBottom: 40,
+    paddingBottom: 20,
     paddingLeft: 15,
     flex: 1,
   },
