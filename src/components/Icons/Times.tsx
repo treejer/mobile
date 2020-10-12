@@ -5,7 +5,7 @@ interface Props {
   color: string;
 }
 
-function Times({ color = "white" }) {
+function Times({ color = "white" }: Props) {
   return (
     <Svg width="20" height="20" viewBox="0 0 20 20">
       <Line

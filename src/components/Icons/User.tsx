@@ -6,10 +6,10 @@ import AnimatedSvgPath from "./AnimatedSvgPath";
 
 interface Props {
   color: string;
-  fillOpacity: string;
+  fill?: boolean;
 }
 
-function User({ color = colors.green, fill = false }) {
+function User({ color = colors.green, fill = false }: Props) {
   const animation = useRef<Animated.BackwardCompatibleWrapper>();
   const opacity = useRef<Animated.Value<number>>(
     new Animated.Value(fill ? 1 : 0)

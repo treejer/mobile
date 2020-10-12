@@ -9,7 +9,7 @@ interface Props {
   fill?: boolean;
 }
 
-function GreenBlock({ color = colors.green, fill = false }) {
+function GreenBlock({ color = colors.green, fill = false }: Props) {
   const animation = useRef<Animated.BackwardCompatibleWrapper>();
   const opacity = useRef<Animated.Value<number>>(
     new Animated.Value(fill ? 1 : 0)
