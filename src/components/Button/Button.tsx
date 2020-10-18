@@ -12,7 +12,7 @@ import globalStyles from "../../styles";
 
 interface Props extends TouchableOpacityProps {
   caption: string;
-  variant?: "primary" | "cta";
+  variant?: "primary" | "cta" | "secondary" | "success";
   icon?: React.ComponentType<any>;
   style?: TouchableOpacityProps["style"];
   textStyle?: TextProps["style"];
@@ -81,9 +81,6 @@ const styles = StyleSheet.create({
   },
   ctaIconWrapper: {
     backgroundColor: colors.green,
-    // position: "absolute",
-    // right: 4,
-    // bottom: 4,
     alignSelf: "center",
     width: 32,
     height: 32,
@@ -96,6 +93,26 @@ const styles = StyleSheet.create({
   },
   hasIcon: {
     paddingRight: 21,
+  },
+  secondaryContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    backgroundColor: colors.grayDarker,
+    borderRadius: 25,
+  },
+  secondaryText: {
+    ...globalStyles.normal,
+    color: 'white',
+  },
+  successContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    backgroundColor: colors.green,
+    borderRadius: 25,
+  },
+  successText: {
+    ...globalStyles.normal,
+    color: 'white',
   },
 });
 
