@@ -1,46 +1,24 @@
-import React from "react";
-import {
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacityProps,
-  TextProps,
-} from "react-native";
-import { colors } from "../../constants";
-import globalStyles from "../../styles";
+import React from 'react';
+import {TouchableOpacity, StyleSheet, Text, View, TouchableOpacityProps, TextProps} from 'react-native';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
 
 interface Props extends TouchableOpacityProps {
   caption: string;
-  variant?: "primary" | "cta" | "secondary" | "success";
+  variant?: 'primary' | 'cta' | 'secondary' | 'success';
   icon?: React.ComponentType<any>;
-  style?: TouchableOpacityProps["style"];
-  textStyle?: TextProps["style"];
+  style?: TouchableOpacityProps['style'];
+  textStyle?: TextProps['style'];
 }
 
-function Button({
-  caption,
-  variant = "primary",
-  icon,
-  style = null,
-  textStyle = null,
-  ...props
-}: Props) {
+function Button({caption, variant = 'primary', icon, style = null, textStyle = null, ...props}: Props) {
   return (
     <TouchableOpacity style={[styles[`${variant}Container`], style]} {...props}>
-      <Text
-        style={[
-          styles[`${variant}Text`],
-          textStyle,
-          icon ? styles.hasIcon : {},
-        ]}
-      >
-        {caption}
-      </Text>
+      <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>
       {icon && (
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
-            color: "white",
+            color: 'white',
           })}
         </View>
       )}
@@ -54,7 +32,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: colors.khakiDark,
     borderRadius: 25,
-    borderColor: "#BDBDBD",
+    borderColor: '#BDBDBD',
     borderWidth: 1,
   },
   primaryText: {
@@ -63,7 +41,7 @@ const styles = StyleSheet.create({
   ctaContainer: {
     paddingVertical: 12,
     paddingHorizontal: 29,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 32,
     shadowOffset: {
       width: 2,
@@ -71,22 +49,22 @@ const styles = StyleSheet.create({
     },
     elevation: 7,
     shadowRadius: 20,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.15,
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
   ctaText: {
     color: colors.grayDarker,
   },
   ctaIconWrapper: {
     backgroundColor: colors.green,
-    alignSelf: "center",
+    alignSelf: 'center',
     width: 32,
     height: 32,
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: -24,
     marginBottom: -10,
     marginTop: -10,

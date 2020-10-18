@@ -1,10 +1,10 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import globalStyles from "../../styles";
-import SelectWallet from "./screens/SelectWallet";
-import VerifyProfile from "./screens/VerifyProfile";
-import CreateWallet from "./screens/CreateWallet";
-import NoWallet from "./screens/NoWallet";
+import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
+import globalStyles from 'constants/styles';
+import SelectWallet from './screens/SelectWallet';
+import VerifyProfile from './screens/VerifyProfile';
+import CreateWallet from './screens/CreateWallet';
+import NoWallet from './screens/NoWallet';
 
 const Stack = createStackNavigator();
 const RootStack = createStackNavigator();

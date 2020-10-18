@@ -1,5 +1,5 @@
-import React from "react";
-import Svg, { Path } from "react-native-svg";
+import React from 'react';
+import Svg, {Path} from 'react-native-svg';
 
 function BackgroundEntropy() {
   return (
@@ -9,7 +9,7 @@ function BackgroundEntropy() {
         height="383"
         viewBox="0 0 380 383"
         style={{
-          position: "absolute",
+          position: 'absolute',
           bottom: -30,
           right: -100,
         }}
@@ -25,7 +25,7 @@ function BackgroundEntropy() {
         height="383"
         viewBox="0 0 380 383"
         style={{
-          position: "absolute",
+          position: 'absolute',
           left: -10,
           top: -50,
         }}

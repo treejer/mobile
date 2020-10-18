@@ -1,1 +1,1 @@
-export { default } from "./ProgressCircles";
+export {default} from './ProgressCircles';

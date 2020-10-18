@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import Animated from "react-native-reanimated";
-import { Path, PathProps } from "react-native-svg";
+import React, {Component} from 'react';
+import Animated from 'react-native-reanimated';
+import {Path, PathProps} from 'react-native-svg';
 
 class SvgPathWrap extends Component<PathProps> {
   private _component: React.Component<PathProps, any, any>;
 
-  setNativeProps = (props) => {
+  setNativeProps = props => {
     if (this._component) {
       (this._component as any).setNativeProps(props);
     }
@@ -14,7 +14,7 @@ class SvgPathWrap extends Component<PathProps> {
   render() {
     return (
       <Path
-        ref={(component) => {
+        ref={component => {
           this._component = component;
         }}
         {...this.props}

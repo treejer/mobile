@@ -1,19 +1,17 @@
-import React, { useEffect, useRef } from "react";
-import Animated, { Easing, Extrapolate } from "react-native-reanimated";
-import Svg, { Path } from "react-native-svg";
-import { colors } from "../../constants";
-import AnimatedSvgPath from "./AnimatedSvgPath";
+import React, {useEffect, useRef} from 'react';
+import Animated, {Easing, Extrapolate} from 'react-native-reanimated';
+import Svg, {Path} from 'react-native-svg';
+import {colors} from 'constants/values';
+import AnimatedSvgPath from './AnimatedSvgPath';
 
 interface Props {
   color: string;
   fill?: boolean;
 }
 
-function GreenBlock({ color = colors.green, fill = false }: Props) {
+function GreenBlock({color = colors.green, fill = false}: Props) {
   const animation = useRef<Animated.BackwardCompatibleWrapper>();
-  const opacity = useRef<Animated.Value<number>>(
-    new Animated.Value(fill ? 1 : 0)
-  ).current;
+  const opacity = useRef<Animated.Value<number>>(new Animated.Value(fill ? 1 : 0)).current;
 
   useEffect(() => {
     if (animation.current && ![0, 1].includes((opacity as any)._value)) {
@@ -31,7 +29,7 @@ function GreenBlock({ color = colors.green, fill = false }: Props) {
 
   const opacityValue = opacity.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0", "0.5"] as any,
+    outputRange: ['0', '0.5'] as any,
     extrapolate: Extrapolate.CLAMP,
   });
 

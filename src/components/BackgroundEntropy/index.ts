@@ -1,1 +1,1 @@
-export { default } from "./BackgroundEntropy";
+export {default} from './BackgroundEntropy';

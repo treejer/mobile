@@ -1,27 +1,27 @@
-import { Platform, StatusBar, StyleSheet, TextStyle } from "react-native";
-import { colors } from "./constants";
+import {Platform, StatusBar, StyleSheet, TextStyle} from 'react-native';
+import {colors} from 'constants/values';
 
 export const fontDefaultColor: TextStyle = {
   color: colors.grayDarker,
 };
 
 export const fontNormal: TextStyle = {
-  fontFamily: "Montserrat",
+  fontFamily: 'Montserrat',
   ...fontDefaultColor,
 };
 
 export const fontBold: TextStyle = {
-  fontFamily: "Montserrat-Bold",
+  fontFamily: 'Montserrat-Bold',
   ...fontDefaultColor,
 };
 
 export const fontMedium: TextStyle = {
-  fontFamily: "Montserrat-Medium",
+  fontFamily: 'Montserrat-Medium',
   ...fontDefaultColor,
 };
 
 export const fontLight: TextStyle = {
-  fontFamily: "Montserrat-Light",
+  fontFamily: 'Montserrat-Light',
   ...fontDefaultColor,
 };
 
@@ -39,10 +39,10 @@ const globalStyles = StyleSheet.create({
     }),
   },
   horizontalStack: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   justifyContentEvenly: {
-    justifyContent: "space-evenly",
+    justifyContent: 'space-evenly',
   },
   small: {
     fontSize: 12,
@@ -88,13 +88,16 @@ const globalStyles = StyleSheet.create({
     paddingStart: 20,
   },
   alignItemsCenter: {
-    alignItems: "center",
+    alignItems: 'center',
+  },
+  alignItemsStart: {
+    alignItems: 'flex-start',
   },
   justifyContentEnd: {
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   justifyContentCenter: {
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   p1: {
     padding: 20,
@@ -106,7 +109,7 @@ const globalStyles = StyleSheet.create({
     padding: 30,
   },
   textCenter: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   pt1: {
     paddingTop: 20,

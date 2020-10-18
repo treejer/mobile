@@ -1,19 +1,16 @@
-import {
-  BottomTabBarProps,
-  BottomTabNavigationOptions,
-} from "@react-navigation/bottom-tabs";
-import React from "react";
-import { StyleSheet, TouchableOpacityProps, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import Animated from "react-native-reanimated";
-import Svg, { Path } from "react-native-svg";
-import { colors } from "../../constants";
-import globalStyles from "../../styles";
-import { GreenBlock, Tree, User } from "../Icons";
+import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
+import React from 'react';
+import {StyleSheet, TouchableOpacityProps, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
+import Svg, {Path} from 'react-native-svg';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {GreenBlock, Tree, User} from '../Icons';
 
 interface Props extends BottomTabBarProps {}
 
-function TabBar({ state, descriptors, navigation }: Props) {
+function TabBar({state, descriptors, navigation}: Props) {
   return (
     <View
       style={[
@@ -24,13 +21,13 @@ function TabBar({ state, descriptors, navigation }: Props) {
       ]}
     >
       {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
+        const {options} = descriptors[route.key];
 
         const isFocused = state.index === index;
 
         const onPress = () => {
           const event = navigation.emit({
-            type: "tabPress",
+            type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
@@ -42,7 +39,7 @@ function TabBar({ state, descriptors, navigation }: Props) {
 
         const onLongPress = () => {
           navigation.emit({
-            type: "tabLongPress",
+            type: 'tabLongPress',
             target: route.key,
           });
         };
@@ -67,8 +64,8 @@ function renderTabItem({
   index,
 }: {
   isFocused: boolean;
-  onLongPress: TouchableOpacityProps["onLongPress"];
-  onPress: TouchableOpacityProps["onPress"];
+  onLongPress: TouchableOpacityProps['onLongPress'];
+  onPress: TouchableOpacityProps['onPress'];
   options: BottomTabNavigationOptions;
   index: number;
 }) {
@@ -82,7 +79,7 @@ function renderTabItem({
           testID={options.tabBarTestID}
           onPress={onPress}
           onLongPress={onLongPress}
-          style={{ padding: 30 }}
+          style={{padding: 30}}
           key={index}
         >
           {React.createElement(index === 0 ? User : GreenBlock, {
@@ -122,8 +119,8 @@ function renderCirclePath(flip = false) {
       viewBox="0 0 25 56"
       fill="none"
       style={{
-        [flip ? "marginLeft" : "marginRight"]: -4,
-        transform: flip ? [{ scaleX: -1 }] : [],
+        [flip ? 'marginLeft' : 'marginRight']: -4,
+        transform: flip ? [{scaleX: -1}] : [],
       }}
     >
       <Path
@@ -139,26 +136,26 @@ function renderCirclePath(flip = false) {
 const styles = StyleSheet.create({
   wrapper: {
     height: 50,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   middleTabWrapper: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: -56,
     width: 96,
   },
   middleButtonWrapper: {
     borderRadius: 32,
     padding: 5,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   middleButton: {
     width: 54,
     height: 54,
     backgroundColor: colors.green,
     borderRadius: 27,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

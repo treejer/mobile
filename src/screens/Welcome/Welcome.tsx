@@ -1,11 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { View, Text, Image } from "react-native";
+import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {View, Text, Image} from 'react-native';
 
-import BackgroundEntropy from "../../components/BackgroundEntropy";
-import Button from "../../components/Button";
-import Spacer from "../../components/Spacer";
-import globalStyles from "../../styles";
+import BackgroundEntropy from 'components/BackgroundEntropy';
+import Button from 'components/Button';
+import Spacer from 'components/Spacer';
+import globalStyles from 'constants/styles';
 
 interface Props {}
 
@@ -14,33 +14,15 @@ function Welcome(props: Props) {
   return (
     <View style={globalStyles.fill}>
       <BackgroundEntropy />
-      <View
-        style={[
-          globalStyles.alignItemsCenter,
-          globalStyles.justifyContentCenter,
-          globalStyles.fill,
-        ]}
-      >
-        <Text
-          style={[globalStyles.h2, globalStyles.textCenter, globalStyles.mb1]}
-        >
-          TREEJER{"\n"}RANGER APP
-        </Text>
-        <Image source={require("../../../assets/images/welcome.png")} />
-        <Text style={[globalStyles.h4, globalStyles.textCenter]}>
-          Choose language
-        </Text>
-        <View
-          style={[
-            globalStyles.horizontalStack,
-            globalStyles.ph1,
-            globalStyles.pt1,
-          ]}
-        >
+      <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
+        <Text style={[globalStyles.h2, globalStyles.textCenter, globalStyles.mb1]}>TREEJER{'\n'}RANGER APP</Text>
+        <Image source={require('../../../assets/images/welcome.png')} />
+        <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
+        <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
           <Button
             caption="English"
             onPress={() => {
-              navigation.navigate("Onboarding");
+              navigation.navigate('Onboarding');
             }}
           />
           <Spacer />
@@ -48,13 +30,7 @@ function Welcome(props: Props) {
           <Spacer />
           <Button disabled caption="فارسی" />
         </View>
-        <View
-          style={[
-            globalStyles.horizontalStack,
-            globalStyles.ph1,
-            globalStyles.pt1,
-          ]}
-        >
+        <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
           <Button disabled caption="Español" />
           <Spacer />
           <Button disabled caption="Turkish" />

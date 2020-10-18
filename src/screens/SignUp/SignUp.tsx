@@ -1,14 +1,14 @@
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {View, Text, Image, StyleSheet} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-import BackgroundEntropy from "../../components/BackgroundEntropy";
-import Button from "../../components/Button";
-import { Tree } from "../../components/Icons";
-import Spacer from "../../components/Spacer";
-import { colors } from "../../constants";
-import globalStyles from "../../styles";
+import BackgroundEntropy from 'components/BackgroundEntropy';
+import Button from 'components/Button';
+import {Tree} from 'components/Icons';
+import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
 
 interface Props {}
 
@@ -17,14 +17,8 @@ function SignUp(props: Props) {
   return (
     <View style={[globalStyles.fill, globalStyles.screenView]}>
       <BackgroundEntropy />
-      <View
-        style={[
-          globalStyles.alignItemsCenter,
-          globalStyles.justifyContentCenter,
-          globalStyles.fill,
-        ]}
-      >
-        <Image source={require("../../../assets/images/sign-up.png")} />
+      <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
+        <Image source={require('../../../assets/images/sign-up.png')} />
 
         <Spacer times={3} />
         <Text style={globalStyles.h4}>Welcome!</Text>
@@ -46,17 +40,10 @@ function SignUp(props: Props) {
           />
           <Spacer times={6} />
 
-          <View
-            style={[
-              globalStyles.horizontalStack,
-              globalStyles.justifyContentCenter,
-            ]}
-          >
+          <View style={[globalStyles.horizontalStack, globalStyles.justifyContentCenter]}>
             <Text style={globalStyles.small}>Have an account? </Text>
             <TouchableOpacity>
-              <Text style={[globalStyles.small, styles.signInText]}>
-                Sign in
-              </Text>
+              <Text style={[globalStyles.small, styles.signInText]}>Sign in</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -1,12 +1,12 @@
-import React from "react";
-import Svg, { Path } from "react-native-svg";
+import React from 'react';
+import Svg, {Path} from 'react-native-svg';
 
 interface Props {
   color: string;
   size: number;
 }
 
-function Times({ color = "white", size = 20 }: Props) {
+function Times({color = 'white', size = 20}: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 17 20" fill="none">
       <Path

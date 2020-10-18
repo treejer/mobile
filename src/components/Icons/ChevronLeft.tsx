@@ -1,12 +1,12 @@
-import React from "react";
-import Svg, { Line, Path } from "react-native-svg";
-import { colors } from "../../constants";
+import React from 'react';
+import Svg, {Line, Path} from 'react-native-svg';
+import {colors} from 'constants/values';
 
 interface Props {
   color?: string;
 }
 
-function ChevronLeft({ color = colors.grayDarker }: Props) {
+function ChevronLeft({color = colors.grayDarker}: Props) {
   return (
     <Svg width="10" height="20" viewBox="0 0 10 20" fill="none">
       <Path

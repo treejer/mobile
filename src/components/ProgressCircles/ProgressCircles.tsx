@@ -1,32 +1,22 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import globalStyles from "../../styles";
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import globalStyles from 'constants/styles';
 
 export interface ProgressCirclesProps {
   numberOfSteps: number;
   activeStep: number;
 }
 
-function ProgressCircles({
-  numberOfSteps,
-  activeStep,
-  ...props
-}: ProgressCirclesProps) {
+function ProgressCircles({numberOfSteps, activeStep, ...props}: ProgressCirclesProps) {
   return (
-    <View
-      style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack]}
-      {...props}
-    >
-      {Array.from({ length: numberOfSteps }, (_, i) => i).map((i) => {
+    <View style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack]} {...props}>
+      {Array.from({length: numberOfSteps}, (_, i) => i).map(i => {
         return (
           <View key={`step${i}`}>
             <View
               style={[
                 {
-                  backgroundColor:
-                    activeStep - 1 === i
-                      ? "#BDBDBD"
-                      : "rgba(189, 189, 189, 0.5);",
+                  backgroundColor: activeStep - 1 === i ? '#BDBDBD' : 'rgba(189, 189, 189, 0.5);',
                 },
                 styles.circle,
               ]}

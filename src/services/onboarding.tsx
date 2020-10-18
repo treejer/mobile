@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useState } from "react";
+import React, {memo, useCallback, useContext, useMemo, useState} from 'react';
 
 const OnboardingContext = React.createContext({
   finishedOnboarding: false,
@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-function OnboardingProvider({ children }: Props) {
+function OnboardingProvider({children}: Props) {
   const [onboarding, setOnboarding] = useState(false);
 
   const markOnboardingAsDone = useCallback(() => {
@@ -21,14 +21,10 @@ function OnboardingProvider({ children }: Props) {
       finishedOnboarding: onboarding,
       markOnboardingAsDone,
     }),
-    [onboarding]
+    [onboarding],
   );
 
-  return (
-    <OnboardingContext.Provider value={value}>
-      {children}
-    </OnboardingContext.Provider>
-  );
+  return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
 }
 
 export default memo(OnboardingProvider);

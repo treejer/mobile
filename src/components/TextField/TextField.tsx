@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
-import { Controller, Control, ValidationRules } from "react-hook-form";
-import { fontNormal } from "../../styles";
-import { colors } from "../../constants";
+import React from 'react';
+import {StyleSheet, TextInput, TextInputProps} from 'react-native';
+import {Controller, Control, ValidationRules} from 'react-hook-form';
+import {fontNormal} from 'constants/styles';
+import {colors} from 'constants/values';
 
 interface Props extends TextInputProps {
   control: Control;
@@ -12,31 +12,26 @@ interface Props extends TextInputProps {
   success?: boolean;
 }
 
-const TextField = React.forwardRef(
-  (
-    { control, name, rules, defaultValue = "", success, ...props }: Props,
-    ref
-  ) => {
-    return (
-      <Controller
-        control={control}
-        render={({ onChange, onBlur, value }) => (
-          <TextInput
-            {...props}
-            ref={ref as any}
-            style={[styles.wrapper, success && styles.success, props.style]}
-            onBlur={onBlur}
-            onChangeText={(value) => onChange(value)}
-            value={value}
-          />
-        )}
-        name={name}
-        rules={rules}
-        defaultValue={defaultValue}
-      />
-    );
-  }
-);
+const TextField = React.forwardRef(({control, name, rules, defaultValue = '', success, ...props}: Props, ref) => {
+  return (
+    <Controller
+      control={control}
+      render={({onChange, onBlur, value}) => (
+        <TextInput
+          {...props}
+          ref={ref as any}
+          style={[styles.wrapper, success && styles.success, props.style]}
+          onBlur={onBlur}
+          onChangeText={value => onChange(value)}
+          value={value}
+        />
+      )}
+      name={name}
+      rules={rules}
+      defaultValue={defaultValue}
+    />
+  );
+});
 
 const styles = StyleSheet.create({
   wrapper: {

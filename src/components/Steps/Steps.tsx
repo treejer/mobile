@@ -1,8 +1,8 @@
-import * as React from "react";
-import { StyleSheet, View, Text, ViewProps } from "react-native";
-import { color } from "react-native-reanimated";
-import { colors } from "../../constants";
-import globalStyles from "../../styles";
+import * as React from 'react';
+import {StyleSheet, View, Text, ViewProps} from 'react-native';
+import {color} from 'react-native-reanimated';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
 
 interface StepProps {
   children: React.ReactNode;
@@ -24,21 +24,15 @@ interface StepContentProps {
   children: React.ReactNode;
 }
 
-const StepContext = React.createContext({ currentStep: 1 });
+const StepContext = React.createContext({currentStep: 1});
 
-function StepNumber({ renderLine, step }: StepNumberProps) {
-  const { currentStep } = React.useContext(StepContext);
+function StepNumber({renderLine, step}: StepNumberProps) {
+  const {currentStep} = React.useContext(StepContext);
   const active = step < currentStep;
   const isCurrentStep = step === currentStep;
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.badge,
-          active && styles.activeBadge,
-          isCurrentStep && styles.currentStepBadge,
-        ]}
-      >
+      <View style={[styles.badge, active && styles.activeBadge, isCurrentStep && styles.currentStepBadge]}>
         <Text style={styles.badgeText}>{step}</Text>
       </View>
       {renderLine && (
@@ -55,11 +49,11 @@ function StepNumber({ renderLine, step }: StepNumberProps) {
   );
 }
 
-export function StepContent({ children }: StepContentProps) {
+export function StepContent({children}: StepContentProps) {
   return <View style={styles.stepContentContainer}>{children}</View>;
 }
 
-export function Step({ lastStep = false, children, step }: StepProps) {
+export function Step({lastStep = false, children, step}: StepProps) {
   return (
     <View style={styles.stepContainer}>
       <StepNumber step={step} renderLine={!lastStep} />
@@ -68,13 +62,9 @@ export function Step({ lastStep = false, children, step }: StepProps) {
   );
 }
 
-export function StepContainer({
-  currentStep,
-  children,
-  ...props
-}: StepContainerProps) {
+export function StepContainer({currentStep, children, ...props}: StepContainerProps) {
   return (
-    <StepContext.Provider value={{ currentStep }}>
+    <StepContext.Provider value={{currentStep}}>
       <View {...props}>{children}</View>
     </StepContext.Provider>
   );
@@ -82,7 +72,7 @@ export function StepContainer({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: 'center',
     width: 18,
   },
   badge: {
@@ -90,14 +80,14 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     width: 18,
     height: 18,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeText: {
     ...globalStyles.h6,
     fontSize: 12,
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   activeBadge: {
     backgroundColor: colors.green,
@@ -115,7 +105,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   stepContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   stepContentContainer: {
     paddingBottom: 20,
@@ -123,6 +113,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   stepHeader: {
-    fontFamily: "Montserrat-Light",
+    fontFamily: 'Montserrat-Light',
   },
 });
