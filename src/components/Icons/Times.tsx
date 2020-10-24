@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, {Line} from 'react-native-svg';
 
 interface Props {
-  color: string;
+  color?: string;
 }
 
 function Times({color = 'white'}: Props) {

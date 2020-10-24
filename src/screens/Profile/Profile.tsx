@@ -5,20 +5,25 @@ import SelectWallet from './screens/SelectWallet';
 import VerifyProfile from './screens/VerifyProfile';
 import CreateWallet from './screens/CreateWallet';
 import NoWallet from './screens/NoWallet';
+import {usePrivateKeyStorage} from 'services/web3';
+import MyProfile from './screens/MyProfile';
 
 const Stack = createStackNavigator();
 const RootStack = createStackNavigator();
 
 function ProfileStack() {
+  const {unlocked} = usePrivateKeyStorage();
+
   return (
     <Stack.Navigator
-      initialRouteName="NoWallet"
+      initialRouteName={unlocked ? 'MyProfile' : 'NoWallet'}
       screenOptions={{
         cardStyle: globalStyles.screenView,
         headerShown: false,
       }}
     >
       <Stack.Screen name="NoWallet" component={NoWallet} />
+      <Stack.Screen name="MyProfile" component={MyProfile} />
       <Stack.Screen name="VerifyProfile" component={VerifyProfile} />
       <Stack.Screen name="SelectWallet" component={SelectWallet} />
     </Stack.Navigator>

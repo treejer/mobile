@@ -1,44 +1,30 @@
 import React, {useEffect, useRef} from 'react';
-import Animated, {Easing, Extrapolate} from 'react-native-reanimated';
+// import {Animated, Easing} from 'react-native';
+import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
 import {colors} from 'constants/values';
-import AnimatedSvgPath from './AnimatedSvgPath';
+import {useTransition} from 'utilities/hooks';
 
 interface Props {
   color: string;
   fill?: boolean;
 }
 
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+Animated.addWhitelistedNativeProps({
+  fillOpacity: true,
+});
+
 function GreenBlock({color = colors.green, fill = false}: Props) {
-  const animation = useRef<Animated.BackwardCompatibleWrapper>();
-  const opacity = useRef<Animated.Value<number>>(new Animated.Value(fill ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (animation.current && ![0, 1].includes((opacity as any)._value)) {
-      animation.current.stop();
-    }
-
-    animation.current = Animated.timing(opacity, {
-      toValue: fill ? 1 : 0,
-      easing: Easing.linear,
-      duration: 300,
-    });
-
-    animation.current.start();
-  }, [fill]);
-
-  const opacityValue = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0', '0.5'] as any,
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const fillOpacity = useTransition(fill);
 
   return (
     <Svg width="30" height="24" viewBox="0 0 30 24" fill="none">
-      <AnimatedSvgPath
+      <AnimatedPath
         d="M20.6605 17.6788H9.33949C4.72967 17.6788 1 13.9491 1 9.33929C1 4.72947 4.72967 0.999802 9.33949 0.999802H20.6605C25.2703 0.999802 29 4.72947 29 9.33929C29 13.9491 25.2703 17.6788 20.6605 17.6788Z"
         fill={color}
-        fillOpacity={opacityValue}
+        fillOpacity={fillOpacity}
       />
       <Path
         d="M20.6605 17.879H9.33949C4.72967 17.879 1 14.1493 1 9.53949C1 4.92966 4.72967 1.2 9.33949 1.2H20.6605C25.2703 1.2 29 4.92966 29 9.53949C29 14.1493 25.2703 17.879 20.6605 17.879Z"

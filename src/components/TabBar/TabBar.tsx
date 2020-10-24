@@ -1,9 +1,9 @@
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, TouchableOpacityProps, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
+import Animated, {useValue, Easing, timing, interpolate} from 'react-native-reanimated';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {GreenBlock, Tree, User} from '../Icons';
@@ -11,13 +11,40 @@ import {GreenBlock, Tree, User} from '../Icons';
 interface Props extends BottomTabBarProps {}
 
 function TabBar({state, descriptors, navigation}: Props) {
+  const {tabBarVisible} = descriptors[state.routes[state.index].key].options;
+
+  const visibilityAnimatedValue = useValue(tabBarVisible ? 1 : 0);
+
+  useEffect(() => {
+    timing(visibilityAnimatedValue, {
+      duration: 1000,
+      toValue: tabBarVisible ? 1 : 0,
+      easing: Easing.inOut(Easing.ease),
+    }).start();
+  }, [visibilityAnimatedValue, tabBarVisible]);
+
+  const translateY = interpolate(visibilityAnimatedValue, {
+    inputRange: [0, 1],
+    outputRange: [100, 0],
+  });
+
+  const maxHeight = interpolate(visibilityAnimatedValue, {
+    inputRange: [0, 1],
+    outputRange: [0, 80],
+  });
+
   return (
-    <View
+    <Animated.View
       style={[
         styles.wrapper,
         globalStyles.horizontalStack,
         globalStyles.justifyContentEvenly,
         globalStyles.alignItemsCenter,
+        {
+          transform: [{translateY}],
+          opacity: visibilityAnimatedValue,
+          maxHeight
+        },
       ]}
     >
       {state.routes.map((route, index) => {
@@ -52,7 +79,7 @@ function TabBar({state, descriptors, navigation}: Props) {
           index,
         });
       })}
-    </View>
+    </Animated.View>
   );
 }
 

@@ -1,7 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {View, Text, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+
 import globalStyles from 'constants/styles';
 
 interface Props {}

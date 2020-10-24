@@ -1,37 +1,44 @@
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React, {useCallback, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {Account} from 'web3-core';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import TextField from 'components/TextField';
-import {useWeb3} from 'services/web3';
-import globalStyles from 'constants/styles';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ChevronLeft} from 'components/Icons';
 import Steps from 'components/Steps';
+import {usePrivateKeyStorage, useWeb3} from 'services/web3';
+import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {}
 
-function NoWallet(props: Props) {
+function CreateWallet(props: Props) {
   const navigation = useNavigation();
-  const {control, handleSubmit, errors, formState} = useForm<{
+  const {control, handleSubmit, errors} = useForm<{
     password: string;
-  }>({
-    mode: 'onChange',
-  });
+  }>();
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
   const web3 = useWeb3();
+  const {storePrivateKey} = usePrivateKeyStorage();
 
-  const handleConnectWallet = useCallback(() => {
-    setCurrentStep(2);
-    const account = web3.eth.accounts.create();
-    setAccount(account);
-  }, [web3]);
+  const handleConnectWallet = handleSubmit(({password}) => {
+    setLoading(true);
+
+    requestAnimationFrame(() => {
+      const account = web3.eth.accounts.create();
+      web3.eth.accounts.wallet.add(account);
+      storePrivateKey(account.privateKey, password);
+      setAccount(account);
+      setCurrentStep(2);
+      setLoading(false);
+    });
+  });
 
   const doneMarkup = <Text style={[globalStyles.normal]}>Done!</Text>;
 
@@ -56,28 +63,34 @@ function NoWallet(props: Props) {
           {/* Step 1 - Enter Password */}
           <Steps.Step step={1}>
             <View>
-              <Text style={globalStyles.h6}>Enter a password</Text>
+              <Text style={globalStyles.h6}>Set up wallet</Text>
               {currentStep > 1 ? (
                 doneMarkup
               ) : (
                 <>
-                  <Spacer times={3} />
+                  {/* <Spacer times={3} />
                   <TextField
                     control={control}
                     name="password"
                     placeholder="Password"
                     secureTextEntry
                     rules={{required: true}}
+                    error={errors.password}
                   />
                   <Spacer times={1} />
-                  <Text style={globalStyles.normal}>Some hint about the password</Text>
+                  <Text style={globalStyles.normal}>Some hint about the password</Text> */}
                   <Spacer times={3} />
-                  <View style={globalStyles.alignItemsStart}>
+                  <View
+                    style={[globalStyles.alignItemsStart, globalStyles.alignItemsCenter, globalStyles.horizontalStack]}
+                  >
                     <Button
+                      disabled={loading}
                       variant="success"
                       caption="Set up account"
-                      onPress={() => handleSubmit(handleConnectWallet)}
+                      onPress={handleConnectWallet}
                     />
+                    <Spacer />
+                    {loading && <ActivityIndicator color="#000000" />}
                   </View>
                   <Spacer times={2} />
                 </>
@@ -103,6 +116,10 @@ function NoWallet(props: Props) {
                   </View>
                   <Spacer times={2} />
                   <Text style={[globalStyles.normal]}>{JSON.stringify(account)}</Text>
+                  <Spacer times={3} />
+                  <View style={globalStyles.alignItemsStart}>
+                    <Button variant="success" caption="Done" onPress={() => navigation.goBack()} />
+                  </View>
                 </>
               )}
             </View>
@@ -125,4 +142,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NoWallet;
+export default CreateWallet;

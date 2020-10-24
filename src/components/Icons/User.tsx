@@ -1,59 +1,43 @@
-import React, {memo, useEffect, useRef} from 'react';
-import Animated, {Easing, Extrapolate} from 'react-native-reanimated';
+import React, {memo} from 'react';
+import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
 import {colors} from 'constants/values';
-import AnimatedSvgPath from './AnimatedSvgPath';
+import {useTransition} from 'utilities/hooks';
 
 interface Props {
   color: string;
   fill?: boolean;
 }
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+Animated.addWhitelistedNativeProps({
+  fillOpacity: true,
+});
 
 function User({color = colors.green, fill = false}: Props) {
-  const animation = useRef<Animated.BackwardCompatibleWrapper>();
-  const opacity = useRef<Animated.Value<number>>(new Animated.Value(fill ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (animation.current && ![0, 1].includes((opacity as any)._value)) {
-      animation.current.stop();
-    }
-
-    animation.current = Animated.timing(opacity, {
-      toValue: fill ? 1 : 0,
-      easing: Easing.linear,
-      duration: 300,
-    });
-
-    animation.current.start();
-  }, [fill]);
-
-  const opacityValue = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0', '0.5'] as any,
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const fillOpacity = useTransition(fill);
 
   return (
     <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <AnimatedSvgPath
+      <AnimatedPath
         d="M3.64774 23.2005C3.63623 22.1468 3.84148 21.1014 4.25154 20.1248C4.66161 19.1481 5.2684 18.2596 6.03678 17.5106C6.80516 16.7616 7.7199 16.167 8.72806 15.7612C9.73623 15.3554 10.8178 15.1465 11.9102 15.1465C13.0027 15.1465 14.0843 15.3554 15.0924 15.7612C16.1006 16.167 17.0153 16.7616 17.7837 17.5106C18.5521 18.2596 19.1589 19.1481 19.569 20.1248C19.979 21.1014 20.1843 22.1468 20.1728 23.2005"
         fill={color}
-        fillOpacity={opacityValue}
+        fillOpacity={fillOpacity}
       />
-      <AnimatedSvgPath
+      <AnimatedPath
         d="M16.6084 6.2109C20.452 6.40188 22.6199 6.85193 22.6199 7.37625C22.6199 8.07387 17.8248 8.64152 11.9095 8.64152C5.99422 8.64152 1.20001 8.07476 1.20001 7.37625C1.20001 6.84574 3.01961 6.38773 6.96774 6.20117"
         fill={color}
-        fillOpacity={opacityValue}
+        fillOpacity={fillOpacity}
       />
-      <AnimatedSvgPath
+      <AnimatedPath
         d="M16.6412 8.521C16.654 8.65893 16.6604 8.79951 16.6604 8.94098C16.6602 10.156 16.1595 11.3212 15.2687 12.1803C14.3779 13.0393 13.1699 13.5219 11.9102 13.5219C10.6505 13.5219 9.44236 13.0393 8.55155 12.1803C7.66074 11.3212 7.16022 10.156 7.15997 8.94098C7.15997 8.79951 7.16639 8.6607 7.17922 8.52276"
         fill={color}
-        fillOpacity={opacityValue}
+        fillOpacity={fillOpacity}
       />
-      <AnimatedSvgPath
+      <AnimatedPath
         d="M7.18239 6.20114C7.16956 6.0632 7.16315 5.9235 7.16315 5.78203C7.16315 4.56701 7.66352 3.40173 8.55416 2.5425C9.4448 1.68326 10.6528 1.20043 11.9125 1.2002C13.1723 1.2002 14.3805 1.68292 15.2713 2.54218C16.1622 3.40145 16.6627 4.56685 16.6627 5.78203C16.6627 5.92262 16.6563 6.06143 16.6435 6.19937"
         fill={color}
-        fillOpacity={opacityValue}
+        fillOpacity={fillOpacity}
       />
       <Path
         d="M3.64761 23.2002C3.63611 22.1466 3.84135 21.1012 4.25142 20.1245C4.66149 19.1479 5.26827 18.2594 6.03666 17.5104C6.80504 16.7614 7.71978 16.1668 8.72794 15.761C9.73611 15.3552 10.8177 15.1462 11.9101 15.1462C13.0026 15.1462 14.0841 15.3552 15.0923 15.761C16.1005 16.1668 17.0152 16.7614 17.7836 17.5104C18.552 18.2594 19.1588 19.1479 19.5688 20.1245C19.9789 21.1012 20.1841 22.1466 20.1726 23.2002"

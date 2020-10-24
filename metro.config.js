@@ -1,5 +1,5 @@
 module.exports = {
   resolver: {
-    extraNodeModules: require("node-libs-expo"),
+    extraNodeModules: require("./modules"),
   },
 };

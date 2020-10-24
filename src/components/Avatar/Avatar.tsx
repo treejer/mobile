@@ -4,7 +4,7 @@ import {colors} from 'constants/values';
 
 interface Props {
   size?: number;
-  type?: 'active';
+  type?: 'active' | 'inactive';
 }
 
 const BORDER_WIDTH = 2.5;
@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
   },
   activeContainer: {
     borderColor: colors.green,
+  },
+  inactiveContainer: {
+    borderColor: colors.red,
   },
 });
 

@@ -11,9 +11,10 @@ module.exports = function (api) {
             screens: './src/screens',
             services: './src/services',
             constants: './src/constants',
+            utilities: './src/utilities',
           },
         },
-      ],
+      ]
     ],
   };
 };

@@ -44,6 +44,9 @@ const globalStyles = StyleSheet.create({
   justifyContentEvenly: {
     justifyContent: 'space-evenly',
   },
+  flexWrap: {
+    flexWrap: 'wrap',
+  },
   small: {
     fontSize: 12,
     ...fontNormal,

@@ -1,22 +1,31 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
 
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {useWeb3} from 'services/web3';
+import {usePrivateKeyStorage} from 'services/web3';
 import globalStyles from 'constants/styles';
 
 interface Props {}
 
 function NoWallet(_: Props) {
   const navigation = useNavigation();
-  const web3 = useWeb3();
+  const {unlocked} = usePrivateKeyStorage();
 
   const handleConnectWallet = useCallback(() => {
     navigation.navigate('CreateWallet');
   }, [navigation]);
+
+  useEffect(() => {
+    if (unlocked) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'MyProfile'}],
+      });
+    }
+  }, [unlocked]);
 
   return (
     <ScrollView>
@@ -33,7 +42,7 @@ function NoWallet(_: Props) {
         <Button variant="secondary" caption="Connect Wallet" onPress={handleConnectWallet} />
         <Spacer times={9} />
 
-        <View style={{paddingHorizontal: 40, width: '100%'}}>
+        <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
           <Card style={globalStyles.alignItemsCenter}>
             <Text style={globalStyles.h5}>Why do I need that?</Text>
             <Spacer times={5} />

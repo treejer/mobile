@@ -1,19 +1,38 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, Text, View, TouchableOpacityProps, TextProps} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacityProps, TextProps, ViewProps} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
+import globalStyles, {fontMedium} from 'constants/styles';
 
-interface Props extends TouchableOpacityProps {
+type Props = {
   caption: string;
-  variant?: 'primary' | 'cta' | 'secondary' | 'success';
+  variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary';
   icon?: React.ComponentType<any>;
   style?: TouchableOpacityProps['style'];
   textStyle?: TextProps['style'];
-}
+  onPress?: () => void;
+} & (
+  | (TouchableOpacityProps & {
+      disabled?: false;
+    })
+  | (ViewProps & {
+      disabled: true;
+    })
+);
 
-function Button({caption, variant = 'primary', icon, style = null, textStyle = null, ...props}: Props) {
+function Button({
+  caption,
+  disabled,
+  variant = 'primary',
+  icon,
+  style = null,
+  textStyle = null,
+  onPress,
+  ...props
+}: Props) {
+  const Component = (disabled ? View : TouchableOpacity) as React.ComponentType<TouchableOpacityProps>;
   return (
-    <TouchableOpacity style={[styles[`${variant}Container`], style]} {...props}>
+    <Component style={[styles[`${variant}Container`], style]} onPress={onPress} {...props}>
       <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>
       {icon && (
         <View style={[styles[`${variant}IconWrapper`]]}>
@@ -22,7 +41,7 @@ function Button({caption, variant = 'primary', icon, style = null, textStyle = n
           })}
         </View>
       )}
-    </TouchableOpacity>
+    </Component>
   );
 }
 
@@ -47,10 +66,10 @@ const styles = StyleSheet.create({
       width: 2,
       height: 6,
     },
-    elevation: 7,
     shadowRadius: 20,
     shadowColor: 'black',
     shadowOpacity: 0.15,
+    elevation: 7,
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
@@ -91,6 +110,26 @@ const styles = StyleSheet.create({
   successText: {
     ...globalStyles.normal,
     color: 'white',
+  },
+  tertiaryContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    shadowOffset: {
+      width: 2,
+      height: 6,
+    },
+    shadowRadius: 20,
+    shadowColor: 'black',
+    shadowOpacity: 0.15,
+    elevation: 6,
+  },
+  tertiaryText: {
+    ...fontMedium,
+    color: colors.grayDarker,
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

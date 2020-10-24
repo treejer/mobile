@@ -1,7 +1,9 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+
+import {Times} from 'components/Icons';
 import {colors} from 'constants/values';
-import {Times} from '../Icons';
 
 interface Props {
   icon?: string;

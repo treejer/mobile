@@ -9,9 +9,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["./src/*", "./node_modules/*"],
-      "constants": ["./src/constants"]
+      "*": ["./src/*", "./node_modules/*"]
     }
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "src/components/TreeList/TreeList/.tsx"]
 }

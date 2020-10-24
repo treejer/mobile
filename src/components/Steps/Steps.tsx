@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {StyleSheet, View, Text, ViewProps} from 'react-native';
-import {color} from 'react-native-reanimated';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
