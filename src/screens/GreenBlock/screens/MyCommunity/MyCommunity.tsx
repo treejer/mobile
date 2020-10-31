@@ -1,6 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import MapView from 'react-native-maps';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';

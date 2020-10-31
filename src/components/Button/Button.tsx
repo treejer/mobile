@@ -11,6 +11,7 @@ type Props = {
   style?: TouchableOpacityProps['style'];
   textStyle?: TextProps['style'];
   onPress?: () => void;
+  round?: boolean;
 } & (
   | (TouchableOpacityProps & {
       disabled?: false;
@@ -25,6 +26,7 @@ function Button({
   disabled,
   variant = 'primary',
   icon,
+  round,
   style = null,
   textStyle = null,
   onPress,
@@ -32,12 +34,12 @@ function Button({
 }: Props) {
   const Component = (disabled ? View : TouchableOpacity) as React.ComponentType<TouchableOpacityProps>;
   return (
-    <Component style={[styles[`${variant}Container`], style]} onPress={onPress} {...props}>
-      <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>
+    <Component style={[styles[`${variant}Container`], round ? styles.round : null, style]} onPress={onPress} {...props}>
+      {!round && <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>}
       {icon && (
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
-            color: 'white',
+            color: styles[`${variant}Text`].color ?? 'white',
           })}
         </View>
       )}
@@ -46,6 +48,17 @@ function Button({
 }
 
 const styles = StyleSheet.create({
+  round: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    padding: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0,
+  },
   primaryContainer: {
     paddingVertical: 8,
     paddingHorizontal: 20,
