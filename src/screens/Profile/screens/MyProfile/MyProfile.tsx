@@ -8,12 +8,18 @@ import {useWeb3} from 'services/web3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
+import useApi from 'services/api';
 
 interface Props {}
 
 function MyProfile(props: Props) {
   const navigation = useNavigation();
   const web3 = useWeb3();
+  const result = useApi({
+    type: 'GetMe',
+  });
+
+  console.log(result)
   const address = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0].address : '';
   }, [web3]);
@@ -56,15 +62,16 @@ function MyProfile(props: Props) {
 
 const styles = StyleSheet.create({
   addressBox: {
-    width: 180,
+    backgroundColor: colors.khakiDark,
     textAlign: 'center',
-    borderRadius: 20,
     borderColor: 'white',
+    overflow: 'hidden',
+    width: 180,
     borderWidth: 2,
+    borderRadius: 20,
+    paddingVertical: 10,
     paddingRight: 10,
     paddingLeft: 10,
-    backgroundColor: colors.khakiDark,
-    paddingVertical: 10,
   },
 });
 

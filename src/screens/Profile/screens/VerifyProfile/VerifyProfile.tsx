@@ -14,7 +14,6 @@ import globalStyles from 'constants/styles';
 interface Props {}
 
 function VerifyProfile(props: Props) {
-  const navigation = useNavigation();
   const {control, handleSubmit, errors, formState} = useForm<{
     firstName: string;
     lastName: string;

@@ -13,7 +13,6 @@ import globalStyles from 'constants/styles';
 interface Props {}
 
 function SignUp(props: Props) {
-  const navigation = useNavigation();
   return (
     <View style={[globalStyles.fill, globalStyles.screenView]}>
       <BackgroundEntropy />

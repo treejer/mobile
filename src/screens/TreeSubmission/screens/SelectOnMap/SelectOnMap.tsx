@@ -3,6 +3,7 @@ import {Image, StyleSheet, View} from 'react-native';
 import MapView, {Region} from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import {useNavigation} from '@react-navigation/native';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';
@@ -17,6 +18,8 @@ function SelectOnMap(props: Props) {
     latitudeDelta: 0.1,
     longitudeDelta: 0.05,
   });
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -44,7 +47,7 @@ function SelectOnMap(props: Props) {
         <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
       </View>
       <View style={[styles.bottom, globalStyles.horizontalStack]}>
-        <Button caption="" icon={Times} variant="primary" round />
+        <Button caption="" icon={Times} variant="primary" round onPress={() => navigation.goBack()} />
         <View style={globalStyles.fill} />
         <Button caption="" icon={Check} variant="success" round />
       </View>

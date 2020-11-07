@@ -2,18 +2,12 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Image, ListRenderItem, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import Svg, {Path} from 'react-native-svg';
 import globalStyles from 'constants/styles';
-import BackgroundEntropy from '../BackgroundEntropy/BackgroundEntropy';
-import Button from '../Button';
-import {Tree} from '../Icons';
-import ProgressCircles from '../ProgressCircles';
-
-// import {
-//   OnboardingContent,
-//   onboardingData,
-//   OnboardingKey,
-// } from "./OnboardingContent";
+import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
+import Button from 'components/Button';
+import {Tree} from 'components/Icons';
+import ProgressCircles from 'components/ProgressCircles';
+import {useSettings} from 'services/settings';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
@@ -25,29 +19,30 @@ interface OnboardingData {
 
 const onboardingData: OnboardingData[] = [
   {
-    image: require('../../../assets/images/onboarding-1.png'),
+    image: require('../../../../../assets/images/onboarding-1.png'),
     heading: 'Connect to your Wallet',
     content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
   },
   {
-    image: require('../../../assets/images/onboarding-2.png'),
+    image: require('../../../../../assets/images/onboarding-2.png'),
     heading: 'Plant Trees or Support them',
     content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
   },
   {
-    image: require('../../../assets/images/onboarding-3.png'),
+    image: require('../../../../../assets/images/onboarding-3.png'),
     heading: 'Get Rewards',
     content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
   },
 ];
 
 function OnboardingScreen() {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const {width: viewportWidth} = useWindowDimensions();
   const carouselRef = useRef<Carousel<OnboardingData>>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const isEnd = currentStep === onboardingData.length - 1;
-  const currentStepForRenderItem = true ? currentStep : -1;
+  const currentStepForRenderItem = currentStep;
+  const {markOnboardingAsDone} = useSettings();
 
   const renderItem: ListRenderItem<OnboardingData> = useCallback(
     ({item, index}) => {
@@ -69,11 +64,10 @@ function OnboardingScreen() {
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
-      navigation.navigate('SignUp');
-      return;
+      return markOnboardingAsDone();
     }
     carouselRef.current?.snapToNext();
-  }, [isEnd, navigation]);
+  }, [isEnd, markOnboardingAsDone]);
 
   const onSnapToItem = useCallback((newIndex: number) => {
     setCurrentStep(newIndex);
@@ -111,14 +105,6 @@ function OnboardingScreen() {
 export default OnboardingScreen;
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  dotContainerStyle: {},
-  dotWrapperStyle: {
-    marginTop: -14,
-    fontSize: 20,
-  },
   bottomWrapper: {
     height: 200,
   },

@@ -8,6 +8,7 @@
     "@shopify/restyle": "^1.2.0",
     "expo": "^39.0.0",
     "expo-camera": "~9.0.0",
+    "expo-constants": "~9.2.0",
     "expo-crypto": "~8.3.0",
     "expo-image-picker": "~9.1.0",
     "expo-random": "~9.0.0",
@@ -35,10 +36,12 @@
   },
   "devDependencies": {
     "@babel/core": "7.9.0",
+    "@expo/config": "^3.3.15",
     "@types/react": "~16.9.35",
     "@types/react-dom": "~16.9.8",
     "@types/react-native": "~0.63.2",
     "@types/react-native-snap-carousel": "^3.8.2",
+    "babel-plugin-inline-dotenv": "^1.6.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.2"

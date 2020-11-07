@@ -6,23 +6,27 @@ import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
+import {useSettings} from 'services/settings';
 
 interface Props {}
 
-function Welcome(props: Props) {
-  const navigation = useNavigation();
+function SelectLanguage(props: Props) {
+  // const navigation = useNavigation();
+  const settings = useSettings();
+
   return (
     <View style={globalStyles.fill}>
       <BackgroundEntropy />
       <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
         <Text style={[globalStyles.h2, globalStyles.textCenter, globalStyles.mb1]}>TREEJER{'\n'}RANGER APP</Text>
-        <Image source={require('../../../assets/images/welcome.png')} />
+        <Image source={require('../../../../../assets/images/welcome.png')} />
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
         <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
           <Button
             caption="English"
             onPress={() => {
-              navigation.navigate('Onboarding');
+              // navigation.navigate('Onboarding');
+              settings.updateLocale('en');
             }}
           />
           <Spacer />
@@ -42,4 +46,4 @@ function Welcome(props: Props) {
   );
 }
 
-export default Welcome;
+export default SelectLanguage;

@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 function TreeSubmission() {
   return (
     <Stack.Navigator
-      initialRouteName="SelectOnMap"
+      initialRouteName="SelectPhoto"
       screenOptions={{
         cardStyle: globalStyles.screenView,
         headerShown: false,
