@@ -6,8 +6,9 @@ import {useFonts} from 'expo-font';
 import {NavigationContainer} from '@react-navigation/native';
 import MainTabs from './src/screens/MainTabs';
 import Onboarding from './src/screens/Onboarding';
-import Web3Provider, {usePersistedWallet} from './src/services/web3';
+import Web3Provider, {Web3Context, usePersistedWallet} from './src/services/web3';
 import AuthProvider, {usePersistedUserData} from './src/services/auth';
+import ApolloProvider from './src/services/apollo';
 import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
 // import PasswordProtected from './src/screens/PasswordProtected';
 
@@ -36,19 +37,27 @@ function App() {
     <SettingsProvider onboardingDoneInitialState={onboardingDone} localeInitialState={locale}>
       <AuthProvider userData={userData}>
         <Web3Provider privateKey={privateKey}>
-          <SettingsContext.Consumer>
-            {value => {
-              if (!value.locale || !value.onboardingDone) {
-                return <Onboarding />;
-              }
+          <Web3Context.Consumer>
+            {({waiting}) =>
+              waiting ? null : (
+                <ApolloProvider>
+                  <SettingsContext.Consumer>
+                    {value => {
+                      if (!value.locale || !value.onboardingDone) {
+                        return <Onboarding />;
+                      }
 
-              return (
-                <NavigationContainer>
-                  <MainTabs />
-                </NavigationContainer>
-              );
-            }}
-          </SettingsContext.Consumer>
+                      return (
+                        <NavigationContainer>
+                          <MainTabs />
+                        </NavigationContainer>
+                      );
+                    }}
+                  </SettingsContext.Consumer>
+                </ApolloProvider>
+              )
+            }
+          </Web3Context.Consumer>
         </Web3Provider>
       </AuthProvider>
     </SettingsProvider>

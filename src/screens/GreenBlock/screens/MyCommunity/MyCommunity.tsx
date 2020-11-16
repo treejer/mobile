@@ -11,6 +11,8 @@ import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import TreeList from 'components/TreeList';
 import {getStaticMapUrl} from 'utilities/helpers';
+import {gql} from 'apollo-boost';
+import {useQuery} from '@apollo/react-hooks';
 
 interface Props {}
 
@@ -19,9 +21,18 @@ enum GreenBlockView {
   MyTrees,
 }
 
+const query = gql`
+  query MyCommunityQuery {
+    TreeFactory @contract {
+      price
+    }
+  }
+`;
+
 function MyCommunity(props: Props) {
   const navigation = useNavigation();
   const [currentView, setCurrentView] = useState(GreenBlockView.MyCommunity);
+  const {data, error} = useQuery(query);
 
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>

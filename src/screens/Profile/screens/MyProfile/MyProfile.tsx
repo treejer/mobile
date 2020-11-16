@@ -1,6 +1,8 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, Text, View, ScrollView, Clipboard} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useQuery} from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -8,18 +10,31 @@ import {useWeb3} from 'services/web3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
-import useApi from 'services/api';
 
 interface Props {}
+
+const query = gql`
+  query GetMe {
+    me @rest(type: "User", path: "/users/me") {
+      id
+      name
+      email
+      email_verified_at
+      id_card
+      created_at
+      updated_at
+      mobile
+      mobile_country
+      mobile_verified_at
+    }
+  }
+`;
 
 function MyProfile(props: Props) {
   const navigation = useNavigation();
   const web3 = useWeb3();
-  const result = useApi({
-    type: 'GetMe',
-  });
+  const {data} = useQuery(query);
 
-  console.log(result)
   const address = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0].address : '';
   }, [web3]);
@@ -29,8 +44,12 @@ function MyProfile(props: Props) {
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
         <Avatar type="inactive" size={74} />
-        <Spacer times={4} />
-        <Text style={globalStyles.h4}>Johnny Deppp</Text>
+        {data?.me?.name ? (
+          <>
+            <Spacer times={4} />
+            <Text style={globalStyles.h4}>{data.me.name}</Text>
+          </>
+        ) : null}
         <Spacer times={4} />
         <Text
           numberOfLines={1}

@@ -12,7 +12,7 @@ import Steps from 'components/Steps';
 import {usePrivateKeyStorage, useWeb3} from 'services/web3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface Props {}
 
@@ -33,10 +33,11 @@ function CreateWallet(props: Props) {
     requestAnimationFrame(() => {
       const account = web3.eth.accounts.create();
       web3.eth.accounts.wallet.add(account);
-      storePrivateKey(account.privateKey, password);
-      setAccount(account);
-      setCurrentStep(2);
-      setLoading(false);
+      storePrivateKey(account.privateKey, password).then(() => {
+        setAccount(account);
+        setCurrentStep(2);
+        setLoading(false);
+      });
     });
   });
 

@@ -1,8 +1,8 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useRef} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, Platform} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useForm} from 'react-hook-form';
+import gql from 'graphql-tag';
 import * as ImagePicker from 'expo-image-picker';
 
 import Button from 'components/Button';
@@ -10,6 +10,14 @@ import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import TextField from 'components/TextField';
 import globalStyles from 'constants/styles';
+
+const mutation = gql`
+  mutation VerifyUser {
+    apply @rest(type: "User", method: "POST" path: "/users/apply") {
+      status
+    }
+  }
+`;
 
 interface Props {}
 

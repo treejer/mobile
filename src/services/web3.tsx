@@ -6,13 +6,14 @@ import Web3 from 'web3';
 import {Contract} from 'web3-eth-contract';
 import config from './config';
 
-const Web3Context = React.createContext({
+export const Web3Context = React.createContext({
   web3: {} as Web3,
   unlocked: false,
   storePrivateKey: (async () => {}) as (privateKey: string, password?: string) => Promise<void>,
   accessToken: '',
   treeFactory: {} as Contract,
   gbFactory: {} as Contract,
+  waiting: false,
 });
 
 interface Props {
@@ -22,45 +23,30 @@ interface Props {
 
 function Web3Provider({children, privateKey}: Props) {
   const web3 = useMemo(() => new Web3(config.web3Url), []);
+  const [waiting, setWaiting] = useState(true);
+  const [unlocked, setUnlocked] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const treeFactory = useContract(web3, config.contracts.TreeFactory);
   const gbFactory = useContract(web3, config.contracts.GBFactory);
 
-  useEffect(() => {
-    if (privateKey) {
-      Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey).then(hash => {
-        const key = `item_${hash}`;
+  const updateAccessToken = useCallback(
+    (privateKey: string) =>
+      getAccessToken(privateKey, web3)
+        .then(accessToken => {
+          setAccessToken(accessToken);
+        })
+        .finally(() => {
+          setWaiting(false);
+          setUnlocked(true);
+        }),
+    [web3],
+  );
 
-        AsyncStorage.getItem(key).then(accessToken => {
-          if (accessToken) {
-            setAccessToken(accessToken);
-          } else {
-            fetch(`${config.treejerApiUrl}oauth/token`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                client_id: config.treejerClientId,
-                client_secret: config.treejerClientSecret,
-                grant_type: 'social',
-                provider: 'wallet',
-                access_token: web3.eth.accounts.sign(config.publicKeyRecoveryMessage, privateKey).signature,
-              }),
-            })
-              .then(response => response.json())
-              .then(value => {
-                AsyncStorage.setItem(key, value.access_token);
-                setAccessToken(value.access_token);
-              });
-          }
-        });
-      });
-    }
-  }, [privateKey]);
-
-  const [unlocked, setUnlocked] = useState(Boolean(privateKey));
   const mounted = useRef(false);
+
+  useEffect(() => {
+    updateAccessToken(privateKey);
+  }, [privateKey]);
 
   if (privateKey && !mounted.current) {
     web3.eth.accounts.wallet.add(privateKey);
@@ -70,7 +56,7 @@ function Web3Provider({children, privateKey}: Props) {
     web3.eth.accounts.wallet.add(privateKey);
 
     await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
-    setUnlocked(true);
+    await updateAccessToken(privateKey);
   }, []);
 
   useEffect(() => {
@@ -91,8 +77,9 @@ function Web3Provider({children, privateKey}: Props) {
       accessToken,
       gbFactory,
       treeFactory,
+      waiting,
     }),
-    [web3, storePrivateKey, unlocked, accessToken, gbFactory, treeFactory],
+    [web3, storePrivateKey, unlocked, accessToken, gbFactory, treeFactory, waiting],
   );
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
@@ -121,10 +108,45 @@ export const usePersistedWallet = () => {
   SecureStore.getItemAsync(config.storageKeys.privateKey).then(key => {
     if (key) {
       setPrivateKey(key);
+      setLoaded(true);
+    } else {
+      setLoaded(true);
     }
-
-    setLoaded(true);
   });
 
   return [loaded, privateKey] as const;
 };
+
+async function getAccessToken(privateKey: string, web3: Web3) {
+  if (!privateKey) {
+    return;
+  }
+
+  const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey);
+  const key = `ACCESS_TOKEN_${hash}`;
+
+  const cachedToken = await AsyncStorage.getItem(key);
+
+  if (cachedToken) {
+    return cachedToken;
+  }
+
+  const response = await fetch(`${config.treejerApiUrl}/oauth/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      client_id: config.treejerClientId,
+      client_secret: config.treejerClientSecret,
+      grant_type: 'social',
+      provider: 'wallet',
+      access_token: web3.eth.accounts.sign(config.publicKeyRecoveryMessage, privateKey).signature,
+    }),
+  });
+
+  const value = await response.json();
+  AsyncStorage.setItem(key, value.access_token);
+
+  return value.access_token;
+}

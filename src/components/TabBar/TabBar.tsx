@@ -1,5 +1,5 @@
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {StyleSheet, TouchableOpacityProps, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Svg, {Path} from 'react-native-svg';
@@ -12,15 +12,28 @@ interface Props extends BottomTabBarProps {}
 
 function TabBar({state, descriptors, navigation}: Props) {
   const {tabBarVisible} = descriptors[state.routes[state.index].key].options;
+  const mounted = useRef(false);
+  const timeout = useRef<Animated.BackwardCompatibleWrapper | undefined>();
 
   const visibilityAnimatedValue = useValue(tabBarVisible ? 1 : 0);
 
   useEffect(() => {
-    timing(visibilityAnimatedValue, {
-      duration: 1000,
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+
+    timeout.current = timing(visibilityAnimatedValue, {
+      duration: 500,
       toValue: tabBarVisible ? 1 : 0,
       easing: Easing.inOut(Easing.ease),
-    }).start();
+    });
+
+    timeout.current.start();
+
+    return () => {
+      timeout.current?.stop();
+    };
   }, [visibilityAnimatedValue, tabBarVisible]);
 
   const translateY = interpolate(visibilityAnimatedValue, {
@@ -43,7 +56,7 @@ function TabBar({state, descriptors, navigation}: Props) {
         {
           transform: [{translateY}],
           opacity: visibilityAnimatedValue,
-          maxHeight
+          maxHeight,
         },
       ]}
     >
