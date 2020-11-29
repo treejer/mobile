@@ -1,6 +1,5 @@
 import './src/globals';
 import React from 'react';
-import {LogBox} from 'react-native';
 import {AppLoading} from 'expo';
 import {useFonts} from 'expo-font';
 import {NavigationContainer} from '@react-navigation/native';
@@ -11,12 +10,6 @@ import AuthProvider, {usePersistedUserData} from './src/services/auth';
 import ApolloProvider from './src/services/apollo';
 import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
 // import PasswordProtected from './src/screens/PasswordProtected';
-
-LogBox.ignoreLogs([
-  "Warning: The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
-  "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
-  /No means to retreive/,
-]);
 
 function App() {
   const [fontsLoaded] = useFonts({

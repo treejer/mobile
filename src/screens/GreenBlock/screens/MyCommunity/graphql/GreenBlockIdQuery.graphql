@@ -1,0 +1,5 @@
+query GreenBlockQuery($address: String!) {
+  GBFactory @contract {
+    greenBlockId: planterGB(address: $address)
+  }
+}

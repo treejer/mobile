@@ -2,7 +2,6 @@ import React, {useMemo} from 'react';
 import {StyleSheet, Text, View, ScrollView, Clipboard} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -11,24 +10,9 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
 
-interface Props {}
+import query from './graphql/GetMeQuery.graphql';
 
-const query = gql`
-  query GetMe {
-    me @rest(type: "User", path: "/users/me") {
-      id
-      name
-      email
-      email_verified_at
-      id_card
-      created_at
-      updated_at
-      mobile
-      mobile_country
-      mobile_verified_at
-    }
-  }
-`;
+interface Props {}
 
 function MyProfile(props: Props) {
   const navigation = useNavigation();

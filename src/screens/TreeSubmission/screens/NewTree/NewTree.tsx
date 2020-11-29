@@ -12,9 +12,34 @@ import Steps from 'components/Steps';
 import {usePrivateKeyStorage, useWeb3} from 'services/web3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {gql} from 'apollo-boost';
 
 interface Props {}
+
+// const mutation = gql`
+// mutation plantTree($height: Int, $diameter: Int) {
+//   plant(typeId: "0", gbId: "3", stringParams: [
+//     "Tree name",
+//     "lat",
+//     "lon",
+//     "ax"
+//   ], intParams: [$height, $diameter]) {
+
+//   }
+// }
+// `;
+// const mutation2 = gql`
+// mutation assignImage($treeId: Int, $diameter: Int) {
+//   plant(typeId: "0", gbId: "3", stringParams: [
+//     "Tree name",
+//     "lat",
+//     "lon"
+//   ], intParams: [$height, $diameter]) {
+
+//   }
+// }
+// `;
 
 function NewTree(props: Props) {
   const navigation = useNavigation();

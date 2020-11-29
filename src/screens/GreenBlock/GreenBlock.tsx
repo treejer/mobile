@@ -3,8 +3,16 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import MyCommunity from './screens/MyCommunity';
 import TreeDetails from './screens/TreeDetails';
+import {TreesQueryQueryData} from './screens/MyCommunity/graphql/TreesQuery.graphql';
 
-const Stack = createStackNavigator();
+export type GreenBlockRouteParamList = {
+  MyCommunity: undefined;
+  TreeDetails: {
+    tree: TreesQueryQueryData.TreesTreesData;
+  };
+};
+
+const Stack = createStackNavigator<GreenBlockRouteParamList>();
 
 function GreenBlock() {
   return (

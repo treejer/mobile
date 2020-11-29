@@ -1,20 +1,25 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
 import {colors} from 'constants/values';
+import {useWalletAccount} from 'services/web3';
 
 interface Props {
   size?: number;
   type?: 'active' | 'inactive';
+  address?: string;
 }
 
 const BORDER_WIDTH = 2.5;
 const BORDER_GAP = 2;
 const SIZE_OFFSET = (BORDER_WIDTH + BORDER_GAP) * 2;
 
-function Avatar({size = 64, type}: Props) {
+function Avatar({size = 64, address, type}: Props) {
+  const account = useWalletAccount();
   const imageSize = size - SIZE_OFFSET;
   const borderRadius = Math.ceil(size / 2);
   const imageBorderRadius = Math.ceil(imageSize / 2);
+  const onlyDigits = (address ?? account?.address ?? '00000').replace(/\D/g, '');
+  const uri = `https://www.gravatar.com/avatar/${onlyDigits}?d=robohash&s=${size}`;
 
   return (
     <View style={[{width: size, height: size, borderRadius}, styles.container, type && styles[`${type}Container`]]}>
@@ -24,10 +29,7 @@ function Avatar({size = 64, type}: Props) {
           height: imageSize,
           borderRadius: imageBorderRadius,
         }}
-        source={{
-          uri:
-            'https://images.generated.photos/-a99Op_mk7sAPi-jXuHR9IMBc_Uj1ncJsu8fvWLzsrA/rs:fit:512:512/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zLzA5/ODc1MTQuanBn.jpg',
-        }}
+        source={{uri}}
       />
     </View>
   );

@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, ScrollView, Image, useWindowDimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import MapView from 'react-native-maps';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -10,9 +9,14 @@ import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import TreeList from 'components/TreeList';
+import {useApolloClient, useQuery} from '@apollo/react-hooks';
+import {useWalletAccount} from 'services/web3';
 import {getStaticMapUrl} from 'utilities/helpers';
-import {gql} from 'apollo-boost';
-import {useQuery} from '@apollo/react-hooks';
+
+import treesQuery, {TreesQueryQueryData} from './graphql/TreesQuery.graphql';
+import greenBlockIdQuery from './graphql/GreenBlockIdQuery.graphql';
+import planterQuery from './graphql/GreenBlockPlanterQuery.graphql';
+import greenBlockDetailsQuery from './graphql/GreenBlockDetailsQuery.graphql';
 
 interface Props {}
 
@@ -21,18 +25,89 @@ enum GreenBlockView {
   MyTrees,
 }
 
-const query = gql`
-  query MyCommunityQuery {
-    TreeFactory @contract {
-      price
+// const ambassadorQuery = gql`
+//   query AmbassadorQuery($greenBlockId: String!) {
+//     GBFactory @contract {
+//       ambassador: gbToAmbassador(id: $greenBlockId)
+//     }
+//   }
+// `;
+
+const usePlanters = (greenBlockId: string) => {
+  const client = useApolloClient();
+  const [planters, setPlanters] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (client && greenBlockId) {
+      (async () => {
+        let shouldStop = false;
+        const result: string[] = [];
+        for (let i = 0; i < 5 && !shouldStop; i++) {
+          try {
+            const {data} = await client.query({
+              query: planterQuery,
+              variables: {
+                userId: String(i),
+                greenBlockId,
+              },
+            });
+
+            result.push(data.GBFactory.planter);
+          } catch {
+            shouldStop = true;
+          }
+        }
+
+        setPlanters(result);
+      })();
     }
-  }
-`;
+  }, [client, greenBlockId]);
+
+  return {data: planters};
+};
 
 function MyCommunity(props: Props) {
   const navigation = useNavigation();
+  const dimensions = useWindowDimensions();
   const [currentView, setCurrentView] = useState(GreenBlockView.MyCommunity);
-  const {data, error} = useQuery(query);
+  const account = useWalletAccount();
+
+  const mapWidth = dimensions.width - 100;
+
+  const accountAddress = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F'; // account?.address
+
+  const greenBlockIdQueryResult = useQuery(greenBlockIdQuery, {
+    variables: {
+      address: accountAddress, // account?.address,
+    },
+    fetchPolicy: 'cache-first',
+    skip: !account,
+  });
+
+  const treesQueryResult = useQuery<TreesQueryQueryData>(treesQuery, {
+    variables: {
+      address: accountAddress, // account?.address,
+      limit: 10,
+    },
+    fetchPolicy: 'cache-first',
+    skip: !account,
+  });
+
+  // const greenBlockId = greenBlockIdQueryResult.data?.GBFactory.greenBlockId;
+  const greenBlockId = '3';
+
+  const greenBlockDetailsQueryResult = useQuery(greenBlockDetailsQuery, {
+    variables: {
+      greenBlockId,
+    },
+    fetchPolicy: 'cache-first',
+    skip: !greenBlockId,
+  });
+
+  const {data: planters} = usePlanters(greenBlockId);
+
+  const greenBlockData = greenBlockDetailsQueryResult.data?.GBFactory.greenBlock;
+  const coordinates = JSON.parse(greenBlockData?.coordinates ?? '[]');
 
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
@@ -64,38 +139,39 @@ function MyCommunity(props: Props) {
   function renderMyCommunity() {
     return (
       <>
-        <Text style={[globalStyles.normal, globalStyles.textCenter]}>Trust Score</Text>
+        {/* <Text style={[globalStyles.normal, globalStyles.textCenter]}>Trust Score</Text>
         <Spacer times={1} />
         <Text style={[globalStyles.h3, globalStyles.textCenter]}>83/100</Text>
-        <Spacer times={6} />
+        <Spacer times={6} /> */}
 
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
-          <Avatar size={56} type="active" />
-          <Spacer times={2} />
-          <Avatar size={56} type="active" />
-          <Spacer times={2} />
-          <Avatar size={56} type="inactive" />
-          <Spacer times={2} />
-          <Avatar size={56} type="inactive" />
+          {planters.map(planter => (
+            <React.Fragment key={planter}>
+              <Spacer times={1} />
+              <Avatar size={56} type="active" address={planter} />
+              <Spacer times={1} />
+            </React.Fragment>
+          ))}
         </View>
         <View style={globalStyles.p2}>
           <Card>
             <Text style={[globalStyles.h6, globalStyles.textCenter]}>Green Block Location</Text>
             <Spacer times={6} />
-            <Image
-              resizeMode="cover"
-              style={{
-                width: '100%',
-                height: 120,
-                borderRadius: 10,
-              }}
-              source={{
-                uri: getStaticMapUrl({
-                  lat: -122.3088584334867,
-                  lon: 47.52468884599355,
-                }),
-              }}
-            />
+            {coordinates.length > 0 && (
+              <Image
+                resizeMode="cover"
+                style={styles.mapImage}
+                source={{
+                  uri: getStaticMapUrl({
+                    path: {
+                      coordinates,
+                    },
+                    width: mapWidth,
+                    height: mapWidth / 2,
+                  }),
+                }}
+              />
+            )}
           </Card>
         </View>
       </>
@@ -103,7 +179,13 @@ function MyCommunity(props: Props) {
   }
 
   function renderMyTrees() {
-    return <TreeList onSelect={() => navigation.navigate('TreeDetails')} />;
+    return (
+      <TreeList
+        loading={treesQueryResult.loading}
+        trees={treesQueryResult.data.trees.trees.data}
+        onSelect={tree => navigation.navigate('TreeDetails', {tree})}
+      />
+    );
   }
 }
 
@@ -116,6 +198,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: colors.gray,
     borderWidth: 1,
+  },
+  mapImage: {
+    width: '100%',
+    height: 130,
+    borderRadius: 10,
   },
 });
 

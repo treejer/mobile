@@ -1,0 +1,27 @@
+query TreesQuery($address: String!, $limit: Int = 10) {
+  trees(address: $address, limit: $limit)
+    @rest(type: "TreesResponse", path: "/planters/{args.address}/trees?perPage={args.limit}") {
+    trees @type(name: "TreeEdges") {
+      current_page
+      data @type(name: "Tree") {
+        treeId
+        gbId
+        typeId
+        owner
+        planter
+        name
+        latitude
+        longitude
+        plantedDate
+        birthDate
+        fundedDate
+        height
+        diameter
+        ambassadorBalance
+        planterBalance
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}

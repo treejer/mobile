@@ -1,10 +1,10 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import * as Crypto from 'expo-crypto';
 import Web3 from 'web3';
+import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
 import config from './config';
+import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 
 export const Web3Context = React.createContext({
   web3: {} as Web3,
@@ -29,9 +29,15 @@ function Web3Provider({children, privateKey}: Props) {
   const treeFactory = useContract(web3, config.contracts.TreeFactory);
   const gbFactory = useContract(web3, config.contracts.GBFactory);
 
+  const previousWeb3 = useRef<Web3 | null>(null);
+
+  const addToWallet = (privateKey: string) => {
+    web3.eth.accounts.wallet.add(privateKey);
+  };
+
   const updateAccessToken = useCallback(
     (privateKey: string) =>
-      getAccessToken(privateKey, web3)
+      getTreejerApiAccessToken(privateKey, web3)
         .then(accessToken => {
           setAccessToken(accessToken);
         })
@@ -42,32 +48,23 @@ function Web3Provider({children, privateKey}: Props) {
     [web3],
   );
 
-  const mounted = useRef(false);
-
-  useEffect(() => {
-    updateAccessToken(privateKey);
-  }, [privateKey]);
-
-  if (privateKey && !mounted.current) {
-    web3.eth.accounts.wallet.add(privateKey);
-  }
-
   const storePrivateKey = useCallback(async (privateKey: string) => {
-    web3.eth.accounts.wallet.add(privateKey);
+    addToWallet(privateKey);
 
     await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
     await updateAccessToken(privateKey);
   }, []);
 
   useEffect(() => {
-    mounted.current = true;
-  }, []);
+    updateAccessToken(privateKey);
+  }, [privateKey]);
 
-  useEffect(() => {
-    // SecureStore.deleteItemAsync(PASSWORD_PATH);
-    // SecureStore.deleteItemAsync(config.storageKeys.privateKey);
-    // SecureStore.deleteItemAsync(PRIVATE_KEY_V3_PATH);
-  }, []);
+  // TODO: Refactor
+  // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
+  if (privateKey && previousWeb3.current !== web3) {
+    previousWeb3.current = web3;
+    addToWallet(privateKey);
+  }
 
   const value = useMemo(
     () => ({
@@ -85,12 +82,16 @@ function Web3Provider({children, privateKey}: Props) {
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
 }
 
-export default memo(Web3Provider);
-
 const useContract = (web3: Web3, {abi, address}: {abi: any; address: string}) =>
   useMemo(() => new web3.eth.Contract(abi, address), [web3]);
 
+export default memo(Web3Provider);
+
 export const useWeb3 = () => useContext(Web3Context).web3;
+export const useWalletAccount = (): Account | null => {
+  const web3 = useWeb3();
+  return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+};
 export const useAccessToken = () => useContext(Web3Context).accessToken;
 export const usePrivateKeyStorage = () => {
   const {storePrivateKey, unlocked} = useContext(Web3Context);
@@ -116,37 +117,3 @@ export const usePersistedWallet = () => {
 
   return [loaded, privateKey] as const;
 };
-
-async function getAccessToken(privateKey: string, web3: Web3) {
-  if (!privateKey) {
-    return;
-  }
-
-  const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey);
-  const key = `ACCESS_TOKEN_${hash}`;
-
-  const cachedToken = await AsyncStorage.getItem(key);
-
-  if (cachedToken) {
-    return cachedToken;
-  }
-
-  const response = await fetch(`${config.treejerApiUrl}/oauth/token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      client_id: config.treejerClientId,
-      client_secret: config.treejerClientSecret,
-      grant_type: 'social',
-      provider: 'wallet',
-      access_token: web3.eth.accounts.sign(config.publicKeyRecoveryMessage, privateKey).signature,
-    }),
-  });
-
-  const value = await response.json();
-  AsyncStorage.setItem(key, value.access_token);
-
-  return value.access_token;
-}

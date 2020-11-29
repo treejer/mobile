@@ -1,6 +1,6 @@
-import React, {useCallback} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {StyleSheet, Text, View, ScrollView, Image, Linking} from 'react-native';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import Spacer from 'components/Spacer';
@@ -10,12 +10,34 @@ import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import {getStaticMapUrl} from 'utilities/helpers';
 import Button from 'components/Button';
-import {colors} from 'constants/values';
+import {TreesQueryQueryData} from '../MyCommunity/graphql/TreesQuery.graphql';
+import {GreenBlockRouteParamList} from '../../GreenBlock';
+import {useWalletAccount} from 'services/web3';
+
+interface RouteParams {
+  tree: TreesQueryQueryData.TreesTreesData;
+}
 
 interface Props {}
 
-function TreeDetails(props: Props) {
+function TreeDetails(_: Props) {
   const navigation = useNavigation();
+  const {
+    params: {tree},
+  } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
+
+  const mapImageUrl = getStaticMapUrl({
+    markers: [
+      {
+        coordinate: {
+          lat: Number(tree.latitude),
+          lng: Number(tree.longitude),
+        },
+      },
+    ],
+    width: 600,
+    height: 300,
+  });
 
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
@@ -29,7 +51,8 @@ function TreeDetails(props: Props) {
         </View>
 
         <Image style={[styles.treeImage]} source={require('../../../../../assets/icons/tree.png')} />
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>10047</Text>
+        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{tree.treeId}</Text>
+        {/* Tree id */}
         <Spacer times={8} />
 
         <View style={globalStyles.p2}>
@@ -40,30 +63,42 @@ function TreeDetails(props: Props) {
               style={styles.updateButton}
               textStyle={globalStyles.textCenter}
             />
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
+            {/* <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>Lordegan, Iran</Text>
-            <Spacer times={6} />
+            <Spacer times={6} /> */}
 
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>GPS Coordinates</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>41.40, 2.17</Text>
+            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+              {tree.latitude}, {tree.longitude}
+            </Text>
             <Spacer times={6} />
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Generated O2</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>12.4352</Text>
+            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Height</Text>
+            <Text style={[globalStyles.h5, globalStyles.textCenter]}>{tree.height} cm</Text>
+            {/* TBD */}
             <Spacer times={6} />
 
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Last Update</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>23 July, 2020</Text>
+            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+              {new Date(tree.updatedAt).toLocaleDateString()}
+            </Text>
             <Spacer times={6} />
 
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Born</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>2018</Text>
+            <Text style={[globalStyles.h5, globalStyles.textCenter]}>{new Date(tree.createdAt).getFullYear()}</Text>
             <Spacer times={6} />
 
-            <View
+            <TouchableOpacity
               style={{
                 marginHorizontal: -20,
                 marginBottom: -23,
+              }}
+              onPress={() => {
+                Linking.openURL(
+                  `https://www.google.com/maps?q=loc:${encodeURIComponent(
+                    `${tree.latitude},${tree.longitude}`,
+                  )}&zoom=6`,
+                );
               }}
             >
               <Image
@@ -76,13 +111,10 @@ function TreeDetails(props: Props) {
                   borderBottomRightRadius: 15,
                 }}
                 source={{
-                  uri: getStaticMapUrl({
-                    lat: -122.3088584334867,
-                    lon: 47.52468884599355,
-                  }),
+                  uri: mapImageUrl,
                 }}
               />
-            </View>
+            </TouchableOpacity>
           </Card>
         </View>
         <Spacer times={8} />

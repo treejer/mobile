@@ -4,6 +4,8 @@ import {ApolloProvider as OriginalApolloProvider} from '@apollo/react-hooks';
 import {RestLink} from 'apollo-link-rest';
 import {AbiMapping, EthereumLink} from 'apollo-link-ethereum';
 import {Web3JSResolver} from 'apollo-link-ethereum-resolver-web3js/lib';
+import camelCase from 'lodash/camelCase';
+import snakeCase from 'lodash/snakeCase';
 import Web3 from 'web3';
 
 import config from './config';
@@ -14,7 +16,10 @@ function createApolloClient(accessToken?: string, web3?: Web3) {
     uri: config.treejerApiUrl,
     headers: {
       Authorization: `Bearer ${accessToken}`,
+      Accept: 'application/json',
     },
+    fieldNameNormalizer: camelCase,
+    fieldNameDenormalizer: snakeCase,
   });
   const abiMapping = new AbiMapping();
   Object.entries(config.contracts).map(([name, config]) => {
@@ -23,6 +28,22 @@ function createApolloClient(accessToken?: string, web3?: Web3) {
   });
 
   const resolver = new Web3JSResolver(abiMapping, web3);
+  const originalCall = resolver.resolve;
+  const newCall = async (...args: any[]) => {
+    const result = await originalCall.apply(resolver, args);
+    if (typeof result === 'object' && result != null) {
+      return Object.entries(result).reduce(
+        (object, [key, value]) => ({
+          ...object,
+          ...(isNaN(key as any) ? {[key]: value} : {}),
+        }),
+        {},
+      );
+    }
+
+    return result;
+  };
+  resolver.resolve = newCall.bind(resolver);
   const ethereumLink = new EthereumLink(resolver);
 
   return new ApolloClient({

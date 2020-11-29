@@ -13,7 +13,7 @@ import globalStyles from 'constants/styles';
 
 const mutation = gql`
   mutation VerifyUser {
-    apply @rest(type: "User", method: "POST" path: "/users/apply") {
+    apply(for: "Ambassador") @rest(type: "User", method: "POST" path: "/users/apply") {
       status
     }
   }
@@ -43,8 +43,6 @@ function VerifyProfile(props: Props) {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.cancelled) {
       alert('got the photo');

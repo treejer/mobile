@@ -1,0 +1,5 @@
+projects:
+  treejer_api:
+    schemaPath: './src/data/schema/treejer_api.graphql'
+    includes:
+      - './src/**/*.graphql'

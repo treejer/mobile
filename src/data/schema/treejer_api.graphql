@@ -1,0 +1,66 @@
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  emailVerifiedAt: String
+  idCard: String
+  createdAt: String
+  updatedAt: String
+  mobile: String
+  mobileCountry: String
+  mobileVerifiedAt: String
+}
+
+type Tree {
+  treeId: ID!
+  gbId: Int!
+  typeId: Int
+  owner: String
+  planter: String
+  name: String!
+  latitude: Float!
+  longitude: Float!
+  plantedDate: String!
+  birthDate: String!
+  fundedDate: String
+  height: Int
+  diameter: Int
+  ambassadorBalance: Float
+  planterBalance: Float
+  createdAt: String!
+  updatedAt: String!
+}
+
+type TreeEdges {
+  current_page: Int!
+  data: [Tree]!
+}
+
+type TreesResponse {
+  trees: TreeEdges
+}
+
+type GBFactory {
+  gbToPlanters(id: String!, userId: String!): String
+  planterGB(address: String!): String
+  greenBlocks(id: String!): String
+}
+
+type ApplyMutationResponse {
+  status: String
+}
+
+type Query {
+  """
+  Returns the current user account.
+  """
+  me: User
+
+  trees(address: String!, limit: Int!): TreesResponse
+
+  GBFactory: GBFactory
+}
+
+type Mutation {
+  apply(for: String): ApplyMutationResponse
+}

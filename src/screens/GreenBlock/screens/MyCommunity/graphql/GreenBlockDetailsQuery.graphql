@@ -1,0 +1,5 @@
+query GreenBlockDetailsQuery($greenBlockId: String!) {
+  GBFactory @contract(type: "GreenBlockResponse") {
+    greenBlock: greenBlocks(id: $greenBlockId)
+  }
+}

@@ -1,26 +1,30 @@
-import React, {useCallback} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
 
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TreesQueryQueryData} from '../../screens/GreenBlock/screens/MyCommunity/graphql/TreesQuery.graphql';
 
 interface Props {
-  onSelect(index: number): void;
+  onSelect(tree: TreesQueryQueryData.TreesTreesData): void;
+  loading?: boolean;
+  trees?: TreesQueryQueryData.TreesTreesData[];
 }
 
-function Trees({onSelect}: Props) {
+function Trees({onSelect, loading, trees}: Props) {
+  if (loading || !trees) {
+    return <ActivityIndicator />;
+  }
+
   return (
-    <View style={[globalStyles.horizontalStack, globalStyles.flexWrap]}>
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map((key, index) => (
-        <TouchableOpacity style={styles.tree} key={key} onPress={() => onSelect(index)}>
+    <View style={[globalStyles.horizontalStack, globalStyles.flexWrap, styles.wrapper]}>
+      {trees.map((tree, index) => (
+        <TouchableOpacity style={styles.tree} key={tree.treeId} onPress={() => onSelect(tree)}>
           <Image
-            style={[styles.treeImage, key > 10 && styles.inactiveTree]}
+            style={[styles.treeImage, tree.fundedDate && styles.inactiveTree]}
             source={require('../../../assets/icons/tree.png')}
           />
-          <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{key + 10000}</Text>
+          <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{tree.treeId}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -28,6 +32,9 @@ function Trees({onSelect}: Props) {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    justifyContent: 'space-between',
+  },
   tree: {
     width: 54,
     height: 74,
