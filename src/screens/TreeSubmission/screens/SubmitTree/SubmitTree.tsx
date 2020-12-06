@@ -114,6 +114,7 @@ function SubmitTree(_: Props) {
             ) : (
               <>
                 <Text>Please confirm to plant the tree</Text>
+                <Spacer times={4} />
                 <Button
                   variant="success"
                   onPress={handleSignTransaction}
@@ -127,7 +128,6 @@ function SubmitTree(_: Props) {
         ) : (
           <TreeSubmissionStepper currentStep={3}>
             <Spacer times={1} />
-
             <Text>Your photo is being uploaded</Text>
 
             <View style={{alignItems: 'center', justifyContent: 'center', padding: 15}}>

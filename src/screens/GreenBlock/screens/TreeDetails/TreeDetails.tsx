@@ -67,7 +67,7 @@ function TreeDetails(_: Props) {
 
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>GPS Coordinates</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {tree.latitude}, {tree.longitude}
+              {Number(tree.latitude).toFixed(5)}, {Number(tree.longitude).toFixed(5)}
             </Text>
             <Spacer times={6} />
 

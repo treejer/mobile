@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, useWindowDimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -27,7 +28,7 @@ enum GreenBlockView {
 
 const usePlanters = (greenBlockId: string) => {
   const client = useApolloClient();
-  const [planters, setPlanters] = useState<string[]>([]);
+  const [planters, setPlanters] = useState<string[] | undefined>();
 
   useEffect(() => {
     if (client && greenBlockId) {
@@ -140,7 +141,16 @@ function MyCommunity(props: Props) {
         */}
 
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
-          {planters.map(planter => (
+          {!planters && (
+            <ShimmerPlaceholder
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+              }}
+            />
+          )}
+          {planters?.map(planter => (
             <React.Fragment key={planter}>
               <Spacer times={1} />
               <Avatar size={56} type="active" address={planter} />
@@ -148,11 +158,14 @@ function MyCommunity(props: Props) {
             </React.Fragment>
           ))}
         </View>
+
         <View style={globalStyles.p2}>
           <Card>
             <Text style={[globalStyles.h6, globalStyles.textCenter]}>Green Block Location</Text>
             <Spacer times={6} />
-            {coordinates.length > 0 && (
+            {coordinates.length === 0 ? (
+              <ShimmerPlaceholder style={styles.mapImage} shimmerColors={['#ebebeb', '#f1f1f1', '#ebebeb']} />
+            ) : (
               <Image
                 resizeMode="cover"
                 style={styles.mapImage}
@@ -177,7 +190,7 @@ function MyCommunity(props: Props) {
     return (
       <TreeList
         loading={treesQueryResult.loading}
-        trees={treesQueryResult.data.trees.trees.data}
+        trees={treesQueryResult.data?.trees.trees.data}
         onSelect={tree => navigation.navigate('TreeDetails', {tree})}
       />
     );

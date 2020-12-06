@@ -2,6 +2,7 @@ import React, {useMemo} from 'react';
 import {StyleSheet, Text, View, ScrollView, Clipboard} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -14,11 +15,11 @@ import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 
 interface Props {}
 
-function MyProfile(props: Props) {
+function MyProfile(_: Props) {
   const navigation = useNavigation();
   const web3 = useWeb3();
-  const {data} = useQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network'
+  const {data, loading} = useQuery<GetMeQueryData>(getMeQuery, {
+    fetchPolicy: 'cache-and-network',
   });
 
   const address = useMemo(() => {
@@ -29,14 +30,31 @@ function MyProfile(props: Props) {
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
-        <Avatar type="inactive" size={74} />
-        {data?.me?.name ? (
-          <>
-            <Spacer times={4} />
-            <Text style={globalStyles.h4}>{data.me.name}</Text>
-          </>
-        ) : null}
+        {loading ? (
+          <ShimmerPlaceholder
+            style={{
+              width: 74,
+              height: 74,
+              borderRadius: 37,
+            }}
+          />
+        ) : (
+          <Avatar type="inactive" size={74} />
+        )}
         <Spacer times={4} />
+
+        {loading && (
+          <View style={globalStyles.horizontalStack}>
+            <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
+            <Spacer times={4} />
+            <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
+          </View>
+        )}
+
+        {data?.me?.name && <Text style={globalStyles.h4}>{data.me.name}</Text>}
+
+        {(data?.me?.name || loading) && <Spacer times={4} />}
+
         <Text
           numberOfLines={1}
           style={styles.addressBox}
