@@ -470,7 +470,7 @@
         "id": 59,
         "nodeType": "ImportDirective",
         "scope": 337,
-        "sourceUnit": 4099,
+        "sourceUnit": 4081,
         "src": "71:104:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -481,7 +481,7 @@
         "id": 60,
         "nodeType": "ImportDirective",
         "scope": 337,
-        "sourceUnit": 7175,
+        "sourceUnit": 7157,
         "src": "176:98:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -496,10 +496,10 @@
               "id": 61,
               "name": "AccessControlUpgradeSafe",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4098,
+              "referencedDeclaration": 4080,
               "src": "307:24:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_AccessControlUpgradeSafe_$4098",
+                "typeIdentifier": "t_contract$_AccessControlUpgradeSafe_$4080",
                 "typeString": "contract AccessControlUpgradeSafe"
               }
             },
@@ -514,10 +514,10 @@
               "id": 63,
               "name": "PausableUpgradeSafe",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 7174,
+              "referencedDeclaration": 7156,
               "src": "333:19:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_PausableUpgradeSafe_$7174",
+                "typeIdentifier": "t_contract$_PausableUpgradeSafe_$7156",
                 "typeString": "contract PausableUpgradeSafe"
               }
             },
@@ -527,10 +527,10 @@
           }
         ],
         "contractDependencies": [
-          3733,
-          3808,
-          4098,
-          7174
+          3715,
+          3790,
+          4080,
+          7156
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -538,10 +538,10 @@
         "id": 336,
         "linearizedBaseContracts": [
           336,
-          7174,
-          4098,
-          3733,
-          3808
+          7156,
+          4080,
+          3715,
+          3790
         ],
         "name": "AccessRestriction",
         "nodeType": "ContractDefinition",
@@ -759,10 +759,10 @@
                         "name": "AccessControlUpgradeSafe",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4098,
+                        "referencedDeclaration": 4080,
                         "src": "757:24:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_AccessControlUpgradeSafe_$4098_$",
+                          "typeIdentifier": "t_type$_t_contract$_AccessControlUpgradeSafe_$4080_$",
                           "typeString": "type(contract AccessControlUpgradeSafe)"
                         }
                       },
@@ -773,7 +773,7 @@
                       "lValueRequested": false,
                       "memberName": "__AccessControl_init",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 3831,
+                      "referencedDeclaration": 3813,
                       "src": "757:45:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -811,10 +811,10 @@
                         "name": "PausableUpgradeSafe",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7174,
+                        "referencedDeclaration": 7156,
                         "src": "814:19:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_PausableUpgradeSafe_$7174_$",
+                          "typeIdentifier": "t_type$_t_contract$_PausableUpgradeSafe_$7156_$",
                           "typeString": "type(contract PausableUpgradeSafe)"
                         }
                       },
@@ -825,7 +825,7 @@
                       "lValueRequested": false,
                       "memberName": "__Pausable_init",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 7097,
+                      "referencedDeclaration": 7079,
                       "src": "814:35:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -923,7 +923,7 @@
                           "name": "DEFAULT_ADMIN_ROLE",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3855,
+                          "referencedDeclaration": 3837,
                           "src": "910:18:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -959,7 +959,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "902:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -1026,7 +1026,7 @@
                               "name": "DEFAULT_ADMIN_ROLE",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 3855,
+                              "referencedDeclaration": 3837,
                               "src": "976:18:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bytes32",
@@ -1062,7 +1062,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "965:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -1148,7 +1148,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "1029:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -1251,7 +1251,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "1086:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -1337,7 +1337,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "1144:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -1440,7 +1440,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "1204:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -1486,7 +1486,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3781,
+                  "referencedDeclaration": 3763,
                   "src": "732:11:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1816,7 +1816,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "1487:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -1901,7 +1901,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "1540:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2085,7 +2085,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "1703:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2263,7 +2263,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "1852:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2389,7 +2389,7 @@
                             "name": "DEFAULT_ADMIN_ROLE",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3855,
+                            "referencedDeclaration": 3837,
                             "src": "2010:18:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -2441,7 +2441,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2002:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2614,7 +2614,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "2184:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2683,7 +2683,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "2219:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -2888,7 +2888,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2379:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -3084,7 +3084,7 @@
                       "name": "hasRole",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 3892,
+                      "referencedDeclaration": 3874,
                       "src": "2531:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -3254,7 +3254,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2645:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -3450,7 +3450,7 @@
                       "name": "hasRole",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 3892,
+                      "referencedDeclaration": 3874,
                       "src": "2806:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -3584,7 +3584,7 @@
                             "name": "DEFAULT_ADMIN_ROLE",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3855,
+                            "referencedDeclaration": 3837,
                             "src": "2926:18:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -3620,7 +3620,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2918:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -3794,7 +3794,7 @@
                             "name": "paused",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 7116,
+                            "referencedDeclaration": 7098,
                             "src": "3046:6:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$",
@@ -3932,7 +3932,7 @@
                           "name": "paused",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 7116,
+                          "referencedDeclaration": 7098,
                           "src": "3138:6:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$",
@@ -4062,7 +4062,7 @@
                       "name": "_pause",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7153,
+                      "referencedDeclaration": 7135,
                       "src": "3230:6:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -4153,7 +4153,7 @@
                       "name": "_unpause",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7169,
+                      "referencedDeclaration": 7151,
                       "src": "3299:8:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -4266,7 +4266,7 @@
         "id": 59,
         "nodeType": "ImportDirective",
         "scope": 337,
-        "sourceUnit": 4099,
+        "sourceUnit": 4081,
         "src": "71:104:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -4277,7 +4277,7 @@
         "id": 60,
         "nodeType": "ImportDirective",
         "scope": 337,
-        "sourceUnit": 7175,
+        "sourceUnit": 7157,
         "src": "176:98:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -4292,10 +4292,10 @@
               "id": 61,
               "name": "AccessControlUpgradeSafe",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4098,
+              "referencedDeclaration": 4080,
               "src": "307:24:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_AccessControlUpgradeSafe_$4098",
+                "typeIdentifier": "t_contract$_AccessControlUpgradeSafe_$4080",
                 "typeString": "contract AccessControlUpgradeSafe"
               }
             },
@@ -4310,10 +4310,10 @@
               "id": 63,
               "name": "PausableUpgradeSafe",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 7174,
+              "referencedDeclaration": 7156,
               "src": "333:19:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_PausableUpgradeSafe_$7174",
+                "typeIdentifier": "t_contract$_PausableUpgradeSafe_$7156",
                 "typeString": "contract PausableUpgradeSafe"
               }
             },
@@ -4323,10 +4323,10 @@
           }
         ],
         "contractDependencies": [
-          3733,
-          3808,
-          4098,
-          7174
+          3715,
+          3790,
+          4080,
+          7156
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -4334,10 +4334,10 @@
         "id": 336,
         "linearizedBaseContracts": [
           336,
-          7174,
-          4098,
-          3733,
-          3808
+          7156,
+          4080,
+          3715,
+          3790
         ],
         "name": "AccessRestriction",
         "nodeType": "ContractDefinition",
@@ -4555,10 +4555,10 @@
                         "name": "AccessControlUpgradeSafe",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4098,
+                        "referencedDeclaration": 4080,
                         "src": "757:24:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_AccessControlUpgradeSafe_$4098_$",
+                          "typeIdentifier": "t_type$_t_contract$_AccessControlUpgradeSafe_$4080_$",
                           "typeString": "type(contract AccessControlUpgradeSafe)"
                         }
                       },
@@ -4569,7 +4569,7 @@
                       "lValueRequested": false,
                       "memberName": "__AccessControl_init",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 3831,
+                      "referencedDeclaration": 3813,
                       "src": "757:45:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -4607,10 +4607,10 @@
                         "name": "PausableUpgradeSafe",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7174,
+                        "referencedDeclaration": 7156,
                         "src": "814:19:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_PausableUpgradeSafe_$7174_$",
+                          "typeIdentifier": "t_type$_t_contract$_PausableUpgradeSafe_$7156_$",
                           "typeString": "type(contract PausableUpgradeSafe)"
                         }
                       },
@@ -4621,7 +4621,7 @@
                       "lValueRequested": false,
                       "memberName": "__Pausable_init",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 7097,
+                      "referencedDeclaration": 7079,
                       "src": "814:35:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -4719,7 +4719,7 @@
                           "name": "DEFAULT_ADMIN_ROLE",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3855,
+                          "referencedDeclaration": 3837,
                           "src": "910:18:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -4755,7 +4755,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "902:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -4822,7 +4822,7 @@
                               "name": "DEFAULT_ADMIN_ROLE",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 3855,
+                              "referencedDeclaration": 3837,
                               "src": "976:18:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bytes32",
@@ -4858,7 +4858,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "965:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -4944,7 +4944,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "1029:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -5047,7 +5047,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "1086:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -5133,7 +5133,7 @@
                         "name": "hasRole",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 3892,
+                        "referencedDeclaration": 3874,
                         "src": "1144:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -5236,7 +5236,7 @@
                             "name": "_setupRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4029,
+                            "referencedDeclaration": 4011,
                             "src": "1204:10:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_address_$returns$__$",
@@ -5282,7 +5282,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3781,
+                  "referencedDeclaration": 3763,
                   "src": "732:11:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -5612,7 +5612,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "1487:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -5697,7 +5697,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "1540:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -5881,7 +5881,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "1703:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6059,7 +6059,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "1852:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6185,7 +6185,7 @@
                             "name": "DEFAULT_ADMIN_ROLE",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3855,
+                            "referencedDeclaration": 3837,
                             "src": "2010:18:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -6237,7 +6237,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2002:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6410,7 +6410,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "2184:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6479,7 +6479,7 @@
                             "name": "hasRole",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3892,
+                            "referencedDeclaration": 3874,
                             "src": "2219:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6684,7 +6684,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2379:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -6880,7 +6880,7 @@
                       "name": "hasRole",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 3892,
+                      "referencedDeclaration": 3874,
                       "src": "2531:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -7050,7 +7050,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2645:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -7246,7 +7246,7 @@
                       "name": "hasRole",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 3892,
+                      "referencedDeclaration": 3874,
                       "src": "2806:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -7380,7 +7380,7 @@
                             "name": "DEFAULT_ADMIN_ROLE",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 3855,
+                            "referencedDeclaration": 3837,
                             "src": "2926:18:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -7416,7 +7416,7 @@
                           "name": "hasRole",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3892,
+                          "referencedDeclaration": 3874,
                           "src": "2918:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_bytes32_$_t_address_$returns$_t_bool_$",
@@ -7590,7 +7590,7 @@
                             "name": "paused",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 7116,
+                            "referencedDeclaration": 7098,
                             "src": "3046:6:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$",
@@ -7728,7 +7728,7 @@
                           "name": "paused",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 7116,
+                          "referencedDeclaration": 7098,
                           "src": "3138:6:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$",
@@ -7858,7 +7858,7 @@
                       "name": "_pause",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7153,
+                      "referencedDeclaration": 7135,
                       "src": "3230:6:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -7949,7 +7949,7 @@
                       "name": "_unpause",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7169,
+                      "referencedDeclaration": 7151,
                       "src": "3299:8:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -8036,7 +8036,7 @@
     "version": "0.6.9+commit.3e3065ac.Emscripten.clang"
   },
   "networks": {
-    "4": {
+    "3": {
       "events": {
         "0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258": {
           "anonymous": false,
@@ -8116,11 +8116,12 @@
         }
       },
       "links": {},
-      "address": "0xDD12d7651fBA7e2F7f50E4a1f6768193DFC1B589"
+      "address": "0xB0234eBa8bE54928070Bc8B348ebB14Fd4F24B4A",
+      "transactionHash": "0x4454a7d4add3b1d7ae8da894ce5f95d2fe1a9df4255c937de3579c51db2cbfcd"
     }
   },
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-10-30T16:50:56.979Z",
+  "updatedAt": "2020-10-27T15:23:08.259Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {
