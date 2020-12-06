@@ -5,7 +5,6 @@ interface IPFSUploadResponse {
 }
 
 const gatewayEndpoint = 'https://ipfs.infura.io:5001/api/v0/';
-
 export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploadResponse> {
   const fileNameMatch = uri.match(/[^\\\/]+$/);
   let fileName = 'file.jpg';
