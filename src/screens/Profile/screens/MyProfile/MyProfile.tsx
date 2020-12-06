@@ -10,14 +10,16 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
 
-import query from './graphql/GetMeQuery.graphql';
+import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 
 interface Props {}
 
 function MyProfile(props: Props) {
   const navigation = useNavigation();
   const web3 = useWeb3();
-  const {data} = useQuery(query);
+  const {data} = useQuery<GetMeQueryData>(getMeQuery, {
+    fetchPolicy: 'cache-and-network'
+  });
 
   const address = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0].address : '';
@@ -50,7 +52,9 @@ function MyProfile(props: Props) {
             caption="Get Verified"
             variant="tertiary"
             onPress={() => {
-              navigation.navigate('VerifyProfile');
+              if (data?.me) {
+                navigation.navigate('VerifyProfile', {user: data.me});
+              }
             }}
           />
           <Spacer times={4} />

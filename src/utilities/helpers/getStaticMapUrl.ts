@@ -15,6 +15,7 @@ interface Path {
   fillcolor?: string;
   coordinates: Coordinate[];
 }
+
 interface Marker {
   coordinate: Coordinate;
 }

@@ -1,0 +1,5 @@
+mutation VerifyMobile($token: String!) {
+  verifyMobile(input: {token: $token}) @rest(type: "UserVerifyMobileResponse", method: "POST", path: "/mobile/verify") {
+    message
+  }
+}

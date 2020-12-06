@@ -8,15 +8,10 @@ import globalStyles from 'constants/styles';
 import {ChevronLeft} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
-import {getStaticMapUrl} from 'utilities/helpers';
 import Button from 'components/Button';
-import {TreesQueryQueryData} from '../MyCommunity/graphql/TreesQuery.graphql';
-import {GreenBlockRouteParamList} from '../../GreenBlock';
-import {useWalletAccount} from 'services/web3';
+import {getStaticMapUrl} from 'utilities/helpers';
 
-interface RouteParams {
-  tree: TreesQueryQueryData.TreesTreesData;
-}
+import {GreenBlockRouteParamList} from '../../GreenBlock';
 
 interface Props {}
 
@@ -63,9 +58,12 @@ function TreeDetails(_: Props) {
               style={styles.updateButton}
               textStyle={globalStyles.textCenter}
             />
-            {/* <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
+
+            {/*
+            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>Lordegan, Iran</Text>
-            <Spacer times={6} /> */}
+            <Spacer times={6} />
+            */}
 
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>GPS Coordinates</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>

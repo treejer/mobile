@@ -1,0 +1,6 @@
+mutation UserApply($input: ApplyInput) {
+  apply(input: $input)
+    @rest(type: "UserApplyResponse", method: "POST", path: "/users/apply", bodySerializer: "formData") {
+    message
+  }
+}

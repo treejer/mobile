@@ -2,10 +2,11 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import TabBar from 'components/TabBar';
+import {usePrivateKeyStorage} from 'services/web3';
+
 import TreeSubmission from './TreeSubmission';
 import Profile from './Profile';
 import GreenBlock from './GreenBlock';
-import {usePrivateKeyStorage} from 'services/web3';
 
 const Tab = createBottomTabNavigator();
 

@@ -40,14 +40,18 @@ type TreesResponse {
   trees: TreeEdges
 }
 
+type ResponseWithMessage {
+  message: String
+}
+
 type GBFactory {
   gbToPlanters(id: String!, userId: String!): String
   planterGB(address: String!): String
-  greenBlocks(id: String!): String
+  greenBlocks(id: String!): Web3Result
 }
 
 type ApplyMutationResponse {
-  status: String
+  message: String
 }
 
 type Query {
@@ -61,6 +65,32 @@ type Query {
   GBFactory: GBFactory
 }
 
-type Mutation {
-  apply(for: String): ApplyMutationResponse
+input ApplyInput {
+  fullName: String!
+  idCardUri: String!
 }
+
+input ApplyInput {
+  name: String!
+  idCard: String!
+  type: String!
+}
+
+input VerifyMobileInput {
+  token: String!
+}
+
+input UpdateMobileInput {
+  mobile: String!
+  mobileCountry: String!
+}
+
+type Mutation {
+  apply(input: ApplyInput!): ApplyMutationResponse
+  verifyMobile(input: VerifyMobileInput!): ResponseWithMessage
+  requestSMS(input: Any): ResponseWithMessage
+  updateMobile(input: UpdateMobileInput!): ResponseWithMessage
+}
+
+scalar Web3Result
+scalar Any

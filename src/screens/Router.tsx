@@ -1,9 +1,10 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import OnboardingScreen from 'screens/Onboarding/screens/OnboardingSlides';
+import globalStyles from 'constants/styles';
+
 import Welcome from './Onboarding/screens/SelectLanguage';
 import SignUp from './SignUp';
-import globalStyles from 'constants/styles';
 
 const Stack = createStackNavigator();
 

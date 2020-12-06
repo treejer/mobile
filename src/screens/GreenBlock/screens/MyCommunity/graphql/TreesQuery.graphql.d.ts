@@ -1,5 +1,4 @@
 import { DocumentNode } from "graphql-typed";
-import { Date } from "../../../../../schema/treejer_api-types";
 export namespace TreesQueryQueryPartialData {
   export interface TreesTreesData {
     __typename?: "Tree" | null;
@@ -11,15 +10,15 @@ export namespace TreesQueryQueryPartialData {
     name?: string | null;
     latitude?: number | null;
     longitude?: number | null;
-    plantedDate?: Date | null;
-    birthDate?: Date | null;
-    fundedDate?: Date | null;
+    plantedDate?: string | null;
+    birthDate?: string | null;
+    fundedDate?: string | null;
     height?: number | null;
     diameter?: number | null;
     ambassadorBalance?: number | null;
     planterBalance?: number | null;
-    createdAt?: Date | null;
-    updatedAt?: Date | null;
+    createdAt?: string | null;
+    updatedAt?: string | null;
   }
   export interface TreesTrees {
     __typename?: "TreeEdges" | null;
@@ -49,15 +48,15 @@ export namespace TreesQueryQueryData {
     name: string;
     latitude: number;
     longitude: number;
-    plantedDate: Date;
-    birthDate: Date;
-    fundedDate?: Date | null;
+    plantedDate: string;
+    birthDate: string;
+    fundedDate?: string | null;
     height?: number | null;
     diameter?: number | null;
     ambassadorBalance?: number | null;
     planterBalance?: number | null;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
   }
   export interface TreesTrees {
     __typename: "TreeEdges";

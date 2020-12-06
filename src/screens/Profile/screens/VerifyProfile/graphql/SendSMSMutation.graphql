@@ -1,0 +1,5 @@
+mutation SendSMS {
+  requestSMS(input: {}) @rest(type: "UserSendSMSResponse", method: "POST", path: "/mobile/resend") {
+    message
+  }
+}

@@ -32,9 +32,7 @@ function Trees({onSelect, loading, trees}: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    justifyContent: 'space-between',
-  },
+  wrapper: {},
   tree: {
     width: 54,
     height: 74,

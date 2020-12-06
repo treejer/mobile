@@ -8,7 +8,14 @@ import NoWallet from './screens/NoWallet';
 import {usePrivateKeyStorage} from 'services/web3';
 import MyProfile from './screens/MyProfile';
 
-const Stack = createStackNavigator();
+export type ProfileRouteParamList = {
+  NoWallet: undefined,
+  MyProfile: undefined,
+  VerifyProfile: undefined;
+  SelectWallet: undefined,
+};
+
+const Stack = createStackNavigator<ProfileRouteParamList>();
 const RootStack = createStackNavigator();
 
 function ProfileStack() {

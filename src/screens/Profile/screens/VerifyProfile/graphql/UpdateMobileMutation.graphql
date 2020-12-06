@@ -1,0 +1,5 @@
+mutation UpdateMobile($input: UpdateMobileInput) {
+  updateMobile(input: $input) @rest(type: "UserUpdateMobileResponse", method: "PUT", path: "/users/updateMobile") {
+    message
+  }
+}

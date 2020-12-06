@@ -2,11 +2,24 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import globalStyles from 'constants/styles';
 
-import NewTree from './screens/NewTree';
+import SubmitTree from './screens/SubmitTree';
 import SelectOnMap from './screens/SelectOnMap';
 import SelectPhoto from './screens/SelectPhoto';
+import {TreeJourney} from './types';
 
-const Stack = createStackNavigator();
+export type TreeSubmissionRouteParamList = {
+  SelectPhoto: {
+    journey: TreeJourney;
+  };
+  SelectOnMap: {
+    journey: TreeJourney;
+  };
+  SubmitTree: {
+    journey: TreeJourney;
+  };
+};
+
+const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 
 function TreeSubmission() {
   return (
@@ -19,7 +32,7 @@ function TreeSubmission() {
     >
       <Stack.Screen name="SelectPhoto" component={SelectPhoto} />
       <Stack.Screen name="SelectOnMap" component={SelectOnMap} />
-      <Stack.Screen name="NewTree" component={NewTree} />
+      <Stack.Screen name="SubmitTree" component={SubmitTree} />
     </Stack.Navigator>
   );
 }

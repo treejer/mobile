@@ -25,14 +25,6 @@ enum GreenBlockView {
   MyTrees,
 }
 
-// const ambassadorQuery = gql`
-//   query AmbassadorQuery($greenBlockId: String!) {
-//     GBFactory @contract {
-//       ambassador: gbToAmbassador(id: $greenBlockId)
-//     }
-//   }
-// `;
-
 const usePlanters = (greenBlockId: string) => {
   const client = useApolloClient();
   const [planters, setPlanters] = useState<string[]>([]);
@@ -74,7 +66,8 @@ function MyCommunity(props: Props) {
 
   const mapWidth = dimensions.width - 100;
 
-  const accountAddress = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F'; // account?.address
+  const accountAddress = account?.address;
+  // const accountAddress = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F'; // account?.address
 
   const greenBlockIdQueryResult = useQuery(greenBlockIdQuery, {
     variables: {
@@ -139,10 +132,12 @@ function MyCommunity(props: Props) {
   function renderMyCommunity() {
     return (
       <>
-        {/* <Text style={[globalStyles.normal, globalStyles.textCenter]}>Trust Score</Text>
+        {/*
+        <Text style={[globalStyles.normal, globalStyles.textCenter]}>Trust Score</Text>
         <Spacer times={1} />
         <Text style={[globalStyles.h3, globalStyles.textCenter]}>83/100</Text>
-        <Spacer times={6} /> */}
+        <Spacer times={6} />
+        */}
 
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
           {planters.map(planter => (

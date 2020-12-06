@@ -1,7 +1,8 @@
 import React, {useMemo} from 'react';
-import {ApolloClient, InMemoryCache, ApolloLink} from 'apollo-boost';
+import {ApolloClient, InMemoryCache, ApolloLink, fromPromise, Observable} from 'apollo-boost';
 import {ApolloProvider as OriginalApolloProvider} from '@apollo/react-hooks';
 import {RestLink} from 'apollo-link-rest';
+import {onError} from 'apollo-link-error';
 import {AbiMapping, EthereumLink} from 'apollo-link-ethereum';
 import {Web3JSResolver} from 'apollo-link-ethereum-resolver-web3js/lib';
 import camelCase from 'lodash/camelCase';
@@ -11,16 +12,55 @@ import Web3 from 'web3';
 import config from './config';
 import {useAccessToken, useWeb3} from './web3';
 
-function createApolloClient(accessToken?: string, web3?: Web3) {
-  const restLink = new RestLink({
-    uri: config.treejerApiUrl,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: 'application/json',
-    },
-    fieldNameNormalizer: camelCase,
-    fieldNameDenormalizer: snakeCase,
+function createRestLink(accessToken?: string) {
+  const errorLink = onError(({graphQLErrors, networkError, response}) => {
+    // console.log(`[Network error]:`, networkError);
+    // console.log(`[graphQLErrors error]:`, graphQLErrors);
+    if (graphQLErrors) {
+      response.errors = null;
+    }
   });
+
+  return errorLink.concat(
+    new RestLink({
+      uri: config.treejerApiUrl,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
+      bodySerializers: {
+        formData: (data: Record<string, any>, headers: Headers) => {
+          const formData = new FormData();
+          let hasFile = false;
+          for (let key in data) {
+            if (data.hasOwnProperty(key)) {
+              const value = data[key];
+
+              if (/file:\//.test(value)) {
+                hasFile = true;
+                formData.append(key, {
+                  uri: value,
+                  name: 'file.jpg',
+                  type: 'image/jpg',
+                } as any);
+              } else {
+                formData.append(key, value);
+              }
+            }
+          }
+
+          headers.set('Content-Type', hasFile ? 'multipart/form-data' : 'application/x-www-form-urlencoded');
+
+          return {body: formData, headers};
+        },
+      },
+      fieldNameNormalizer: camelCase,
+      fieldNameDenormalizer: snakeCase,
+    }),
+  );
+}
+
+function createEthereumLink(web3?: Web3) {
   const abiMapping = new AbiMapping();
   Object.entries(config.contracts).map(([name, config]) => {
     abiMapping.addAbi(name, config.abi);
@@ -44,7 +84,13 @@ function createApolloClient(accessToken?: string, web3?: Web3) {
     return result;
   };
   resolver.resolve = newCall.bind(resolver);
-  const ethereumLink = new EthereumLink(resolver);
+
+  return new EthereumLink(resolver);
+}
+
+function createApolloClient(accessToken?: string, web3?: Web3) {
+  const restLink = createRestLink(accessToken);
+  const ethereumLink = createEthereumLink(web3);
 
   return new ApolloClient({
     link: ApolloLink.from([ethereumLink, restLink]),

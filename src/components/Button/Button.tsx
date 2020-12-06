@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacityProps, TextProps, ViewProps} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacityProps, TextProps, ViewProps, ActivityIndicator} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {colors} from 'constants/values';
 import globalStyles, {fontMedium} from 'constants/styles';
@@ -12,6 +12,7 @@ type Props = {
   textStyle?: TextProps['style'];
   onPress?: () => void;
   round?: boolean;
+  loading?: boolean;
 } & (
   | (TouchableOpacityProps & {
       disabled?: false;
@@ -29,6 +30,7 @@ function Button({
   round,
   style = null,
   textStyle = null,
+  loading = false,
   onPress,
   ...props
 }: Props) {
@@ -43,6 +45,7 @@ function Button({
           })}
         </View>
       )}
+      {loading && <ActivityIndicator style={{marginLeft: 10}} color="white" size="small" />}
     </Component>
   );
 }
@@ -66,6 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: '#BDBDBD',
     borderWidth: 1,
+    flexDirection: 'row',
   },
   primaryText: {
     ...globalStyles.normal,
@@ -119,6 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: colors.green,
     borderRadius: 25,
+    flexDirection: 'row',
   },
   successText: {
     ...globalStyles.normal,
