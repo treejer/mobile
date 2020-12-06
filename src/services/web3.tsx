@@ -89,6 +89,7 @@ export default memo(Web3Provider);
 
 export const useWeb3 = () => useContext(Web3Context).web3;
 export const useTreeFactory = () => useContext(Web3Context).treeFactory;
+export const useGBFactory = () => useContext(Web3Context).gbFactory;
 export const useWalletAccount = (): Account | null => {
   const web3 = useWeb3();
   return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;

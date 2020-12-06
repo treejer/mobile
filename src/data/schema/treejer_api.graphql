@@ -9,6 +9,7 @@ type User {
   mobile: String
   mobileCountry: String
   mobileVerifiedAt: String
+  isVerified: Boolean!
 }
 
 type Tree {

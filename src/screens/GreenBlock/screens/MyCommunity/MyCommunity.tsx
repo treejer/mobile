@@ -72,15 +72,23 @@ function MyCommunity(props: Props) {
 
   const greenBlockIdQueryResult = useQuery(greenBlockIdQuery, {
     variables: {
-      address: accountAddress, // account?.address,
+      address: accountAddress,
     },
     fetchPolicy: 'cache-first',
     skip: !account,
+    onError(error) {
+      const addressNotPresent = error.message.includes('Address not present');
+
+      if (addressNotPresent) {
+        // TODO: Replace screen
+        navigation.navigate('CreateGreenBlock');
+      }
+    },
   });
 
   const treesQueryResult = useQuery<TreesQueryQueryData>(treesQuery, {
     variables: {
-      address: accountAddress, // account?.address,
+      address: accountAddress,
       limit: 10,
     },
     fetchPolicy: 'cache-first',

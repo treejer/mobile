@@ -12,6 +12,7 @@ export namespace GetMeQueryPartialData {
     mobile?: string | null;
     mobileCountry?: string | null;
     mobileVerifiedAt?: string | null;
+    isVerified?: boolean | null;
   }
 }
 export interface GetMeQueryPartialData {
@@ -30,6 +31,7 @@ export namespace GetMeQueryData {
     mobile?: string | null;
     mobileCountry?: string | null;
     mobileVerifiedAt?: string | null;
+    isVerified: boolean;
   }
 }
 export interface GetMeQueryData {

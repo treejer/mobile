@@ -10,6 +10,7 @@ import {colors} from 'constants/values';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
 import {upload} from 'utilities/helpers/IPFS';
+import {sendTransaction} from 'utilities/helpers/sendTransaction';
 
 interface Props {}
 
@@ -46,48 +47,16 @@ function SubmitTree(_: Props) {
 
     setSubmitting(true);
 
-    const {address, privateKey} = wallet;
-
-    const networkId = await web3.eth.net.getId();
-
-    console.log('1 - Location', journey.location);
-
-    // TODO: Hard coded type id, gb id, tree name, height, and diameter
     const tx = treeFactory.methods.plant(
       0,
       3,
       ['My Tree', journey.location.latitude.toString(), journey.location.longitude.toString()],
       ['1', '1'],
     );
-    console.log('2 - Transaction Created');
-    const gas = await tx.estimateGas({from: address});
-    console.log('3 - Gas estimated', gas);
-    const gasPrice = await web3.eth.getGasPrice();
-    console.log('4 - Gas price ready', gasPrice);
-    const data = tx.encodeABI();
-    console.log('5 - ABI encoded');
-    const nonce = await web3.eth.getTransactionCount(address);
-    console.log('6 - Nonce', nonce);
-    const signedTx = await web3.eth.accounts.signTransaction(
-      {
-        to: treeFactory.options.address,
-        data,
-        gas,
-        gasPrice,
-        nonce,
-        chainId: networkId,
-      },
-      privateKey,
-    );
-
-    console.log('7 - Transaction signed');
-
-    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-    console.log('8 - Transaction sent');
 
     alert('Transaction was sucessfully done!');
 
+    const receipt = await sendTransaction(web3, tx, treeFactory.options.address, wallet);
     setSubmitting(false);
     setTxHash(receipt.transactionHash);
 

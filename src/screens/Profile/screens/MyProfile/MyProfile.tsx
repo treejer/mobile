@@ -51,9 +51,9 @@ function MyProfile(_: Props) {
           </View>
         )}
 
-        {data?.me?.name && <Text style={globalStyles.h4}>{data.me.name}</Text>}
+        {Boolean(data?.me?.name) && <Text style={globalStyles.h4}>{data.me.name}</Text>}
 
-        {(data?.me?.name || loading) && <Spacer times={4} />}
+        {Boolean(data?.me?.name || loading) && <Spacer times={4} />}
 
         <Text
           numberOfLines={1}
@@ -66,18 +66,24 @@ function MyProfile(_: Props) {
         </Text>
         <Spacer times={8} />
         <View style={globalStyles.p3}>
-          <Button
-            caption="Get Verified"
-            variant="tertiary"
-            onPress={() => {
-              if (data?.me) {
-                navigation.navigate('VerifyProfile', {user: data.me});
-              }
-            }}
-          />
-          <Spacer times={4} />
+          {data?.me && !data?.me?.isVerified && (
+            <>
+              <Button
+                caption="Get Verified"
+                variant="tertiary"
+                onPress={() => {
+                  if (data?.me) {
+                    navigation.navigate('VerifyProfile', {user: data.me});
+                  }
+                }}
+              />
+              <Spacer times={4} />
+            </>
+          )}
+          {/* 
           <Button caption="Change Wallet" variant="tertiary" />
           <Spacer times={4} />
+          */}
           <Button caption="Language" variant="tertiary" />
         </View>
       </View>
