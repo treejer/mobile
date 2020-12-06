@@ -19,7 +19,4 @@ const config = {
   treejerClientId: process.env.REACT_NATIVE_TREEJER_CLIENT_ID,
 };
 
-console.log(require('../../contracts/TreeFactory.json').networks);
-
-
 export default config;

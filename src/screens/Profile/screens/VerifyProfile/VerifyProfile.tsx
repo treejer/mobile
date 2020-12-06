@@ -110,8 +110,6 @@ function VerifyProfile(props: Props) {
     return 4;
   })();
 
-  console.log('currentStep', currentStep, user);
-
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
@@ -167,7 +165,7 @@ function VerifyProfile(props: Props) {
 
       console.log('mobile verify response', response);
     } catch (error) {
-      console.log('error --->', error);
+      console.log('error', error);
       phoneNumberForm.setError('token', {
         message: 'PHONE_NUMBER_NOT_UNIQUE',
       });
@@ -196,7 +194,6 @@ function VerifyProfile(props: Props) {
         ],
       });
 
-      console.log('result', result);
       navigation.goBack();
     } catch (err) {
       phoneNumberForm.setError('token', {

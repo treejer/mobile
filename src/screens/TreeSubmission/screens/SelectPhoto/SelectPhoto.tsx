@@ -24,8 +24,6 @@ function SelectPhoto(_: Props) {
       });
 
       if (result.cancelled === false) {
-        console.log('photo result ->', result);
-
         navigation.navigate('SelectOnMap', {
           journey: {
             photo: result,
