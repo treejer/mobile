@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Text, View, ScrollView, ActivityIndicator} from 'react-native';
+import {Text, View, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useTreeFactory, useWeb3} from 'services/web3';
+import {useTreeFactory, useUpdateFactory, useWeb3} from 'services/web3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
@@ -22,15 +22,18 @@ function SubmitTree(_: Props) {
   const [txHash, setTxHash] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
 
+  const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
+
   const web3 = useWeb3();
   const treeFactory = useTreeFactory();
+  const updateFactory = useUpdateFactory();
 
   const wallet = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
   }, [web3]);
 
   const handleUploadToIpfs = useCallback(async () => {
-    if (!journey.photo || !journey.location) {
+    if (!journey.photo || (!journey.location && !isUpdate)) {
       return;
     }
 
@@ -47,21 +50,35 @@ function SubmitTree(_: Props) {
 
     setSubmitting(true);
 
-    const tx = treeFactory.methods.plant(
-      0,
-      3,
-      ['My Tree', journey.location.latitude.toString(), journey.location.longitude.toString()],
-      ['1', '1'],
-    );
+    let tx: any;
+    let address: string;
+    console.log(journey.treeIdToUpdate, photoHash);
 
-    alert('Transaction was sucessfully done!');
+    if (journey.treeIdToUpdate) {
+      tx = updateFactory.methods.post(Number(journey.treeIdToUpdate), photoHash);
+      address = updateFactory.options.address;
+    } else {
+      tx = treeFactory.methods.plant(
+        0,
+        3,
+        ['My Tree', journey.location.latitude.toString(), journey.location.longitude.toString()],
+        ['1', '1'],
+      );
+      address = treeFactory.options.address;
+    }
 
-    const receipt = await sendTransaction(web3, tx, treeFactory.options.address, wallet);
+    try {
+      const receipt = await sendTransaction(web3, tx, address, wallet);
+      setTxHash(receipt.transactionHash);
+
+      console.log(`Transaction hash: ${receipt.transactionHash}`);
+    } catch (error) {
+      Alert.alert('Error occured', "Transaction couldn't complete");
+      console.log(error);
+    }
+
     setSubmitting(false);
-    setTxHash(receipt.transactionHash);
-
-    console.log(`Transaction hash: ${receipt.transactionHash}`);
-  }, []);
+  }, [wallet, treeFactory, updateFactory, web3, journey, photoHash]);
 
   useEffect(() => {
     handleUploadToIpfs();
@@ -75,7 +92,7 @@ function SubmitTree(_: Props) {
         <Spacer times={10} />
 
         {photoHash ? (
-          <TreeSubmissionStepper currentStep={4}>
+          <TreeSubmissionStepper isUpdate={isUpdate} currentStep={4}>
             <Spacer times={1} />
 
             {txHash ? (
@@ -95,7 +112,7 @@ function SubmitTree(_: Props) {
             )}
           </TreeSubmissionStepper>
         ) : (
-          <TreeSubmissionStepper currentStep={3}>
+          <TreeSubmissionStepper isUpdate={isUpdate} currentStep={3}>
             <Spacer times={1} />
             <Text>Your photo is being uploaded</Text>
 

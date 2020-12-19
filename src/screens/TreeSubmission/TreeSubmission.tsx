@@ -6,6 +6,7 @@ import SubmitTree from './screens/SubmitTree';
 import SelectOnMap from './screens/SelectOnMap';
 import SelectPhoto from './screens/SelectPhoto';
 import {TreeJourney} from './types';
+import {Route} from '@react-navigation/native';
 
 export type TreeSubmissionRouteParamList = {
   SelectPhoto: {
@@ -21,7 +22,14 @@ export type TreeSubmissionRouteParamList = {
 
 const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 
-function TreeSubmission() {
+interface Props {
+  route: Route<'TreeUpdate'>;
+}
+
+function TreeSubmission({route}: Props) {
+  const treeIdToUpdate =
+    route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
+
   return (
     <Stack.Navigator
       initialRouteName="SelectPhoto"
@@ -30,7 +38,17 @@ function TreeSubmission() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="SelectPhoto" component={SelectPhoto} />
+      <Stack.Screen
+        name="SelectPhoto"
+        component={SelectPhoto}
+        initialParams={{
+          journey: treeIdToUpdate
+            ? {
+                treeIdToUpdate,
+              }
+            : undefined,
+        }}
+      />
       <Stack.Screen name="SelectOnMap" component={SelectOnMap} />
       <Stack.Screen name="SubmitTree" component={SubmitTree} />
     </Stack.Navigator>

@@ -8,6 +8,10 @@ const config = {
       address: process.env.REACT_NATIVE_CONTRACT_GBFACTORY_ADDRESS,
       abi: require('../../contracts/GBFactory.json').abi,
     },
+    UpdateFactory: {
+      address: process.env.REACT_NATIVE_CONTRACT_UPDATEFACTORY_ADDRESS,
+      abi: require('../../contracts/UpdateFactory.json').abi,
+    },
   },
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',

@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, Linking} from 'react-native';
-import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
+import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import Spacer from 'components/Spacer';
@@ -16,7 +16,7 @@ import {GreenBlockRouteParamList} from '../../GreenBlock';
 interface Props {}
 
 function TreeDetails(_: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
@@ -52,12 +52,19 @@ function TreeDetails(_: Props) {
 
         <View style={globalStyles.p2}>
           <Card>
-            <Button
-              variant="success"
-              caption="Update"
-              style={styles.updateButton}
-              textStyle={globalStyles.textCenter}
-            />
+            <View style={styles.updateButton}>
+              <Button
+                variant="success"
+                caption="Update"
+                textStyle={globalStyles.textCenter}
+                onPress={() => {
+                  navigation.navigate('TreeUpdate', {
+                    treeIdToUpdate: tree.treeId,
+                  });
+                }}
+              />
+            </View>
+            <Spacer times={4} />
 
             {/*
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
@@ -127,10 +134,10 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     position: 'absolute',
-    top: -45,
-    left: '50%',
-    marginLeft: -50,
-    width: 100,
+    alignItems: 'center',
+    left: 0,
+    right: 0,
+    marginTop: -20,
   },
   treeImage: {
     width: 100,

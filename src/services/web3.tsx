@@ -13,6 +13,7 @@ export const Web3Context = React.createContext({
   accessToken: '',
   treeFactory: {} as Contract,
   gbFactory: {} as Contract,
+  updateFactory: {} as Contract,
   waiting: false,
 });
 
@@ -28,6 +29,7 @@ function Web3Provider({children, privateKey}: Props) {
   const [accessToken, setAccessToken] = useState('');
   const treeFactory = useContract(web3, config.contracts.TreeFactory);
   const gbFactory = useContract(web3, config.contracts.GBFactory);
+  const updateFactory = useContract(web3, config.contracts.UpdateFactory);
 
   const previousWeb3 = useRef<Web3 | null>(null);
 
@@ -74,9 +76,10 @@ function Web3Provider({children, privateKey}: Props) {
       accessToken,
       gbFactory,
       treeFactory,
+      updateFactory,
       waiting,
     }),
-    [web3, storePrivateKey, unlocked, accessToken, gbFactory, treeFactory, waiting],
+    [web3, storePrivateKey, unlocked, accessToken, gbFactory, treeFactory, updateFactory, waiting],
   );
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
@@ -90,6 +93,7 @@ export default memo(Web3Provider);
 export const useWeb3 = () => useContext(Web3Context).web3;
 export const useTreeFactory = () => useContext(Web3Context).treeFactory;
 export const useGBFactory = () => useContext(Web3Context).gbFactory;
+export const useUpdateFactory = () => useContext(Web3Context).updateFactory;
 export const useWalletAccount = (): Account | null => {
   const web3 = useWeb3();
   return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;

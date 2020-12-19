@@ -1,9 +1,9 @@
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
@@ -13,6 +13,10 @@ interface Props {}
 
 function SelectPhoto(_: Props) {
   const navigation = useNavigation<NavigationProp<TreeSubmissionRouteParamList>>();
+  const {
+    params: {journey},
+  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
 
   const handleSelectPhoto = useCallback(async () => {
     const status = await ImagePicker.getCameraPermissionsAsync();
@@ -24,10 +28,13 @@ function SelectPhoto(_: Props) {
       });
 
       if (result.cancelled === false) {
-        navigation.navigate('SelectOnMap', {
-          journey: {
-            photo: result,
-          },
+        const newJourney = {
+          ...(journey ?? {}),
+          photo: result,
+        };
+
+        navigation.navigate(journey.treeIdToUpdate ? 'SubmitTree' : 'SelectOnMap', {
+          journey: newJourney,
         });
       }
     }
@@ -40,7 +47,7 @@ function SelectPhoto(_: Props) {
         <Text style={[globalStyles.h5, globalStyles.textCenter]}>Submit a new tree</Text>
         <Spacer times={10} />
 
-        <TreeSubmissionStepper currentStep={1}>
+        <TreeSubmissionStepper isUpdate={isUpdate} currentStep={1}>
           <Spacer times={4} />
           <Button variant="secondary" onPress={handleSelectPhoto} caption="Open Camera" />
         </TreeSubmissionStepper>

@@ -8,9 +8,10 @@ import globalStyles from 'constants/styles';
 interface Props {
   currentStep: number;
   children: React.ReactNode;
+  isUpdate?: boolean;
 }
 
-function TreeSubmissionStepper({currentStep, children}: Props) {
+function TreeSubmissionStepper({isUpdate, currentStep, children}: Props) {
   return (
     <Steps.Container currentStep={currentStep} style={{width: 300}}>
       {/* Step 1  */}
@@ -22,17 +23,19 @@ function TreeSubmissionStepper({currentStep, children}: Props) {
         </View>
       </Steps.Step>
 
-      {/* Step 2 */}
-      <Steps.Step step={2}>
-        <View style={{alignItems: 'flex-start'}}>
-          <Text style={globalStyles.h6}>Submit tree location</Text>
+      {/* Step 2 - Only for creation */}
+      {!isUpdate && (
+        <Steps.Step step={2}>
+          <View style={{alignItems: 'flex-start'}}>
+            <Text style={globalStyles.h6}>Submit tree location</Text>
 
-          {renderChildrenIfCurrentStep(2)}
-        </View>
-      </Steps.Step>
+            {renderChildrenIfCurrentStep(2)}
+          </View>
+        </Steps.Step>
+      )}
 
       {/* Step 3 */}
-      <Steps.Step step={3}>
+      <Steps.Step step={3 - Number(isUpdate)}>
         <View style={{alignItems: 'flex-start'}}>
           <Text style={globalStyles.h6}>Upload photo</Text>
 
@@ -41,7 +44,7 @@ function TreeSubmissionStepper({currentStep, children}: Props) {
       </Steps.Step>
 
       {/* Step 4 */}
-      <Steps.Step step={4} lastStep>
+      <Steps.Step step={4 - Number(isUpdate)} lastStep>
         <View style={{alignItems: 'flex-start'}}>
           <Text style={globalStyles.h6}>Sign with wallet</Text>
           {renderChildrenIfCurrentStep(4)}

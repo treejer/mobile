@@ -12,6 +12,7 @@ import TreeDetails from './screens/TreeDetails';
 import AcceptInvitation from './screens/AcceptInvitation';
 import {TreesQueryQueryData} from './screens/MyCommunity/graphql/TreesQuery.graphql';
 import {Alert} from 'react-native';
+import TreeSubmission from 'screens/TreeSubmission';
 
 export type GreenBlockRouteParamList = {
   CreateGreenBlock: undefined;
@@ -21,6 +22,9 @@ export type GreenBlockRouteParamList = {
   };
   TreeDetails: {
     tree: TreesQueryQueryData.TreesTreesData;
+  };
+  TreeUpdate: {
+    treeIdToUpdate: string;
   };
 };
 
@@ -73,6 +77,7 @@ function GreenBlock({navigation, route}: Props) {
       <Stack.Screen name="MyCommunity" component={MyCommunity} />
       <Stack.Screen name="TreeDetails" component={TreeDetails} />
       <Stack.Screen name="CreateGreenBlock" component={CreateGreenBlock} />
+      <Stack.Screen name="TreeUpdate" component={TreeSubmission} />
       <Stack.Screen
         name="AcceptInvitation"
         component={AcceptInvitation}
