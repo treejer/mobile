@@ -4,25 +4,36 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import {Times} from 'components/Icons';
 import {colors} from 'constants/values';
+import {TouchableProps} from 'react-native-svg';
 
-interface Props {
-  icon?: string;
+interface Props<P> extends TouchableProps {
+  icon: React.FunctionComponent<P>;
   variant?: 'success' | 'primary';
+  size?: number;
+  props?: P;
 }
 
-function IconButton({icon, variant = 'primary'}: Props) {
+function IconButton<P>({icon: Icon, size = 64, variant = 'primary', props, ...rest}: Props<P>) {
   return (
-    <TouchableOpacity style={[styles.container, styles[`${variant}Container`]]}>
-      <Times />
+    <TouchableOpacity
+      {...rest}
+      style={[
+        {
+          height: size,
+          width: size,
+          borderRadius: size / 2,
+        },
+        styles.container,
+        styles[`${variant}Container`],
+      ]}
+    >
+      <Icon {...props} />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 64,
-    width: 64,
-    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },

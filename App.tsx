@@ -1,8 +1,8 @@
 import './src/globals';
-import React from 'react';
+import React, {useRef} from 'react';
 import {AppLoading} from 'expo';
 import {useFonts} from 'expo-font';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import MainTabs from './src/screens/MainTabs';
 import Onboarding from './src/screens/Onboarding';
 import Web3Provider, {Web3Context, usePersistedWallet} from './src/services/web3';
@@ -19,6 +19,7 @@ function App() {
   });
   const [privateKeyLoaded, privateKey] = usePersistedWallet();
   const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
+  const navigationRef = useRef<NavigationContainerRef>();
 
   if (!fontsLoaded || !privateKeyLoaded || !settingsLoaded) {
     return <AppLoading />;
@@ -38,8 +39,8 @@ function App() {
                     }
 
                     return (
-                      <NavigationContainer>
-                        <MainTabs />
+                      <NavigationContainer ref={navigationRef}>
+                        <MainTabs navigation={navigationRef.current as any} />
                       </NavigationContainer>
                     );
                   }}

@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, useWindowDimensions} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions} from 'react-native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import * as Linking from 'expo-linking';
 
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
+import Button from 'components/Button';
+import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import TreeList from 'components/TreeList';
+import IconButton from 'components/IconButton';
+import {Plus} from 'components/Icons';
 import {useApolloClient, useQuery} from '@apollo/react-hooks';
 import {useWalletAccount} from 'services/web3';
 import {getStaticMapUrl} from 'utilities/helpers';
@@ -80,8 +83,18 @@ function MyCommunity(props: Props) {
       const addressNotPresent = error.message.includes('Address not present');
 
       if (addressNotPresent) {
-        // TODO: Replace screen
-        navigation.navigate('CreateGreenBlock');
+        // Todo: Remove... Rinkeby problem
+        return;
+        navigation.dispatch(state => {
+          const routes = [{name: 'CreateGreenBlock'}];
+  
+          return CommonActions.reset({
+            ...state,
+            routes,
+            index: state.index,
+            stale: state.stale as any,
+          });
+        });
       }
     },
   });
@@ -95,8 +108,8 @@ function MyCommunity(props: Props) {
     skip: !account,
   });
 
-  // const greenBlockId = greenBlockIdQueryResult.data?.GBFactory.greenBlockId;
-  const greenBlockId = '3';
+  const greenBlockId = greenBlockIdQueryResult.data?.GBFactory.greenBlockId;
+  // const greenBlockId = '3';
 
   const greenBlockDetailsQueryResult = useQuery(greenBlockDetailsQuery, {
     variables: {
@@ -165,6 +178,23 @@ function MyCommunity(props: Props) {
               <Spacer times={1} />
             </React.Fragment>
           ))}
+          {(planters?.length < 5 || true) && (
+            <>
+              <Spacer times={1} />
+              <IconButton
+                size={56}
+                variant="primary"
+                icon={Plus}
+                props={{color: colors.grayDarker}}
+                onPress={() => {
+                  Share.share({
+                    message: Linking.makeUrl(`invite/green-block/${greenBlockId}`),
+                  });
+                }}
+              />
+              <Spacer times={1} />
+            </>
+          )}
         </View>
 
         <View style={globalStyles.p2}>
