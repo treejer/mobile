@@ -1,0 +1,3204 @@
+{
+  "contractName": "ForestFactory",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "forestAddress",
+          "type": "address"
+        }
+      ],
+      "name": "PublicForestCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "accessRestriction",
+      "outputs": [
+        {
+          "internalType": "contract IAccessRestriction",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "forests",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "treeFactory",
+      "outputs": [
+        {
+          "internalType": "contract ITreeFactory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_accessRestrictionAddress",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "setTreeFactoryAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "createPublicForest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.9+commit.3e3065ac\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"forestAddress\",\"type\":\"address\"}],\"name\":\"PublicForestCreated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"accessRestriction\",\"outputs\":[{\"internalType\":\"contract IAccessRestriction\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"createPublicForest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"forests\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_accessRestrictionAddress\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_address\",\"type\":\"address\"}],\"name\":\"setTreeFactoryAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treeFactory\",\"outputs\":[{\"internalType\":\"contract ITreeFactory\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/amir/Projects/treejer/contract/contracts/forest/ForestFactory.sol\":\"ForestFactory\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/amir/Projects/treejer/contract/contracts/access/IAccessRestriction.sol\":{\"keccak256\":\"0x1f3e32dd721a71edb651d28b402adf89fd9624899238db895e9445098331168a\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://e5202e1886428be20e30ff9bdaac8f8aa76398fc30735b7036bb3c29189c8aa6\",\"dweb:/ipfs/QmamcHF9b8TiiyFLeMwXwyzY8B9LGvTiby8F3wjw3zuCPC\"]},\"/home/amir/Projects/treejer/contract/contracts/forest/ForestFactory.sol\":{\"keccak256\":\"0xf5b88c63194a0bf5c878b92167e7dc9359c312f2a2934baade678d3067f5baa7\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://5aaf5fdbb3a08c234430f3f7072d9a538821dc9294bd96997decd71c959b41fe\",\"dweb:/ipfs/QmVU44VSVLyfMYxMc3JfmVJJCLMxUtmi7MKPv9RjRRENjK\"]},\"/home/amir/Projects/treejer/contract/contracts/forest/PublicForest.sol\":{\"keccak256\":\"0xdd0515b5dadbec665d2e877f65042c1ce9b41ccc6abd06efb091d8f422c54cc9\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://c37c7f9cfe60d9d8b0113d6428efa6237f1622d059428d033a3c858a075d2c3a\",\"dweb:/ipfs/QmVKWT3eLUU5V9eSRk4tnGLEUt4UsjV5fTN2xRkbrGF4Hy\"]},\"/home/amir/Projects/treejer/contract/contracts/tree/ITreeFactory.sol\":{\"keccak256\":\"0x913b4a1f5d792d4e47dc3c0060e4e2dda3f4f57a7075e2241e92d1f7ab97b6d6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://299461151542edc069afd96956a6694d6a33ba7c16ecaf1df7aff152ed2469e9\",\"dweb:/ipfs/QmWzG4epBG7p1cVnjVcwNWxzSvWoNcSELKrnyjYwgjijqN\"]},\"/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol\":{\"keccak256\":\"0xe81686511d62f18b2d9c693c2c94c0a789c690de63aa90e15451ebf65c5bfd3e\",\"urls\":[\"bzz-raw://1332ee1d2b096456bf2e5795b5871d0fed47be6a31c9a2f2cef9206a299565ea\",\"dweb:/ipfs/Qmdu1847Y4UL3gTjbLUManMGfxYEoyGPSodM3Br89SKzwx\"]},\"/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol\":{\"keccak256\":\"0x9bfec92e36234ecc99b5d37230acb6cd1f99560233753162204104a4897e8721\",\"urls\":[\"bzz-raw://5cf7c208583d4d046d75bd99f5507412ab01cce9dd9f802ce9768a416d93ea2f\",\"dweb:/ipfs/QmcQS1BBMPpVEkXP3qzwSjxHNrqDek8YeR7xbVWDC9ApC7\"]},\"/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x04d34b3cd5677bea25f8dfceb6dec0eaa071d4d4b789a43f13fe0c415ba4c296\",\"urls\":[\"bzz-raw://e7e8b526a6839e5ba14f0d23a830387fec47f7043ce01d42c9f285b709a9d080\",\"dweb:/ipfs/QmXmhhFmX5gcAvVzNiDPAGA35iHMPNaYtQkACswRHBVTNw\"]},\"/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Holder.sol\":{\"keccak256\":\"0x0b1de9ebf34b97fadd66a68dba4609d8bb20a83ed130bf10abc6d1b87af548a7\",\"urls\":[\"bzz-raw://5df02de8603c2adfbcd47531999c0da725a7edc4358cdf362ecd1eb07a368f41\",\"dweb:/ipfs/QmfTYzcEqVnEVzQUYZbHQRuMzntvytS3T3xZfAVA5CdBGJ\"]},\"/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/IERC721Receiver.sol\":{\"keccak256\":\"0xa0237f846362c88efa0b2a5815e5cf95cf58c1f9acf654fa6e57f62090fdc92d\",\"urls\":[\"bzz-raw://ed15922f47d283422ed74b3ed7ff4c8df4831d7611953b5c970f460bf2215e3c\",\"dweb:/ipfs/QmaNLi68QwwZhENcbM6D5GP6Yp3xC8fQY7gEMXvWES92uK\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610cee806100206000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c80630bf351f8146100675780632c4383161461008f578063421ef6d4146100c8578063c4d66de8146100d0578063cdb2c187146100f6578063d6762c4a146100fe575b600080fd5b61008d6004803603602081101561007d57600080fd5b50356001600160a01b0316610106565b005b6100ac600480360360208110156100a557600080fd5b50356101ff565b604080516001600160a01b039092168252519081900360200190f35b6100ac610226565b61008d600480360360208110156100e657600080fd5b50356001600160a01b0316610235565b61008d61036b565b6100ac6104e7565b60675460408051632104fb0560e21b815233600482015290516001600160a01b0390921691638413ec1491602480820192600092909190829003018186803b15801561015157600080fd5b505afa158015610165573d6000803e3d6000fd5b505050506000819050806001600160a01b031663e0eb4eb96040518163ffffffff1660e01b815260040160206040518083038186803b1580156101a757600080fd5b505afa1580156101bb573d6000803e3d6000fd5b505050506040513d60208110156101d157600080fd5b50516101dc57600080fd5b606680546001600160a01b0319166001600160a01b039290921691909117905550565b6065818154811061020c57fe5b6000918252602090912001546001600160a01b0316905081565b6066546001600160a01b031681565b600054610100900460ff168061024e575061024e6104f6565b8061025c575060005460ff16155b6102975760405162461bcd60e51b815260040180806020018281038252602e815260200180610c8b602e913960400191505060405180910390fd5b600054610100900460ff161580156102c2576000805460ff1961ff0019909116610100171660011790555b6000829050806001600160a01b031663ba84fd696040518163ffffffff1660e01b815260040160206040518083038186803b15801561030057600080fd5b505afa158015610314573d6000803e3d6000fd5b505050506040513d602081101561032a57600080fd5b505161033557600080fd5b606780546001600160a01b0319166001600160a01b03929092169190911790558015610367576000805461ff00191690555b5050565b60675460408051632104fb0560e21b815233600482015290516001600160a01b0390921691638413ec1491602480820192600092909190829003018186803b1580156103b657600080fd5b505afa1580156103ca573d6000803e3d6000fd5b5050505060006040516103dc906104fc565b604051809103906000f0801580156103f8573d6000803e3d6000fd5b506066546040805163189acdbd60e31b81526001600160a01b03928316600482015290519293509083169163c4d66de89160248082019260009290919082900301818387803b15801561044a57600080fd5b505af115801561045e573d6000803e3d6000fd5b5050606580546001810182556000919091527f8ff97419363ffd7000167f130ef7168fbea05faf9251824ca5043f113cc6a7c70180546001600160a01b0385166001600160a01b0319909116811790915560408051918252517fdf9aaac2a1a5d1aa96529bee031a9ccd434937fc2ae0fc1fe9cb88b09bcd43949350908190036020019150a150565b6067546001600160a01b031681565b303b1590565b6107818061050a8339019056fe608060405234801561001057600080fd5b50610761806100206000396000f3fe60806040526004361061004e5760003560e01c8063150b7a0214610094578063421ef6d4146101845780639e0e83e8146101b5578063c4d66de8146101cc578063ed88c68e146101ff5761008f565b3661008f576040805133815234602082015281517f1bb460ccaaf70fbacfec17a376f8acbd278c1405590ffcc8ebe4b88daf4f64ad929181900390910190a1005b600080fd5b3480156100a057600080fd5b50610167600480360360808110156100b757600080fd5b6001600160a01b038235811692602081013590911691604082013591908101906080810160608201356401000000008111156100f257600080fd5b82018360208201111561010457600080fd5b8035906020019184600183028401116401000000008311171561012657600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929550610207945050505050565b604080516001600160e01b03199092168252519081900360200190f35b34801561019057600080fd5b50610199610217565b604080516001600160a01b039092168252519081900360200190f35b3480156101c157600080fd5b506101ca610226565b005b3480156101d857600080fd5b506101ca600480360360208110156101ef57600080fd5b50356001600160a01b031661036b565b6101ca6104a0565b630a85bd0160e11b949350505050565b6097546001600160a01b031681565b6097546040805163501ad8ff60e11b8152905147926000926001600160a01b039091169163a035b1fe91600480820192602092909190829003018186803b15801561027057600080fd5b505afa158015610284573d6000803e3d6000fd5b505050506040513d602081101561029a57600080fd5b505190508082106103675760006102b7838363ffffffff61056e16565b90508015610365576097546001600160a01b031663ca1d209d6102e0838563ffffffff6105b916565b836040518363ffffffff1660e01b8152600401808281526020019150506000604051808303818588803b15801561031657600080fd5b505af115801561032a573d6000803e3d6000fd5b50506040805185815290517ff79c8802323c14e1c363227982616b5fcb3f5550566f13afeff9bd00bb0f9bd294509081900360200192509050a15b505b5050565b600054610100900460ff16806103845750610384610612565b80610392575060005460ff16155b6103cd5760405162461bcd60e51b815260040180806020018281038252602e8152602001806106fe602e913960400191505060405180910390fd5b600054610100900460ff161580156103f8576000805460ff1961ff0019909116610100171660011790555b6000829050806001600160a01b031663e0eb4eb96040518163ffffffff1660e01b815260040160206040518083038186803b15801561043657600080fd5b505afa15801561044a573d6000803e3d6000fd5b505050506040513d602081101561046057600080fd5b505161046b57600080fd5b609780546001600160a01b0319166001600160a01b03929092169190911790558015610367576000805461ff00191690555050565b600034116104df5760405162461bcd60e51b81526004018080602001828103825260228152602001806106bb6022913960400191505060405180910390fd5b6040805133815234602082015281517f1bb460ccaaf70fbacfec17a376f8acbd278c1405590ffcc8ebe4b88daf4f64ad929181900390910190a1306001600160a01b0316639e0e83e86040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561055457600080fd5b505af1158015610568573d6000803e3d6000fd5b50505050565b60006105b083836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610618565b90505b92915050565b6000826105c8575060006105b3565b828202828482816105d557fe5b04146105b05760405162461bcd60e51b81526004018080602001828103825260218152602001806106dd6021913960400191505060405180910390fd5b303b1590565b600081836106a45760405162461bcd60e51b81526004018080602001828103825283818151815260200191508051906020019080838360005b83811015610669578181015183820152602001610651565b50505050905090810190601f1680156106965780820380516001836020036101000a031916815260200191505b509250505060405180910390fd5b5060008385816106b057fe5b049594505050505056fe436f6e747269627574696f6e206d75737420626967676572207468616e207a65726f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f77436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564a264697066735822122008c8db1fdc719c1f08aacf1dc5b480e9aa83fa2d73554fe249f5a58e2bb530ba64736f6c63430006090033436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564a2646970667358221220286fc7d9ff5342d5f0055b12bfe1cf0206e556d946243291f1ee5f9d18ce470164736f6c63430006090033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c80630bf351f8146100675780632c4383161461008f578063421ef6d4146100c8578063c4d66de8146100d0578063cdb2c187146100f6578063d6762c4a146100fe575b600080fd5b61008d6004803603602081101561007d57600080fd5b50356001600160a01b0316610106565b005b6100ac600480360360208110156100a557600080fd5b50356101ff565b604080516001600160a01b039092168252519081900360200190f35b6100ac610226565b61008d600480360360208110156100e657600080fd5b50356001600160a01b0316610235565b61008d61036b565b6100ac6104e7565b60675460408051632104fb0560e21b815233600482015290516001600160a01b0390921691638413ec1491602480820192600092909190829003018186803b15801561015157600080fd5b505afa158015610165573d6000803e3d6000fd5b505050506000819050806001600160a01b031663e0eb4eb96040518163ffffffff1660e01b815260040160206040518083038186803b1580156101a757600080fd5b505afa1580156101bb573d6000803e3d6000fd5b505050506040513d60208110156101d157600080fd5b50516101dc57600080fd5b606680546001600160a01b0319166001600160a01b039290921691909117905550565b6065818154811061020c57fe5b6000918252602090912001546001600160a01b0316905081565b6066546001600160a01b031681565b600054610100900460ff168061024e575061024e6104f6565b8061025c575060005460ff16155b6102975760405162461bcd60e51b815260040180806020018281038252602e815260200180610c8b602e913960400191505060405180910390fd5b600054610100900460ff161580156102c2576000805460ff1961ff0019909116610100171660011790555b6000829050806001600160a01b031663ba84fd696040518163ffffffff1660e01b815260040160206040518083038186803b15801561030057600080fd5b505afa158015610314573d6000803e3d6000fd5b505050506040513d602081101561032a57600080fd5b505161033557600080fd5b606780546001600160a01b0319166001600160a01b03929092169190911790558015610367576000805461ff00191690555b5050565b60675460408051632104fb0560e21b815233600482015290516001600160a01b0390921691638413ec1491602480820192600092909190829003018186803b1580156103b657600080fd5b505afa1580156103ca573d6000803e3d6000fd5b5050505060006040516103dc906104fc565b604051809103906000f0801580156103f8573d6000803e3d6000fd5b506066546040805163189acdbd60e31b81526001600160a01b03928316600482015290519293509083169163c4d66de89160248082019260009290919082900301818387803b15801561044a57600080fd5b505af115801561045e573d6000803e3d6000fd5b5050606580546001810182556000919091527f8ff97419363ffd7000167f130ef7168fbea05faf9251824ca5043f113cc6a7c70180546001600160a01b0385166001600160a01b0319909116811790915560408051918252517fdf9aaac2a1a5d1aa96529bee031a9ccd434937fc2ae0fc1fe9cb88b09bcd43949350908190036020019150a150565b6067546001600160a01b031681565b303b1590565b6107818061050a8339019056fe608060405234801561001057600080fd5b50610761806100206000396000f3fe60806040526004361061004e5760003560e01c8063150b7a0214610094578063421ef6d4146101845780639e0e83e8146101b5578063c4d66de8146101cc578063ed88c68e146101ff5761008f565b3661008f576040805133815234602082015281517f1bb460ccaaf70fbacfec17a376f8acbd278c1405590ffcc8ebe4b88daf4f64ad929181900390910190a1005b600080fd5b3480156100a057600080fd5b50610167600480360360808110156100b757600080fd5b6001600160a01b038235811692602081013590911691604082013591908101906080810160608201356401000000008111156100f257600080fd5b82018360208201111561010457600080fd5b8035906020019184600183028401116401000000008311171561012657600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600092019190915250929550610207945050505050565b604080516001600160e01b03199092168252519081900360200190f35b34801561019057600080fd5b50610199610217565b604080516001600160a01b039092168252519081900360200190f35b3480156101c157600080fd5b506101ca610226565b005b3480156101d857600080fd5b506101ca600480360360208110156101ef57600080fd5b50356001600160a01b031661036b565b6101ca6104a0565b630a85bd0160e11b949350505050565b6097546001600160a01b031681565b6097546040805163501ad8ff60e11b8152905147926000926001600160a01b039091169163a035b1fe91600480820192602092909190829003018186803b15801561027057600080fd5b505afa158015610284573d6000803e3d6000fd5b505050506040513d602081101561029a57600080fd5b505190508082106103675760006102b7838363ffffffff61056e16565b90508015610365576097546001600160a01b031663ca1d209d6102e0838563ffffffff6105b916565b836040518363ffffffff1660e01b8152600401808281526020019150506000604051808303818588803b15801561031657600080fd5b505af115801561032a573d6000803e3d6000fd5b50506040805185815290517ff79c8802323c14e1c363227982616b5fcb3f5550566f13afeff9bd00bb0f9bd294509081900360200192509050a15b505b5050565b600054610100900460ff16806103845750610384610612565b80610392575060005460ff16155b6103cd5760405162461bcd60e51b815260040180806020018281038252602e8152602001806106fe602e913960400191505060405180910390fd5b600054610100900460ff161580156103f8576000805460ff1961ff0019909116610100171660011790555b6000829050806001600160a01b031663e0eb4eb96040518163ffffffff1660e01b815260040160206040518083038186803b15801561043657600080fd5b505afa15801561044a573d6000803e3d6000fd5b505050506040513d602081101561046057600080fd5b505161046b57600080fd5b609780546001600160a01b0319166001600160a01b03929092169190911790558015610367576000805461ff00191690555050565b600034116104df5760405162461bcd60e51b81526004018080602001828103825260228152602001806106bb6022913960400191505060405180910390fd5b6040805133815234602082015281517f1bb460ccaaf70fbacfec17a376f8acbd278c1405590ffcc8ebe4b88daf4f64ad929181900390910190a1306001600160a01b0316639e0e83e86040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561055457600080fd5b505af1158015610568573d6000803e3d6000fd5b50505050565b60006105b083836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610618565b90505b92915050565b6000826105c8575060006105b3565b828202828482816105d557fe5b04146105b05760405162461bcd60e51b81526004018080602001828103825260218152602001806106dd6021913960400191505060405180910390fd5b303b1590565b600081836106a45760405162461bcd60e51b81526004018080602001828103825283818151815260200191508051906020019080838360005b83811015610669578181015183820152602001610651565b50505050905090810190601f1680156106965780820380516001836020036101000a031916815260200191505b509250505060405180910390fd5b5060008385816106b057fe5b049594505050505056fe436f6e747269627574696f6e206d75737420626967676572207468616e207a65726f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f77436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564a264697066735822122008c8db1fdc719c1f08aacf1dc5b480e9aa83fa2d73554fe249f5a58e2bb530ba64736f6c63430006090033436f6e747261637420696e7374616e63652068617320616c7265616479206265656e20696e697469616c697a6564a2646970667358221220286fc7d9ff5342d5f0055b12bfe1cf0206e556d946243291f1ee5f9d18ce470164736f6c63430006090033",
+  "immutableReferences": {},
+  "sourceMap": "374:1113:3:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "374:1113:3:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;911:271;;;;;;;;;;;;;;;;-1:-1:-1;911:271:3;-1:-1:-1;;;;;911:271:3;;:::i;:::-;;495:24;;;;;;;;;;;;;;;;-1:-1:-1;495:24:3;;:::i;:::-;;;;-1:-1:-1;;;;;495:24:3;;;;;;;;;;;;;;526:31;;;:::i;613:292::-;;;;;;;;;;;;;;;;-1:-1:-1;613:292:3;-1:-1:-1;;;;;613:292:3;;:::i;1188:297::-;;;:::i;563:43::-;;;:::i;911:271::-;979:17;;:37;;;-1:-1:-1;;;979:37:3;;1005:10;979:37;;;;;;-1:-1:-1;;;;;979:17:3;;;;:25;;:37;;;;;:17;;:37;;;;;;;;:17;:37;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1027:30;1073:8;1027:55;;1100:17;-1:-1:-1;;;;;1100:31:3;;:33;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;1100:33:3;1092:42;;;;;;1144:11;:31;;-1:-1:-1;;;;;;1144:31:3;-1:-1:-1;;;;;1144:31:3;;;;;;;;;;-1:-1:-1;911:271:3:o;495:24::-;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;495:24:3;;-1:-1:-1;495:24:3;:::o;526:31::-;;;-1:-1:-1;;;;;526:31:3;;:::o;613:292::-;1024:12:22;;;;;;;;:31;;;1040:15;:13;:15::i;:::-;1024:47;;;-1:-1:-1;1060:11:22;;;;1059:12;1024:47;1016:106;;;;-1:-1:-1;;;1016:106:22;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1129:19;1152:12;;;;;;1151:13;1170:80;;;;1198:12;:19;;-1:-1:-1;;;;1198:19:22;;;;;1225:18;1213:4;1225:18;;;1170:80;697:36:3::1;767:25;697:96;;811:17;-1:-1:-1::0;;;;;811:37:3::1;;:39;;;;;;;;;;;;;;;;;;;;;;;;;;;::::0;::::1;;;;;;;;;;;;::::0;::::1;;;;;;;;;;;;;;;;;;;::::0;::::1;;-1:-1:-1::0;811:39:3;803:48:::1;;;::::0;::::1;;861:17;:37:::0;;-1:-1:-1;;;;;;861:37:3::1;-1:-1:-1::0;;;;;861:37:3;;;::::1;::::0;;;::::1;::::0;;1264:55:22;;;;1307:5;1292:20;;-1:-1:-1;;1292:20:22;;;1264:55;613:292:3;;:::o;1188:297::-;1237:17;;:37;;;-1:-1:-1;;;1237:37:3;;1263:10;1237:37;;;;;;-1:-1:-1;;;;;1237:17:3;;;;:25;;:37;;;;;:17;;:37;;;;;;;;:17;:37;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1285:22;1310:18;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;1367:11:3;;1338:42;;;-1:-1:-1;;;1338:42:3;;-1:-1:-1;;;;;1367:11:3;;;1338:42;;;;;;1285:43;;-1:-1:-1;1338:20:3;;;;;;:42;;;;;1367:11;;1338:42;;;;;;;;1367:11;1338:20;:42;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;1391:7:3;:32;;;;;;;-1:-1:-1;1391:32:3;;;;;;;;-1:-1:-1;;;;;1391:32:3;;-1:-1:-1;;;;;;1391:32:3;;;;;;;;1439:39;;;;;;;;;-1:-1:-1;1439:39:3;;;;1391:32;1439:39;;-1:-1:-1;1439:39:3;1188:297;:::o;563:43::-;;;-1:-1:-1;;;;;563:43:3;;:::o;1409:498:22:-;1820:4;1864:17;1895:7;1409:498;:::o;-1:-1:-1:-;;;;;;;;:::o",
+  "source": "// SPDX-License-Identifier: GPL-3.0\n\npragma solidity >=0.4.21 <0.7.0;\n\nimport \"../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol\";\nimport \"../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol\";\n\nimport \"../access/IAccessRestriction.sol\";\nimport \"../tree/ITreeFactory.sol\";\nimport \"./PublicForest.sol\";\n\ncontract ForestFactory is Initializable, ContextUpgradeSafe {\n    event PublicForestCreated(address forestAddress);\n\n    address[] public forests;\n\n    ITreeFactory public treeFactory;\n    IAccessRestriction public accessRestriction;\n\n    function initialize(address _accessRestrictionAddress) public initializer {\n        IAccessRestriction candidateContract =\n            IAccessRestriction(_accessRestrictionAddress);\n        require(candidateContract.isAccessRestriction());\n        accessRestriction = candidateContract;\n    }\n\n    function setTreeFactoryAddress(address _address) external {\n        accessRestriction.ifAdmin(msg.sender);\n\n        ITreeFactory candidateContract = ITreeFactory(_address);\n        require(candidateContract.isTreeFactory());\n        treeFactory = candidateContract;\n    }\n\n    function createPublicForest() external {\n        accessRestriction.ifAdmin(msg.sender);\n\n        PublicForest newForest = new PublicForest();\n        newForest.initialize(address(treeFactory));\n\n        forests.push(address(newForest));\n\n        emit PublicForestCreated(address(newForest));\n    }\n}\n",
+  "sourcePath": "/home/amir/Projects/treejer/contract/contracts/forest/ForestFactory.sol",
+  "ast": {
+    "absolutePath": "/home/amir/Projects/treejer/contract/contracts/forest/ForestFactory.sol",
+    "exportedSymbols": {
+      "ForestFactory": [
+        655
+      ]
+    },
+    "id": 656,
+    "license": "GPL-3.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 539,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".21",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "37:32:3"
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+        "file": "../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+        "id": 540,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 6120,
+        "src": "71:97:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol",
+        "file": "../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol",
+        "id": 541,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 6045,
+        "src": "169:95:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/access/IAccessRestriction.sol",
+        "file": "../access/IAccessRestriction.sol",
+        "id": 542,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 538,
+        "src": "266:42:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/tree/ITreeFactory.sol",
+        "file": "../tree/ITreeFactory.sol",
+        "id": 543,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 2731,
+        "src": "309:34:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/forest/PublicForest.sol",
+        "file": "./PublicForest.sol",
+        "id": 544,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 794,
+        "src": "344:28:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 545,
+              "name": "Initializable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6119,
+              "src": "400:13:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Initializable_$6119",
+                "typeString": "contract Initializable"
+              }
+            },
+            "id": 546,
+            "nodeType": "InheritanceSpecifier",
+            "src": "400:13:3"
+          },
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 547,
+              "name": "ContextUpgradeSafe",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6044,
+              "src": "415:18:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ContextUpgradeSafe_$6044",
+                "typeString": "contract ContextUpgradeSafe"
+              }
+            },
+            "id": 548,
+            "nodeType": "InheritanceSpecifier",
+            "src": "415:18:3"
+          }
+        ],
+        "contractDependencies": [
+          793,
+          6044,
+          6119
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 655,
+        "linearizedBaseContracts": [
+          655,
+          6044,
+          6119
+        ],
+        "name": "ForestFactory",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 552,
+            "name": "PublicForestCreated",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 551,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 550,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "forestAddress",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 552,
+                  "src": "466:21:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 549,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "466:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "465:23:3"
+            },
+            "src": "440:49:3"
+          },
+          {
+            "constant": false,
+            "functionSelector": "2c438316",
+            "id": 555,
+            "mutability": "mutable",
+            "name": "forests",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "495:24:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_array$_t_address_$dyn_storage",
+              "typeString": "address[]"
+            },
+            "typeName": {
+              "baseType": {
+                "id": 553,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "495:7:3",
+                "stateMutability": "nonpayable",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              },
+              "id": 554,
+              "length": null,
+              "nodeType": "ArrayTypeName",
+              "src": "495:9:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                "typeString": "address[]"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "421ef6d4",
+            "id": 557,
+            "mutability": "mutable",
+            "name": "treeFactory",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "526:31:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+              "typeString": "contract ITreeFactory"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 556,
+              "name": "ITreeFactory",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 2730,
+              "src": "526:12:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                "typeString": "contract ITreeFactory"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "d6762c4a",
+            "id": 559,
+            "mutability": "mutable",
+            "name": "accessRestriction",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "563:43:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+              "typeString": "contract IAccessRestriction"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 558,
+              "name": "IAccessRestriction",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 537,
+              "src": "563:18:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                "typeString": "contract IAccessRestriction"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 582,
+              "nodeType": "Block",
+              "src": "687:218:3",
+              "statements": [
+                {
+                  "assignments": [
+                    567
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 567,
+                      "mutability": "mutable",
+                      "name": "candidateContract",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 582,
+                      "src": "697:36:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 566,
+                        "name": "IAccessRestriction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 537,
+                        "src": "697:18:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 571,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 569,
+                        "name": "_accessRestrictionAddress",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 561,
+                        "src": "767:25:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 568,
+                      "name": "IAccessRestriction",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 537,
+                      "src": "748:18:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_IAccessRestriction_$537_$",
+                        "typeString": "type(contract IAccessRestriction)"
+                      }
+                    },
+                    "id": 570,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "748:45:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                      "typeString": "contract IAccessRestriction"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "697:96:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 573,
+                            "name": "candidateContract",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 567,
+                            "src": "811:17:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                              "typeString": "contract IAccessRestriction"
+                            }
+                          },
+                          "id": 574,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "isAccessRestriction",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 388,
+                          "src": "811:37:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                            "typeString": "function () view external returns (bool)"
+                          }
+                        },
+                        "id": 575,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "811:39:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 572,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        -18,
+                        -18
+                      ],
+                      "referencedDeclaration": -18,
+                      "src": "803:7:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 576,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "803:48:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 577,
+                  "nodeType": "ExpressionStatement",
+                  "src": "803:48:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 580,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 578,
+                      "name": "accessRestriction",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 559,
+                      "src": "861:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 579,
+                      "name": "candidateContract",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 567,
+                      "src": "881:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      }
+                    },
+                    "src": "861:37:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                      "typeString": "contract IAccessRestriction"
+                    }
+                  },
+                  "id": 581,
+                  "nodeType": "ExpressionStatement",
+                  "src": "861:37:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "c4d66de8",
+            "id": 583,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 564,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 563,
+                  "name": "initializer",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 6092,
+                  "src": "675:11:3",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "675:11:3"
+              }
+            ],
+            "name": "initialize",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 562,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 561,
+                  "mutability": "mutable",
+                  "name": "_accessRestrictionAddress",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 583,
+                  "src": "633:33:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 560,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "633:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "632:35:3"
+            },
+            "returnParameters": {
+              "id": 565,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "687:0:3"
+            },
+            "scope": 655,
+            "src": "613:292:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 611,
+              "nodeType": "Block",
+              "src": "969:213:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 591,
+                          "name": "msg",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": -15,
+                          "src": "1005:3:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_message",
+                            "typeString": "msg"
+                          }
+                        },
+                        "id": 592,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "sender",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1005:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 588,
+                        "name": "accessRestriction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 559,
+                        "src": "979:17:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "id": 590,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "ifAdmin",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 482,
+                      "src": "979:25:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_address_$returns$__$",
+                        "typeString": "function (address) view external"
+                      }
+                    },
+                    "id": 593,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "979:37:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 594,
+                  "nodeType": "ExpressionStatement",
+                  "src": "979:37:3"
+                },
+                {
+                  "assignments": [
+                    596
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 596,
+                      "mutability": "mutable",
+                      "name": "candidateContract",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 611,
+                      "src": "1027:30:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 595,
+                        "name": "ITreeFactory",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 2730,
+                        "src": "1027:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                          "typeString": "contract ITreeFactory"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 600,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 598,
+                        "name": "_address",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 585,
+                        "src": "1073:8:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 597,
+                      "name": "ITreeFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2730,
+                      "src": "1060:12:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_ITreeFactory_$2730_$",
+                        "typeString": "type(contract ITreeFactory)"
+                      }
+                    },
+                    "id": 599,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1060:22:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                      "typeString": "contract ITreeFactory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1027:55:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 602,
+                            "name": "candidateContract",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 596,
+                            "src": "1100:17:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          },
+                          "id": 603,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "isTreeFactory",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 2401,
+                          "src": "1100:31:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                            "typeString": "function () view external returns (bool)"
+                          }
+                        },
+                        "id": 604,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1100:33:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 601,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        -18,
+                        -18
+                      ],
+                      "referencedDeclaration": -18,
+                      "src": "1092:7:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 605,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1092:42:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 606,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1092:42:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 609,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 607,
+                      "name": "treeFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 557,
+                      "src": "1144:11:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 608,
+                      "name": "candidateContract",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 596,
+                      "src": "1158:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      }
+                    },
+                    "src": "1144:31:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                      "typeString": "contract ITreeFactory"
+                    }
+                  },
+                  "id": 610,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1144:31:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "0bf351f8",
+            "id": 612,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setTreeFactoryAddress",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 586,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 585,
+                  "mutability": "mutable",
+                  "name": "_address",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 612,
+                  "src": "942:16:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 584,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "942:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "941:18:3"
+            },
+            "returnParameters": {
+              "id": 587,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "969:0:3"
+            },
+            "scope": 655,
+            "src": "911:271:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 653,
+              "nodeType": "Block",
+              "src": "1227:258:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 618,
+                          "name": "msg",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": -15,
+                          "src": "1263:3:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_message",
+                            "typeString": "msg"
+                          }
+                        },
+                        "id": 619,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "sender",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1263:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 615,
+                        "name": "accessRestriction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 559,
+                        "src": "1237:17:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "id": 617,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "ifAdmin",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 482,
+                      "src": "1237:25:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_address_$returns$__$",
+                        "typeString": "function (address) view external"
+                      }
+                    },
+                    "id": 620,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1237:37:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 621,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1237:37:3"
+                },
+                {
+                  "assignments": [
+                    623
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 623,
+                      "mutability": "mutable",
+                      "name": "newForest",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 653,
+                      "src": "1285:22:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PublicForest_$793",
+                        "typeString": "contract PublicForest"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 622,
+                        "name": "PublicForest",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 793,
+                        "src": "1285:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 627,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 625,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "NewExpression",
+                      "src": "1310:16:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_creation_nonpayable$__$returns$_t_contract$_PublicForest_$793_$",
+                        "typeString": "function () returns (contract PublicForest)"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 624,
+                        "name": "PublicForest",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 793,
+                        "src": "1314:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      }
+                    },
+                    "id": 626,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1310:18:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PublicForest_$793",
+                      "typeString": "contract PublicForest"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1285:43:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 633,
+                            "name": "treeFactory",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 557,
+                            "src": "1367:11:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          ],
+                          "id": 632,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1359:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 631,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1359:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 634,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1359:20:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 628,
+                        "name": "newForest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 623,
+                        "src": "1338:9:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      },
+                      "id": 630,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "initialize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 707,
+                      "src": "1338:20:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address) external"
+                      }
+                    },
+                    "id": 635,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1338:42:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 636,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1338:42:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 642,
+                            "name": "newForest",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 623,
+                            "src": "1412:9:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          ],
+                          "id": 641,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1404:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 640,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1404:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 643,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1404:18:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 637,
+                        "name": "forests",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 555,
+                        "src": "1391:7:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_address_$dyn_storage",
+                          "typeString": "address[] storage ref"
+                        }
+                      },
+                      "id": 639,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "push",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1391:12:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_arraypush_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address)"
+                      }
+                    },
+                    "id": 644,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1391:32:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 645,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1391:32:3"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 649,
+                            "name": "newForest",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 623,
+                            "src": "1467:9:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          ],
+                          "id": 648,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1459:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 647,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1459:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 650,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1459:18:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "id": 646,
+                      "name": "PublicForestCreated",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 552,
+                      "src": "1439:19:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address)"
+                      }
+                    },
+                    "id": 651,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1439:39:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 652,
+                  "nodeType": "EmitStatement",
+                  "src": "1434:44:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "cdb2c187",
+            "id": 654,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createPublicForest",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 613,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1215:2:3"
+            },
+            "returnParameters": {
+              "id": 614,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1227:0:3"
+            },
+            "scope": 655,
+            "src": "1188:297:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 656,
+        "src": "374:1113:3"
+      }
+    ],
+    "src": "37:1451:3"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/amir/Projects/treejer/contract/contracts/forest/ForestFactory.sol",
+    "exportedSymbols": {
+      "ForestFactory": [
+        655
+      ]
+    },
+    "id": 656,
+    "license": "GPL-3.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 539,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".21",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "37:32:3"
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+        "file": "../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+        "id": 540,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 6120,
+        "src": "71:97:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol",
+        "file": "../../node_modules/@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol",
+        "id": 541,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 6045,
+        "src": "169:95:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/access/IAccessRestriction.sol",
+        "file": "../access/IAccessRestriction.sol",
+        "id": 542,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 538,
+        "src": "266:42:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/tree/ITreeFactory.sol",
+        "file": "../tree/ITreeFactory.sol",
+        "id": 543,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 2731,
+        "src": "309:34:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/amir/Projects/treejer/contract/contracts/forest/PublicForest.sol",
+        "file": "./PublicForest.sol",
+        "id": 544,
+        "nodeType": "ImportDirective",
+        "scope": 656,
+        "sourceUnit": 794,
+        "src": "344:28:3",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 545,
+              "name": "Initializable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6119,
+              "src": "400:13:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Initializable_$6119",
+                "typeString": "contract Initializable"
+              }
+            },
+            "id": 546,
+            "nodeType": "InheritanceSpecifier",
+            "src": "400:13:3"
+          },
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 547,
+              "name": "ContextUpgradeSafe",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6044,
+              "src": "415:18:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ContextUpgradeSafe_$6044",
+                "typeString": "contract ContextUpgradeSafe"
+              }
+            },
+            "id": 548,
+            "nodeType": "InheritanceSpecifier",
+            "src": "415:18:3"
+          }
+        ],
+        "contractDependencies": [
+          793,
+          6044,
+          6119
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 655,
+        "linearizedBaseContracts": [
+          655,
+          6044,
+          6119
+        ],
+        "name": "ForestFactory",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 552,
+            "name": "PublicForestCreated",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 551,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 550,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "forestAddress",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 552,
+                  "src": "466:21:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 549,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "466:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "465:23:3"
+            },
+            "src": "440:49:3"
+          },
+          {
+            "constant": false,
+            "functionSelector": "2c438316",
+            "id": 555,
+            "mutability": "mutable",
+            "name": "forests",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "495:24:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_array$_t_address_$dyn_storage",
+              "typeString": "address[]"
+            },
+            "typeName": {
+              "baseType": {
+                "id": 553,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "495:7:3",
+                "stateMutability": "nonpayable",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              },
+              "id": 554,
+              "length": null,
+              "nodeType": "ArrayTypeName",
+              "src": "495:9:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                "typeString": "address[]"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "421ef6d4",
+            "id": 557,
+            "mutability": "mutable",
+            "name": "treeFactory",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "526:31:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+              "typeString": "contract ITreeFactory"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 556,
+              "name": "ITreeFactory",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 2730,
+              "src": "526:12:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                "typeString": "contract ITreeFactory"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "d6762c4a",
+            "id": 559,
+            "mutability": "mutable",
+            "name": "accessRestriction",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 655,
+            "src": "563:43:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+              "typeString": "contract IAccessRestriction"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 558,
+              "name": "IAccessRestriction",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 537,
+              "src": "563:18:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                "typeString": "contract IAccessRestriction"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 582,
+              "nodeType": "Block",
+              "src": "687:218:3",
+              "statements": [
+                {
+                  "assignments": [
+                    567
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 567,
+                      "mutability": "mutable",
+                      "name": "candidateContract",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 582,
+                      "src": "697:36:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 566,
+                        "name": "IAccessRestriction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 537,
+                        "src": "697:18:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 571,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 569,
+                        "name": "_accessRestrictionAddress",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 561,
+                        "src": "767:25:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 568,
+                      "name": "IAccessRestriction",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 537,
+                      "src": "748:18:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_IAccessRestriction_$537_$",
+                        "typeString": "type(contract IAccessRestriction)"
+                      }
+                    },
+                    "id": 570,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "748:45:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                      "typeString": "contract IAccessRestriction"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "697:96:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 573,
+                            "name": "candidateContract",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 567,
+                            "src": "811:17:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                              "typeString": "contract IAccessRestriction"
+                            }
+                          },
+                          "id": 574,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "isAccessRestriction",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 388,
+                          "src": "811:37:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                            "typeString": "function () view external returns (bool)"
+                          }
+                        },
+                        "id": 575,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "811:39:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 572,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        -18,
+                        -18
+                      ],
+                      "referencedDeclaration": -18,
+                      "src": "803:7:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 576,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "803:48:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 577,
+                  "nodeType": "ExpressionStatement",
+                  "src": "803:48:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 580,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 578,
+                      "name": "accessRestriction",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 559,
+                      "src": "861:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 579,
+                      "name": "candidateContract",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 567,
+                      "src": "881:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                        "typeString": "contract IAccessRestriction"
+                      }
+                    },
+                    "src": "861:37:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                      "typeString": "contract IAccessRestriction"
+                    }
+                  },
+                  "id": 581,
+                  "nodeType": "ExpressionStatement",
+                  "src": "861:37:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "c4d66de8",
+            "id": 583,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 564,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 563,
+                  "name": "initializer",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 6092,
+                  "src": "675:11:3",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "675:11:3"
+              }
+            ],
+            "name": "initialize",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 562,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 561,
+                  "mutability": "mutable",
+                  "name": "_accessRestrictionAddress",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 583,
+                  "src": "633:33:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 560,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "633:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "632:35:3"
+            },
+            "returnParameters": {
+              "id": 565,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "687:0:3"
+            },
+            "scope": 655,
+            "src": "613:292:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 611,
+              "nodeType": "Block",
+              "src": "969:213:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 591,
+                          "name": "msg",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": -15,
+                          "src": "1005:3:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_message",
+                            "typeString": "msg"
+                          }
+                        },
+                        "id": 592,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "sender",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1005:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 588,
+                        "name": "accessRestriction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 559,
+                        "src": "979:17:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "id": 590,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "ifAdmin",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 482,
+                      "src": "979:25:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_address_$returns$__$",
+                        "typeString": "function (address) view external"
+                      }
+                    },
+                    "id": 593,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "979:37:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 594,
+                  "nodeType": "ExpressionStatement",
+                  "src": "979:37:3"
+                },
+                {
+                  "assignments": [
+                    596
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 596,
+                      "mutability": "mutable",
+                      "name": "candidateContract",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 611,
+                      "src": "1027:30:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 595,
+                        "name": "ITreeFactory",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 2730,
+                        "src": "1027:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                          "typeString": "contract ITreeFactory"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 600,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 598,
+                        "name": "_address",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 585,
+                        "src": "1073:8:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 597,
+                      "name": "ITreeFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2730,
+                      "src": "1060:12:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_ITreeFactory_$2730_$",
+                        "typeString": "type(contract ITreeFactory)"
+                      }
+                    },
+                    "id": 599,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1060:22:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                      "typeString": "contract ITreeFactory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1027:55:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 602,
+                            "name": "candidateContract",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 596,
+                            "src": "1100:17:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          },
+                          "id": 603,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "isTreeFactory",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 2401,
+                          "src": "1100:31:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                            "typeString": "function () view external returns (bool)"
+                          }
+                        },
+                        "id": 604,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1100:33:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 601,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        -18,
+                        -18
+                      ],
+                      "referencedDeclaration": -18,
+                      "src": "1092:7:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 605,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1092:42:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 606,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1092:42:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 609,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 607,
+                      "name": "treeFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 557,
+                      "src": "1144:11:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 608,
+                      "name": "candidateContract",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 596,
+                      "src": "1158:17:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                        "typeString": "contract ITreeFactory"
+                      }
+                    },
+                    "src": "1144:31:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                      "typeString": "contract ITreeFactory"
+                    }
+                  },
+                  "id": 610,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1144:31:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "0bf351f8",
+            "id": 612,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setTreeFactoryAddress",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 586,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 585,
+                  "mutability": "mutable",
+                  "name": "_address",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 612,
+                  "src": "942:16:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 584,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "942:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "941:18:3"
+            },
+            "returnParameters": {
+              "id": 587,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "969:0:3"
+            },
+            "scope": 655,
+            "src": "911:271:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 653,
+              "nodeType": "Block",
+              "src": "1227:258:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 618,
+                          "name": "msg",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": -15,
+                          "src": "1263:3:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_message",
+                            "typeString": "msg"
+                          }
+                        },
+                        "id": 619,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "sender",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1263:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 615,
+                        "name": "accessRestriction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 559,
+                        "src": "1237:17:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IAccessRestriction_$537",
+                          "typeString": "contract IAccessRestriction"
+                        }
+                      },
+                      "id": 617,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "ifAdmin",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 482,
+                      "src": "1237:25:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_address_$returns$__$",
+                        "typeString": "function (address) view external"
+                      }
+                    },
+                    "id": 620,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1237:37:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 621,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1237:37:3"
+                },
+                {
+                  "assignments": [
+                    623
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 623,
+                      "mutability": "mutable",
+                      "name": "newForest",
+                      "nodeType": "VariableDeclaration",
+                      "overrides": null,
+                      "scope": 653,
+                      "src": "1285:22:3",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PublicForest_$793",
+                        "typeString": "contract PublicForest"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 622,
+                        "name": "PublicForest",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 793,
+                        "src": "1285:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 627,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 625,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "NewExpression",
+                      "src": "1310:16:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_creation_nonpayable$__$returns$_t_contract$_PublicForest_$793_$",
+                        "typeString": "function () returns (contract PublicForest)"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 624,
+                        "name": "PublicForest",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 793,
+                        "src": "1314:12:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      }
+                    },
+                    "id": 626,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1310:18:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PublicForest_$793",
+                      "typeString": "contract PublicForest"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1285:43:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 633,
+                            "name": "treeFactory",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 557,
+                            "src": "1367:11:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_ITreeFactory_$2730",
+                              "typeString": "contract ITreeFactory"
+                            }
+                          ],
+                          "id": 632,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1359:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 631,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1359:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 634,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1359:20:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 628,
+                        "name": "newForest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 623,
+                        "src": "1338:9:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PublicForest_$793",
+                          "typeString": "contract PublicForest"
+                        }
+                      },
+                      "id": 630,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "initialize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 707,
+                      "src": "1338:20:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address) external"
+                      }
+                    },
+                    "id": 635,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1338:42:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 636,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1338:42:3"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 642,
+                            "name": "newForest",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 623,
+                            "src": "1412:9:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          ],
+                          "id": 641,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1404:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 640,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1404:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 643,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1404:18:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 637,
+                        "name": "forests",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 555,
+                        "src": "1391:7:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_address_$dyn_storage",
+                          "typeString": "address[] storage ref"
+                        }
+                      },
+                      "id": 639,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "push",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1391:12:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_arraypush_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address)"
+                      }
+                    },
+                    "id": 644,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1391:32:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 645,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1391:32:3"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 649,
+                            "name": "newForest",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 623,
+                            "src": "1467:9:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_PublicForest_$793",
+                              "typeString": "contract PublicForest"
+                            }
+                          ],
+                          "id": 648,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1459:7:3",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": {
+                            "id": 647,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1459:7:3",
+                            "typeDescriptions": {
+                              "typeIdentifier": null,
+                              "typeString": null
+                            }
+                          }
+                        },
+                        "id": 650,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1459:18:3",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      ],
+                      "id": 646,
+                      "name": "PublicForestCreated",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 552,
+                      "src": "1439:19:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$returns$__$",
+                        "typeString": "function (address)"
+                      }
+                    },
+                    "id": 651,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1439:39:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 652,
+                  "nodeType": "EmitStatement",
+                  "src": "1434:44:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "cdb2c187",
+            "id": 654,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createPublicForest",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 613,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1215:2:3"
+            },
+            "returnParameters": {
+              "id": 614,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1227:0:3"
+            },
+            "scope": 655,
+            "src": "1188:297:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 656,
+        "src": "374:1113:3"
+      }
+    ],
+    "src": "37:1451:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.9+commit.3e3065ac.Emscripten.clang"
+  },
+  "networks": {
+    "3": {
+      "events": {
+        "0xdf9aaac2a1a5d1aa96529bee031a9ccd434937fc2ae0fc1fe9cb88b09bcd4394": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "forestAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PublicForestCreated",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x879FF49b6053A98D66F2835a4cfF8Bcc800a1E30",
+      "transactionHash": "0x94d97c3f24e11e07736e7e16057e64a2a9ab29c83564f5afff753ac08ea9d2ed"
+    }
+  },
+  "schemaVersion": "3.2.3",
+  "updatedAt": "2020-12-26T11:36:26.875Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

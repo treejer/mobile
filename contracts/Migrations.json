@@ -1421,12 +1421,12 @@
     "3": {
       "events": {},
       "links": {},
-      "address": "0xa1B6E0f3a06Ca692fBAD42fc52447A44555Fc94A",
-      "transactionHash": "0x0913b833b75f96191a7c4c3a7131058a6f71c0386d9124425bc4a3f80711bb66"
+      "address": "0xa77BABa1a006A71c4B562248545f1e653eAFAd85",
+      "transactionHash": "0x27b24d435cd64d0a4da5789986c3e7e679b65649be9875df59797bf9e5b356c2"
     }
   },
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-10-27T15:23:08.311Z",
+  "updatedAt": "2020-12-26T11:36:26.877Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
