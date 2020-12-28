@@ -26,6 +26,8 @@ function MyProfile(_: Props) {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0].address : '';
   }, [web3]);
 
+  console.log(address, 'address');
+
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
@@ -80,10 +82,16 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           )}
-          {/* 
-          <Button caption="Change Wallet" variant="tertiary" />
+
+          <Button
+            caption="Change Wallet"
+            variant="tertiary"
+            onPress={() => {
+              navigation.navigate('CreateWallet');
+            }}
+          />
           <Spacer times={4} />
-          */}
+
           <Button caption="Language" variant="tertiary" />
         </View>
       </View>
