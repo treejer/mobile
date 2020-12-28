@@ -11,6 +11,7 @@ import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmiss
 import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
 import {upload} from 'utilities/helpers/IPFS';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
+import config from 'services/config';
 
 interface Props {}
 
@@ -56,7 +57,7 @@ function SubmitTree(_: Props) {
 
     if (journey.treeIdToUpdate) {
       tx = updateFactory.methods.post(Number(journey.treeIdToUpdate), photoHash);
-      address = updateFactory.options.address;
+      address = config.contracts.UpdateFactory.address;
     } else {
       tx = treeFactory.methods.plant(
         0,
@@ -64,7 +65,7 @@ function SubmitTree(_: Props) {
         ['My Tree', journey.location.latitude.toString(), journey.location.longitude.toString()],
         ['1', '1'],
       );
-      address = treeFactory.options.address;
+      address = config.contracts.TreeFactory.address;
     }
 
     try {

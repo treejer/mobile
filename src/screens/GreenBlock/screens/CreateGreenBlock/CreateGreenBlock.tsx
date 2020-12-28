@@ -15,6 +15,8 @@ import {useForm, useWatch} from 'react-hook-form';
 import Button from 'components/Button';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import {useWalletAccount, useWeb3, useGBFactory} from 'services/web3';
+import config from 'services/config';
+
 
 interface Props {}
 
@@ -62,7 +64,7 @@ function CreateGreenBlcok(_: Props) {
         [wallet.address],
       );
 
-      const receipt = await sendTransaction(web3, tx, gbFactory.options.address, wallet);
+      const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
       console.log('receipt', receipt.transactionHash);
     } catch (error) {
       console.log('error', error);

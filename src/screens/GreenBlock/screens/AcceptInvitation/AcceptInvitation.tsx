@@ -9,6 +9,7 @@ import {Tree} from 'components/Icons';
 import {useGBFactory, useWalletAccount, useWeb3} from 'services/web3';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import {GreenBlockRouteParamList} from 'screens/GreenBlock/GreenBlock';
+import config from 'services/config';
 
 interface Props {}
 
@@ -27,7 +28,7 @@ function AcceptInvitation(_: Props) {
     try {
       const tx = gbFactory.methods.joinGB(greenBlockId, wallet.address);
 
-      const receipt = await sendTransaction(web3, tx, gbFactory.options.address, wallet);
+      const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
       console.log('receipt', receipt.transactionHash);
       Alert.alert('You successfully joined this green block! Start planting!');
     } catch (error) {
