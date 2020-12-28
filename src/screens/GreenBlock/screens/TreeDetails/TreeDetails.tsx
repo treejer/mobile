@@ -12,6 +12,8 @@ import Button from 'components/Button';
 import {getStaticMapUrl} from 'utilities/helpers';
 
 import {GreenBlockRouteParamList} from '../../GreenBlock';
+import TreeDetailsQuery from './graphql/TreeDetailsQuery.graphql';
+import {useQuery} from '@apollo/react-hooks';
 
 interface Props {}
 
@@ -20,6 +22,12 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
+  const {loading, data} = useQuery(TreeDetailsQuery, {
+    variables: {
+      id: tree.treeId,
+    },
+    returnPartialData: true,
+  });
 
   const mapImageUrl = getStaticMapUrl({
     markers: [
@@ -121,6 +129,11 @@ function TreeDetails(_: Props) {
               />
             </TouchableOpacity>
           </Card>
+          <Spacer times={8} />
+
+          <View>
+            <Text>Details go here</Text>
+          </View>
         </View>
         <Spacer times={8} />
       </View>

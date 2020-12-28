@@ -62,9 +62,9 @@ function createRestLink(accessToken?: string) {
 
 function createEthereumLink(web3?: Web3) {
   const abiMapping = new AbiMapping();
-  Object.entries(config.contracts).map(([name, config]) => {
-    abiMapping.addAbi(name, config.abi);
-    abiMapping.addAddress(name, 4, config.address);
+  Object.entries(config.contracts).map(([name, contract]) => {
+    abiMapping.addAbi(name, contract.abi);
+    abiMapping.addAddress(name, config.networkId, contract.address);
   });
 
   const resolver = new Web3JSResolver(abiMapping, web3);

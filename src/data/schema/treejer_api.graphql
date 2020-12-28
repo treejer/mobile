@@ -12,7 +12,20 @@ type User {
   isVerified: Boolean!
 }
 
+type TreeUpdate {
+  id: Int!
+  update_id: Int!
+  tree_id: Int!
+  image: String!
+  status: Boolean!
+  accepted_by: String
+  accepted_at: String
+  created_at: String!
+  updated_at: String!
+}
+
 type Tree {
+  id: Int!
   treeId: ID!
   gbId: Int!
   typeId: Int
@@ -30,6 +43,7 @@ type Tree {
   planterBalance: Float
   createdAt: String!
   updatedAt: String!
+  updates: [TreeUpdate]!
 }
 
 type TreeEdges {
@@ -60,6 +74,11 @@ type Query {
   Returns the current user account.
   """
   me: User
+
+  """
+  Returns the info for the given tree id
+  """
+  tree: Tree
 
   trees(address: String!, limit: Int!): TreesResponse
 

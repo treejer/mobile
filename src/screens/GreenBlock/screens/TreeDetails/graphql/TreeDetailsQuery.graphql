@@ -1,0 +1,22 @@
+query TreeDetailsQuery($id: Int!) {
+  tree(id: $id) @rest(type: "Tree", path: "/trees/{args.id}") {
+    id
+    treeId
+    gbId
+    typeId
+    owner
+    planter
+    name
+    latitude
+    longitude
+    plantedDate
+    birthDate
+    fundedDate
+    height
+    diameter
+    ambassadorBalance
+    planterBalance
+    createdAt
+    updatedAt
+  }
+}

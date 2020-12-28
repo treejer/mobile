@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {CommonActions, useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Polygon, Marker, Region} from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -16,7 +16,6 @@ import Button from 'components/Button';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import {useWalletAccount, useWeb3, useGBFactory} from 'services/web3';
 import config from 'services/config';
-
 
 interface Props {}
 
@@ -66,6 +65,17 @@ function CreateGreenBlcok(_: Props) {
 
       const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
       console.log('receipt', receipt.transactionHash);
+
+      navigation.dispatch(state => {
+        const routes = [{name: 'MyCommunity'}];
+
+        return CommonActions.reset({
+          ...state,
+          routes,
+          index: state.index,
+          stale: state.stale as any,
+        });
+      });
     } catch (error) {
       console.log('error', error);
     } finally {

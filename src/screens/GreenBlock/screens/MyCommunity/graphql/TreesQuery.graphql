@@ -4,6 +4,7 @@ query TreesQuery($address: String!, $limit: Int = 10) {
     trees @type(name: "TreeEdges") {
       current_page
       data @type(name: "Tree") {
+        id
         treeId
         gbId
         typeId

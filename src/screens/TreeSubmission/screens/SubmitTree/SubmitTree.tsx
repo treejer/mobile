@@ -9,7 +9,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
-import {upload} from 'utilities/helpers/IPFS';
+import {upload, uploadContent, getHttpDownloadUrl} from 'utilities/helpers/IPFS';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
 
@@ -20,6 +20,8 @@ function SubmitTree(_: Props) {
     params: {journey},
   } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
   const [photoHash, setPhotoHash] = useState<string>();
+  const [metaDataHash, setMetaDataHash] = useState<string>();
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   const [txHash, setTxHash] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
 
@@ -38,10 +40,26 @@ function SubmitTree(_: Props) {
       return;
     }
 
-    const result = await upload(journey.photo.uri);
+    const photoUploadResult = await upload(journey.photo.uri);
+    setPhotoHash(photoUploadResult.Hash);
 
-    setPhotoHash(result.Hash);
+    if (!journey.treeIdToUpdate) {
+      const treeName = 'My Tree';
+
+      const metaDataUploadResult = await uploadContent(
+        JSON.stringify({
+          name: treeName,
+          description: `"${treeName}" photo submitted on ${new Date().toDateString()}`,
+          image: getHttpDownloadUrl(photoUploadResult.Hash),
+        }),
+      );
+
+      setMetaDataHash(metaDataUploadResult.Hash);
+    }
+
+    setIsReadyToSubmit(true);
   }, []);
+  console.log(metaDataHash);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
@@ -53,17 +71,22 @@ function SubmitTree(_: Props) {
 
     let tx: any;
     let address: string;
-    console.log(journey.treeIdToUpdate, photoHash);
 
     if (journey.treeIdToUpdate) {
       tx = updateFactory.methods.post(Number(journey.treeIdToUpdate), photoHash);
       address = config.contracts.UpdateFactory.address;
     } else {
       tx = treeFactory.methods.plant(
-        0,
-        3,
-        ['My Tree', journey.location.latitude.toString(), journey.location.longitude.toString()],
-        ['1', '1'],
+        0, // Type id
+        [
+          getHttpDownloadUrl(metaDataHash), // Metadata
+          journey.location.latitude.toString(), // Lat
+          journey.location.longitude.toString(), // Lon
+        ],
+        [
+          '1', // Height
+          '1', // Diameter
+        ],
       );
       address = config.contracts.TreeFactory.address;
     }
@@ -79,7 +102,7 @@ function SubmitTree(_: Props) {
     }
 
     setSubmitting(false);
-  }, [wallet, treeFactory, updateFactory, web3, journey, photoHash]);
+  }, [wallet, treeFactory, updateFactory, web3, journey, photoHash, metaDataHash]);
 
   useEffect(() => {
     handleUploadToIpfs();
@@ -92,7 +115,7 @@ function SubmitTree(_: Props) {
         <Text style={[globalStyles.h5, globalStyles.textCenter]}>Submit a new tree</Text>
         <Spacer times={10} />
 
-        {photoHash ? (
+        {isReadyToSubmit ? (
           <TreeSubmissionStepper isUpdate={isUpdate} currentStep={4}>
             <Spacer times={1} />
 

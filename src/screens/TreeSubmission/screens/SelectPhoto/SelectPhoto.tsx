@@ -33,7 +33,7 @@ function SelectPhoto(_: Props) {
           photo: result,
         };
 
-        navigation.navigate(journey.treeIdToUpdate ? 'SubmitTree' : 'SelectOnMap', {
+        navigation.navigate(journey?.treeIdToUpdate ? 'SubmitTree' : 'SelectOnMap', {
           journey: newJourney,
         });
       }

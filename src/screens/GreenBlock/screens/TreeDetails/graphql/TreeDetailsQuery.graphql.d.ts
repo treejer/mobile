@@ -1,6 +1,6 @@
 import { DocumentNode } from "graphql-typed";
-export namespace TreesQueryQueryPartialData {
-  export interface TreesTreesData {
+export namespace TreeDetailsQueryQueryPartialData {
+  export interface Tree {
     __typename?: "Tree" | null;
     id?: number | null;
     treeId?: string | null;
@@ -21,25 +21,15 @@ export namespace TreesQueryQueryPartialData {
     createdAt?: string | null;
     updatedAt?: string | null;
   }
-  export interface TreesTrees {
-    __typename?: "TreeEdges" | null;
-    current_page?: number | null;
-    data?: (TreesQueryQueryPartialData.TreesTreesData | null)[] | null;
-  }
-  export interface Trees {
-    __typename?: "TreesResponse" | null;
-    trees?: TreesQueryQueryPartialData.TreesTrees | null;
-  }
 }
-export interface TreesQueryQueryPartialData {
-  trees?: TreesQueryQueryPartialData.Trees | null;
+export interface TreeDetailsQueryQueryPartialData {
+  tree?: TreeDetailsQueryQueryPartialData.Tree | null;
 }
-export namespace TreesQueryQueryData {
+export namespace TreeDetailsQueryQueryData {
   export interface Variables {
-    address: string;
-    limit?: number | null;
+    id: number;
   }
-  export interface TreesTreesData {
+  export interface Tree {
     __typename: "Tree";
     id: number;
     treeId: string;
@@ -60,18 +50,9 @@ export namespace TreesQueryQueryData {
     createdAt: string;
     updatedAt: string;
   }
-  export interface TreesTrees {
-    __typename: "TreeEdges";
-    current_page: number;
-    data: (TreesQueryQueryData.TreesTreesData | null)[];
-  }
-  export interface Trees {
-    __typename: "TreesResponse";
-    trees?: TreesQueryQueryData.TreesTrees | null;
-  }
 }
-export interface TreesQueryQueryData {
-  trees?: TreesQueryQueryData.Trees | null;
+export interface TreeDetailsQueryQueryData {
+  tree?: TreeDetailsQueryQueryData.Tree | null;
 }
-declare const document: DocumentNode<TreesQueryQueryData, TreesQueryQueryData.Variables, TreesQueryQueryPartialData>;
+declare const document: DocumentNode<TreeDetailsQueryQueryData, TreeDetailsQueryQueryData.Variables, TreeDetailsQueryQueryPartialData>;
 export default document;

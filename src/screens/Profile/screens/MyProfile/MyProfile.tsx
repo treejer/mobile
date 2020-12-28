@@ -83,14 +83,14 @@ function MyProfile(_: Props) {
             </>
           )}
 
-          <Button
+          {/* <Button
             caption="Change Wallet"
             variant="tertiary"
             onPress={() => {
               navigation.navigate('CreateWallet');
             }}
           />
-          <Spacer times={4} />
+          <Spacer times={4} /> */}
 
           <Button caption="Language" variant="tertiary" />
         </View>

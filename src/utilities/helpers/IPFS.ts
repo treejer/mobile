@@ -20,13 +20,31 @@ export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploa
     name: fileName,
   } as any);
 
-  const response = await fetch(`${gatewayEndpoint}/add?pin=false`, {
+  const response = await callUploadEndpoint(formData);
+
+  return response.json();
+}
+
+export async function uploadContent(content: string, type = 'application/json'): Promise<IPFSUploadResponse> {
+  const formData = new FormData();
+
+  formData.append('file', content);
+
+  const response = await callUploadEndpoint(formData);
+
+  return response.json();
+}
+
+export function getHttpDownloadUrl(hash: string) {
+  return `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`;
+}
+
+function callUploadEndpoint(formData: FormData) {
+  return fetch(`${gatewayEndpoint}/add?pin=false`, {
     method: 'POST',
     body: formData,
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-
-  return response.json();
 }

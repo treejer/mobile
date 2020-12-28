@@ -4,6 +4,9 @@ import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
 import globalStyles from 'constants/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {TreesQueryQueryData} from '../../screens/GreenBlock/screens/MyCommunity/graphql/TreesQuery.graphql';
+import Button from 'components/Button';
+import Spacer from 'components/Spacer';
+import {useNavigation} from '@react-navigation/native';
 
 interface Props {
   onSelect(tree: TreesQueryQueryData.TreesTreesData): void;
@@ -12,13 +15,31 @@ interface Props {
 }
 
 function Trees({onSelect, loading, trees}: Props) {
-  if (loading || !trees) {
+  const navigation = useNavigation();
+
+  if (loading) {
     return <ActivityIndicator />;
   }
 
+  if (!trees || trees.length === 0) {
+    return (
+      <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
+        <Spacer times={20} />
+        <Text>You haven't planted any trees yet</Text>
+        <Spacer times={5} />
+        <Button
+          caption="Plant your first tree"
+          variant="cta"
+          onPress={() => {
+            navigation.navigate('TreeSubmission');
+          }}
+        />
+      </View>
+    );
+  }
   return (
     <View style={[globalStyles.horizontalStack, globalStyles.flexWrap, styles.wrapper]}>
-      {trees.map((tree, index) => (
+      {trees?.map((tree, index) => (
         <TouchableOpacity style={styles.tree} key={tree.treeId} onPress={() => onSelect(tree)}>
           <Image
             style={[styles.treeImage, tree.fundedDate && styles.inactiveTree]}

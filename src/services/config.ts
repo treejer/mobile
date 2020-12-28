@@ -13,6 +13,7 @@ const config = {
       abi: require('../../contracts/UpdateFactory.json').abi,
     },
   },
+  networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
   },

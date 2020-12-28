@@ -129,6 +129,9 @@ const globalStyles = StyleSheet.create({
   mb1: {
     marginBottom: 20,
   },
+  mt3: {
+    paddingTop: 30,
+  },
 });
 
 export default globalStyles;

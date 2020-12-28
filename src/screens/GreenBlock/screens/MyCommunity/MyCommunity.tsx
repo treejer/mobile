@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions, RefreshControl} from 'react-native';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import * as Linking from 'expo-linking';
@@ -14,13 +14,14 @@ import TreeList from 'components/TreeList';
 import IconButton from 'components/IconButton';
 import {Plus} from 'components/Icons';
 import {useApolloClient, useQuery} from '@apollo/react-hooks';
-import {useWalletAccount} from 'services/web3';
+import {useGBFactory, useWalletAccount} from 'services/web3';
 import {getStaticMapUrl} from 'utilities/helpers';
 
 import treesQuery, {TreesQueryQueryData} from './graphql/TreesQuery.graphql';
 import greenBlockIdQuery from './graphql/GreenBlockIdQuery.graphql';
 import planterQuery from './graphql/GreenBlockPlanterQuery.graphql';
 import greenBlockDetailsQuery from './graphql/GreenBlockDetailsQuery.graphql';
+import {NetworkStatus} from 'apollo-boost';
 
 interface Props {}
 
@@ -62,16 +63,18 @@ const usePlanters = (greenBlockId: string) => {
   return {data: planters};
 };
 
-function MyCommunity(props: Props) {
+function MyCommunity(_: Props) {
   const navigation = useNavigation();
   const dimensions = useWindowDimensions();
   const [currentView, setCurrentView] = useState(GreenBlockView.MyCommunity);
   const account = useWalletAccount();
-
   const mapWidth = dimensions.width - 100;
 
   const accountAddress = account?.address;
+
+  // console.log('accountAddress', accountAddress);
   // const accountAddress = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F'; // account?.address
+  // const accountAddress = '0x2f4E01F1DFf04B37C23cd365F05C6c06dD5718c0'; // account?.address
 
   const greenBlockIdQueryResult = useQuery(greenBlockIdQuery, {
     variables: {
@@ -79,15 +82,11 @@ function MyCommunity(props: Props) {
     },
     fetchPolicy: 'cache-first',
     skip: !account,
-    onError(error) {
-      const addressNotPresent = error.message.includes('Address not present');
-
-      if (addressNotPresent) {
-        // Todo: Remove... Rinkeby problem
-        return;
+    onCompleted(data) {
+      if (data?.GBFactory?.greenBlockId == 0) {
         navigation.dispatch(state => {
           const routes = [{name: 'CreateGreenBlock'}];
-  
+
           return CommonActions.reset({
             ...state,
             routes,
@@ -96,6 +95,9 @@ function MyCommunity(props: Props) {
           });
         });
       }
+    },
+    onError(error) {
+      console.warn('Error while fetching green block id', error);
     },
   });
 
@@ -119,15 +121,22 @@ function MyCommunity(props: Props) {
     skip: !greenBlockId,
   });
 
+  const onRefetch = () => {
+    treesQueryResult.refetch();
+  };
+
   const {data: planters} = usePlanters(greenBlockId);
 
   const greenBlockData = greenBlockDetailsQueryResult.data?.GBFactory.greenBlock;
   const coordinates = JSON.parse(greenBlockData?.coordinates ?? '[]');
+  const refetching = treesQueryResult.networkStatus === NetworkStatus.refetch;
 
   return (
-    <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+    <ScrollView
+      style={[globalStyles.screenView, globalStyles.fill, globalStyles.mt3]}
+      refreshControl={<RefreshControl refreshing={refetching} onRefresh={onRefetch} />}
+    >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, globalStyles.p1]}>
-        <Spacer times={8} />
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>Green Block</Text>
         <Spacer times={4} />
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
