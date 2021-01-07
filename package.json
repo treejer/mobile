@@ -14,6 +14,7 @@
     "apollo-link-rest": "~0.7.3",
     "expo": "^39.0.0",
     "expo-camera": "~9.0.0",
+    "expo-clipboard": "^1.0.1",
     "expo-constants": "~9.2.0",
     "expo-crypto": "~8.3.0",
     "expo-image-picker": "~9.1.0",
