@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
 import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
@@ -17,6 +17,7 @@ import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanc
 import {NetworkStatus} from 'apollo-boost';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface Props {}
 
@@ -30,11 +31,11 @@ function MyProfile(_: Props) {
     fetchPolicy: 'cache-and-network',
   });
 
-  const address = useMemo(() => {
-    return wallet?.address;
-  }, [wallet]);
+  // const address = useMemo(() => {
+  //   return wallet?.address;
+  // }, [wallet]);
 
-  // const address = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F';
+  const address = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F';
 
   const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
     variables: {
@@ -52,9 +53,9 @@ function MyProfile(_: Props) {
 
       const receipt = await sendTransaction(web3, tx, config.contracts.TreeFactory.address, wallet);
       console.log('receipt', receipt.transactionHash);
-      Alert.alert('You successfully withdraw!');
+      Alert.alert('Success', 'You successfully withdrew!');
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert('Error', error.message);
       console.log('error', error);
     } finally {
       setSubmitting(false);
@@ -67,7 +68,7 @@ function MyProfile(_: Props) {
 
   const planterWithdrawableBalance =
     planterWithdrawableBalanceResult.data?.TreeFactory.balance > 0
-      ? parseFloat(web3.utils.fromWei(planterWithdrawableBalanceResult.data?.TreeFactory.balance))
+      ? parseFloat(web3.utils.fromWei(planterWithdrawableBalanceResult.data.TreeFactory.balance))
       : 0;
   const refetching = planterWithdrawableBalanceResult.networkStatus === NetworkStatus.refetch;
 
@@ -103,16 +104,16 @@ function MyProfile(_: Props) {
 
         {Boolean(data?.me?.name || loading) && <Spacer times={4} />}
 
-        <Text
-          numberOfLines={1}
-          style={styles.addressBox}
+        <TouchableOpacity
           onPress={() => {
             Clipboard.setString(address);
-            Alert.alert("Address copied to clipboard!")
+            ToastAndroid.show('Copied to clipboard!', 1000);
           }}
         >
-          {address.slice(0, 15)}...
-        </Text>
+          <Text numberOfLines={1} style={styles.addressBox}>
+            {address.slice(0, 15)}...
+          </Text>
+        </TouchableOpacity>
         <Spacer times={8} />
 
         {planterWithdrawableBalance > 0 && (
@@ -126,6 +127,7 @@ function MyProfile(_: Props) {
           {planterWithdrawableBalance > 0 && (
             <>
               <Button
+                style={styles.button}
                 caption="Withdraw"
                 variant="tertiary"
                 loading={submiting}
@@ -140,6 +142,7 @@ function MyProfile(_: Props) {
           {data?.me && !data?.me?.isVerified && (
             <>
               <Button
+                style={styles.button}
                 caption="Get Verified"
                 variant="tertiary"
                 onPress={() => {
@@ -183,6 +186,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingRight: 10,
     paddingLeft: 10,
+  },
+  button: {
+    width: 180,
   },
 });
 

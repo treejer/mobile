@@ -65,6 +65,10 @@ type GBFactory {
   greenBlocks(id: String!): Web3Result
 }
 
+type TreeFactory {
+  getPlanterWithdrawableBalance: String!
+}
+
 type ApplyMutationResponse {
   message: String
 }
@@ -83,6 +87,7 @@ type Query {
   trees(address: String!, limit: Int!): TreesResponse
 
   GBFactory: GBFactory
+  TreeFactory: TreeFactory
 }
 
 input ApplyInput {

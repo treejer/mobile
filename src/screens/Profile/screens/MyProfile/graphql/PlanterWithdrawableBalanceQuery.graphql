@@ -1,5 +1,5 @@
 query PlanterWithdrawableBalanceQuery($address: String!) {
-  TreeFactory @contract(type: "Integer") {
+  TreeFactory @contract {
     balance: getPlanterWithdrawableBalance(address: $address)
   }
 }

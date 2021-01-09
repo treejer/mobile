@@ -45,7 +45,9 @@ function Button({
           })}
         </View>
       )}
-      {loading && <ActivityIndicator style={{marginLeft: 10}} color="white" size="small" />}
+      {loading && (
+        <ActivityIndicator style={{marginLeft: 10}} color={styles[`${variant}Text`].color ?? 'white'} size="small" />
+      )}
     </Component>
   );
 }
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   tertiaryContainer: {
-    paddingVertical: 16,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -142,12 +144,14 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOpacity: 0.15,
     elevation: 6,
+    flexDirection: 'row',
   },
   tertiaryText: {
     ...fontMedium,
     color: colors.grayDarker,
     fontSize: 16,
     textAlign: 'center',
+    flex: 1,
   },
 });
 
