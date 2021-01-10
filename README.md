@@ -1,4 +1,4 @@
-# [TypeScript Example](https://www.typescriptlang.org/)
+# [Treejer Ranger Mobile App](https://treejer.com/)
 
 <p>
   <!-- iOS -->
@@ -9,26 +9,22 @@
   <img alt="Supports Expo Web" longdesc="Supports Expo Web" src="https://img.shields.io/badge/web-4630EB.svg?style=flat-square&logo=GOOGLE-CHROME&labelColor=4285F4&logoColor=fff" />
 </p>
 
-```sh
-npx create-react-native-app -t with-typescript
-```
+Treejer empowers local people to save the planet by providing a unique borderless approach in Climate Action powered by blockchain technology.
 
+Treejer Ranger is a mobile app that allows planters and rural ambassadors submit updates on the status of trees and claim their rewards.
 
-TypeScript is a superset of JavaScript which gives you static types and powerful tooling in Visual Studio Code including autocompletion and useful inline warnings for type errors.
-
-## 🚀 How to use
+## 🚀 How to develop/debug
 
 #### Creating a new project
 
-- Install the CLI: `npm i -g expo-cli`
-- Create a project: `expo init --template expo-template-blank-typescript`
+- Install expo CLI: `yarn global add expo-cli`
 - `cd` into the project
+- Install dependencies: `yarn`
+- Start bundler: `yarn start`
 
-### Adding TypeScript to existing projects
+### Generate typescript types for .graphql files
 
-- Copy the `tsconfig.json` from this repo, or new typescript template
-- Add typescript dependencies: `yarn add --dev @types/react @types/react-native @types/react-dom typescript`
-- Rename files tpo TypeScript, `.tsx` for React components and `.ts` for plain typescript files
+- `yarn code-gen`
 
 ## 📝 Notes
 
