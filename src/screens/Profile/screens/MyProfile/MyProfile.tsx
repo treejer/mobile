@@ -38,8 +38,6 @@ function MyProfile(_: Props) {
   const address = useMemo(() => wallet?.address, [wallet]);
   const skipStats = !address || !isVerified;
 
-  console.log(wallet);
-
   const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -63,11 +61,11 @@ function MyProfile(_: Props) {
       const tx = treeFactory.methods.withdrawPlanterBalance();
 
       const receipt = await sendTransaction(web3, tx, config.contracts.TreeFactory.address, wallet);
-      console.log('receipt', receipt.transactionHash);
+      console.log('Receipt', receipt.transactionHash);
       Alert.alert('Success', 'You successfully withdrew!');
     } catch (error) {
       Alert.alert('Error', error.message);
-      console.log('error', error);
+      console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }

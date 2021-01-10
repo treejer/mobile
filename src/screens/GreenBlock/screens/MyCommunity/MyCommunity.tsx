@@ -72,10 +72,6 @@ function MyCommunity(_: Props) {
 
   const accountAddress = account?.address;
 
-  // console.log('accountAddress', accountAddress);
-  // const accountAddress = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F'; // account?.address
-  // const accountAddress = '0x2f4E01F1DFf04B37C23cd365F05C6c06dD5718c0'; // account?.address
-
   const greenBlockIdQueryResult = useQuery(greenBlockIdQuery, {
     variables: {
       address: accountAddress,

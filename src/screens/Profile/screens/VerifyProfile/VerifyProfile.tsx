@@ -162,10 +162,8 @@ function VerifyProfile(props: Props) {
           });
         },
       });
-
-      console.log('mobile verify response', response);
     } catch (error) {
-      console.log('error', error);
+      console.warn('Error', error);
       phoneNumberForm.setError('token', {
         message: 'PHONE_NUMBER_NOT_UNIQUE',
       });
@@ -195,11 +193,11 @@ function VerifyProfile(props: Props) {
       });
 
       navigation.goBack();
-    } catch (err) {
+    } catch (error) {
       phoneNumberForm.setError('token', {
         message: 'INVALID_VERIFICATION_CODE',
       });
-      console.log('error', err);
+      console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }

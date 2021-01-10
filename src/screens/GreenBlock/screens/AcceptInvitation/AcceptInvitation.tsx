@@ -29,10 +29,10 @@ function AcceptInvitation(_: Props) {
       const tx = gbFactory.methods.joinGB(greenBlockId, wallet.address);
 
       const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
-      console.log('receipt', receipt.transactionHash);
+      console.log('Receipt', receipt.transactionHash);
       Alert.alert('You successfully joined this green block! Start planting!');
     } catch (error) {
-      console.log('error', error);
+      console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }

@@ -64,7 +64,7 @@ function CreateGreenBlcok(_: Props) {
       );
 
       const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
-      console.log('receipt', receipt.transactionHash);
+      console.log('Receipt', receipt.transactionHash);
 
       navigation.dispatch(state => {
         const routes = [{name: 'MyCommunity'}];
@@ -77,7 +77,7 @@ function CreateGreenBlcok(_: Props) {
         });
       });
     } catch (error) {
-      console.log('error', error);
+      console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }

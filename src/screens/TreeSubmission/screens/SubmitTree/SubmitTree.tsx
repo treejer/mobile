@@ -59,7 +59,6 @@ function SubmitTree(_: Props) {
 
     setIsReadyToSubmit(true);
   }, []);
-  console.log(metaDataHash);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
@@ -98,7 +97,7 @@ function SubmitTree(_: Props) {
       console.log(`Transaction hash: ${receipt.transactionHash}`);
     } catch (error) {
       Alert.alert('Error occured', "Transaction couldn't complete");
-      console.log(error);
+      console.warn('Error', error);
     }
 
     setSubmitting(false);
