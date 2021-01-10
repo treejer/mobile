@@ -1,14 +1,14 @@
 import React from 'react';
-import Svg, {Line, Path} from 'react-native-svg';
+import Svg, {Path, SvgProps} from 'react-native-svg';
 import {colors} from 'constants/values';
 
-interface Props {
+export interface Props extends SvgProps {
   color?: string;
 }
 
-function ChevronLeft({color = colors.grayDarker}: Props) {
+function ChevronLeft({color = colors.grayDarker, ...rest}: Props) {
   return (
-    <Svg width="10" height="20" viewBox="0 0 10 20" fill="none">
+    <Svg width="10" height="20" viewBox="0 0 10 20" fill="none" {...rest}>
       <Path
         d="M8.43999 19.3334C8.2408 19.3341 8.04399 19.2901 7.86402 19.2047C7.68404 19.1193 7.52549 18.9947 7.39999 18.84L0.959995 10.84C0.763886 10.6015 0.656677 10.3022 0.656677 9.99337C0.656677 9.68454 0.763886 9.38529 0.959995 9.14671L7.62666 1.14671C7.85298 0.87442 8.17819 0.703187 8.53076 0.670681C8.88333 0.638175 9.23437 0.747057 9.50666 0.973375C9.77895 1.19969 9.95018 1.52491 9.98269 1.87748C10.0152 2.23005 9.90631 2.58109 9.67999 2.85337L3.71999 10L9.47999 17.1467C9.64304 17.3424 9.74661 17.5807 9.77845 17.8335C9.81029 18.0862 9.76906 18.3428 9.65966 18.5728C9.55025 18.8028 9.37724 18.9967 9.16109 19.1315C8.94494 19.2663 8.69471 19.3363 8.43999 19.3334Z"
         fill={color}

@@ -1,5 +1,4 @@
-import React, {useEffect, useRef} from 'react';
-// import {Animated, Easing} from 'react-native';
+import React from 'react';
 import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
 import {colors} from 'constants/values';

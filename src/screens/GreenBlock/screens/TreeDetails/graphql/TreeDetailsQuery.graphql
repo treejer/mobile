@@ -18,5 +18,16 @@ query TreeDetailsQuery($id: Int!) {
     planterBalance
     createdAt
     updatedAt
+    updates @type(name: "TreeUpdate") {
+      id
+      updateId
+      treeId
+      image
+      status
+      acceptedBy
+      acceptedAt
+      createdAt
+      updatedAt
+    }
   }
 }

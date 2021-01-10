@@ -1,28 +1,32 @@
-import React from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, Linking} from 'react-native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {StyleSheet, Text, View, ScrollView, Image, Linking, ActivityIndicator} from 'react-native';
 import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
-import {ChevronLeft} from 'components/Icons';
+import {ChevronLeft, ChevronRight} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import {getStaticMapUrl} from 'utilities/helpers';
 
 import {GreenBlockRouteParamList} from '../../GreenBlock';
-import TreeDetailsQuery from './graphql/TreeDetailsQuery.graphql';
+import TreeDetailsQuery, {TreeDetailsQueryQueryData} from './graphql/TreeDetailsQuery.graphql';
 import {useQuery} from '@apollo/react-hooks';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import {colors} from 'constants/values';
 
 interface Props {}
 
 function TreeDetails(_: Props) {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
+  const cardRef = useRef<View>();
+  const sliderRef = useRef<Carousel<any>>();
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
-  const {loading, data} = useQuery(TreeDetailsQuery, {
+  const {loading, data} = useQuery<TreeDetailsQueryQueryData>(TreeDetailsQuery, {
     variables: {
       id: tree.treeId,
     },
@@ -42,6 +46,31 @@ function TreeDetails(_: Props) {
     height: 300,
   });
 
+  const updates = data?.tree?.updates;
+  const updatesCount = updates?.length ?? 0;
+
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [cardWidth, setCardWidth] = useState<number | null>(null);
+  const imageWidth = useMemo(() => {
+    if (!cardWidth) {
+      return null;
+    }
+
+    if (updatesCount > 1) {
+      return cardWidth - 120;
+    }
+
+    return cardWidth;
+  }, [cardWidth, updatesCount]);
+
+  useEffect(() => {
+    if (cardRef.current) {
+      cardRef.current.measureInWindow((_x, _y, width) => {
+        setCardWidth(width);
+      });
+    }
+  }, [cardRef]);
+
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
@@ -59,7 +88,7 @@ function TreeDetails(_: Props) {
         <Spacer times={8} />
 
         <View style={globalStyles.p2}>
-          <Card>
+          <Card ref={cardRef}>
             <View style={styles.updateButton}>
               <Button
                 variant="success"
@@ -131,9 +160,82 @@ function TreeDetails(_: Props) {
           </Card>
           <Spacer times={8} />
 
-          <View>
-            <Text>Details go here</Text>
-          </View>
+          {loading && <ActivityIndicator color={colors.green} size="large" />}
+
+          {Boolean(cardWidth) && updates && updatesCount > 0 && (
+            <View>
+              <View
+                style={[
+                  globalStyles.horizontalStack,
+                  globalStyles.alignItemsCenter,
+                  styles.titleContainer,
+                  {width: imageWidth},
+                ]}
+              >
+                <View style={styles.titleLine} />
+                <Text style={[globalStyles.ph1, globalStyles.h5]}>Photos</Text>
+                <View style={styles.titleLine} />
+              </View>
+              <Spacer times={8} />
+              <View
+                style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack, globalStyles.alignItemsCenter]}
+              >
+                {updatesCount > 1 && (
+                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current.snapToPrev()}>
+                    <ChevronLeft />
+                  </TouchableOpacity>
+                )}
+                <Carousel
+                  ref={sliderRef}
+                  data={updates}
+                  renderItem={({item: update}) => {
+                    return (
+                      <Image
+                        style={{width: imageWidth + (updatesCount > 1 ? 20 : 0), height: cardWidth, borderRadius: 20}}
+                        resizeMode="cover"
+                        key={update.id}
+                        source={{uri: update.image}}
+                      />
+                    );
+                  }}
+                  sliderWidth={imageWidth}
+                  itemWidth={imageWidth}
+                  inactiveSlideScale={0.95}
+                  inactiveSlideOpacity={0}
+                  activeSlideAlignment="start"
+                  activeAnimationType={'spring'}
+                  layout="default"
+                  loop
+                  onSnapToItem={index => setActiveSlide(index)}
+                />
+                {updatesCount > 1 && (
+                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current.snapToNext()}>
+                    <ChevronRight />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {updatesCount > 1 && (
+                <Pagination
+                  dotsLength={updates.length}
+                  activeDotIndex={activeSlide}
+                  containerStyle={{}}
+                  dotColor={colors.grayDarker}
+                  dotStyle={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    marginHorizontal: 8,
+                  }}
+                  inactiveDotColor={colors.gray}
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={0.6}
+                  carouselRef={sliderRef.current}
+                  tappableDots={!!sliderRef.current}
+                />
+              )}
+            </View>
+          )}
         </View>
         <Spacer times={8} />
       </View>
@@ -155,6 +257,14 @@ const styles = StyleSheet.create({
   treeImage: {
     width: 100,
     height: 100,
+    alignSelf: 'center',
+  },
+  titleLine: {
+    height: 2,
+    backgroundColor: colors.grayLight,
+    flex: 1,
+  },
+  titleContainer: {
     alignSelf: 'center',
   },
 });
