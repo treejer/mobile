@@ -56,13 +56,4 @@ function NoWallet(_: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  signInText: {
-    color: '#67B68C',
-  },
-  buttonsWrapper: {
-    width: 200,
-  },
-});
-
 export default NoWallet;

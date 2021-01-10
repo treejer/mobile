@@ -39,7 +39,7 @@ function GreenBlock({navigation, route}: Props) {
   const {data} = useQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
   });
-  const isVerified = data.me?.isVerified;
+  const isVerified = data?.me?.isVerified;
   const greenBlockIdToJoin = route.params?.greenBlockIdToJoin;
   const alertPending = useRef(false);
 

@@ -1,0 +1,5 @@
+query PlanterTreesCount($address: String!) {
+  planterTreesCount(address: $address) @rest(type: "TreesResponse", path: "/planters/{args.address}/trees-count") {
+    count
+  }
+}

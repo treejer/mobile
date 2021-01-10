@@ -58,7 +58,11 @@ function Web3Provider({children, privateKey}: Props) {
   }, []);
 
   useEffect(() => {
-    updateAccessToken(privateKey);
+    if (privateKey) {
+      updateAccessToken(privateKey);
+    } else {
+      setWaiting(false);
+    }
   }, [privateKey]);
 
   // TODO: Refactor

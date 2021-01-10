@@ -1,9 +1,15 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
+import {NetworkStatus} from 'apollo-boost';
 import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+
+import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
+import {sendTransaction} from 'utilities/helpers/sendTransaction';
+import config from 'services/config';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -12,12 +18,8 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
 
-import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
-import {NetworkStatus} from 'apollo-boost';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
 
 interface Props {}
 
@@ -31,18 +33,27 @@ function MyProfile(_: Props) {
     fetchPolicy: 'cache-and-network',
   });
 
-  // const address = useMemo(() => {
-  //   return wallet?.address;
-  // }, [wallet]);
+  const isVerified = data?.me.isVerified;
 
-  const address = '0x9ec0A4472fF40cd9beE54A26a268c29C9dF3872F';
+  const address = useMemo(() => wallet?.address, [wallet]);
+  const skipStats = !address || !isVerified;
+
+  console.log(wallet);
+
+  const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      address: address,
+    },
+    skip: skipStats,
+  });
 
   const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
     variables: {
       address: address,
     },
     fetchPolicy: 'cache-first',
-    skip: !address,
+    skip: skipStats,
   });
 
   const [submiting, setSubmitting] = useState(false);
@@ -88,7 +99,7 @@ function MyProfile(_: Props) {
             }}
           />
         ) : (
-          <Avatar type="inactive" size={74} />
+          <Avatar type={isVerified ? 'active' : 'inactive'} size={74} />
         )}
         <Spacer times={4} />
 
@@ -110,17 +121,35 @@ function MyProfile(_: Props) {
             ToastAndroid.show('Copied to clipboard!', 1000);
           }}
         >
-          <Text numberOfLines={1} style={styles.addressBox}>
-            {address.slice(0, 15)}...
-          </Text>
+          {address && (
+            <Text numberOfLines={1} style={styles.addressBox}>
+              {address.slice(0, 15)}...
+            </Text>
+          )}
         </TouchableOpacity>
         <Spacer times={8} />
 
-        {planterWithdrawableBalance > 0 && (
-          <>
-            <Text numberOfLines={1}>Withdrawable Balance : ~{planterWithdrawableBalance.toFixed(5)} ETH</Text>
-            <Spacer times={4} />
-          </>
+        {!skipStats && (
+          <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+            <View style={styles.statContainer}>
+              <Text style={styles.statValue}>0.00</Text>
+              <Text style={styles.statLabel}>O2 Balance</Text>
+            </View>
+
+            <Spacer times={6} />
+
+            <View style={styles.statContainer}>
+              <Text style={styles.statValue}>{planterTreesCountResult.data?.planterTreesCount?.count}</Text>
+              <Text style={styles.statLabel}>Planted Trees</Text>
+            </View>
+
+            <Spacer times={6} />
+
+            <View style={styles.statContainer}>
+              <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>
+              <Text style={styles.statLabel}>ETH Earning</Text>
+            </View>
+          </View>
         )}
 
         <View style={globalStyles.p3}>
@@ -157,6 +186,7 @@ function MyProfile(_: Props) {
           {!address && (
             <>
               <Button
+                style={styles.button}
                 caption="Create Wallet"
                 variant="tertiary"
                 onPress={() => {
@@ -167,7 +197,7 @@ function MyProfile(_: Props) {
             </>
           )}
 
-          <Button caption="Language" variant="tertiary" />
+          <Button style={styles.button} caption="Language" variant="tertiary" />
         </View>
       </View>
     </ScrollView>
@@ -189,6 +219,24 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 180,
+  },
+  statContainer: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontWeight: '700',
+    fontSize: 20,
+    color: colors.grayDarker,
+    marginBottom: 5,
+  },
+  statLabel: {
+    color: colors.grayLight,
+  },
+  statsContainer: {
+    paddingBottom: 20,
+    borderStyle: 'solid',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grayLighter,
   },
 });
 
