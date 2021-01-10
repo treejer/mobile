@@ -2,23 +2,15 @@ import React, {useEffect} from 'react';
 import {Alert, Linking} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationProp} from '@react-navigation/native';
-
 import TabBar from 'components/TabBar';
 import {usePrivateKeyStorage} from 'services/web3';
+import {MainTabsParamList} from 'types';
 
 import TreeSubmission from './TreeSubmission';
 import Profile from './Profile';
 import GreenBlock from './GreenBlock';
 
 const Tab = createBottomTabNavigator();
-
-export type MainTabsParamList = {
-  Profile: undefined;
-  TreeSubmission: undefined;
-  GreenBlock: {
-    greenBlockIdToJoin?: string;
-  };
-};
 
 interface Props {
   navigation?: NavigationProp<MainTabsParamList>;
@@ -49,7 +41,11 @@ function MainTabs({navigation}: Props) {
     };
 
     Linking.addEventListener('url', listener);
-    Linking.getInitialURL().then(listener);
+    Linking.getInitialURL()
+      .then(listener)
+      .catch(() => {
+        console.warn('Failed to get initial URL');
+      });
 
     return () => {
       Linking.removeEventListener('url', listener);

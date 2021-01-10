@@ -1,5 +1,6 @@
 import React from 'react';
 import {useSettings} from 'services/settings';
+
 import SelectLanguage from './screens/SelectLanguage';
 import OnboardingSlides from './screens/OnboardingSlides';
 

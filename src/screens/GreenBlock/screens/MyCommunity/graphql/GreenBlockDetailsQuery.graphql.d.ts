@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql-typed";
-import { Web3Result } from "../../../../../schema/treejer_api-types";
+import { Web3Result } from "../../../../../data/schema/treejer_api-types";
 export namespace GreenBlockDetailsQueryQueryPartialData {
   export interface GBFactory {
     __typename?: "GBFactory" | null;

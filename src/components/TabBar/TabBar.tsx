@@ -1,11 +1,13 @@
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useRef} from 'react';
 import {StyleSheet, TouchableOpacityProps, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Svg, {Path} from 'react-native-svg';
 import Animated, {useValue, Easing, timing, interpolate} from 'react-native-reanimated';
-import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
+
 import {GreenBlock, Tree, User} from '../Icons';
 
 interface Props extends BottomTabBarProps {}

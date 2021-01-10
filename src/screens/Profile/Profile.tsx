@@ -1,29 +1,26 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import globalStyles from 'constants/styles';
+import {usePrivateKeyStorage} from 'services/web3';
+import {ProfileRouteParamList} from 'types';
+
 import SelectWallet from './screens/SelectWallet';
 import VerifyProfile from './screens/VerifyProfile';
 import CreateWallet from './screens/CreateWallet';
 import NoWallet from './screens/NoWallet';
-import {usePrivateKeyStorage} from 'services/web3';
 import MyProfile from './screens/MyProfile';
-
-export type ProfileRouteParamList = {
-  NoWallet: undefined,
-  MyProfile: undefined,
-  VerifyProfile: undefined;
-  SelectWallet: undefined,
-};
 
 const Stack = createStackNavigator<ProfileRouteParamList>();
 const RootStack = createStackNavigator();
 
 function ProfileStack() {
   const {unlocked} = usePrivateKeyStorage();
+  const initialRoute = unlocked ? 'MyProfile' : 'NoWallet';
 
   return (
     <Stack.Navigator
-      initialRouteName={unlocked ? 'MyProfile' : 'NoWallet'}
+      initialRouteName={initialRoute}
       screenOptions={{
         cardStyle: globalStyles.screenView,
         headerShown: false,

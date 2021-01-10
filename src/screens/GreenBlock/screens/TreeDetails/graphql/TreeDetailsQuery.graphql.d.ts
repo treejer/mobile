@@ -2,7 +2,7 @@ import { DocumentNode } from "graphql-typed";
 export namespace TreeDetailsQueryQueryPartialData {
   export interface TreeUpdates {
     __typename?: "TreeUpdate" | null;
-    id?: number | null;
+    id?: string | null;
     updateId?: number | null;
     treeId?: number | null;
     image?: string | null;
@@ -14,7 +14,7 @@ export namespace TreeDetailsQueryQueryPartialData {
   }
   export interface Tree {
     __typename?: "Tree" | null;
-    id?: number | null;
+    id?: string | null;
     treeId?: string | null;
     gbId?: number | null;
     typeId?: number | null;
@@ -44,7 +44,7 @@ export namespace TreeDetailsQueryQueryData {
   }
   export interface TreeUpdates {
     __typename: "TreeUpdate";
-    id: number;
+    id: string;
     updateId: number;
     treeId: number;
     image: string;
@@ -56,7 +56,7 @@ export namespace TreeDetailsQueryQueryData {
   }
   export interface Tree {
     __typename: "Tree";
-    id: number;
+    id: string;
     treeId: string;
     gbId: number;
     typeId?: number | null;

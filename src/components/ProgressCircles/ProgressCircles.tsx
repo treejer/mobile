@@ -1,6 +1,7 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import globalStyles from 'constants/styles';
 
 export interface ProgressCirclesProps {
   numberOfSteps: number;

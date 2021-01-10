@@ -1,14 +1,15 @@
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+
 import React, {useCallback, useEffect, useState} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapView, {Region} from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
-import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
+import {TreeSubmissionRouteParamList} from 'types';
 
 interface Props {}
 
@@ -53,26 +54,20 @@ function SelectOnMap(_: Props) {
         longitudeDelta: 0.01,
       });
     })();
-  }, []);
+  }, [journey]);
 
   const handleSubmit = useCallback(() => {
-    // TODO: Fix - replace screen instead of navigate
     navigation.navigate('SubmitTree', {
       journey: {
         ...journey,
         location: region,
       },
     });
-  }, [navigation, region]);
+  }, [navigation, region, journey]);
 
   return (
     <View style={globalStyles.fill}>
-      <MapView
-        mapType="satellite"
-        style={[globalStyles.fill]}
-        region={region}
-        onRegionChangeComplete={setRegion}
-      ></MapView>
+      <MapView mapType="satellite" style={[globalStyles.fill]} region={region} onRegionChangeComplete={setRegion} />
       <View pointerEvents="none" style={styles.mapMarkerWrapper}>
         <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
       </View>

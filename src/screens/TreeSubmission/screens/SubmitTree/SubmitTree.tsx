@@ -1,17 +1,17 @@
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Text, View, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
-
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useTreeFactory, useUpdateFactory, useWeb3} from 'services/web3';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
 import {upload, uploadContent, getHttpDownloadUrl} from 'utilities/helpers/IPFS';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
+import {TreeSubmissionRouteParamList} from 'types';
 
 interface Props {}
 
@@ -58,11 +58,11 @@ function SubmitTree(_: Props) {
     }
 
     setIsReadyToSubmit(true);
-  }, []);
+  }, [isUpdate, journey.photo, journey.location, journey.treeIdToUpdate]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
-      alert('Wallet not provided');
+      Alert.alert('No wallet', 'Wallet not provided');
       return;
     }
 
@@ -76,15 +76,21 @@ function SubmitTree(_: Props) {
       address = config.contracts.UpdateFactory.address;
     } else {
       tx = treeFactory.methods.plant(
-        0, // Type id
+        // Type id
+        0,
         [
-          getHttpDownloadUrl(metaDataHash), // Metadata
-          journey.location.latitude.toString(), // Lat
-          journey.location.longitude.toString(), // Lon
+          // Metadata
+          getHttpDownloadUrl(metaDataHash),
+          // Lat
+          journey.location.latitude.toString(),
+          // Lon
+          journey.location.longitude.toString(),
         ],
         [
-          '1', // Height
-          '1', // Diameter
+          // Height
+          '1',
+          // Diameter
+          '1',
         ],
       );
       address = config.contracts.TreeFactory.address;
@@ -107,41 +113,42 @@ function SubmitTree(_: Props) {
     handleUploadToIpfs();
   }, [handleUploadToIpfs]);
 
+  const contentMarkup = isReadyToSubmit ? (
+    <TreeSubmissionStepper isUpdate={isUpdate} currentStep={4}>
+      <Spacer times={1} />
+
+      {txHash && <Text>Your transaction hash: {txHash}</Text>}
+      {!txHash && (
+        <>
+          <Text>Please confirm to plant the tree</Text>
+          <Spacer times={4} />
+          <Button
+            variant="success"
+            onPress={handleSignTransaction}
+            caption="Confirm"
+            loading={submitting}
+            disabled={submitting}
+          />
+        </>
+      )}
+    </TreeSubmissionStepper>
+  ) : (
+    <TreeSubmissionStepper isUpdate={isUpdate} currentStep={3}>
+      <Spacer times={1} />
+      <Text>Your photo is being uploaded</Text>
+
+      <View style={{alignItems: 'center', justifyContent: 'center', padding: 15}}>
+        <ActivityIndicator size="large" color={colors.green} />
+      </View>
+    </TreeSubmissionStepper>
+  );
+
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
         <Spacer times={10} />
 
-        {isReadyToSubmit ? (
-          <TreeSubmissionStepper isUpdate={isUpdate} currentStep={4}>
-            <Spacer times={1} />
-
-            {txHash ? (
-              <Text>Your transaction hash: {txHash}</Text>
-            ) : (
-              <>
-                <Text>Please confirm to plant the tree</Text>
-                <Spacer times={4} />
-                <Button
-                  variant="success"
-                  onPress={handleSignTransaction}
-                  caption="Confirm"
-                  loading={submitting}
-                  disabled={submitting}
-                />
-              </>
-            )}
-          </TreeSubmissionStepper>
-        ) : (
-          <TreeSubmissionStepper isUpdate={isUpdate} currentStep={3}>
-            <Spacer times={1} />
-            <Text>Your photo is being uploaded</Text>
-
-            <View style={{alignItems: 'center', justifyContent: 'center', padding: 15}}>
-              <ActivityIndicator size="large" color={colors.green} />
-            </View>
-          </TreeSubmissionStepper>
-        )}
+        {contentMarkup}
       </View>
     </ScrollView>
   );

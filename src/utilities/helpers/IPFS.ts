@@ -5,8 +5,9 @@ interface IPFSUploadResponse {
 }
 
 const gatewayEndpoint = 'https://ipfs.infura.io:5001/api/v0';
+
 export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploadResponse> {
-  const fileNameMatch = uri.match(/[^\\\/]+$/);
+  const fileNameMatch = uri.match(/[^\\/]+$/);
   let fileName = 'file.jpg';
   if (fileNameMatch) {
     fileName = fileNameMatch[1];
@@ -25,7 +26,7 @@ export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploa
   return response.json();
 }
 
-export async function uploadContent(content: string, type = 'application/json'): Promise<IPFSUploadResponse> {
+export async function uploadContent(content: string): Promise<IPFSUploadResponse> {
   const formData = new FormData();
 
   formData.append('file', content);

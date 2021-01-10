@@ -1,3 +1,6 @@
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
 import {NetworkStatus} from 'apollo-boost';
@@ -6,16 +9,12 @@ import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
-
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import Avatar from 'components/Avatar';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
@@ -41,14 +40,14 @@ function MyProfile(_: Props) {
   const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
     fetchPolicy: 'cache-and-network',
     variables: {
-      address: address,
+      address,
     },
     skip: skipStats,
   });
 
   const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
     variables: {
-      address: address,
+      address,
     },
     fetchPolicy: 'cache-first',
     skip: skipStats,
@@ -81,6 +80,19 @@ function MyProfile(_: Props) {
       : 0;
   const refetching = planterWithdrawableBalanceResult.networkStatus === NetworkStatus.refetch;
 
+  const avatarStatus = isVerified ? 'active' : 'inactive';
+  const avatarMarkup = loading ? (
+    <ShimmerPlaceholder
+      style={{
+        width: 74,
+        height: 74,
+        borderRadius: 37,
+      }}
+    />
+  ) : (
+    <Avatar type={avatarStatus} size={74} />
+  );
+
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
@@ -88,17 +100,7 @@ function MyProfile(_: Props) {
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
-        {loading ? (
-          <ShimmerPlaceholder
-            style={{
-              width: 74,
-              height: 74,
-              borderRadius: 37,
-            }}
-          />
-        ) : (
-          <Avatar type={isVerified ? 'active' : 'inactive'} size={74} />
-        )}
+        {avatarMarkup}
         <Spacer times={4} />
 
         {loading && (

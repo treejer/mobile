@@ -2,7 +2,7 @@ import { DocumentNode } from "graphql-typed";
 export namespace GetMeQueryPartialData {
   export interface Me {
     __typename?: "User" | null;
-    id?: number | null;
+    id?: string | null;
     name?: string | null;
     email?: string | null;
     emailVerifiedAt?: string | null;
@@ -21,7 +21,7 @@ export interface GetMeQueryPartialData {
 export namespace GetMeQueryData {
   export interface Me {
     __typename: "User";
-    id: number;
+    id: string;
     name: string;
     email: string;
     emailVerifiedAt?: string | null;

@@ -1,21 +1,21 @@
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, Linking, ActivityIndicator} from 'react-native';
 import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-
+import {useQuery} from '@apollo/react-hooks';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Spacer from 'components/Spacer';
-import globalStyles from 'constants/styles';
 import {ChevronLeft, ChevronRight} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import {getStaticMapUrl} from 'utilities/helpers';
+import {GreenBlockRouteParamList} from 'types';
 
-import {GreenBlockRouteParamList} from '../../GreenBlock';
 import TreeDetailsQuery, {TreeDetailsQueryQueryData} from './graphql/TreeDetailsQuery.graphql';
-import {useQuery} from '@apollo/react-hooks';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {colors} from 'constants/values';
 
 interface Props {}
 
@@ -75,7 +75,7 @@ function TreeDetails(_: Props) {
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
             <ChevronLeft />
           </TouchableOpacity>
           <View style={globalStyles.fill} />
@@ -203,7 +203,7 @@ function TreeDetails(_: Props) {
                   inactiveSlideScale={0.95}
                   inactiveSlideOpacity={0}
                   activeSlideAlignment="start"
-                  activeAnimationType={'spring'}
+                  activeAnimationType="spring"
                   layout="default"
                   loop
                   onSnapToItem={index => setActiveSlide(index)}
@@ -231,7 +231,7 @@ function TreeDetails(_: Props) {
                   inactiveDotOpacity={0.4}
                   inactiveDotScale={0.6}
                   carouselRef={sliderRef.current}
-                  tappableDots={!!sliderRef.current}
+                  tappableDots={Boolean(sliderRef.current)}
                 />
               )}
             </View>

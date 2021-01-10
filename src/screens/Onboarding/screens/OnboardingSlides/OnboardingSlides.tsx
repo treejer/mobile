@@ -1,8 +1,8 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import globalStyles from 'constants/styles';
+
+import React, {useCallback, useRef, useState} from 'react';
 import {Image, ListRenderItem, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import globalStyles from 'constants/styles';
 import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';

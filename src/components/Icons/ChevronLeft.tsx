@@ -1,6 +1,7 @@
+import {colors} from 'constants/values';
+
 import React from 'react';
 import Svg, {Path, SvgProps} from 'react-native-svg';
-import {colors} from 'constants/values';
 
 export interface Props extends SvgProps {
   color?: string;

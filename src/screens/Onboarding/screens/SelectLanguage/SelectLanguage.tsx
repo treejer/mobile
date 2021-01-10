@@ -1,17 +1,13 @@
-import {useNavigation} from '@react-navigation/native';
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {View, Text, Image} from 'react-native';
-
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import globalStyles from 'constants/styles';
 import {useSettings} from 'services/settings';
 
-interface Props {}
-
-function SelectLanguage(props: Props) {
-  // const navigation = useNavigation();
+function SelectLanguage() {
   const settings = useSettings();
 
   return (
@@ -25,7 +21,6 @@ function SelectLanguage(props: Props) {
           <Button
             caption="English"
             onPress={() => {
-              // navigation.navigate('Onboarding');
               settings.updateLocale('en');
             }}
           />

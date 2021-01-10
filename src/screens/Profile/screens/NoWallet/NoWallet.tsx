@@ -1,12 +1,12 @@
+import globalStyles from 'constants/styles';
+
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect} from 'react';
-import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
-
+import {Image, Text, View, ScrollView} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {usePrivateKeyStorage} from 'services/web3';
-import globalStyles from 'constants/styles';
 
 interface Props {}
 
@@ -25,7 +25,7 @@ function NoWallet(_: Props) {
         routes: [{name: 'MyProfile'}],
       });
     }
-  }, [unlocked]);
+  }, [unlocked, navigation]);
 
   return (
     <ScrollView>

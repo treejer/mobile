@@ -1,9 +1,8 @@
+import {colors} from 'constants/values';
+
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-
-import {Times} from 'components/Icons';
-import {colors} from 'constants/values';
 import {TouchableProps} from 'react-native-svg';
 
 interface Props<P> extends TouchableProps {

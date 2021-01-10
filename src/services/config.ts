@@ -1,3 +1,4 @@
+/* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 const config = {
   contracts: {
     TreeFactory: {
@@ -22,6 +23,7 @@ const config = {
   publicKeyRecoveryMessage: process.env.REACT_NATIVE_PUBLIC_KEY_RECOVERY_MESSAGE,
   treejerClientSecret: process.env.REACT_NATIVE_TREEJER_CLIENT_SECRET,
   treejerClientId: process.env.REACT_NATIVE_TREEJER_CLIENT_ID,
+  googleMapsApiKey: process.env.REACT_NATIVE_GOOGLE_MAPS_API_KEY,
 };
 
 export default config;

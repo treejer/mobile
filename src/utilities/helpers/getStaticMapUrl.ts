@@ -1,7 +1,9 @@
 import {colors} from 'constants/values';
-import qs from 'qs';
 
-const API_KEY = process.env.REACT_NATIVE_GOOGLE_MAPS_API_KEY;
+import qs from 'qs';
+import config from 'services/config';
+
+const API_KEY = config.googleMapsApiKey;
 const baseUrl = 'https://maps.googleapis.com/maps/api/staticmap';
 
 interface Coordinate {
@@ -51,7 +53,7 @@ function getStaticMapUrl({height, width, markers, path, zoom, maptype = 'satelli
         fillcolor: path.fillcolor ?? defaultColor,
         weight: path.weight ?? 1,
       })}|${path.coordinates.map(joinCoordinate).join('|')}`,
-    // TODO: Support multiple markers
+    // NOTE: Support multiple markers
     center: markers && `${joinCoordinate(markers[0].coordinate)}`,
     markers: markers && `color:${defaultColor}|${joinCoordinate(markers[0].coordinate)}`,
     size: `${Math.floor(width)}x${Math.floor(height)}`,

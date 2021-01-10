@@ -1,12 +1,11 @@
+import globalStyles from 'constants/styles';
+
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
 import {CommonActions, useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Polygon, Marker, Region} from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import {Point, pointSort, upperLeft} from 'utilities/helpers/latLng';
 import Steps from 'components/Steps';
 import Spacer from 'components/Spacer';
@@ -182,6 +181,7 @@ function CreateGreenBlcok(_: Props) {
                     )}
                     {polygon.length < 4 &&
                       polygon.map((point, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
                         <Marker key={index} coordinate={point}>
                           <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: 'red'}} />
                         </Marker>
@@ -232,22 +232,5 @@ function CreateGreenBlcok(_: Props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  word: {
-    marginRight: 10,
-    marginBottom: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 15,
-    borderColor: colors.gray,
-    borderWidth: 1,
-  },
-  mapImage: {
-    width: '100%',
-    height: 130,
-    borderRadius: 10,
-  },
-});
 
 export default CreateGreenBlcok;

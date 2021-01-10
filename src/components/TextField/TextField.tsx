@@ -1,9 +1,10 @@
+import {fontNormal} from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React from 'react';
 import {StyleSheet, TextInput, TextInputProps} from 'react-native';
 import {Controller, Control, ValidationRules, FieldError} from 'react-hook-form';
 import PhoneInput, {PhoneInputProps} from 'react-native-phone-number-input';
-import {fontNormal} from 'constants/styles';
-import {colors} from 'constants/values';
 
 type OwnProps = {
   defaultValue?: string;
@@ -50,6 +51,8 @@ const TextField = React.forwardRef<TextInput, TextFieldProps>(
   },
 );
 
+TextField.displayName = 'TextField';
+
 export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
   ({control, name, rules, defaultValue = '', success, error, ...props}: PhoneFieldProps, ref) => {
     const inputProps = {
@@ -88,6 +91,8 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
     return <PhoneInput {...inputProps} />;
   },
 );
+
+PhoneField.displayName = 'PhoneField';
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -1,7 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacityProps, TextProps, ViewProps} from 'react-native';
-import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
+import {View, StyleSheet, TouchableOpacityProps, ViewProps} from 'react-native';
 
 interface Props extends TouchableOpacityProps {
   children: React.ReactNode;
@@ -15,6 +13,8 @@ const Card = React.forwardRef<View, Props>(({children, style}, ref) => {
     </View>
   );
 });
+
+Card.displayName = 'Card';
 
 const styles = StyleSheet.create({
   container: {

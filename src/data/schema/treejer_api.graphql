@@ -1,5 +1,5 @@
 type User {
-  id: Int!
+  id: ID!
   name: String!
   email: String!
   emailVerifiedAt: String
@@ -17,7 +17,7 @@ type PlanterTreesCount {
 }
 
 type TreeUpdate {
-  id: Int!
+  id: ID!
   updateId: Int!
   treeId: Int!
   image: String!
@@ -29,7 +29,7 @@ type TreeUpdate {
 }
 
 type Tree {
-  id: Int!
+  id: ID!
   treeId: ID!
   gbId: Int!
   typeId: Int

@@ -1,17 +1,17 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
-
-import globalStyles from 'constants/styles';
+import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {TreesQueryQueryData} from '../../screens/GreenBlock/screens/MyCommunity/graphql/TreesQuery.graphql';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useNavigation} from '@react-navigation/native';
+import {Tree} from 'types';
 
 interface Props {
-  onSelect(tree: TreesQueryQueryData.TreesTreesData): void;
+  onSelect(tree: Tree): void;
   loading?: boolean;
-  trees?: TreesQueryQueryData.TreesTreesData[];
+  trees?: Tree[];
 }
 
 function Trees({onSelect, loading, trees}: Props) {
@@ -39,7 +39,7 @@ function Trees({onSelect, loading, trees}: Props) {
   }
   return (
     <View style={[globalStyles.horizontalStack, globalStyles.flexWrap, styles.wrapper]}>
-      {trees?.map((tree, index) => (
+      {trees?.map(tree => (
         <TouchableOpacity style={styles.tree} key={tree.treeId} onPress={() => onSelect(tree)}>
           <Image
             style={[styles.treeImage, tree.fundedDate && styles.inactiveTree]}

@@ -1,7 +1,8 @@
+import {colors} from 'constants/values';
+
 import React, {memo} from 'react';
 import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
-import {colors} from 'constants/values';
 import {useTransition} from 'utilities/hooks';
 
 interface Props {

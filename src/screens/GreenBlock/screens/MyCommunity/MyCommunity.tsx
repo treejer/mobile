@@ -1,11 +1,11 @@
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions, RefreshControl} from 'react-native';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import * as Linking from 'expo-linking';
-
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
@@ -14,14 +14,14 @@ import TreeList from 'components/TreeList';
 import IconButton from 'components/IconButton';
 import {Plus} from 'components/Icons';
 import {useApolloClient, useQuery} from '@apollo/react-hooks';
-import {useGBFactory, useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'services/web3';
 import {getStaticMapUrl} from 'utilities/helpers';
+import {NetworkStatus} from 'apollo-boost';
 
 import treesQuery, {TreesQueryQueryData} from './graphql/TreesQuery.graphql';
 import greenBlockIdQuery from './graphql/GreenBlockIdQuery.graphql';
 import planterQuery from './graphql/GreenBlockPlanterQuery.graphql';
 import greenBlockDetailsQuery from './graphql/GreenBlockDetailsQuery.graphql';
-import {NetworkStatus} from 'apollo-boost';
 
 interface Props {}
 
@@ -79,7 +79,7 @@ function MyCommunity(_: Props) {
     fetchPolicy: 'cache-first',
     skip: !account,
     onCompleted(data) {
-      if (data?.GBFactory?.greenBlockId == 0) {
+      if (!data?.GBFactory?.greenBlockId) {
         navigation.dispatch(state => {
           const routes = [{name: 'CreateGreenBlock'}];
 
@@ -107,7 +107,6 @@ function MyCommunity(_: Props) {
   });
 
   const greenBlockId = greenBlockIdQueryResult.data?.GBFactory.greenBlockId;
-  // const greenBlockId = '3';
 
   const greenBlockDetailsQueryResult = useQuery(greenBlockDetailsQuery, {
     variables: {
@@ -138,34 +137,58 @@ function MyCommunity(_: Props) {
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
           <Button
             caption="My Community"
-            variant={currentView === GreenBlockView.MyCommunity ? 'secondary' : 'primary'}
+            variant={selectBasedOnView(GreenBlockView.MyCommunity, 'primary', 'secondary')}
             onPress={() => setCurrentView(GreenBlockView.MyCommunity)}
             disabled={currentView === GreenBlockView.MyCommunity}
           />
           <Spacer times={2} />
           <Button
             caption="My Trees"
-            variant={currentView === GreenBlockView.MyTrees ? 'secondary' : 'primary'}
+            variant={selectBasedOnView(GreenBlockView.MyCommunity, 'secondary', 'primary')}
             onPress={() => setCurrentView(GreenBlockView.MyTrees)}
             disabled={currentView === GreenBlockView.MyTrees}
           />
         </View>
         <Spacer times={6} />
-        {currentView === GreenBlockView.MyCommunity ? renderMyCommunity() : renderMyTrees()}
+        {renderContent()}
       </View>
     </ScrollView>
   );
 
+  function renderContent() {
+    return currentView === GreenBlockView.MyCommunity ? renderMyCommunity() : renderMyTrees();
+  }
+
+  function selectBasedOnView<T1 extends any, T2 extends any>(
+    view: GreenBlockView,
+    valueIfTrue: T1,
+    valueIfFalse: T2,
+  ): T1 | T2 {
+    return currentView === view ? valueIfTrue : valueIfFalse;
+  }
+
   function renderMyCommunity() {
+    const mapImageMarkup =
+      coordinates.length === 0 ? (
+        <ShimmerPlaceholder style={styles.mapImage} shimmerColors={['#ebebeb', '#f1f1f1', '#ebebeb']} />
+      ) : (
+        <Image
+          resizeMode="cover"
+          style={styles.mapImage}
+          source={{
+            uri: getStaticMapUrl({
+              path: {
+                coordinates,
+              },
+              width: mapWidth,
+              height: mapWidth / 2,
+            }),
+          }}
+        />
+      );
+
     return (
       <>
-        {/*
-        <Text style={[globalStyles.normal, globalStyles.textCenter]}>Trust Score</Text>
-        <Spacer times={1} />
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>83/100</Text>
-        <Spacer times={6} />
-        */}
-
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
           {!planters && (
             <ShimmerPlaceholder
@@ -206,23 +229,7 @@ function MyCommunity(_: Props) {
           <Card>
             <Text style={[globalStyles.h6, globalStyles.textCenter]}>Green Block Location</Text>
             <Spacer times={6} />
-            {coordinates.length === 0 ? (
-              <ShimmerPlaceholder style={styles.mapImage} shimmerColors={['#ebebeb', '#f1f1f1', '#ebebeb']} />
-            ) : (
-              <Image
-                resizeMode="cover"
-                style={styles.mapImage}
-                source={{
-                  uri: getStaticMapUrl({
-                    path: {
-                      coordinates,
-                    },
-                    width: mapWidth,
-                    height: mapWidth / 2,
-                  }),
-                }}
-              />
-            )}
+            {mapImageMarkup}
           </Card>
         </View>
       </>

@@ -1,20 +1,19 @@
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, View, ScrollView, Text, Alert} from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-
 import globalStyles from 'constants/styles';
+
+import React, {useCallback, useState} from 'react';
+import {View, Text, Alert} from 'react-native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
 import {useGBFactory, useWalletAccount, useWeb3} from 'services/web3';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import {GreenBlockRouteParamList} from 'screens/GreenBlock/GreenBlock';
 import config from 'services/config';
+import {GreenBlockRouteParamList} from 'types';
 
 interface Props {}
 
 function AcceptInvitation(_: Props) {
-  const navigation = useNavigation();
   const {
     params: {greenBlockId},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'AcceptInvitation'>>();
@@ -64,7 +63,5 @@ function AcceptInvitation(_: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default AcceptInvitation;

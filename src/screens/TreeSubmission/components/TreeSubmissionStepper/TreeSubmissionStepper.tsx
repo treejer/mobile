@@ -1,9 +1,9 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {Text, View} from 'react-native';
-
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
-import globalStyles from 'constants/styles';
 
 interface Props {
   currentStep: number;

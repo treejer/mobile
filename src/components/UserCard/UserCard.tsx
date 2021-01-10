@@ -1,7 +1,9 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+
 import Avatar from '../Avatar';
-import globalStyles from 'constants/styles';
 
 interface Props {
   name: string;

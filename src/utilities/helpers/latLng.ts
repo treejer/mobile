@@ -10,14 +10,14 @@ export class Point implements LatLng {
   }
 
   distance(that: Point) {
-    var dX = that.x - this.x;
-    var dY = that.y - this.y;
+    const dX = that.x - this.x;
+    const dY = that.y - this.y;
     return Math.sqrt(dX * dX + dY * dY);
   }
 
   slope(that: Point) {
-    var dX = that.x - this.x;
-    var dY = that.y - this.y;
+    const dX = that.x - this.x;
+    const dY = that.y - this.y;
     return dY / dX;
   }
 }
@@ -27,16 +27,16 @@ export class Point implements LatLng {
 export function pointSort(upper: Point) {
   return (p1: Point, p2: Point) => {
     // Exclude the 'upper' point from the sort (which should come first).
-    if (p1 == upper) return -1;
-    if (p2 == upper) return 1;
+    if (p1 === upper) return -1;
+    if (p2 === upper) return 1;
 
     // Find the slopes of 'p1' and 'p2' when a line is
     // drawn from those points through the 'upper' point.
-    var m1 = upper.slope(p1);
-    var m2 = upper.slope(p2);
+    const m1 = upper.slope(p1);
+    const m2 = upper.slope(p2);
 
     // 'p1' and 'p2' are on the same line towards 'upper'.
-    if (m1 == m2) {
+    if (m1 === m2) {
       // The point closest to 'upper' will come first.
       return p1.distance(upper) < p2.distance(upper) ? -1 : 1;
     }
@@ -54,10 +54,10 @@ export function pointSort(upper: Point) {
 
 // Find the upper most point. In case of a tie, get the left most point.
 export function upperLeft(points: Point[]) {
-  var top = points[0];
-  for (var i = 1; i < points.length; i++) {
-    var temp = points[i];
-    if (temp.y > top.y || (temp.y == top.y && temp.x < top.x)) {
+  let top = points[0];
+  for (let i = 1; i < points.length; i++) {
+    const temp = points[i];
+    if (temp.y > top.y || (temp.y === top.y && temp.x < top.x)) {
       top = temp;
     }
   }

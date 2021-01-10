@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {ApolloClient, InMemoryCache, ApolloLink, fromPromise, Observable} from 'apollo-boost';
+import {ApolloClient, InMemoryCache, ApolloLink} from 'apollo-boost';
 import {ApolloProvider as OriginalApolloProvider} from '@apollo/react-hooks';
 import {RestLink} from 'apollo-link-rest';
 import {onError} from 'apollo-link-error';
@@ -13,7 +13,7 @@ import config from './config';
 import {useAccessToken, useWeb3} from './web3';
 
 function createRestLink(accessToken?: string) {
-  const errorLink = onError(({graphQLErrors, networkError, response}) => {
+  const errorLink = onError(({graphQLErrors, response}) => {
     // console.log(`[Network error]:`, networkError);
     // console.log(`[graphQLErrors error]:`, graphQLErrors);
     if (graphQLErrors) {
@@ -32,7 +32,8 @@ function createRestLink(accessToken?: string) {
         formData: (data: Record<string, any>, headers: Headers) => {
           const formData = new FormData();
           let hasFile = false;
-          for (let key in data) {
+          for (const key in data) {
+            // eslint-disable-next-line no-prototype-builtins
             if (data.hasOwnProperty(key)) {
               const value = data[key];
 

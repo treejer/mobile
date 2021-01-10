@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql-typed";
-import { ApplyInput } from "../../../../../schema/treejer_api-types";
+import { ApplyInput } from "../../../../../data/schema/treejer_api-types";
 export namespace UserApplyMutationPartialData {
   export interface Apply {
     __typename?: "ApplyMutationResponse" | null;

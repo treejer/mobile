@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql-typed";
-import { UpdateMobileInput } from "../../../../../schema/treejer_api-types";
+import { UpdateMobileInput } from "../../../../../data/schema/treejer_api-types";
 export namespace UpdateMobileMutationPartialData {
   export interface UpdateMobile {
     __typename?: "ResponseWithMessage" | null;

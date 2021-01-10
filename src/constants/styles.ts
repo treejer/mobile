@@ -1,5 +1,6 @@
-import {Platform, StatusBar, StyleSheet, TextStyle} from 'react-native';
 import {colors} from 'constants/values';
+
+import {Platform, StatusBar, StyleSheet, TextStyle} from 'react-native';
 
 export const fontDefaultColor: TextStyle = {
   color: colors.grayDarker,
@@ -24,6 +25,8 @@ export const fontLight: TextStyle = {
   fontFamily: 'Montserrat-Light',
   ...fontDefaultColor,
 };
+
+const space = [0, 20, 25, 30];
 
 const globalStyles = StyleSheet.create({
   fill: {
@@ -87,9 +90,6 @@ const globalStyles = StyleSheet.create({
     fontSize: 14,
     ...fontMedium,
   },
-  pl1: {
-    paddingStart: 20,
-  },
   alignItemsCenter: {
     alignItems: 'center',
   },
@@ -102,35 +102,41 @@ const globalStyles = StyleSheet.create({
   justifyContentCenter: {
     justifyContent: 'center',
   },
-  p1: {
-    padding: 20,
-  },
-  p2: {
-    padding: 25,
-  },
-  p3: {
-    padding: 30,
-  },
   textCenter: {
     textAlign: 'center',
   },
+  p1: {
+    padding: space[1],
+  },
+  p2: {
+    padding: space[2],
+  },
+  p3: {
+    padding: space[3],
+  },
+  pl1: {
+    paddingStart: space[1],
+  },
+  pr1: {
+    paddingVertical: space[1],
+  },
   pt1: {
-    paddingTop: 20,
+    paddingTop: space[1],
   },
   pt3: {
-    paddingTop: 30,
+    paddingTop: space[3],
   },
   pv1: {
-    paddingVertical: 20,
+    paddingVertical: space[1],
   },
   ph1: {
-    paddingHorizontal: 20,
+    paddingHorizontal: space[1],
   },
   mb1: {
-    marginBottom: 20,
+    marginBottom: space[1],
   },
   mt3: {
-    paddingTop: 30,
+    paddingTop: space[3],
   },
 });
 

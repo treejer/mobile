@@ -11,6 +11,7 @@ export default ({config}: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
+    package: 'com.treejer.ranger',
     intentFilters: [
       {
         action: 'VIEW',

@@ -22,6 +22,7 @@ export async function getTreejerApiAccessToken(privateKey: string, web3: Web3) {
     headers: {
       'Content-Type': 'application/json',
     },
+    /* eslint-disable @typescript-eslint/naming-convention */
     body: JSON.stringify({
       client_id: config.treejerClientId,
       client_secret: config.treejerClientSecret,
@@ -29,6 +30,7 @@ export async function getTreejerApiAccessToken(privateKey: string, web3: Web3) {
       provider: 'wallet',
       access_token: web3.eth.accounts.sign(config.publicKeyRecoveryMessage, privateKey).signature,
     }),
+    /* eslint-enable @typescript-eslint/naming-convention */
   });
 
   const value = await response.json();

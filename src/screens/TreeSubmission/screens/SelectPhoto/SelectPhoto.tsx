@@ -1,13 +1,14 @@
+import globalStyles from 'constants/styles';
+
 import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import globalStyles from 'constants/styles';
 import * as ImagePicker from 'expo-image-picker';
 import React, {useCallback} from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {TreeSubmissionRouteParamList} from 'screens/TreeSubmission/TreeSubmission';
+import {TreeSubmissionRouteParamList} from 'types';
 
 interface Props {}
 
@@ -38,7 +39,7 @@ function SelectPhoto(_: Props) {
         });
       }
     }
-  }, [navigation]);
+  }, [navigation, journey]);
 
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>

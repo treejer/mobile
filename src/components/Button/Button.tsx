@@ -1,8 +1,9 @@
+import {colors} from 'constants/values';
+import globalStyles, {fontMedium} from 'constants/styles';
+
 import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacityProps, TextProps, ViewProps, ActivityIndicator} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {colors} from 'constants/values';
-import globalStyles, {fontMedium} from 'constants/styles';
 
 type Props = {
   caption: string;

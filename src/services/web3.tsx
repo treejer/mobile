@@ -3,8 +3,9 @@ import * as SecureStore from 'expo-secure-store';
 import Web3 from 'web3';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
-import config from './config';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
+
+import config from './config';
 
 export const Web3Context = React.createContext({
   web3: {} as Web3,
@@ -33,9 +34,12 @@ function Web3Provider({children, privateKey}: Props) {
 
   const previousWeb3 = useRef<Web3 | null>(null);
 
-  const addToWallet = (privateKey: string) => {
-    web3.eth.accounts.wallet.add(privateKey);
-  };
+  const addToWallet = useCallback(
+    (privateKey: string) => {
+      web3.eth.accounts.wallet.add(privateKey);
+    },
+    [web3],
+  );
 
   const updateAccessToken = useCallback(
     (privateKey: string) =>
@@ -50,12 +54,15 @@ function Web3Provider({children, privateKey}: Props) {
     [web3],
   );
 
-  const storePrivateKey = useCallback(async (privateKey: string) => {
-    addToWallet(privateKey);
+  const storePrivateKey = useCallback(
+    async (privateKey: string) => {
+      addToWallet(privateKey);
 
-    await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
-    await updateAccessToken(privateKey);
-  }, []);
+      await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
+      await updateAccessToken(privateKey);
+    },
+    [updateAccessToken, addToWallet],
+  );
 
   useEffect(() => {
     if (privateKey) {
@@ -63,9 +70,8 @@ function Web3Provider({children, privateKey}: Props) {
     } else {
       setWaiting(false);
     }
-  }, [privateKey]);
+  }, [privateKey, updateAccessToken]);
 
-  // TODO: Refactor
   // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
   if (privateKey && previousWeb3.current !== web3) {
     previousWeb3.current = web3;
@@ -90,7 +96,8 @@ function Web3Provider({children, privateKey}: Props) {
 }
 
 const useContract = (web3: Web3, {abi, address}: {abi: any; address: string}) =>
-  useMemo(() => new web3.eth.Contract(abi, address), [web3]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useMemo(() => new web3.eth.Contract(abi, address), [web3, address]);
 
 export default memo(Web3Provider);
 
@@ -116,14 +123,18 @@ export const usePersistedWallet = () => {
   const [privateKey, setPrivateKey] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
 
-  SecureStore.getItemAsync(config.storageKeys.privateKey).then(key => {
-    if (key) {
-      setPrivateKey(key);
-      setLoaded(true);
-    } else {
-      setLoaded(true);
-    }
-  });
+  SecureStore.getItemAsync(config.storageKeys.privateKey)
+    .then(key => {
+      if (key) {
+        setPrivateKey(key);
+        setLoaded(true);
+      } else {
+        setLoaded(true);
+      }
+    })
+    .catch(() => {
+      console.warn('Failed to get fetch stored private key');
+    });
 
   return [loaded, privateKey] as const;
 };

@@ -1,8 +1,9 @@
-import {View} from 'react-native';
 import {StepContainer, Step, StepContent} from './Steps';
 
-export default {
+const Steps = {
   Container: StepContainer,
   Step,
   Content: StepContent,
 };
+
+export default Steps;

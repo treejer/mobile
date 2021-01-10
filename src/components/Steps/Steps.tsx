@@ -1,7 +1,8 @@
-import * as React from 'react';
-import {StyleSheet, View, Text, ViewProps} from 'react-native';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
+
+import * as React from 'react';
+import {StyleSheet, View, Text, ViewProps} from 'react-native';
 
 interface StepProps {
   children: React.ReactNode;

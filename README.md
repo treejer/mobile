@@ -11,11 +11,9 @@
 
 Treejer empowers local people to save the planet by providing a unique borderless approach in Climate Action powered by blockchain technology.
 
-Treejer Ranger is a mobile app that allows planters and rural ambassadors submit updates on the status of trees and claim their rewards.
+Treejer Ranger is a mobile app that allows planters and rural ambassadors to submit updates on the status of trees and claim their rewards.
 
 ## 🚀 How to develop/debug
-
-#### Creating a new project
 
 - Install expo CLI: `yarn global add expo-cli`
 - `cd` into the project

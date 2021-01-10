@@ -60,29 +60,33 @@ export const useSettingsInitialValue = () => {
   });
 
   useEffect(() => {
-    AsyncStorage.multiGet([LOCALE_KEY, ONBOARDING_DONE_KEY]).then(stores => {
-      const result = stores.reduce(
-        (result, [key, value]) => {
-          switch (key) {
-            case LOCALE_KEY:
-              return {
-                ...result,
-                locale: value ?? '',
-              };
-            case ONBOARDING_DONE_KEY:
-              return {
-                ...result,
-                onboardingDone: Boolean(value) ?? false,
-              };
-            default:
-              return result;
-          }
-        },
-        {loaded: true} as InitialValueHookResult,
-      );
+    AsyncStorage.multiGet([LOCALE_KEY, ONBOARDING_DONE_KEY])
+      .then(stores => {
+        const result = stores.reduce(
+          (result, [key, value]) => {
+            switch (key) {
+              case LOCALE_KEY:
+                return {
+                  ...result,
+                  locale: value ?? '',
+                };
+              case ONBOARDING_DONE_KEY:
+                return {
+                  ...result,
+                  onboardingDone: Boolean(value) ?? false,
+                };
+              default:
+                return result;
+            }
+          },
+          {loaded: true} as InitialValueHookResult,
+        );
 
-      setInitialValue(result);
-    });
+        setInitialValue(result);
+      })
+      .catch(() => {
+        console.warn('Failed to get settings info from storage');
+      });
   }, []);
 
   return initialValue;

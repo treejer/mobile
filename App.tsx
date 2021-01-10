@@ -8,7 +8,6 @@ import Onboarding from './src/screens/Onboarding';
 import Web3Provider, {Web3Context, usePersistedWallet} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
 import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
-// import PasswordProtected from './src/screens/PasswordProtected';
 
 function App() {
   const [fontsLoaded] = useFonts({

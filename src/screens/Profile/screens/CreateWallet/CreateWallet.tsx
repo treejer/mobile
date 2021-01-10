@@ -1,24 +1,21 @@
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 import {Account} from 'web3-core';
-
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import TextField from 'components/TextField';
 import {ChevronLeft} from 'components/Icons';
 import Steps from 'components/Steps';
 import {usePrivateKeyStorage, useWeb3} from 'services/web3';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-interface Props {}
-
-function CreateWallet(props: Props) {
+function CreateWallet() {
   const navigation = useNavigation();
-  const {control, handleSubmit, errors} = useForm<{
+  const {handleSubmit} = useForm<{
     password: string;
   }>();
   const [currentStep, setCurrentStep] = useState(1);
@@ -33,11 +30,15 @@ function CreateWallet(props: Props) {
     requestAnimationFrame(() => {
       const account = web3.eth.accounts.create();
       web3.eth.accounts.wallet.add(account);
-      storePrivateKey(account.privateKey, password).then(() => {
-        setAccount(account);
-        setCurrentStep(2);
-        setLoading(false);
-      });
+      storePrivateKey(account.privateKey, password)
+        .then(() => {
+          setAccount(account);
+          setCurrentStep(2);
+          setLoading(false);
+        })
+        .catch(() => {
+          console.warn('Error saving private key');
+        });
     });
   });
 
@@ -65,37 +66,7 @@ function CreateWallet(props: Props) {
           <Steps.Step step={1}>
             <View>
               <Text style={globalStyles.h6}>Set up wallet</Text>
-              {currentStep > 1 ? (
-                doneMarkup
-              ) : (
-                <>
-                  {/* <Spacer times={3} />
-                  <TextField
-                    control={control}
-                    name="password"
-                    placeholder="Password"
-                    secureTextEntry
-                    rules={{required: true}}
-                    error={errors.password}
-                  />
-                  <Spacer times={1} />
-                  <Text style={globalStyles.normal}>Some hint about the password</Text> */}
-                  <Spacer times={3} />
-                  <View
-                    style={[globalStyles.alignItemsStart, globalStyles.alignItemsCenter, globalStyles.horizontalStack]}
-                  >
-                    <Button
-                      disabled={loading}
-                      variant="success"
-                      caption="Set up account"
-                      onPress={handleConnectWallet}
-                    />
-                    <Spacer />
-                    {loading && <ActivityIndicator color="#000000" />}
-                  </View>
-                  <Spacer times={2} />
-                </>
-              )}
+              {renderSetupWallet()}
             </View>
           </Steps.Step>
 
@@ -105,30 +76,55 @@ function CreateWallet(props: Props) {
               <Text style={globalStyles.h6}>Recovery phrase</Text>
               <Spacer times={1} />
 
-              {currentStep === 2 && (
-                <>
-                  <Spacer times={2} />
-                  <View style={[globalStyles.horizontalStack, {flexWrap: 'wrap'}]}>
-                    {recoveryPhrase.map(word => (
-                      <Text key={word} style={[globalStyles.normal, styles.word]}>
-                        {word}
-                      </Text>
-                    ))}
-                  </View>
-                  <Spacer times={2} />
-                  <Text style={[globalStyles.normal]}>{JSON.stringify(account)}</Text>
-                  <Spacer times={3} />
-                  <View style={globalStyles.alignItemsStart}>
-                    <Button variant="success" caption="Done" onPress={() => navigation.goBack()} />
-                  </View>
-                </>
-              )}
+              {renderRecoveryPhrase()}
             </View>
           </Steps.Step>
         </Steps.Container>
       </View>
     </ScrollView>
   );
+
+  function renderSetupWallet() {
+    if (currentStep > 1) {
+      return doneMarkup;
+    }
+    return (
+      <>
+        <Spacer times={3} />
+        <View style={[globalStyles.alignItemsStart, globalStyles.alignItemsCenter, globalStyles.horizontalStack]}>
+          <Button disabled={loading} variant="success" caption="Set up account" onPress={handleConnectWallet} />
+          <Spacer />
+          {loading && <ActivityIndicator color="#000000" />}
+        </View>
+        <Spacer times={2} />
+      </>
+    );
+  }
+
+  function renderRecoveryPhrase() {
+    if (currentStep !== 2) {
+      return null;
+    }
+
+    return (
+      <>
+        <Spacer times={2} />
+        <View style={[globalStyles.horizontalStack, {flexWrap: 'wrap'}]}>
+          {recoveryPhrase.map(word => (
+            <Text key={word} style={[globalStyles.normal, styles.word]}>
+              {word}
+            </Text>
+          ))}
+        </View>
+        <Spacer times={2} />
+        <Text style={[globalStyles.normal]}>{JSON.stringify(account)}</Text>
+        <Spacer times={3} />
+        <View style={globalStyles.alignItemsStart}>
+          <Button variant="success" caption="Done" onPress={() => navigation.goBack()} />
+        </View>
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

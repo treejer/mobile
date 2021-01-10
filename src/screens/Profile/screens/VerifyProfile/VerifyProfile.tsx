@@ -1,59 +1,26 @@
+import globalStyles from 'constants/styles';
+
 import React, {useMemo, useRef, useState} from 'react';
-import {View, Text, StyleSheet, Platform} from 'react-native';
+import {View, Text, Platform, Alert} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useForm} from 'react-hook-form';
-import gql from 'graphql-tag';
 import PhoneInput from 'react-native-phone-number-input';
 import {useNavigation} from '@react-navigation/native';
+import {useMutation, useQuery} from '@apollo/react-hooks';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 import * as ImagePicker from 'expo-image-picker';
-
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import TextField, {PhoneField} from 'components/TextField';
-import globalStyles from 'constants/styles';
-import {useMutation, useQuery} from '@apollo/react-hooks';
-
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 
-const userApplyMutation = gql`
-  mutation UserApply($input: any) {
-    apply(input: $input)
-      @rest(type: "UserApplyResponse", method: "POST", path: "/users/apply", bodySerializer: "formData") {
-      message
-    }
-  }
-`;
+import userApplyMutation from './graphql/UserApplyMutation.graphql';
+import updateMobileMutation from './graphql/UpdateMobileMutation.graphql';
+import sendSmsMutation from './graphql/SendSMSMutation.graphql';
+import verifyMobileMutation from './graphql/VerifyMobileMutation.graphql';
 
-const updateMobileMutation = gql`
-  mutation UpdateMobile($input: any) {
-    updateMobile(input: $input) @rest(type: "UserUpdateMobileResponse", method: "PUT", path: "/users/updateMobile") {
-      message
-    }
-  }
-`;
-
-const sendSmsMutation = gql`
-  mutation SendSMS {
-    requestSMS(input: {}) @rest(type: "UserSendSMSResponse", method: "POST", path: "/mobile/resend") {
-      message
-    }
-  }
-`;
-
-const verifyMobileMutation = gql`
-  mutation SendSMS($token: String!) {
-    verifyMobile(input: {token: $token})
-      @rest(type: "UserVerifyMobileResponse", method: "POST", path: "/mobile/verify") {
-      message
-    }
-  }
-`;
-
-interface Props {}
-
-function VerifyProfile(props: Props) {
+function VerifyProfile() {
   const [verifyProfile] = useMutation(userApplyMutation);
   const [updateMobile] = useMutation(updateMobileMutation, {
     fetchPolicy: 'no-cache',
@@ -89,9 +56,7 @@ function VerifyProfile(props: Props) {
     },
   });
 
-  const nameForm = useForm<{
-    fullName: string;
-  }>({
+  const nameForm = useForm<{fullName: string}>({
     mode: 'onChange',
     defaultValues: {
       fullName: '',
@@ -144,7 +109,7 @@ function VerifyProfile(props: Props) {
   const verifyPhone = phoneNumberForm.handleSubmit(async ({token}) => {
     try {
       setSubmitting(true);
-      const response = await verifyMobile({
+      await verifyMobile({
         variables: {
           token,
         },
@@ -176,7 +141,7 @@ function VerifyProfile(props: Props) {
     try {
       setSubmitting(true);
 
-      const result = await verifyProfile({
+      await verifyProfile({
         variables: {
           input: {
             name: data.fullName,
@@ -207,7 +172,7 @@ function VerifyProfile(props: Props) {
     if (Platform.OS !== 'web') {
       const {status} = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        alert('Sorry, we need camera permissions to make this work!');
+        Alert.alert('Permission required', 'Sorry, we need camera permissions to make this work!');
       }
     }
 
@@ -244,56 +209,7 @@ function VerifyProfile(props: Props) {
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>Add phone</Text>
-              {currentStep === 2 ? (
-                <>
-                  <Spacer times={2} />
-                  {!requestedMobileVerification && (
-                    <>
-                      <PhoneField
-                        control={phoneNumberForm.control}
-                        name="phoneNumber"
-                        error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
-                        ref={phoneRef}
-                        textInputStyle={{height: 24, paddingLeft: 0}}
-                        defaultCode={(user.mobileCountry as any) ?? 'CA'}
-                        placeholder="Phone #"
-                      />
-                      <Spacer times={4} />
-                      <Button
-                        variant="success"
-                        onPress={submitPhoneNumber}
-                        caption="Verify"
-                        disabled={submitting}
-                        loading={submitting}
-                      />
-                    </>
-                  )}
-                  {requestedMobileVerification && (
-                    <>
-                      <TextField
-                        control={phoneNumberForm.control}
-                        placeholder="CODE"
-                        keyboardType="number-pad"
-                        error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.token}
-                        name="token"
-                      />
-                      <Spacer times={4} />
-                      <Button
-                        variant="success"
-                        onPress={verifyPhone}
-                        caption="Verify"
-                        disabled={submitting}
-                        loading={submitting}
-                      />
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <Spacer times={1} />
-                  <Text style={[globalStyles.normal]}>Verified!</Text>
-                </>
-              )}
+              {renderAddPhone()}
             </View>
           </Steps.Step>
 
@@ -301,19 +217,7 @@ function VerifyProfile(props: Props) {
           <Steps.Step step={3}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>Add name</Text>
-              {currentStep > 2 && (
-                <>
-                  <Spacer times={6} />
-                  <TextField
-                    name="fullName"
-                    control={nameForm.control}
-                    style={{width: '90%'}}
-                    placeholder="Full name"
-                    success={nameForm.formState.dirtyFields.fullName && !nameForm.formState.errors.fullName}
-                    rules={{required: true}}
-                  />
-                </>
-              )}
+              {renderAddName()}
             </View>
           </Steps.Step>
 
@@ -322,39 +226,106 @@ function VerifyProfile(props: Props) {
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>Upload ID card</Text>
               <Spacer times={1} />
-
-              {currentStep === 4 && (
-                <>
-                  <Text style={[globalStyles.normal]}>ID card, passport or driving license</Text>
-                  <Spacer times={4} />
-                  <Button onPress={pickImage} caption="Open Camera" />
-                  <Spacer times={4} />
-                  {idCardImageUri ? (
-                    <Button
-                      variant="success"
-                      onPress={submitApply}
-                      caption="Submit"
-                      disabled={submitting}
-                      loading={submitting}
-                    />
-                  ) : null}
-                </>
-              )}
+              {renderUploadIdCard()}
             </View>
           </Steps.Step>
         </Steps.Container>
       </View>
     </KeyboardAwareScrollView>
   );
-}
 
-const styles = StyleSheet.create({
-  signInText: {
-    color: '#67B68C',
-  },
-  buttonsWrapper: {
-    width: 200,
-  },
-});
+  function renderAddPhone() {
+    if (currentStep !== 2) {
+      return (
+        <>
+          <Spacer times={1} />
+          <Text style={[globalStyles.normal]}>Verified!</Text>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Spacer times={2} />
+        {!requestedMobileVerification && (
+          <>
+            <PhoneField
+              control={phoneNumberForm.control}
+              name="phoneNumber"
+              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
+              ref={phoneRef}
+              textInputStyle={{height: 24, paddingLeft: 0}}
+              defaultCode={(user.mobileCountry as any) ?? 'CA'}
+              placeholder="Phone #"
+            />
+            <Spacer times={4} />
+            <Button
+              variant="success"
+              onPress={submitPhoneNumber}
+              caption="Verify"
+              disabled={submitting}
+              loading={submitting}
+            />
+          </>
+        )}
+        {requestedMobileVerification && (
+          <>
+            <TextField
+              control={phoneNumberForm.control}
+              placeholder="CODE"
+              keyboardType="number-pad"
+              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.token}
+              name="token"
+            />
+            <Spacer times={4} />
+            <Button
+              variant="success"
+              onPress={verifyPhone}
+              caption="Verify"
+              disabled={submitting}
+              loading={submitting}
+            />
+          </>
+        )}
+      </>
+    );
+  }
+
+  function renderAddName() {
+    if (currentStep > 2) {
+      return (
+        <>
+          <Spacer times={6} />
+          <TextField
+            name="fullName"
+            control={nameForm.control}
+            style={{width: '90%'}}
+            placeholder="Full name"
+            success={nameForm.formState.dirtyFields.fullName && !nameForm.formState.errors.fullName}
+            rules={{required: true}}
+          />
+        </>
+      );
+    }
+  }
+
+  function renderUploadIdCard() {
+    const submitButtonMarkup = idCardImageUri ? (
+      <Button variant="success" onPress={submitApply} caption="Submit" disabled={submitting} loading={submitting} />
+    ) : null;
+
+    return (
+      currentStep === 4 && (
+        <>
+          <Text style={[globalStyles.normal]}>ID card, passport or driving license</Text>
+          <Spacer times={4} />
+          <Button onPress={pickImage} caption="Open Camera" />
+          <Spacer times={4} />
+          {submitButtonMarkup}
+        </>
+      )
+    );
+  }
+}
 
 export default VerifyProfile;

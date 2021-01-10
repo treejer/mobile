@@ -5,7 +5,8 @@ import {Path, PathProps} from 'react-native-svg';
 class SvgPathWrap extends Component<PathProps> {
   private _component: React.Component<PathProps, any, any>;
 
-  setNativeProps = props => {
+  // eslint-disable-next-line @shopify/react-prefer-private-members
+  public setNativeProps = props => {
     if (this._component) {
       (this._component as any).setNativeProps(props);
     }

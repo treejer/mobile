@@ -1,24 +1,13 @@
+import globalStyles from 'constants/styles';
+
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import globalStyles from 'constants/styles';
+import {Route} from '@react-navigation/native';
+import {TreeSubmissionRouteParamList} from 'types';
 
 import SubmitTree from './screens/SubmitTree';
 import SelectOnMap from './screens/SelectOnMap';
 import SelectPhoto from './screens/SelectPhoto';
-import {TreeJourney} from './types';
-import {Route} from '@react-navigation/native';
-
-export type TreeSubmissionRouteParamList = {
-  SelectPhoto: {
-    journey: TreeJourney;
-  };
-  SelectOnMap: {
-    journey: TreeJourney;
-  };
-  SubmitTree: {
-    journey: TreeJourney;
-  };
-};
 
 const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 

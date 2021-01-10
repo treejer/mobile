@@ -1,6 +1,7 @@
-import React from 'react';
-import {View, StyleSheet, Text, Image} from 'react-native';
 import {colors} from 'constants/values';
+
+import React from 'react';
+import {View, StyleSheet, Image} from 'react-native';
 import {useWalletAccount} from 'services/web3';
 
 interface Props {

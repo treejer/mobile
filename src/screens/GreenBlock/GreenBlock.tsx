@@ -1,32 +1,16 @@
 import React, {useCallback, useEffect, useRef} from 'react';
+import {Alert} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
-
-import {MainTabsParamList} from 'screens/MainTabs';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
+import TreeSubmission from 'screens/TreeSubmission';
+import {GreenBlockRouteParamList, MainTabsParamList} from 'types';
 
 import CreateGreenBlock from './screens/CreateGreenBlock';
 import MyCommunity from './screens/MyCommunity';
 import TreeDetails from './screens/TreeDetails';
 import AcceptInvitation from './screens/AcceptInvitation';
-import {TreesQueryQueryData} from './screens/MyCommunity/graphql/TreesQuery.graphql';
-import {Alert} from 'react-native';
-import TreeSubmission from 'screens/TreeSubmission';
-
-export type GreenBlockRouteParamList = {
-  CreateGreenBlock: undefined;
-  MyCommunity: undefined;
-  AcceptInvitation: {
-    greenBlockId: string;
-  };
-  TreeDetails: {
-    tree: TreesQueryQueryData.TreesTreesData;
-  };
-  TreeUpdate: {
-    treeIdToUpdate: string;
-  };
-};
 
 interface Props {
   navigation: NavigationProp<GreenBlockRouteParamList>;
@@ -62,13 +46,13 @@ function GreenBlock({navigation, route}: Props) {
     }
 
     return false;
-  }, [greenBlockIdToJoin, isVerified]);
+  }, [greenBlockIdToJoin, isVerified, navigation]);
 
   useEffect(() => {
     if (shouldNavigateToInvitation()) {
       navigation.navigate('AcceptInvitation', {greenBlockId: route.params.greenBlockIdToJoin});
     }
-  }, [shouldNavigateToInvitation]);
+  }, [shouldNavigateToInvitation, navigation, route.params]);
 
   const initialRouteName = shouldNavigateToInvitation() ? 'AcceptInvitation' : undefined;
 
