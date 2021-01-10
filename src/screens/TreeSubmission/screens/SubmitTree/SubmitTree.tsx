@@ -112,8 +112,6 @@ function SubmitTree(_: Props) {
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
         <Spacer times={10} />
-        <Text style={[globalStyles.h5, globalStyles.textCenter]}>Submit a new tree</Text>
-        <Spacer times={10} />
 
         {isReadyToSubmit ? (
           <TreeSubmissionStepper isUpdate={isUpdate} currentStep={4}>
