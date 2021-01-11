@@ -1,10 +1,16 @@
 import {ExpoConfig, ConfigContext} from '@expo/config';
 
-export default ({config}: ConfigContext): ExpoConfig => ({
+const appConfig = ({config}: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Treejer Ranger',
   slug: 'treejer-ranger',
   scheme: 'com.treejer.ranger',
+  icon: './assets/images/icon.png',
+  splash: {
+    backgroundColor: '#FAF8F0',
+    image: './assets/images/splash.png',
+    resizeMode: 'contain',
+  },
   ios: {
     config: {
       googleMapsApiKey: process.env.REACT_NATIVE_GOOGLE_MAPS_API_KEY,
@@ -12,6 +18,10 @@ export default ({config}: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: 'com.treejer.ranger',
+    adaptiveIcon: {
+      foregroundImage: './assets/images/icon.png',
+      backgroundColor: '#FAF8F0',
+    },
     intentFilters: [
       {
         action: 'VIEW',
@@ -28,3 +38,5 @@ export default ({config}: ConfigContext): ExpoConfig => ({
     ],
   },
 });
+
+export default appConfig;
