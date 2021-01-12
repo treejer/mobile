@@ -18,10 +18,22 @@ const appConfig = ({config}: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: 'com.treejer.ranger',
+    config: {
+      googleMaps: {
+        apiKey: process.env.REACT_NATIVE_GOOGLE_MAPS_ANDROID_API_KEY,
+      },
+    },
     adaptiveIcon: {
       foregroundImage: './assets/images/icon.png',
       backgroundColor: '#FAF8F0',
     },
+    permissions: [
+      'CAMERA',
+      'ACCESS_FINE_LOCATION',
+      'ACCESS_COARSE_LOCATION',
+      'READ_EXTERNAL_STORAGE',
+      'WRITE_EXTERNAL_STORAGE',
+    ],
     intentFilters: [
       {
         action: 'VIEW',

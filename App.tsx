@@ -1,8 +1,9 @@
 import './src/globals';
 import React, {useRef} from 'react';
-import {AppLoading} from 'expo';
+import AppLoading from 'expo-app-loading';
 import {useFonts} from 'expo-font';
 import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
+
 import MainTabs from './src/screens/MainTabs';
 import Onboarding from './src/screens/Onboarding';
 import Web3Provider, {Web3Context, usePersistedWallet} from './src/services/web3';

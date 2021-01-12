@@ -16,5 +16,5 @@ module.exports = {
     ],
     'react/no-unescaped-entities': 'off',
   },
-  ignorePatterns: ['*.graphql.d.ts', '*.graphql'],
+  ignorePatterns: ['*.graphql.d.ts', '*.graphql', 'data'],
 };

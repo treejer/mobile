@@ -79,7 +79,8 @@ function MyCommunity(_: Props) {
     fetchPolicy: 'cache-first',
     skip: !account,
     onCompleted(data) {
-      if (!data?.GBFactory?.greenBlockId) {
+      const greenBlockId = data?.GBFactory?.greenBlockId ?? 0;
+      if (Number(greenBlockId) === 0) {
         navigation.dispatch(state => {
           const routes = [{name: 'CreateGreenBlock'}];
 
@@ -123,7 +124,13 @@ function MyCommunity(_: Props) {
   const {data: planters} = usePlanters(greenBlockId);
 
   const greenBlockData = greenBlockDetailsQueryResult.data?.GBFactory.greenBlock;
-  const coordinates = JSON.parse(greenBlockData?.coordinates ?? '[]');
+  let coordinates: any[];
+  try {
+    coordinates = JSON.parse(greenBlockData?.coordinates ?? '[]');
+  } catch {
+    coordinates = [];
+  }
+
   const refetching = treesQueryResult.networkStatus === NetworkStatus.refetch;
 
   return (

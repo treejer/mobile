@@ -5,7 +5,7 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import * as ImagePicker from 'expo-image-picker';
 import React, {useCallback} from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -20,8 +20,9 @@ function SelectPhoto(_: Props) {
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
 
   const handleSelectPhoto = useCallback(async () => {
-    const status = await ImagePicker.getCameraPermissionsAsync();
-    if (status.granted) {
+    const {granted: grantedCamera} = await ImagePicker.requestCameraPermissionsAsync();
+    const {granted: grantedCameraRoll} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (grantedCameraRoll && grantedCamera) {
       const result = await ImagePicker.launchCameraAsync({
         exif: true,
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -38,6 +39,8 @@ function SelectPhoto(_: Props) {
           journey: newJourney,
         });
       }
+    } else {
+      Alert.alert('Permissions required', 'Camera permission is required');
     }
   }, [navigation, journey]);
 
