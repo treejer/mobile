@@ -13,8 +13,13 @@ const config = {
       address: process.env.REACT_NATIVE_CONTRACT_UPDATEFACTORY_ADDRESS,
       abi: require('../../contracts/UpdateFactory.json').abi,
     },
+    Paymaster: {
+      address: process.env.REACT_NATIVE_CONTRACT_PAYMASTER_ADDRESS,
+      abi: require('../../contracts/WhitelistPaymaster.json').abi,
+    }
   },
   networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
+  isMainnet: Boolean(process.env.REACT_NATIVE_IS_MAINNET || false),
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
   },
