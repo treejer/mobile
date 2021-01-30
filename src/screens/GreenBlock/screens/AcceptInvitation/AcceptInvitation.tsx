@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 
 import React, {useCallback, useState} from 'react';
 import {View, Text, Alert} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
@@ -21,21 +21,31 @@ function AcceptInvitation(_: Props) {
   const gbFactory = useGBFactory();
   const wallet = useWalletAccount();
   const web3 = useWeb3();
+  const navigation = useNavigation();
 
   const handleJoinGreenBlock = useCallback(async () => {
     setSubmitting(true);
     try {
-      const tx = gbFactory.methods.joinGB(greenBlockId, wallet.address);
+      const tx = gbFactory.methods.joinGB(greenBlockId);
 
       const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
       console.log('Receipt', receipt.transactionHash);
       Alert.alert('You successfully joined this green block! Start planting!');
+
+      navigation.dispatch(state =>
+        CommonActions.reset({
+          ...state,
+          routes: [{name: 'MyCommunity'}],
+          index: state.index,
+          stale: state.stale as any,
+        }),
+      );
     } catch (error) {
       console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }
-  }, [gbFactory, greenBlockId, web3, wallet]);
+  }, [gbFactory, greenBlockId, web3, wallet, navigation]);
 
   return (
     <View
@@ -58,6 +68,7 @@ function AcceptInvitation(_: Props) {
         }}
         icon={Tree}
         caption="Join"
+        disabled={submiting}
         loading={submiting}
       />
     </View>

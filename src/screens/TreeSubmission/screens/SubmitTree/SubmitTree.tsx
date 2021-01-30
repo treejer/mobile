@@ -3,7 +3,7 @@ import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Text, View, ScrollView, ActivityIndicator, Alert} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useTreeFactory, useUpdateFactory, useWeb3} from 'services/web3';
@@ -12,10 +12,15 @@ import {upload, uploadContent, getHttpDownloadUrl} from 'utilities/helpers/IPFS'
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
 import {TreeSubmissionRouteParamList} from 'types';
+import {RelayProvider} from '@opengsn/gsn';
+import Web3 from 'web3';
+import {TreeJourney} from 'screens/TreeSubmission/types';
 
 interface Props {}
 
 function SubmitTree(_: Props) {
+  const navigation = useNavigation();
+
   const {
     params: {journey},
   } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
@@ -60,6 +65,40 @@ function SubmitTree(_: Props) {
     setIsReadyToSubmit(true);
   }, [isUpdate, journey.photo, journey.location, journey.treeIdToUpdate]);
 
+  const handleSendUpdateTransaction = useCallback(
+    (treeId: number) => {
+      return updateFactory.methods.post(treeId, photoHash).send({from: wallet.address, gas: 1e6});
+    },
+    [updateFactory, wallet.address, photoHash],
+  );
+
+  const handleSendCreateTransaction = useCallback(
+    (location: TreeJourney['location']) => {
+      // Sends the transaction via the GSN
+      return treeFactory.methods
+        .plant(
+          // Type id
+          0,
+          [
+            // Metadata
+            getHttpDownloadUrl(metaDataHash),
+            // Lat
+            location.latitude.toString(),
+            // Lon
+            location.longitude.toString(),
+          ],
+          [
+            // Height
+            '1',
+            // Diameter
+            '1',
+          ],
+        )
+        .send({from: wallet.address, gas: 1e6});
+    },
+    [wallet, treeFactory, metaDataHash],
+  );
+
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
       Alert.alert('No wallet', 'Wallet not provided');
@@ -68,46 +107,27 @@ function SubmitTree(_: Props) {
 
     setSubmitting(true);
 
-    let tx: any;
-    let address: string;
-
-    if (journey.treeIdToUpdate) {
-      tx = updateFactory.methods.post(Number(journey.treeIdToUpdate), photoHash);
-      address = config.contracts.UpdateFactory.address;
-    } else {
-      tx = treeFactory.methods.plant(
-        // Type id
-        0,
-        [
-          // Metadata
-          getHttpDownloadUrl(metaDataHash),
-          // Lat
-          journey.location.latitude.toString(),
-          // Lon
-          journey.location.longitude.toString(),
-        ],
-        [
-          // Height
-          '1',
-          // Diameter
-          '1',
-        ],
-      );
-      address = config.contracts.TreeFactory.address;
-    }
-
+    let transaction: any;
     try {
-      const receipt = await sendTransaction(web3, tx, address, wallet);
-      setTxHash(receipt.transactionHash);
+      if (journey.treeIdToUpdate) {
+        transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
+        Alert.alert('Success', 'Your tree has been successfully updated');
+      } else {
+        transaction = await handleSendCreateTransaction(journey.location);
+        Alert.alert('Success', 'Your tree has been successfully submitted');
+      }
 
-      console.log(`Transaction hash: ${receipt.transactionHash}`);
+      setTxHash(transaction.hash);
+
+      console.log('Transaction: ', transaction);
+
+      navigation.navigate('GreenBlock', {});
     } catch (error) {
-      Alert.alert('Error occured', "Transaction couldn't complete");
+      Alert.alert('Error occurred', "Transaction couldn't complete");
       console.warn('Error', error);
     }
-
     setSubmitting(false);
-  }, [wallet, treeFactory, updateFactory, web3, journey, photoHash, metaDataHash]);
+  }, [wallet, journey, navigation, handleSendCreateTransaction, handleSendUpdateTransaction]);
 
   useEffect(() => {
     handleUploadToIpfs();

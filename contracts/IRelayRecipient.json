@@ -1,0 +1,772 @@
+{
+  "contractName": "IRelayRecipient",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "forwarder",
+          "type": "address"
+        }
+      ],
+      "name": "isTrustedForwarder",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "versionRecipient",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.10+commit.00c0fcaf\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"forwarder\",\"type\":\"address\"}],\"name\":\"isTrustedForwarder\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"versionRecipient\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"isTrustedForwarder(address)\":{\"notice\":\"return if the forwarder is trusted to forward relayed transactions to us. the forwarder is required to verify the sender's signature, and verify the call is not a replay.\"}},\"notice\":\"a contract must implement this interface in order to support relayed transaction. It is better to inherit the BaseRelayRecipient as its implementation.\"}},\"settings\":{\"compilationTarget\":{\"@opengsn/gsn/contracts/interfaces/IRelayRecipient.sol\":\"IRelayRecipient\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@opengsn/gsn/contracts/interfaces/IRelayRecipient.sol\":{\"keccak256\":\"0xbb9d970a466d0155113acc87f0ea403df413e070e0a1ddce66439f2f82ac6d01\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2a7d40ca09005a8a4598edc292c079be77fa0ba05f3a93514fcbe9349e8a265d\",\"dweb:/ipfs/QmbY3DJ6jf18Kprx24oadvMqrjguYUHhf2tBVd3kvCVtJc\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier:MIT\npragma solidity ^0.6.2;\n\n/**\n * a contract must implement this interface in order to support relayed transaction.\n * It is better to inherit the BaseRelayRecipient as its implementation.\n */\nabstract contract IRelayRecipient {\n\n    /**\n     * return if the forwarder is trusted to forward relayed transactions to us.\n     * the forwarder is required to verify the sender's signature, and verify\n     * the call is not a replay.\n     */\n    function isTrustedForwarder(address forwarder) public virtual view returns(bool);\n\n    /**\n     * return the sender of this call.\n     * if the call came through our trusted forwarder, then the real sender is appended as the last 20 bytes\n     * of the msg.data.\n     * otherwise, return `msg.sender`\n     * should be used in the contract anywhere instead of msg.sender\n     */\n    function _msgSender() internal virtual view returns (address payable);\n\n    /**\n     * return the msg.data of this call.\n     * if the call came through our trusted forwarder, then the real sender was appended as the last 20 bytes\n     * of the msg.data - so this method will strip those 20 bytes off.\n     * otherwise, return `msg.data`\n     * should be used in the contract instead of msg.data, where the difference matters (e.g. when explicitly\n     * signing or hashing the\n     */\n    function _msgData() internal virtual view returns (bytes memory);\n\n    function versionRecipient() external virtual view returns (string memory);\n}\n",
+  "sourcePath": "@opengsn/gsn/contracts/interfaces/IRelayRecipient.sol",
+  "ast": {
+    "absolutePath": "@opengsn/gsn/contracts/interfaces/IRelayRecipient.sol",
+    "exportedSymbols": {
+      "IRelayRecipient": [
+        7362
+      ]
+    },
+    "id": 7363,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 7335,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "31:23:30"
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 7336,
+          "nodeType": "StructuredDocumentation",
+          "src": "56:165:30",
+          "text": " a contract must implement this interface in order to support relayed transaction.\n It is better to inherit the BaseRelayRecipient as its implementation."
+        },
+        "fullyImplemented": false,
+        "id": 7362,
+        "linearizedBaseContracts": [
+          7362
+        ],
+        "name": "IRelayRecipient",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": {
+              "id": 7337,
+              "nodeType": "StructuredDocumentation",
+              "src": "263:203:30",
+              "text": " return if the forwarder is trusted to forward relayed transactions to us.\n the forwarder is required to verify the sender's signature, and verify\n the call is not a replay."
+            },
+            "functionSelector": "572b6c05",
+            "id": 7344,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isTrustedForwarder",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 7340,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7339,
+                  "mutability": "mutable",
+                  "name": "forwarder",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 7344,
+                  "src": "499:17:30",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7338,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "499:7:30",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "498:19:30"
+            },
+            "returnParameters": {
+              "id": 7343,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7342,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 7344,
+                  "src": "546:4:30",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 7341,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "546:4:30",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "545:6:30"
+            },
+            "scope": 7362,
+            "src": "471:81:30",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 7345,
+              "nodeType": "StructuredDocumentation",
+              "src": "558:290:30",
+              "text": " return the sender of this call.\n if the call came through our trusted forwarder, then the real sender is appended as the last 20 bytes\n of the msg.data.\n otherwise, return `msg.sender`\n should be used in the contract anywhere instead of msg.sender"
+            },
+            "id": 7350,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_msgSender",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 7346,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "872:2:30"
+            },
+            "returnParameters": {
+              "id": 7349,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7348,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 7350,
+                  "src": "906:15:30",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 7347,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "906:15:30",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "905:17:30"
+            },
+            "scope": 7362,
+            "src": "853:70:30",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "internal"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 7351,
+              "nodeType": "StructuredDocumentation",
+              "src": "929:409:30",
+              "text": " return the msg.data of this call.\n if the call came through our trusted forwarder, then the real sender was appended as the last 20 bytes\n of the msg.data - so this method will strip those 20 bytes off.\n otherwise, return `msg.data`\n should be used in the contract instead of msg.data, where the difference matters (e.g. when explicitly\n signing or hashing the"
+            },
+            "id": 7356,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_msgData",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 7352,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1360:2:30"
+            },
+            "returnParameters": {
+              "id": 7355,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7354,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 7356,
+                  "src": "1394:12:30",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 7353,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1394:5:30",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1393:14:30"
+            },
+            "scope": 7362,
+            "src": "1343:65:30",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "internal"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "486ff0cd",
+            "id": 7361,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "versionRecipient",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 7357,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1439:2:30"
+            },
+            "returnParameters": {
+              "id": 7360,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7359,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 7361,
+                  "src": "1473:13:30",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 7358,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1473:6:30",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1472:15:30"
+            },
+            "scope": 7362,
+            "src": "1414:74:30",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "external"
+          }
+        ],
+        "scope": 7363,
+        "src": "222:1268:30"
+      }
+    ],
+    "src": "31:1460:30"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "@opengsn/gsn/contracts/interfaces/IRelayRecipient.sol",
+      "exportedSymbols": {
+        "IRelayRecipient": [
+          7362
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.6",
+            ".2"
+          ]
+        },
+        "id": 7335,
+        "name": "PragmaDirective",
+        "src": "31:23:30"
+      },
+      {
+        "attributes": {
+          "abstract": true,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            7362
+          ],
+          "name": "IRelayRecipient",
+          "scope": 7363
+        },
+        "children": [
+          {
+            "attributes": {
+              "text": " a contract must implement this interface in order to support relayed transaction.\n It is better to inherit the BaseRelayRecipient as its implementation."
+            },
+            "id": 7336,
+            "name": "StructuredDocumentation",
+            "src": "56:165:30"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "572b6c05",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "isTrustedForwarder",
+              "overrides": null,
+              "scope": 7362,
+              "stateMutability": "view",
+              "virtual": true,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " return if the forwarder is trusted to forward relayed transactions to us.\n the forwarder is required to verify the sender's signature, and verify\n the call is not a replay."
+                },
+                "id": 7337,
+                "name": "StructuredDocumentation",
+                "src": "263:203:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "forwarder",
+                      "overrides": null,
+                      "scope": 7344,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 7338,
+                        "name": "ElementaryTypeName",
+                        "src": "499:7:30"
+                      }
+                    ],
+                    "id": 7339,
+                    "name": "VariableDeclaration",
+                    "src": "499:17:30"
+                  }
+                ],
+                "id": 7340,
+                "name": "ParameterList",
+                "src": "498:19:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 7344,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 7341,
+                        "name": "ElementaryTypeName",
+                        "src": "546:4:30"
+                      }
+                    ],
+                    "id": 7342,
+                    "name": "VariableDeclaration",
+                    "src": "546:4:30"
+                  }
+                ],
+                "id": 7343,
+                "name": "ParameterList",
+                "src": "545:6:30"
+              }
+            ],
+            "id": 7344,
+            "name": "FunctionDefinition",
+            "src": "471:81:30"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "_msgSender",
+              "overrides": null,
+              "scope": 7362,
+              "stateMutability": "view",
+              "virtual": true,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " return the sender of this call.\n if the call came through our trusted forwarder, then the real sender is appended as the last 20 bytes\n of the msg.data.\n otherwise, return `msg.sender`\n should be used in the contract anywhere instead of msg.sender"
+                },
+                "id": 7345,
+                "name": "StructuredDocumentation",
+                "src": "558:290:30"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 7346,
+                "name": "ParameterList",
+                "src": "872:2:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 7350,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address payable",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "payable",
+                          "type": "address payable"
+                        },
+                        "id": 7347,
+                        "name": "ElementaryTypeName",
+                        "src": "906:15:30"
+                      }
+                    ],
+                    "id": 7348,
+                    "name": "VariableDeclaration",
+                    "src": "906:15:30"
+                  }
+                ],
+                "id": 7349,
+                "name": "ParameterList",
+                "src": "905:17:30"
+              }
+            ],
+            "id": 7350,
+            "name": "FunctionDefinition",
+            "src": "853:70:30"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "_msgData",
+              "overrides": null,
+              "scope": 7362,
+              "stateMutability": "view",
+              "virtual": true,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " return the msg.data of this call.\n if the call came through our trusted forwarder, then the real sender was appended as the last 20 bytes\n of the msg.data - so this method will strip those 20 bytes off.\n otherwise, return `msg.data`\n should be used in the contract instead of msg.data, where the difference matters (e.g. when explicitly\n signing or hashing the"
+                },
+                "id": 7351,
+                "name": "StructuredDocumentation",
+                "src": "929:409:30"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 7352,
+                "name": "ParameterList",
+                "src": "1360:2:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 7356,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "bytes",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes",
+                          "type": "bytes"
+                        },
+                        "id": 7353,
+                        "name": "ElementaryTypeName",
+                        "src": "1394:5:30"
+                      }
+                    ],
+                    "id": 7354,
+                    "name": "VariableDeclaration",
+                    "src": "1394:12:30"
+                  }
+                ],
+                "id": 7355,
+                "name": "ParameterList",
+                "src": "1393:14:30"
+              }
+            ],
+            "id": 7356,
+            "name": "FunctionDefinition",
+            "src": "1343:65:30"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "documentation": null,
+              "functionSelector": "486ff0cd",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "versionRecipient",
+              "overrides": null,
+              "scope": 7362,
+              "stateMutability": "view",
+              "virtual": true,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 7357,
+                "name": "ParameterList",
+                "src": "1439:2:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 7361,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "string",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "string",
+                          "type": "string"
+                        },
+                        "id": 7358,
+                        "name": "ElementaryTypeName",
+                        "src": "1473:6:30"
+                      }
+                    ],
+                    "id": 7359,
+                    "name": "VariableDeclaration",
+                    "src": "1473:13:30"
+                  }
+                ],
+                "id": 7360,
+                "name": "ParameterList",
+                "src": "1472:15:30"
+              }
+            ],
+            "id": 7361,
+            "name": "FunctionDefinition",
+            "src": "1414:74:30"
+          }
+        ],
+        "id": 7362,
+        "name": "ContractDefinition",
+        "src": "222:1268:30"
+      }
+    ],
+    "id": 7363,
+    "name": "SourceUnit",
+    "src": "31:1460:30"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.10+commit.00c0fcaf.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-01-23T09:37:33.774Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {
+      "isTrustedForwarder(address)": {
+        "notice": "return if the forwarder is trusted to forward relayed transactions to us. the forwarder is required to verify the sender's signature, and verify the call is not a replay."
+      }
+    },
+    "notice": "a contract must implement this interface in order to support relayed transaction. It is better to inherit the BaseRelayRecipient as its implementation."
+  }
+}
