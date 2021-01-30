@@ -19,7 +19,7 @@ const config = {
     }
   },
   networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
-  isMainnet: Boolean(process.env.REACT_NATIVE_IS_MAINNET || false),
+  isMainnet: false, // Boolean(process.env.REACT_NATIVE_IS_MAINNET || false),
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
   },

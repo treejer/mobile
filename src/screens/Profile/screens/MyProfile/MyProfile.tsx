@@ -1,6 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
+import * as Linking from 'expo-linking';
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
 import {NetworkStatus} from 'apollo-boost';
@@ -31,8 +32,11 @@ function MyProfile(_: Props) {
   const {data, loading} = useQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
   });
+  console.log('config.isMainnet ', config.isMainnet);
 
   const isVerified = data?.me.isVerified;
+
+  console.log(Linking.makeUrl(`invite/green-block/4`));
 
   const address = useMemo(() => wallet?.address, [wallet]);
   const skipStats = !address || !isVerified;

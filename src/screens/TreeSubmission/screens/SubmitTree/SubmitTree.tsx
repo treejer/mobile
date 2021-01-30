@@ -14,6 +14,7 @@ import config from 'services/config';
 import {TreeSubmissionRouteParamList} from 'types';
 import {RelayProvider} from '@opengsn/gsn';
 import Web3 from 'web3';
+import {TreeJourney} from 'screens/TreeSubmission/types';
 
 interface Props {}
 
@@ -64,6 +65,40 @@ function SubmitTree(_: Props) {
     setIsReadyToSubmit(true);
   }, [isUpdate, journey.photo, journey.location, journey.treeIdToUpdate]);
 
+  const handleSendUpdateTransaction = useCallback(
+    (treeId: number) => {
+      return updateFactory.methods.post(treeId, photoHash).send({from: wallet.address, gas: 1e6});
+    },
+    [updateFactory, wallet.address, photoHash],
+  );
+
+  const handleSendCreateTransaction = useCallback(
+    (location: TreeJourney['location']) => {
+      // Sends the transaction via the GSN
+      return treeFactory.methods
+        .plant(
+          // Type id
+          0,
+          [
+            // Metadata
+            getHttpDownloadUrl(metaDataHash),
+            // Lat
+            location.latitude.toString(),
+            // Lon
+            location.longitude.toString(),
+          ],
+          [
+            // Height
+            '1',
+            // Diameter
+            '1',
+          ],
+        )
+        .send({from: wallet.address, gas: 1e6});
+    },
+    [wallet, treeFactory, metaDataHash],
+  );
+
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
       Alert.alert('No wallet', 'Wallet not provided');
@@ -72,74 +107,27 @@ function SubmitTree(_: Props) {
 
     setSubmitting(true);
 
-    let tx: any;
-    let address: string;
-
-    if (journey.treeIdToUpdate) {
-      tx = updateFactory.methods.post(Number(journey.treeIdToUpdate), photoHash);
-      address = config.contracts.UpdateFactory.address;
-
-      try {
-        const receipt = await sendTransaction(web3, tx, address, wallet);
-        setTxHash(receipt.transactionHash);
-
-        console.log(`Transaction hash: ${receipt.transactionHash}`);
-      } catch (error) {
-        Alert.alert('Error occured', "Transaction couldn't complete");
-        console.warn('Error', error);
+    let transaction: any;
+    try {
+      if (journey.treeIdToUpdate) {
+        transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
+        Alert.alert('Success', 'Your tree has been successfully updated');
+      } else {
+        transaction = await handleSendCreateTransaction(journey.location);
+        Alert.alert('Success', 'Your tree has been successfully submitted');
       }
-    } else {
-      try {
-        const gsnProvider = await RelayProvider.newProvider({
-          provider: web3.currentProvider as any,
-          config: {
-            auditorsCount: config.isMainnet ? 1 : 0,
-            paymasterAddress: config.contracts.Paymaster.address,
-          },
-        }).init();
-        gsnProvider.addAccount(wallet.privateKey);
 
-        const web3GSN = new Web3(gsnProvider);
-        const treeContract = new web3GSN.eth.Contract(
-          config.contracts.TreeFactory.abi,
-          config.contracts.TreeFactory.address,
-        );
+      setTxHash(transaction.hash);
 
-        // Sends the transaction via the GSN
-        const transaction = await treeContract.methods
-          .plant(
-            // Type id
-            0,
-            [
-              // Metadata
-              getHttpDownloadUrl(metaDataHash),
-              // Lat
-              journey.location.latitude.toString(),
-              // Lon
-              journey.location.longitude.toString(),
-            ],
-            [
-              // Height
-              '1',
-              // Diameter
-              '1',
-            ],
-          )
-          .send({from: wallet.address});
+      console.log('Transaction: ', transaction);
 
-        console.log(transaction.hash);
-
-        Alert.alert('Tree Submitted Successfully!');
-      } catch (error) {
-        Alert.alert('Error occurred', "Transaction couldn't complete");
-        console.warn('Error', error);
-      }
+      navigation.navigate('GreenBlock', {});
+    } catch (error) {
+      Alert.alert('Error occurred', "Transaction couldn't complete");
+      console.warn('Error', error);
     }
-
-    // navigation.navigate('MyCommunity');
-
     setSubmitting(false);
-  }, [wallet, treeFactory, updateFactory, web3, journey, photoHash, metaDataHash]);
+  }, [wallet, journey, navigation, handleSendCreateTransaction, handleSendUpdateTransaction]);
 
   useEffect(() => {
     handleUploadToIpfs();
