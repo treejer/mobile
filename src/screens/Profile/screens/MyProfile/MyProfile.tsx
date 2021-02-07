@@ -8,14 +8,14 @@ import {NetworkStatus} from 'apollo-boost';
 import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
+import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
+import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
 import Avatar from 'components/Avatar';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
@@ -32,11 +32,8 @@ function MyProfile(_: Props) {
   const {data, loading} = useQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
   });
-  console.log('config.isMainnet ', config.isMainnet);
 
   const isVerified = data?.me.isVerified;
-
-  console.log(Linking.makeUrl(`invite/green-block/4`));
 
   const address = useMemo(() => wallet?.address, [wallet]);
   const skipStats = !address || !isVerified;

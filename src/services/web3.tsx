@@ -88,7 +88,6 @@ function Web3Provider({children, privateKey}: Props) {
   const storePrivateKey = useCallback(
     async (privateKey: string) => {
       addToWallet(privateKey);
-      console.log('called store');
 
       await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
       await updateAccessToken(privateKey);
@@ -107,7 +106,6 @@ function Web3Provider({children, privateKey}: Props) {
   // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
   if (privateKey && previousWeb3.current !== web3) {
     previousWeb3.current = web3;
-    console.log('chos effect');
     addToWallet(privateKey);
   }
 
@@ -156,18 +154,20 @@ export const usePersistedWallet = () => {
   const [privateKey, setPrivateKey] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
 
-  SecureStore.getItemAsync(config.storageKeys.privateKey)
-    .then(key => {
-      if (key) {
-        setPrivateKey(key);
-        setLoaded(true);
-      } else {
-        setLoaded(true);
-      }
-    })
-    .catch(() => {
-      console.warn('Failed to get fetch stored private key');
-    });
+  useEffect(() => {
+    SecureStore.getItemAsync(config.storageKeys.privateKey)
+      .then(key => {
+        if (key) {
+          setPrivateKey(key);
+          setLoaded(true);
+        } else {
+          setLoaded(true);
+        }
+      })
+      .catch(() => {
+        console.warn('Failed to get fetch stored private key');
+      });
+  }, []);
 
   return [loaded, privateKey] as const;
 };
