@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {CommonActions, useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Polygon, Marker, Region} from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -12,9 +12,7 @@ import Spacer from 'components/Spacer';
 import TextField from 'components/TextField';
 import {useForm, useWatch} from 'react-hook-form';
 import Button from 'components/Button';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
 import {useWalletAccount, useWeb3, useGBFactory} from 'services/web3';
-import config from 'services/config';
 
 interface Props {}
 
@@ -55,15 +53,18 @@ function CreateGreenBlcok(_: Props) {
   const handleCreateGreenBlock = form.handleSubmit(async data => {
     setSubmitting(true);
     try {
-      const tx = gbFactory.methods.create(
-        data.title,
-        JSON.stringify(data.polygon.map(({latitude, longitude}) => ({lat: latitude, lng: longitude}))),
-        '0x0000000000000000000000000000000000000000',
-        [wallet.address],
-      );
+      let transaction = await gbFactory.methods
+        .create(
+          data.title,
+          JSON.stringify(data.polygon.map(({latitude, longitude}) => ({lat: latitude, lng: longitude}))),
+          '0x0000000000000000000000000000000000000000',
+          [wallet.address],
+        )
+        .send({from: wallet.address, gas: 1e6});
 
-      const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
-      console.log('Receipt', receipt.transactionHash);
+      console.log('transaction', transaction);
+
+      Alert.alert('Success', 'GreenBlock has been successfully submitted');
 
       navigation.dispatch(state => {
         const routes = [{name: 'MyCommunity'}];

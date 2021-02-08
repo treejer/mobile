@@ -10,8 +10,6 @@ import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
 import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
@@ -58,10 +56,9 @@ function MyProfile(_: Props) {
   const handleWithdrawPlanterBalance = useCallback(async () => {
     setSubmitting(true);
     try {
-      const tx = treeFactory.methods.withdrawPlanterBalance();
+      let transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
 
-      const receipt = await sendTransaction(web3, tx, config.contracts.TreeFactory.address, wallet);
-      console.log('Receipt', receipt.transactionHash);
+      console.log('transaction', transaction);
       Alert.alert('Success', 'You successfully withdrew!');
     } catch (error) {
       Alert.alert('Error', error.message);

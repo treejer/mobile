@@ -9,11 +9,7 @@ import Spacer from 'components/Spacer';
 import {useTreeFactory, useUpdateFactory, useWeb3} from 'services/web3';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {upload, uploadContent, getHttpDownloadUrl} from 'utilities/helpers/IPFS';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
 import {TreeSubmissionRouteParamList} from 'types';
-import {RelayProvider} from '@opengsn/gsn';
-import Web3 from 'web3';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 
 interface Props {}
