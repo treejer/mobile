@@ -51,23 +51,23 @@
   "bytecode": "0x608060405234801561001057600080fd5b50610199806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063486ff0cd14610046578063572b6c05146100c35780637da0a877146100fd575b600080fd5b61004e610121565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610088578181015183820152602001610070565b50505050905090810190601f1680156100b55780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6100e9600480360360208110156100d957600080fd5b50356001600160a01b0316610140565b604080519115158252519081900360200190f35b610105610154565b604080516001600160a01b039092168252519081900360200190f35b6040805180820190915260058152640322e302e360dc1b602082015290565b6000546001600160a01b0390811691161490565b6000546001600160a01b03168156fea2646970667358221220b638c9186e35827c875812608987ee604ba1c44d6fe2dec019f3d46c9f841e5564736f6c634300060a0033",
   "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c8063486ff0cd14610046578063572b6c05146100c35780637da0a877146100fd575b600080fd5b61004e610121565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610088578181015183820152602001610070565b50505050905090810190601f1680156100b55780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6100e9600480360360208110156100d957600080fd5b50356001600160a01b0316610140565b604080519115158252519081900360200190f35b610105610154565b604080516001600160a01b039092168252519081900360200190f35b6040805180820190915260058152640322e302e360dc1b602082015290565b6000546001600160a01b0390811691161490565b6000546001600160a01b03168156fea2646970667358221220b638c9186e35827c875812608987ee604ba1c44d6fe2dec019f3d46c9f841e5564736f6c634300060a0033",
   "immutableReferences": {},
-  "sourceMap": "127:160:7:-:0;;;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "127:160:7:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;179:106;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;465:135:24;;;;;;;;;;;;;;;;-1:-1:-1;465:135:24;-1:-1:-1;;;;;465:135:24;;:::i;:::-;;;;;;;;;;;;;;;;;;427:31;;;:::i;:::-;;;;-1:-1:-1;;;;;427:31:24;;;;;;;;;;;;;;179:106:7;264:14;;;;;;;;;;;;-1:-1:-1;;;264:14:7;;;;179:106;:::o;465:135:24:-;541:4;577:16;-1:-1:-1;;;;;577:16:24;;;564:29;;;;465:135::o;427:31::-;;;-1:-1:-1;;;;;427:31:24;;:::o",
+  "sourceMap": "127:160:8:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "127:160:8:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;179:106;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;465:135:25;;;;;;;;;;;;;;;;-1:-1:-1;465:135:25;-1:-1:-1;;;;;465:135:25;;:::i;:::-;;;;;;;;;;;;;;;;;;427:31;;;:::i;:::-;;;;-1:-1:-1;;;;;427:31:25;;;;;;;;;;;;;;179:106:8;264:14;;;;;;;;;;;;-1:-1:-1;;;264:14:8;;;;179:106;:::o;465:135:25:-;541:4;577:16;-1:-1:-1;;;;;577:16:25;;;564:29;;;;465:135::o;427:31::-;;;-1:-1:-1;;;;;427:31:25;;:::o",
   "source": "// SPDX-License-Identifier: GPL-3.0\n\npragma solidity >=0.6.0 <0.7.0;\n\nimport \"@opengsn/gsn/contracts/BaseRelayRecipient.sol\";\n\ncontract RelayRecipient is BaseRelayRecipient {\n    function versionRecipient() external view override returns (string memory) {\n        return \"2.0.0\";\n    }\n}\n",
   "sourcePath": "/home/amir/Projects/treejer/contract/contracts/gsn/RelayRecipient.sol",
   "ast": {
     "absolutePath": "/home/amir/Projects/treejer/contract/contracts/gsn/RelayRecipient.sol",
     "exportedSymbols": {
       "RelayRecipient": [
-        1279
+        1373
       ]
     },
-    "id": 1280,
+    "id": 1374,
     "license": "GPL-3.0",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1266,
+        "id": 1360,
         "literals": [
           "solidity",
           ">=",
@@ -78,16 +78,16 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "37:31:7"
+        "src": "37:31:8"
       },
       {
         "absolutePath": "@opengsn/gsn/contracts/BaseRelayRecipient.sol",
         "file": "@opengsn/gsn/contracts/BaseRelayRecipient.sol",
-        "id": 1267,
+        "id": 1361,
         "nodeType": "ImportDirective",
-        "scope": 1280,
-        "sourceUnit": 6475,
-        "src": "70:55:7",
+        "scope": 1374,
+        "sourceUnit": 6658,
+        "src": "70:55:8",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -98,58 +98,58 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1268,
+              "id": 1362,
               "name": "BaseRelayRecipient",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6474,
-              "src": "154:18:7",
+              "referencedDeclaration": 6657,
+              "src": "154:18:8",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_BaseRelayRecipient_$6474",
+                "typeIdentifier": "t_contract$_BaseRelayRecipient_$6657",
                 "typeString": "contract BaseRelayRecipient"
               }
             },
-            "id": 1269,
+            "id": 1363,
             "nodeType": "InheritanceSpecifier",
-            "src": "154:18:7"
+            "src": "154:18:8"
           }
         ],
         "contractDependencies": [
-          6474,
-          7362
+          6657,
+          7545
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1279,
+        "id": 1373,
         "linearizedBaseContracts": [
-          1279,
-          6474,
-          7362
+          1373,
+          6657,
+          7545
         ],
         "name": "RelayRecipient",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "baseFunctions": [
-              7361
+              7544
             ],
             "body": {
-              "id": 1277,
+              "id": 1371,
               "nodeType": "Block",
-              "src": "254:31:7",
+              "src": "254:31:8",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
                     "hexValue": "322e302e30",
-                    "id": 1275,
+                    "id": 1369,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
                     "kind": "string",
                     "lValueRequested": false,
                     "nodeType": "Literal",
-                    "src": "271:7:7",
+                    "src": "271:7:8",
                     "subdenomination": null,
                     "typeDescriptions": {
                       "typeIdentifier": "t_stringliteral_b4bcb154e38601c389396fa918314da42d4626f13ef6d0ceb07e5f5d26b2fbc3",
@@ -157,46 +157,46 @@
                     },
                     "value": "2.0.0"
                   },
-                  "functionReturnParameters": 1274,
-                  "id": 1276,
+                  "functionReturnParameters": 1368,
+                  "id": 1370,
                   "nodeType": "Return",
-                  "src": "264:14:7"
+                  "src": "264:14:8"
                 }
               ]
             },
             "documentation": null,
             "functionSelector": "486ff0cd",
-            "id": 1278,
+            "id": 1372,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "versionRecipient",
             "nodeType": "FunctionDefinition",
             "overrides": {
-              "id": 1271,
+              "id": 1365,
               "nodeType": "OverrideSpecifier",
               "overrides": [],
-              "src": "221:8:7"
+              "src": "221:8:8"
             },
             "parameters": {
-              "id": 1270,
+              "id": 1364,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "204:2:7"
+              "src": "204:2:8"
             },
             "returnParameters": {
-              "id": 1274,
+              "id": 1368,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1273,
+                  "id": 1367,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 1278,
-                  "src": "239:13:7",
+                  "scope": 1372,
+                  "src": "239:13:8",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -204,10 +204,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1272,
+                    "id": 1366,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "239:6:7",
+                    "src": "239:6:8",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -217,27 +217,27 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "238:15:7"
+              "src": "238:15:8"
             },
-            "scope": 1279,
-            "src": "179:106:7",
+            "scope": 1373,
+            "src": "179:106:8",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 1280,
-        "src": "127:160:7"
+        "scope": 1374,
+        "src": "127:160:8"
       }
     ],
-    "src": "37:251:7"
+    "src": "37:251:8"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/home/amir/Projects/treejer/contract/contracts/gsn/RelayRecipient.sol",
       "exportedSymbols": {
         "RelayRecipient": [
-          1279
+          1373
         ]
       },
       "license": "GPL-3.0"
@@ -255,42 +255,42 @@
             ".0"
           ]
         },
-        "id": 1266,
+        "id": 1360,
         "name": "PragmaDirective",
-        "src": "37:31:7"
+        "src": "37:31:8"
       },
       {
         "attributes": {
-          "SourceUnit": 6475,
+          "SourceUnit": 6658,
           "absolutePath": "@opengsn/gsn/contracts/BaseRelayRecipient.sol",
           "file": "@opengsn/gsn/contracts/BaseRelayRecipient.sol",
-          "scope": 1280,
+          "scope": 1374,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1267,
+        "id": 1361,
         "name": "ImportDirective",
-        "src": "70:55:7"
+        "src": "70:55:8"
       },
       {
         "attributes": {
           "abstract": false,
           "contractDependencies": [
-            6474,
-            7362
+            6657,
+            7545
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            1279,
-            6474,
-            7362
+            1373,
+            6657,
+            7545
           ],
           "name": "RelayRecipient",
-          "scope": 1280
+          "scope": 1374
         },
         "children": [
           {
@@ -302,22 +302,22 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "BaseRelayRecipient",
-                  "referencedDeclaration": 6474,
+                  "referencedDeclaration": 6657,
                   "type": "contract BaseRelayRecipient"
                 },
-                "id": 1268,
+                "id": 1362,
                 "name": "UserDefinedTypeName",
-                "src": "154:18:7"
+                "src": "154:18:8"
               }
             ],
-            "id": 1269,
+            "id": 1363,
             "name": "InheritanceSpecifier",
-            "src": "154:18:7"
+            "src": "154:18:8"
           },
           {
             "attributes": {
               "baseFunctions": [
-                7361
+                7544
               ],
               "documentation": null,
               "functionSelector": "486ff0cd",
@@ -328,7 +328,7 @@
                 null
               ],
               "name": "versionRecipient",
-              "scope": 1279,
+              "scope": 1373,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -340,9 +340,9 @@
                     null
                   ]
                 },
-                "id": 1271,
+                "id": 1365,
                 "name": "OverrideSpecifier",
-                "src": "221:8:7"
+                "src": "221:8:8"
               },
               {
                 "attributes": {
@@ -351,9 +351,9 @@
                   ]
                 },
                 "children": [],
-                "id": 1270,
+                "id": 1364,
                 "name": "ParameterList",
-                "src": "204:2:7"
+                "src": "204:2:8"
               },
               {
                 "children": [
@@ -363,7 +363,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 1278,
+                      "scope": 1372,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -376,25 +376,25 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 1272,
+                        "id": 1366,
                         "name": "ElementaryTypeName",
-                        "src": "239:6:7"
+                        "src": "239:6:8"
                       }
                     ],
-                    "id": 1273,
+                    "id": 1367,
                     "name": "VariableDeclaration",
-                    "src": "239:13:7"
+                    "src": "239:13:8"
                   }
                 ],
-                "id": 1274,
+                "id": 1368,
                 "name": "ParameterList",
-                "src": "238:15:7"
+                "src": "238:15:8"
               },
               {
                 "children": [
                   {
                     "attributes": {
-                      "functionReturnParameters": 1274
+                      "functionReturnParameters": 1368
                     },
                     "children": [
                       {
@@ -410,34 +410,34 @@
                           "type": "literal_string \"2.0.0\"",
                           "value": "2.0.0"
                         },
-                        "id": 1275,
+                        "id": 1369,
                         "name": "Literal",
-                        "src": "271:7:7"
+                        "src": "271:7:8"
                       }
                     ],
-                    "id": 1276,
+                    "id": 1370,
                     "name": "Return",
-                    "src": "264:14:7"
+                    "src": "264:14:8"
                   }
                 ],
-                "id": 1277,
+                "id": 1371,
                 "name": "Block",
-                "src": "254:31:7"
+                "src": "254:31:8"
               }
             ],
-            "id": 1278,
+            "id": 1372,
             "name": "FunctionDefinition",
-            "src": "179:106:7"
+            "src": "179:106:8"
           }
         ],
-        "id": 1279,
+        "id": 1373,
         "name": "ContractDefinition",
-        "src": "127:160:7"
+        "src": "127:160:8"
       }
     ],
-    "id": 1280,
+    "id": 1374,
     "name": "SourceUnit",
-    "src": "37:251:7"
+    "src": "37:251:8"
   },
   "compiler": {
     "name": "solc",
@@ -445,7 +445,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-23T09:37:33.655Z",
+  "updatedAt": "2021-01-30T12:05:12.576Z",
   "devdoc": {
     "methods": {}
   },
