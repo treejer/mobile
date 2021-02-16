@@ -9,6 +9,7 @@ import {MainTabsParamList} from 'types';
 import TreeSubmission from './TreeSubmission';
 import Profile from './Profile';
 import GreenBlock from './GreenBlock';
+import { useCurrentUser, UserStatus } from 'services/currentUser';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +19,9 @@ interface Props {
 
 function MainTabs({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
+  const {status} = useCurrentUser();
+
+  const tabsVisible = unlocked && status === UserStatus.Verified
 
   useEffect(() => {
     if (!navigation) {
@@ -25,11 +29,15 @@ function MainTabs({navigation}: Props) {
     }
     const greenBlockRegex = /\/invite\/green-block\/(\d+)$/;
     const listener = (eventOrUrl: string | {url: string}) => {
+      if (!eventOrUrl) {
+        return;
+      }
+
       const url = typeof eventOrUrl === 'string' ? eventOrUrl : eventOrUrl.url;
       const matches = url.match(greenBlockRegex);
 
       if (matches) {
-        if (!unlocked) {
+        if (!tabsVisible) {
           Alert.alert('You need to create a wallet before joining a green block.');
           return;
         }
@@ -43,22 +51,22 @@ function MainTabs({navigation}: Props) {
     Linking.addEventListener('url', listener);
     Linking.getInitialURL()
       .then(listener)
-      .catch(() => {
-        console.warn('Failed to get initial URL');
+      .catch((error) => {
+        console.warn('Failed to get initial URL', error);
       });
 
     return () => {
       Linking.removeEventListener('url', listener);
     };
-  }, [navigation, unlocked]);
+  }, [navigation, tabsVisible]);
 
   return (
     <Tab.Navigator
       tabBar={props => <TabBar {...props} />}
       screenOptions={{
-        tabBarVisible: unlocked,
+        tabBarVisible: tabsVisible,
       }}
-      initialRouteName="Profile"
+      // initialRouteName="GreenBlock"
     >
       <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen name="TreeSubmission" component={TreeSubmission} />

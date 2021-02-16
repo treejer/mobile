@@ -1,7 +1,6 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import * as Linking from 'expo-linking';
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
 import {NetworkStatus} from 'apollo-boost';
@@ -15,6 +14,7 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
+import { useCurrentUser, UserStatus } from 'services/currentUser';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
 import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
@@ -27,9 +27,7 @@ function MyProfile(_: Props) {
   const wallet = useWalletAccount();
 
   const treeFactory = useTreeFactory();
-  const {data, loading} = useQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
+  const {data, loading, status} = useCurrentUser();
 
   const isVerified = data?.me.isVerified;
 
@@ -165,8 +163,27 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           )}
+          {status === UserStatus.Pending && (
+            <>
+              <Text style={globalStyles.textCenter}>Pending verification</Text>
+              <Spacer times={6} />
+            </>
+          )}
 
-          {data?.me && !data?.me?.isVerified && (
+          {/* {
+            <>
+              <Button
+                style={styles.button}
+                caption="CLEAR"
+                variant="tertiary"
+                onPress={() => {
+                  SecureStore.deleteItemAsync(config.storageKeys.privateKey);
+                }}
+              />
+              <Spacer times={4} />
+            </>
+          } */}
+          {status === UserStatus.Unverified && (
             <>
               <Button
                 style={styles.button}

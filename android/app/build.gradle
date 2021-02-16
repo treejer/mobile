@@ -141,7 +141,7 @@ android {
         versionCode 1
         versionName "1.0.0"
         manifestPlaceholders = [
-                'torusRedirectScheme': 'com.treejer.ranger',
+                'torusRedirectScheme': 'treejer',
                 'torusRedirectHost': 'torus',
                 'torusRedirectPathPrefix': '/redirect'
         ]

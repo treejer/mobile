@@ -58,7 +58,6 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>com.treejer.ranger</string>
-          <string>com.treejer.ranger</string>
         </array>
       </dict>
     </array>

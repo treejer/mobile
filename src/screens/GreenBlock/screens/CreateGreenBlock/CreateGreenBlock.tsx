@@ -107,7 +107,7 @@ function CreateGreenBlcok(_: Props) {
         mapViewRef.current.animateToRegion(initialMapRegion.current);
       }
     })();
-  }, [mapViewRef]);
+  }, [mapViewRef.current]);
 
   const sortedPolygon = useMemo(() => [...polygon].sort(pointSort(upperLeft(polygon))), [polygon]);
 

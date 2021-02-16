@@ -43,12 +43,16 @@ function Web3Provider({children, privateKey}: Props) {
     })
       .init()
       .then(gsnProvider => {
-        gsnProvider.addAccount(web3WithoutGSN.eth.accounts.wallet[0].privateKey);
+        const privateKey = web3WithoutGSN.eth.accounts.wallet[0].privateKey
+        gsnProvider.addAccount(privateKey);
 
-        setWeb3WithGsn(new Web3(gsnProvider));
+        const newWeb3 = new Web3(gsnProvider);
+        newWeb3.eth.accounts.wallet.add(privateKey)
+
+        setWeb3WithGsn(newWeb3);
       })
-      .catch(() => {
-        console.warn('Could not build Web3 with GSN');
+      .catch((error) => {
+        console.warn('Could not build Web3 with GSN', error);
       });
   }, [web3WithoutGSN, web3WithGsn]);
 

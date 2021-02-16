@@ -2,13 +2,12 @@ import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Image, Text, View, ScrollView, Linking} from 'react-native';
+import {Image, Text, View, ScrollView, Alert} from 'react-native';
 import TorusSdk from '@toruslabs/torus-direct-react-native-sdk';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {usePrivateKeyStorage, useWeb3} from 'services/web3';
-import Wallet from 'ethereumjs-wallet';
+import {usePrivateKeyStorage} from 'services/web3';
 
 interface Props {}
 
@@ -45,6 +44,7 @@ function NoWallet(_: Props) {
           });
       });
     } catch (error) {
+      Alert.alert('Failed to login', 'Failed to authenticate via Torus. Please try again later.')
       console.error(error, 'login caught');
       setLoading(false);
     }
