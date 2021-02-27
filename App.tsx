@@ -1,8 +1,10 @@
 import './src/globals';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import AppLoading from 'expo-app-loading';
 import {useFonts} from 'expo-font';
 import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
+import TorusSdk from "@toruslabs/torus-direct-react-native-sdk";
 
 import MainTabs from './src/screens/MainTabs';
 import Onboarding from './src/screens/Onboarding';
@@ -17,11 +19,26 @@ function App() {
     'Montserrat-Light': require('./assets/fonts/Montserrat-Light.ttf'),
     'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
   });
+
   const [privateKeyLoaded, privateKey] = usePersistedWallet();
   const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
   const navigationRef = useRef<NavigationContainerRef>();
+  const loading = !fontsLoaded || !privateKeyLoaded || !settingsLoaded;
 
-  if (!fontsLoaded || !privateKeyLoaded || !settingsLoaded) {
+  useEffect(() => {
+    if (!loading) {
+      TorusSdk.init({
+        redirectUri: 'treejer://torus/redirect',
+        network: 'testnet', // details for test net
+        // proxyContractAddress: '0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183', // details for test net
+        browserRedirectUri: 'https://api.treejer.com/toruswallet_redirect.html',
+      });
+
+      SplashScreen.hideAsync();
+    }
+  }, [loading]);
+
+  if (loading) {
     return <AppLoading />;
   }
 

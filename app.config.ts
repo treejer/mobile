@@ -12,6 +12,7 @@ const appConfig = ({config}: ConfigContext): ExpoConfig => ({
     resizeMode: 'contain',
   },
   ios: {
+    bundleIdentifier: 'com.treejer.ranger',
     config: {
       googleMapsApiKey: process.env.REACT_NATIVE_GOOGLE_MAPS_API_KEY,
     },

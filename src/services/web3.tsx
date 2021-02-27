@@ -6,7 +6,6 @@ import {Contract} from 'web3-eth-contract';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 
 import config from './config';
-import {RelayProvider} from '@opengsn/gsn';
 
 export const Web3Context = React.createContext({
   web3: {} as Web3,
@@ -25,34 +24,7 @@ interface Props {
 }
 
 function Web3Provider({children, privateKey}: Props) {
-  const [web3WithGsn, setWeb3WithGsn] = useState<Web3>();
-
-  const web3WithoutGSN = useMemo(() => new Web3(config.web3Url), []);
-
-  const handleWeb3GSNUpdate = useCallback(() => {
-    if (web3WithoutGSN.eth.accounts.wallet.length === 0 || web3WithGsn) {
-      return;
-    }
-
-    RelayProvider.newProvider({
-      provider: web3WithoutGSN.currentProvider as any,
-      config: {
-        auditorsCount: config.isMainnet ? 1 : 0,
-        paymasterAddress: config.contracts.Paymaster.address,
-      },
-    })
-      .init()
-      .then(gsnProvider => {
-        gsnProvider.addAccount(web3WithoutGSN.eth.accounts.wallet[0].privateKey);
-
-        setWeb3WithGsn(new Web3(gsnProvider));
-      })
-      .catch(() => {
-        console.warn('Could not build Web3 with GSN');
-      });
-  }, [web3WithoutGSN, web3WithGsn]);
-
-  const web3 = web3WithGsn ?? web3WithoutGSN;
+  const web3 = useMemo(() => new Web3(config.web3Url), []);
 
   const [waiting, setWaiting] = useState(true);
   const [unlocked, setUnlocked] = useState(false);
@@ -65,11 +37,9 @@ function Web3Provider({children, privateKey}: Props) {
 
   const addToWallet = useCallback(
     (privateKey: string) => {
-      console.log('called add to wallet');
       web3.eth.accounts.wallet.add(privateKey);
-      handleWeb3GSNUpdate();
     },
-    [web3, handleWeb3GSNUpdate],
+    [web3],
   );
 
   const updateAccessToken = useCallback(
@@ -88,7 +58,6 @@ function Web3Provider({children, privateKey}: Props) {
   const storePrivateKey = useCallback(
     async (privateKey: string) => {
       addToWallet(privateKey);
-      console.log('called store');
 
       await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
       await updateAccessToken(privateKey);
@@ -107,7 +76,6 @@ function Web3Provider({children, privateKey}: Props) {
   // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
   if (privateKey && previousWeb3.current !== web3) {
     previousWeb3.current = web3;
-    console.log('chos effect');
     addToWallet(privateKey);
   }
 
@@ -156,18 +124,20 @@ export const usePersistedWallet = () => {
   const [privateKey, setPrivateKey] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
 
-  SecureStore.getItemAsync(config.storageKeys.privateKey)
-    .then(key => {
-      if (key) {
-        setPrivateKey(key);
-        setLoaded(true);
-      } else {
-        setLoaded(true);
-      }
-    })
-    .catch(() => {
-      console.warn('Failed to get fetch stored private key');
-    });
+  useEffect(() => {
+    SecureStore.getItemAsync(config.storageKeys.privateKey)
+      .then(key => {
+        if (key) {
+          setPrivateKey(key);
+          setLoaded(true);
+        } else {
+          setLoaded(true);
+        }
+      })
+      .catch(() => {
+        console.warn('Failed to get fetch stored private key');
+      });
+  }, []);
 
   return [loaded, privateKey] as const;
 };

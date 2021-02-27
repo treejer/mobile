@@ -4,17 +4,16 @@ import {colors} from 'constants/values';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Text, View, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useTreeFactory, useUpdateFactory, useWeb3} from 'services/web3';
+import {useWeb3} from 'services/web3';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {upload, uploadContent, getHttpDownloadUrl} from 'utilities/helpers/IPFS';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
 import {TreeSubmissionRouteParamList} from 'types';
-import {RelayProvider} from '@opengsn/gsn';
-import Web3 from 'web3';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import config from 'services/config';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 
 interface Props {}
 
@@ -33,8 +32,6 @@ function SubmitTree(_: Props) {
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
 
   const web3 = useWeb3();
-  const treeFactory = useTreeFactory();
-  const updateFactory = useUpdateFactory();
 
   const wallet = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
@@ -66,37 +63,43 @@ function SubmitTree(_: Props) {
   }, [isUpdate, journey.photo, journey.location, journey.treeIdToUpdate]);
 
   const handleSendUpdateTransaction = useCallback(
-    (treeId: number) => {
-      return updateFactory.methods.post(treeId, photoHash).send({from: wallet.address, gas: 1e6});
+    async (treeId: number) => {
+      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.UpdateFactory, 'post', [
+        treeId,
+        photoHash,
+      ]);
+      console.log(receipt.hash);
+
+      return receipt;
     },
-    [updateFactory, wallet.address, photoHash],
+    [photoHash, web3, wallet],
   );
 
   const handleSendCreateTransaction = useCallback(
-    (location: TreeJourney['location']) => {
-      // Sends the transaction via the GSN
-      return treeFactory.methods
-        .plant(
-          // Type id
-          0,
-          [
-            // Metadata
-            getHttpDownloadUrl(metaDataHash),
-            // Lat
-            location.latitude.toString(),
-            // Lon
-            location.longitude.toString(),
-          ],
-          [
-            // Height
-            '1',
-            // Diameter
-            '1',
-          ],
-        )
-        .send({from: wallet.address, gas: 1e6});
+    async (location: TreeJourney['location']) => {
+      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plant', [
+        // Type id
+        0,
+        [
+          // Metadata
+          getHttpDownloadUrl(metaDataHash),
+          // Lat
+          location.latitude.toString(),
+          // Lon
+          location.longitude.toString(),
+        ],
+        [
+          // Height
+          '1',
+          // Diameter
+          '1',
+        ],
+      ]);
+      console.log(receipt.hash);
+
+      return receipt;
     },
-    [wallet, treeFactory, metaDataHash],
+    [web3, wallet, metaDataHash],
   );
 
   const handleSignTransaction = useCallback(async () => {
@@ -107,7 +110,7 @@ function SubmitTree(_: Props) {
 
     setSubmitting(true);
 
-    let transaction: any;
+    let transaction: TransactionReceipt;
     try {
       if (journey.treeIdToUpdate) {
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
@@ -117,7 +120,7 @@ function SubmitTree(_: Props) {
         Alert.alert('Success', 'Your tree has been successfully submitted');
       }
 
-      setTxHash(transaction.hash);
+      setTxHash(transaction.transactionHash);
 
       console.log('Transaction: ', transaction);
 

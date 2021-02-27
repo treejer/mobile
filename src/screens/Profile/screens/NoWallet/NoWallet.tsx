@@ -1,8 +1,9 @@
 import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect} from 'react';
-import {Image, Text, View, ScrollView} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Image, Text, View, ScrollView, Alert} from 'react-native';
+import TorusSdk from '@toruslabs/torus-direct-react-native-sdk';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
@@ -12,10 +13,41 @@ interface Props {}
 
 function NoWallet(_: Props) {
   const navigation = useNavigation();
-  const {unlocked} = usePrivateKeyStorage();
+  const {unlocked, storePrivateKey} = usePrivateKeyStorage();
+  const [loading, setLoading] = useState(false);
 
+
+  /*
   const handleConnectWallet = useCallback(() => {
     navigation.navigate('CreateWallet');
+  }, [navigation]);
+  */
+
+  const handleTorusWallet = useCallback(async () => {
+    try {
+      setLoading(true);
+      const loginDetails = await TorusSdk.triggerLogin({
+        typeOfLogin: 'google',
+        verifier: 'treejer-ranger-google-testnet-web',
+        clientId: '116888410915-1j5mi6etjrqnbfch8ovuc4i50vg7kg3c.apps.googleusercontent.com',
+      });
+
+      requestAnimationFrame(() => {
+        const normalizedPrivateKey = loginDetails.privateKey.replace(/^00/, '0x');
+        storePrivateKey(normalizedPrivateKey)
+          .then(() => {
+            setLoading(false);
+          })
+          .catch(error => {
+            console.warn('Error saving private key', error);
+            setLoading(false);
+          });
+      });
+    } catch (error) {
+      Alert.alert('Failed to login', 'Failed to authenticate via Torus. Please try again later.')
+      console.error(error, 'login caught');
+      setLoading(false);
+    }
   }, [navigation]);
 
   useEffect(() => {
@@ -39,7 +71,14 @@ function NoWallet(_: Props) {
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>Please connect {'\n'}your Ethereum wallet!</Text>
 
         <Spacer times={7} />
-        <Button variant="secondary" caption="Connect Wallet" onPress={handleConnectWallet} />
+        {/* <Button variant="secondary" caption="Connect Wallet" onPress={handleConnectWallet} /> */}
+        <Button
+          variant="secondary"
+          caption="Connect Wallet"
+          onPress={handleTorusWallet}
+          loading={loading}
+          disabled={loading}
+        />
         <Spacer times={9} />
 
         <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>

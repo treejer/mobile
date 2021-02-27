@@ -113,6 +113,8 @@ function VerifyProfile() {
         variables: {
           token,
         },
+        refetchQueries: getMeQuery,
+        awaitRefetchQueries: true,
         update: store => {
           const currentUser = store.readQuery<GetMeQueryData>({query: getMeQuery});
 
@@ -254,7 +256,7 @@ function VerifyProfile() {
               name="phoneNumber"
               error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
               ref={phoneRef}
-              textInputStyle={{height: 24, paddingLeft: 0}}
+              textInputStyle={{height: 64, paddingLeft: 0}}
               defaultCode={(user.mobileCountry as any) ?? 'CA'}
               placeholder="Phone #"
             />

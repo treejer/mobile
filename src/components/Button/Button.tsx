@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: colors.grayDarker,
     borderRadius: 25,
+    flexDirection: 'row',
   },
   secondaryText: {
     ...globalStyles.normal,

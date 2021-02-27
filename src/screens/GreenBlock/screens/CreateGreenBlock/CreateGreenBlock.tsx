@@ -1,20 +1,20 @@
 import globalStyles from 'constants/styles';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {CommonActions, useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Polygon, Marker, Region} from 'react-native-maps';
+import {useForm, useWatch} from 'react-hook-form';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import {Point, pointSort, upperLeft} from 'utilities/helpers/latLng';
 import Steps from 'components/Steps';
 import Spacer from 'components/Spacer';
 import TextField from 'components/TextField';
-import {useForm, useWatch} from 'react-hook-form';
 import Button from 'components/Button';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import {useWalletAccount, useWeb3, useGBFactory} from 'services/web3';
+import {useWalletAccount, useWeb3} from 'services/web3';
 import config from 'services/config';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 
 interface Props {}
 
@@ -28,7 +28,6 @@ function CreateGreenBlcok(_: Props) {
   const isFocused = useIsFocused();
   const mapViewRef = useRef<MapView>();
   const web3 = useWeb3();
-  const gbFactory = useGBFactory();
   const wallet = useWalletAccount();
   const [submitting, setSubmitting] = useState(false);
   const initialMapRegion = useRef<Region>({
@@ -55,15 +54,16 @@ function CreateGreenBlcok(_: Props) {
   const handleCreateGreenBlock = form.handleSubmit(async data => {
     setSubmitting(true);
     try {
-      const tx = gbFactory.methods.create(
+      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.GBFactory, 'create', [
         data.title,
         JSON.stringify(data.polygon.map(({latitude, longitude}) => ({lat: latitude, lng: longitude}))),
         '0x0000000000000000000000000000000000000000',
         [wallet.address],
-      );
+      ]);
 
-      const receipt = await sendTransaction(web3, tx, config.contracts.GBFactory.address, wallet);
-      console.log('Receipt', receipt.transactionHash);
+      console.log('transaction', transaction);
+
+      Alert.alert('Success', 'GreenBlock has been successfully submitted');
 
       navigation.dispatch(state => {
         const routes = [{name: 'MyCommunity'}];
@@ -106,7 +106,8 @@ function CreateGreenBlcok(_: Props) {
         mapViewRef.current.animateToRegion(initialMapRegion.current);
       }
     })();
-  }, [mapViewRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapViewRef.current]);
 
   const sortedPolygon = useMemo(() => [...polygon].sort(pointSort(upperLeft(polygon))), [polygon]);
 

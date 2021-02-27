@@ -1,22 +1,21 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import * as Linking from 'expo-linking';
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
 import {NetworkStatus} from 'apollo-boost';
 import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
-import {sendTransaction} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
+import {useWalletAccount, useWeb3} from 'services/web3';
+import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
 import Avatar from 'components/Avatar';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useCurrentUser, UserStatus} from 'services/currentUser';
+import config from 'services/config';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
 import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
@@ -28,15 +27,9 @@ function MyProfile(_: Props) {
   const web3 = useWeb3();
   const wallet = useWalletAccount();
 
-  const treeFactory = useTreeFactory();
-  const {data, loading} = useQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
-  console.log('config.isMainnet ', config.isMainnet);
+  const {data, loading, status} = useCurrentUser();
 
   const isVerified = data?.me.isVerified;
-
-  console.log(Linking.makeUrl(`invite/green-block/4`));
 
   const address = useMemo(() => wallet?.address, [wallet]);
   const skipStats = !address || !isVerified;
@@ -61,10 +54,15 @@ function MyProfile(_: Props) {
   const handleWithdrawPlanterBalance = useCallback(async () => {
     setSubmitting(true);
     try {
-      const tx = treeFactory.methods.withdrawPlanterBalance();
+      // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
+      const transaction = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'withdrawPlanterBalance',
+      );
 
-      const receipt = await sendTransaction(web3, tx, config.contracts.TreeFactory.address, wallet);
-      console.log('Receipt', receipt.transactionHash);
+      console.log('transaction', transaction);
       Alert.alert('Success', 'You successfully withdrew!');
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -72,7 +70,7 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [treeFactory, web3, wallet]);
+  }, [web3, wallet]);
 
   const onRefetch = () => {
     planterWithdrawableBalanceResult.refetch();
@@ -171,8 +169,27 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           )}
+          {status === UserStatus.Pending && (
+            <>
+              <Text style={globalStyles.textCenter}>Pending verification</Text>
+              <Spacer times={6} />
+            </>
+          )}
 
-          {data?.me && !data?.me?.isVerified && (
+          {/* {
+            <>
+              <Button
+                style={styles.button}
+                caption="CLEAR"
+                variant="tertiary"
+                onPress={() => {
+                  SecureStore.deleteItemAsync(config.storageKeys.privateKey);
+                }}
+              />
+              <Spacer times={4} />
+            </>
+          } */}
+          {status === UserStatus.Unverified && (
             <>
               <Button
                 style={styles.button}
