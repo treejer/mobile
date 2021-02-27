@@ -20,9 +20,9 @@ jobs:
         java-version: 1.8
     - name: restore-keystore
       run: |
-        echo {{secrets.RELEASE_KEYSTORE}} > treejer.keystore.asc
-        gpg -d --passphrase "{{secrets.RELEASE_KEYSTORE_PASSPHRASE}}" --batch treejer.keystore.asc > android/app/treejer.keystore
-        sed -i 's/__KEYSTORE_PASSWORD__/{{secrets.RELEASE_KEYSTORE_PASSWORD}}/g' android/gradle.properties
+        echo "${{ secrets.RELEASE_KEYSTORE }}" > treejer.keystore.asc
+        gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch treejer.keystore.asc > android/app/treejer.keystore
+        sed -i 's/__KEYSTORE_PASSWORD__/${{ secrets.RELEASE_KEYSTORE_PASSWORD }}/g' android/gradle.properties
     - name: Grant execute permission for gradlew
       run: chmod +x android/gradlew
     - name: Build with Gradle
