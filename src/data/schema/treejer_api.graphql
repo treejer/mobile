@@ -86,7 +86,7 @@ type Query {
   """
   Returns the info for the given tree id
   """
-  tree: Tree
+  tree(id: Int!): Tree
 
   """
   Returns all trees for a given planter

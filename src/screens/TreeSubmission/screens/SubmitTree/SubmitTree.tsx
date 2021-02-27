@@ -3,7 +3,8 @@ import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Text, View, ScrollView, ActivityIndicator, Alert} from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {useQuery} from '@apollo/react-hooks';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -14,6 +15,10 @@ import {TreeSubmissionRouteParamList} from 'types';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import config from 'services/config';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import TreeDetailsQuery, {
+  TreeDetailsQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailsQuery.graphql';
+import {TreesQueryQueryData} from 'screens/GreenBlock/screens/MyCommunity/graphql/TreesQuery.graphql';
 
 interface Props {}
 
@@ -36,6 +41,18 @@ function SubmitTree(_: Props) {
   const wallet = useMemo(() => {
     return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
   }, [web3]);
+
+  const updatedTreeQuery = useQuery<TreeDetailsQueryQueryData, TreeDetailsQueryQueryData.Variables>(TreeDetailsQuery, {
+    skip: !isUpdate,
+    variables: {
+      id: Number(journey.treeIdToUpdate ?? 0),
+    },
+  });
+  const treeListQuery = useQuery<TreesQueryQueryData, TreesQueryQueryData.Variables>(TreeDetailsQuery, {
+    variables: {
+      address: wallet.address,
+    },
+  });
 
   const handleUploadToIpfs = useCallback(async () => {
     if (!journey.photo || (!journey.location && !isUpdate)) {
@@ -68,7 +85,7 @@ function SubmitTree(_: Props) {
         treeId,
         photoHash,
       ]);
-      console.log(receipt.hash);
+      console.log(receipt.transactionHash);
 
       return receipt;
     },
@@ -95,7 +112,7 @@ function SubmitTree(_: Props) {
           '1',
         ],
       ]);
-      console.log(receipt.hash);
+      console.log(receipt.transactionHash);
 
       return receipt;
     },
@@ -114,23 +131,51 @@ function SubmitTree(_: Props) {
     try {
       if (journey.treeIdToUpdate) {
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
-        Alert.alert('Success', 'Your tree has been successfully updated');
+        await treeListQuery.refetch();
+        await updatedTreeQuery.refetch();
+        Alert.alert('Success', 'The tree has been successfully updated');
+
+        navigation.dangerouslyGetParent().dispatch(state => {
+          const indexToGo = state.routes.findIndex(({name}) => name === 'TreeDetails');
+          return CommonActions.reset({
+            ...state,
+            routes: state.routes.slice(0, indexToGo + 1),
+            index: indexToGo,
+            stale: state.stale as any,
+          });
+        });
       } else {
         transaction = await handleSendCreateTransaction(journey.location);
+        await treeListQuery.refetch();
         Alert.alert('Success', 'Your tree has been successfully submitted');
+
+        navigation.dispatch(state =>
+          CommonActions.reset({
+            ...state,
+            routes: [{name: 'SelectPhoto', params: {}}],
+            index: 0,
+            stale: state.stale as any,
+          }),
+        );
       }
 
       setTxHash(transaction.transactionHash);
 
       console.log('Transaction: ', transaction);
-
-      navigation.navigate('GreenBlock', {});
     } catch (error) {
-      Alert.alert('Error occurred', "Transaction couldn't complete");
+      Alert.alert('Error occurred', "Transaction couldn't be completed");
       console.warn('Error', error);
     }
     setSubmitting(false);
-  }, [wallet, journey, navigation, handleSendCreateTransaction, handleSendUpdateTransaction]);
+  }, [
+    wallet,
+    journey,
+    navigation,
+    handleSendCreateTransaction,
+    handleSendUpdateTransaction,
+    updatedTreeQuery,
+    treeListQuery,
+  ]);
 
   useEffect(() => {
     handleUploadToIpfs();

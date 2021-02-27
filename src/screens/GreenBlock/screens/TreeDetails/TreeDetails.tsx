@@ -2,11 +2,12 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, Linking, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, Image, Linking, ActivityIndicator, RefreshControl} from 'react-native';
 import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useQuery} from '@apollo/react-hooks';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
+import {NetworkStatus} from 'apollo-boost';
 import Spacer from 'components/Spacer';
 import {ChevronLeft, ChevronRight} from 'components/Icons';
 import Avatar from 'components/Avatar';
@@ -26,11 +27,10 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
-  const {loading, data} = useQuery<TreeDetailsQueryQueryData>(TreeDetailsQuery, {
+  const {loading, data, networkStatus, refetch} = useQuery<TreeDetailsQueryQueryData>(TreeDetailsQuery, {
     variables: {
       id: tree.treeId,
     },
-    returnPartialData: true,
   });
 
   const mapImageUrl = getStaticMapUrl({
@@ -72,7 +72,12 @@ function TreeDetails(_: Props) {
   }, [cardRef]);
 
   return (
-    <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+    <ScrollView
+      style={[globalStyles.screenView, globalStyles.fill]}
+      refreshControl={
+        <RefreshControl refreshing={networkStatus === NetworkStatus.refetch} onRefresh={() => refetch()} />
+      }
+    >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
           <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
