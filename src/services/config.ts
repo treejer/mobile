@@ -16,7 +16,7 @@ const config = {
     Paymaster: {
       address: process.env.REACT_NATIVE_CONTRACT_PAYMASTER_ADDRESS,
       abi: require('../../contracts/WhitelistPaymaster.json').abi,
-    }
+    },
   },
   networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
   isMainnet: false, // Boolean(process.env.REACT_NATIVE_IS_MAINNET || false),

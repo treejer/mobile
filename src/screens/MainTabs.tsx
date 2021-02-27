@@ -4,12 +4,12 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationProp} from '@react-navigation/native';
 import TabBar from 'components/TabBar';
 import {usePrivateKeyStorage} from 'services/web3';
+import {useCurrentUser, UserStatus} from 'services/currentUser';
 import {MainTabsParamList} from 'types';
 
 import TreeSubmission from './TreeSubmission';
 import Profile from './Profile';
 import GreenBlock from './GreenBlock';
-import { useCurrentUser, UserStatus } from 'services/currentUser';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +21,7 @@ function MainTabs({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
   const {status} = useCurrentUser();
 
-  const tabsVisible = unlocked && status === UserStatus.Verified
+  const tabsVisible = unlocked && status === UserStatus.Verified;
 
   useEffect(() => {
     if (!navigation) {
@@ -51,7 +51,7 @@ function MainTabs({navigation}: Props) {
     Linking.addEventListener('url', listener);
     Linking.getInitialURL()
       .then(listener)
-      .catch((error) => {
+      .catch(error => {
         console.warn('Failed to get initial URL', error);
       });
 

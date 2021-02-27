@@ -4,15 +4,17 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, ScrollView, Text, View} from 'react-native';
 import {CommonActions, useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Polygon, Marker, Region} from 'react-native-maps';
+import {useForm, useWatch} from 'react-hook-form';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import {Point, pointSort, upperLeft} from 'utilities/helpers/latLng';
 import Steps from 'components/Steps';
 import Spacer from 'components/Spacer';
 import TextField from 'components/TextField';
-import {useForm, useWatch} from 'react-hook-form';
 import Button from 'components/Button';
-import {useWalletAccount, useWeb3, useGBFactory} from 'services/web3';
+import {useWalletAccount, useWeb3} from 'services/web3';
+import config from 'services/config';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 
 interface Props {}
 
@@ -26,7 +28,6 @@ function CreateGreenBlcok(_: Props) {
   const isFocused = useIsFocused();
   const mapViewRef = useRef<MapView>();
   const web3 = useWeb3();
-  const gbFactory = useGBFactory();
   const wallet = useWalletAccount();
   const [submitting, setSubmitting] = useState(false);
   const initialMapRegion = useRef<Region>({
@@ -53,14 +54,12 @@ function CreateGreenBlcok(_: Props) {
   const handleCreateGreenBlock = form.handleSubmit(async data => {
     setSubmitting(true);
     try {
-      let transaction = await gbFactory.methods
-        .create(
-          data.title,
-          JSON.stringify(data.polygon.map(({latitude, longitude}) => ({lat: latitude, lng: longitude}))),
-          '0x0000000000000000000000000000000000000000',
-          [wallet.address],
-        )
-        .send({from: wallet.address, gas: 1e6});
+      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.GBFactory, 'create', [
+        data.title,
+        JSON.stringify(data.polygon.map(({latitude, longitude}) => ({lat: latitude, lng: longitude}))),
+        '0x0000000000000000000000000000000000000000',
+        [wallet.address],
+      ]);
 
       console.log('transaction', transaction);
 
@@ -107,6 +106,7 @@ function CreateGreenBlcok(_: Props) {
         mapViewRef.current.animateToRegion(initialMapRegion.current);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapViewRef.current]);
 
   const sortedPolygon = useMemo(() => [...polygon].sort(pointSort(upperLeft(polygon))), [polygon]);

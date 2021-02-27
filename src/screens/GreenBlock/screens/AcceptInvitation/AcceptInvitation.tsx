@@ -6,8 +6,10 @@ import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigati
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
-import {useGBFactory, useWalletAccount, useWeb3} from 'services/web3';
+import {useWalletAccount, useWeb3} from 'services/web3';
 import {GreenBlockRouteParamList} from 'types';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import config from 'services/config';
 
 interface Props {}
 
@@ -16,7 +18,6 @@ function AcceptInvitation(_: Props) {
     params: {greenBlockId},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'AcceptInvitation'>>();
   const [submiting, setSubmitting] = useState(false);
-  const gbFactory = useGBFactory();
   const wallet = useWalletAccount();
   const web3 = useWeb3();
   const navigation = useNavigation();
@@ -24,7 +25,9 @@ function AcceptInvitation(_: Props) {
   const handleJoinGreenBlock = useCallback(async () => {
     setSubmitting(true);
     try {
-      let transaction = await gbFactory.methods.joinGB(greenBlockId).send({from: wallet.address, gas: 1e6});
+      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.GBFactory, 'joinGB', [
+        greenBlockId,
+      ]);
 
       console.log('transaction', transaction);
 
@@ -43,7 +46,7 @@ function AcceptInvitation(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [gbFactory, greenBlockId, web3, wallet, navigation]);
+  }, [greenBlockId, web3, wallet, navigation]);
 
   return (
     <View

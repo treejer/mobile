@@ -8,13 +8,14 @@ import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from '@apollo/react-hooks';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
-import {useTreeFactory, useWalletAccount, useWeb3} from 'services/web3';
+import {useWalletAccount, useWeb3} from 'services/web3';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import { useCurrentUser, UserStatus } from 'services/currentUser';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useCurrentUser, UserStatus} from 'services/currentUser';
+import config from 'services/config';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
 import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
@@ -26,7 +27,6 @@ function MyProfile(_: Props) {
   const web3 = useWeb3();
   const wallet = useWalletAccount();
 
-  const treeFactory = useTreeFactory();
   const {data, loading, status} = useCurrentUser();
 
   const isVerified = data?.me.isVerified;
@@ -54,7 +54,13 @@ function MyProfile(_: Props) {
   const handleWithdrawPlanterBalance = useCallback(async () => {
     setSubmitting(true);
     try {
-      let transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
+      // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
+      const transaction = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'withdrawPlanterBalance',
+      );
 
       console.log('transaction', transaction);
       Alert.alert('Success', 'You successfully withdrew!');
@@ -64,7 +70,7 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [treeFactory, web3, wallet]);
+  }, [web3, wallet]);
 
   const onRefetch = () => {
     planterWithdrawableBalanceResult.refetch();
