@@ -4,7 +4,6 @@ import {colors} from 'constants/values';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions, RefreshControl} from 'react-native';
 import {CommonActions, useNavigation} from '@react-navigation/native';
-import * as Linking from 'expo-linking';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -29,6 +28,8 @@ enum GreenBlockView {
   MyCommunity,
   MyTrees,
 }
+
+const HTTPS_BASE_URL = 'https://ranger.treejer.com';
 
 const usePlanters = (greenBlockId: string) => {
   const client = useApolloClient();
@@ -76,21 +77,19 @@ function MyCommunity(_: Props) {
     variables: {
       address: accountAddress,
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'network-only',
     skip: !account,
     onCompleted(data) {
       const greenBlockId = data?.GBFactory?.greenBlockId ?? 0;
       if (Number(greenBlockId) === 0) {
-        navigation.dispatch(state => {
-          const routes = [{name: 'CreateGreenBlock'}];
-
-          return CommonActions.reset({
+        navigation.dispatch(state =>
+          CommonActions.reset({
             ...state,
-            routes,
+            routes: [{name: 'CreateGreenBlock'}],
             index: state.index,
             stale: state.stale as any,
-          });
-        });
+          }),
+        );
       }
     },
     onError(error) {
@@ -223,7 +222,7 @@ function MyCommunity(_: Props) {
                 props={{color: colors.grayDarker}}
                 onPress={() => {
                   Share.share({
-                    message: Linking.makeUrl(`invite/green-block/${greenBlockId}`),
+                    message: `${HTTPS_BASE_URL}/invite/green-block/${greenBlockId}`,
                   });
                 }}
               />

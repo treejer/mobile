@@ -4,5 +4,5 @@
   standalone="yes"
 ?>
 <resources>
-  <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDd1Nkr_321tefWlrtXnJa4pT45e6U05LE</string>
+  <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCG48LOjSwa2iN02bWRsz2nAp0oJvf-CxU</string>
 </resources>

@@ -76,6 +76,7 @@ function CreateGreenBlcok(_: Props) {
         });
       });
     } catch (error) {
+      Alert.alert('Failed to join', 'Could not join this green block.');
       console.warn('Error', error);
     } finally {
       setSubmitting(false);

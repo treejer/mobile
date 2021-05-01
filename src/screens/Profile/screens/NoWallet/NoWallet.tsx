@@ -16,7 +16,6 @@ function NoWallet(_: Props) {
   const {unlocked, storePrivateKey} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
 
-
   /*
   const handleConnectWallet = useCallback(() => {
     navigation.navigate('CreateWallet');
@@ -44,11 +43,11 @@ function NoWallet(_: Props) {
           });
       });
     } catch (error) {
-      Alert.alert('Failed to login', 'Failed to authenticate via Torus. Please try again later.')
+      Alert.alert('Failed to login', 'Failed to authenticate via Torus. Please try again later.');
       console.error(error, 'login caught');
       setLoading(false);
     }
-  }, [navigation]);
+  }, [storePrivateKey]);
 
   useEffect(() => {
     if (unlocked) {

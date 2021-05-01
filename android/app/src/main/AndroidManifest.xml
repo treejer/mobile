@@ -18,7 +18,7 @@
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="true"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
-    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDd1Nkr_321tefWlrtXnJa4pT45e6U05LE"/>
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCG48LOjSwa2iN02bWRsz2nAp0oJvf-CxU"/>
     <activity android:name=".MainActivity" android:label="@string/app_name" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
