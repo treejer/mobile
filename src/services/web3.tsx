@@ -129,10 +129,9 @@ export const usePersistedWallet = () => {
       .then(key => {
         if (key) {
           setPrivateKey(key);
-          setLoaded(true);
-        } else {
-          setLoaded(true);
         }
+
+        setLoaded(true);
       })
       .catch(() => {
         console.warn('Failed to get fetch stored private key');
