@@ -224,10 +224,9 @@ function MyProfile(_: Props) {
 
           <Button style={styles.button} caption="Language" variant="tertiary" />
           <TouchableOpacity onPress={handleOpenHelp}>
-
-          <View style={styles.helpWrapper}>
-            <Text>Help?</Text>
-          </View>
+            <View style={styles.helpWrapper}>
+              <Text>Help?</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>

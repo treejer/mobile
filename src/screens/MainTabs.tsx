@@ -44,6 +44,7 @@ function MainTabs({navigation}: Props) {
         const [, greenBlockIdToJoin] = matches;
         navigation.navigate('GreenBlock', {
           greenBlockIdToJoin,
+          goTree: false,
         });
       }
     };

@@ -38,7 +38,9 @@ function Trees({onSelect, loading, trees}: Props) {
     );
   }
   return (
-    <View style={[globalStyles.horizontalStack, globalStyles.justifyContentCenter, globalStyles.flexWrap, styles.wrapper]}>
+    <View
+      style={[globalStyles.horizontalStack, globalStyles.justifyContentCenter, globalStyles.flexWrap, styles.wrapper]}
+    >
       {trees?.map(tree => (
         <TouchableOpacity style={styles.tree} key={tree.treeId} onPress={() => onSelect(tree)}>
           <Image

@@ -1,9 +1,9 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, Text, View, ScrollView, Image, Share, useWindowDimensions, RefreshControl} from 'react-native';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation, RouteProp} from '@react-navigation/native';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -16,13 +16,16 @@ import {useApolloClient, useQuery} from '@apollo/react-hooks';
 import {useWalletAccount} from 'services/web3';
 import {getStaticMapUrl} from 'utilities/helpers';
 import {NetworkStatus} from 'apollo-boost';
+import {GreenBlockRouteParamList} from 'types';
 
 import treesQuery, {TreesQueryQueryData} from './graphql/TreesQuery.graphql';
 import greenBlockIdQuery from './graphql/GreenBlockIdQuery.graphql';
 import planterQuery from './graphql/GreenBlockPlanterQuery.graphql';
 import greenBlockDetailsQuery from './graphql/GreenBlockDetailsQuery.graphql';
 
-interface Props {}
+interface Props {
+  route: RouteProp<GreenBlockRouteParamList, 'MyCommunity'>;
+}
 
 enum GreenBlockView {
   MyCommunity,
@@ -64,11 +67,12 @@ const usePlanters = (greenBlockId: string) => {
   return {data: planters};
 };
 
-function MyCommunity(_: Props) {
+function MyCommunity({route}: Props) {
+  // const {route} = props;
   const navigation = useNavigation();
   const dimensions = useWindowDimensions();
   const [currentView, setCurrentView] = useState(
-    _.route.params && _.route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity,
+    route.params?.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity,
   );
 
   const account = useWalletAccount();
@@ -119,16 +123,16 @@ function MyCommunity(_: Props) {
     skip: !greenBlockId,
   });
 
-  const onRefetch = () => {
+  const onRefetch = useCallback(() => {
     treesQueryResult.refetch();
-  };
+  }, [treesQueryResult]);
 
   useEffect(() => {
-    if (_.route.params && _.route.params.goTree) {
-      setCurrentView(_.route.params && _.route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity);
+    if (route.params && route.params.goTree) {
+      setCurrentView(route.params && route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity);
       onRefetch();
     }
-  }, [_.route.params]);
+  }, [onRefetch, route.params]);
 
   const {data: planters} = usePlanters(greenBlockId);
 
