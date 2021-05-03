@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid, Linking} from 'react-native';
 import {NetworkStatus} from 'apollo-boost';
 import Clipboard from 'expo-clipboard';
 import {useNavigation} from '@react-navigation/native';
@@ -74,6 +74,7 @@ function MyProfile(_: Props) {
 
   const onRefetch = () => {
     planterWithdrawableBalanceResult.refetch();
+    planterTreesCountResult.refetch();
   };
 
   const planterWithdrawableBalance =
@@ -81,7 +82,6 @@ function MyProfile(_: Props) {
       ? parseFloat(web3.utils.fromWei(planterWithdrawableBalanceResult.data.TreeFactory.balance))
       : 0;
   const refetching = planterWithdrawableBalanceResult.networkStatus === NetworkStatus.refetch;
-
   const avatarStatus = isVerified ? 'active' : 'inactive';
   const avatarMarkup = loading ? (
     <ShimmerPlaceholder
@@ -94,6 +94,10 @@ function MyProfile(_: Props) {
   ) : (
     <Avatar type={avatarStatus} size={74} />
   );
+
+  const handleOpenHelp = () => {
+    Linking.openURL('https://treejer.com/contact');
+  };
 
   return (
     <ScrollView
@@ -219,6 +223,12 @@ function MyProfile(_: Props) {
           )}
 
           <Button style={styles.button} caption="Language" variant="tertiary" />
+          <TouchableOpacity onPress={handleOpenHelp}>
+
+          <View style={styles.helpWrapper}>
+            <Text>Help?</Text>
+          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -240,6 +250,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 180,
+  },
+  helpWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   statContainer: {
     alignItems: 'center',

@@ -147,7 +147,12 @@ function SubmitTree(_: Props) {
       } else {
         transaction = await handleSendCreateTransaction(journey.location);
         await treeListQuery.refetch();
-        Alert.alert('Success', 'Your tree has been successfully submitted');
+        Alert.alert('Success', 'Your tree has been successfully submitted', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('GreenBlock', {goTree: true}),
+          },
+        ]);
 
         navigation.dispatch(state =>
           CommonActions.reset({

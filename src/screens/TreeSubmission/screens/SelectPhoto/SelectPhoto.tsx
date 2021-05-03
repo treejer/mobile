@@ -4,7 +4,7 @@ import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigat
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Alert, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';

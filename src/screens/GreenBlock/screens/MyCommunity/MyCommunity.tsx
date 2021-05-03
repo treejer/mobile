@@ -67,7 +67,10 @@ const usePlanters = (greenBlockId: string) => {
 function MyCommunity(_: Props) {
   const navigation = useNavigation();
   const dimensions = useWindowDimensions();
-  const [currentView, setCurrentView] = useState(GreenBlockView.MyCommunity);
+  const [currentView, setCurrentView] = useState(
+    _.route.params && _.route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity,
+  );
+
   const account = useWalletAccount();
   const mapWidth = dimensions.width - 100;
 
@@ -100,7 +103,7 @@ function MyCommunity(_: Props) {
   const treesQueryResult = useQuery<TreesQueryQueryData>(treesQuery, {
     variables: {
       address: accountAddress,
-      limit: 10,
+      limit: 50,
     },
     fetchPolicy: 'cache-first',
     skip: !account,
@@ -119,6 +122,13 @@ function MyCommunity(_: Props) {
   const onRefetch = () => {
     treesQueryResult.refetch();
   };
+
+  useEffect(() => {
+    if (_.route.params && _.route.params.goTree) {
+      setCurrentView(_.route.params && _.route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity);
+      onRefetch();
+    }
+  }, [_.route.params]);
 
   const {data: planters} = usePlanters(greenBlockId);
 
