@@ -27,11 +27,17 @@ function GreenBlock({navigation, route}: Props) {
   const greenBlockIdToJoin = route.params?.greenBlockIdToJoin;
   const alertPending = useRef(false);
 
-  useEffect(() => {
+  const shouldNavigateToTree = useCallback(() => {
     if (route.params && route.params.goTree) {
       navigation.navigate('MyCommunity', {goTree: route.params && route.params.goTree});
     }
-  }, [route.params]);
+  }, [navigation, route.params]);
+
+  useEffect(() => {
+    if (route.params && route.params.goTree) {
+      shouldNavigateToTree();
+    }
+  }, [shouldNavigateToTree, route.params]);
 
   const shouldNavigateToInvitation = useCallback(() => {
     if (greenBlockIdToJoin && typeof isVerified === 'boolean') {
