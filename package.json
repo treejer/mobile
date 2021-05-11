@@ -35,7 +35,7 @@
     "google-libphonenumber": "^3.2.15",
     "graphql": "^14.7.0",
     "graphql-anywhere": "^4.2.7",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-libs-browser": "^2.2.1",
     "node-libs-expo": "^0.0.3",
     "qs": "^6.9.4",
