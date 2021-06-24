@@ -72,7 +72,7 @@ function MyCommunity({route}: Props) {
   const navigation = useNavigation();
   const dimensions = useWindowDimensions();
   const [currentView, setCurrentView] = useState(
-    route.params?.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity,
+    route.params?.shouldNavigateToTreeDetails ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity,
   );
 
   const account = useWalletAccount();
@@ -128,8 +128,8 @@ function MyCommunity({route}: Props) {
   }, [treesQueryResult]);
 
   useEffect(() => {
-    if (route.params && route.params.goTree) {
-      setCurrentView(route.params && route.params.goTree ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity);
+    if (route.params?.shouldNavigateToTreeDetails) {
+      setCurrentView(route.params?.shouldNavigateToTreeDetails ? GreenBlockView.MyTrees : GreenBlockView.MyCommunity);
       onRefetch();
     }
   }, [onRefetch, route.params]);

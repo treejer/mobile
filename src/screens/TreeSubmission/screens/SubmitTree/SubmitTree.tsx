@@ -150,7 +150,7 @@ function SubmitTree(_: Props) {
         Alert.alert('Success', 'Your tree has been successfully submitted', [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('GreenBlock', {goTree: true}),
+            onPress: () => navigation.navigate('GreenBlock', {shouldNavigateToTreeDetails: true}),
           },
         ]);
 

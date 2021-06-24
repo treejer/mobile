@@ -28,13 +28,13 @@ function GreenBlock({navigation, route}: Props) {
   const alertPending = useRef(false);
 
   const shouldNavigateToTree = useCallback(() => {
-    if (route.params && route.params.goTree) {
-      navigation.navigate('MyCommunity', {goTree: route.params && route.params.goTree});
+    if (route.params?.shouldNavigateToTreeDetails) {
+      navigation.navigate('MyCommunity', {shouldNavigateToTreeDetails: route.params?.shouldNavigateToTreeDetails});
     }
   }, [navigation, route.params]);
 
   useEffect(() => {
-    if (route.params && route.params.goTree) {
+    if (route.params?.shouldNavigateToTreeDetails) {
       shouldNavigateToTree();
     }
   }, [shouldNavigateToTree, route.params]);

@@ -10,14 +10,14 @@ export interface MainTabsParamList extends Record<string, any> {
   TreeSubmission: undefined;
   GreenBlock: {
     greenBlockIdToJoin?: string;
-    goTree: boolean;
+    shouldNavigateToTreeDetails: boolean;
   };
 }
 
 export interface GreenBlockRouteParamList extends Record<string, any> {
   CreateGreenBlock: undefined;
   MyCommunity: {
-    goTree: boolean;
+    shouldNavigateToTreeDetails: boolean;
   };
   AcceptInvitation: {
     greenBlockId: string;
