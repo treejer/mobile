@@ -16,6 +16,8 @@ import Avatar from 'components/Avatar';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import config from 'services/config';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
 import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
@@ -94,6 +96,11 @@ function MyProfile(_: Props) {
   ) : (
     <Avatar type={avatarStatus} size={74} />
   );
+
+  const handleLogout = () => {
+    AsyncStorage.clear();
+    SecureStore.deleteItemAsync(config.storageKeys.privateKey);
+  };
 
   return (
     <ScrollView
@@ -219,6 +226,11 @@ function MyProfile(_: Props) {
           )}
 
           <Button style={styles.button} caption="Language" variant="tertiary" />
+          <TouchableOpacity onPress={handleLogout}>
+            <View style={styles.helpWrapper}>
+              <Text>Logout</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -240,6 +252,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 180,
+  },
+  helpWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   statContainer: {
     alignItems: 'center',

@@ -7,7 +7,7 @@ import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessTok
 
 import config from './config';
 
-export const Web3Context = React.createContext({
+const initialValue = {
   web3: {} as Web3,
   unlocked: false,
   storePrivateKey: (async () => {}) as (privateKey: string, password?: string) => Promise<void>,
@@ -16,7 +16,9 @@ export const Web3Context = React.createContext({
   gbFactory: {} as Contract,
   updateFactory: {} as Contract,
   waiting: false,
-});
+};
+
+export const Web3Context = React.createContext(initialValue);
 
 interface Props {
   children: React.ReactNode;
