@@ -27,6 +27,18 @@ function GreenBlock({navigation, route}: Props) {
   const greenBlockIdToJoin = route.params?.greenBlockIdToJoin;
   const alertPending = useRef(false);
 
+  const shouldNavigateToTree = useCallback(() => {
+    if (route.params?.shouldNavigateToTreeDetails) {
+      navigation.navigate('MyCommunity', {shouldNavigateToTreeDetails: route.params?.shouldNavigateToTreeDetails});
+    }
+  }, [navigation, route.params]);
+
+  useEffect(() => {
+    if (route.params?.shouldNavigateToTreeDetails) {
+      shouldNavigateToTree();
+    }
+  }, [shouldNavigateToTree, route.params]);
+
   const shouldNavigateToInvitation = useCallback(() => {
     if (greenBlockIdToJoin && typeof isVerified === 'boolean') {
       if (isVerified) {
@@ -44,7 +56,6 @@ function GreenBlock({navigation, route}: Props) {
         ]);
       }
     }
-
     return false;
   }, [greenBlockIdToJoin, isVerified, navigation]);
 
