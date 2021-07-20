@@ -42,7 +42,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-hook-form": "^6.9.2",
-    "react-native": "~0.63.4",
+    "react-native": "~0.64.1",
     "react-native-confirmation-code-field": "^6.5.1",
     "react-native-crypto": "^2.2.0",
     "react-native-dash": "^0.0.11",
