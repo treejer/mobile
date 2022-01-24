@@ -12,6 +12,7 @@ export interface UserApplyMutationPartialData {
 export namespace UserApplyMutationData {
   export interface Variables {
     input?: ApplyInput | null;
+    userId?: string | null;
   }
   export interface Apply {
     __typename: "ApplyMutationResponse";

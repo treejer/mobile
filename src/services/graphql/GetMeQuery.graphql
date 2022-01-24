@@ -1,15 +1,17 @@
 query GetMe {
-  me @rest(type: "User", path: "/users/me") {
-    id
-    name
-    email
-    emailVerifiedAt
-    idCard
-    createdAt
-    updatedAt
-    mobile
-    mobileCountry
-    mobileVerifiedAt
-    isVerified
-  }
+    user @rest(type: "User", path: "/user/getme/user") {
+        id
+        firstName
+        lastName
+        email
+        emailVerifiedAt
+        idCard
+        createdAt
+        updatedAt
+        mobile
+        mobileCountry
+        mobileVerifiedAt
+        isVerified
+    }
 }
+

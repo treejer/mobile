@@ -45,6 +45,16 @@ const appConfig = ({config}: ConfigContext): ExpoConfig => ({
             host: 'ranger.treejer.com',
             pathPrefix: '/invite/green-block',
           },
+          {
+            scheme: 'https',
+            host: 'ranger.treejer.com',
+            pathPrefix: '/organization/',
+          },
+          {
+            scheme: 'https',
+            host: 'ranger.treejer.com',
+            pathPrefix: '/referrer/',
+          },
         ],
         category: ['BROWSABLE', 'DEFAULT'],
       },

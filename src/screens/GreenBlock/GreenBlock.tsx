@@ -1,31 +1,44 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Alert} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {useQuery} from '@apollo/react-hooks';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationProp, RouteProp, useRoute} from '@react-navigation/native';
+import {useQuery} from '@apollo/client';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
-import TreeSubmission from 'screens/TreeSubmission';
 import {GreenBlockRouteParamList, MainTabsParamList} from 'types';
 
-import CreateGreenBlock from './screens/CreateGreenBlock';
-import MyCommunity from './screens/MyCommunity';
 import TreeDetails from './screens/TreeDetails';
 import AcceptInvitation from './screens/AcceptInvitation';
+import TreeList from 'components/TreeList';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
   navigation: NavigationProp<GreenBlockRouteParamList>;
   route: RouteProp<MainTabsParamList, 'GreenBlock'>;
 }
 
-const Stack = createStackNavigator<GreenBlockRouteParamList>();
+const Stack = createNativeStackNavigator<GreenBlockRouteParamList>();
 
 function GreenBlock({navigation, route}: Props) {
-  const {data} = useQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
-  const isVerified = data?.me?.isVerified;
+  const {data} = useQuery<GetMeQueryData>(getMeQuery);
+  const isVerified = data?.user?.isVerified;
   const greenBlockIdToJoin = route.params?.greenBlockIdToJoin;
   const alertPending = useRef(false);
+  const {t} = useTranslation();
+
+  const {params} = useRoute();
+  const {filter} = params || {};
+
+  const shouldNavigateToTree = useCallback(() => {
+    if (route.params?.shouldNavigateToTreeDetails) {
+      navigation.navigate('MyCommunity', {shouldNavigateToTreeDetails: route.params?.shouldNavigateToTreeDetails});
+    }
+  }, [navigation, route.params]);
+
+  useEffect(() => {
+    if (route.params?.shouldNavigateToTreeDetails) {
+      shouldNavigateToTree();
+    }
+  }, [shouldNavigateToTree, route.params]);
 
   const shouldNavigateToInvitation = useCallback(() => {
     if (greenBlockIdToJoin && typeof isVerified === 'boolean') {
@@ -33,9 +46,9 @@ function GreenBlock({navigation, route}: Props) {
         return true;
       } else if (!alertPending.current) {
         alertPending.current = true;
-        Alert.alert('Please verify your account', 'You must verify your account before joining a green block.', [
+        Alert.alert(t('greenBlock.notVerified.title'), t('greenBlock.notVerified.details'), [
           {
-            text: 'Get verified',
+            text: t('getVerified'),
             onPress: () => {
               alertPending.current = false;
               navigation.navigate('VerifyProfile' as any);
@@ -46,7 +59,7 @@ function GreenBlock({navigation, route}: Props) {
     }
 
     return false;
-  }, [greenBlockIdToJoin, isVerified, navigation]);
+  }, [greenBlockIdToJoin, isVerified, navigation, t]);
 
   useEffect(() => {
     if (shouldNavigateToInvitation()) {
@@ -54,14 +67,12 @@ function GreenBlock({navigation, route}: Props) {
     }
   }, [shouldNavigateToInvitation, navigation, route.params]);
 
-  const initialRouteName = shouldNavigateToInvitation() ? 'AcceptInvitation' : undefined;
+  const initialRouteName = shouldNavigateToInvitation() ? 'AcceptInvitation' : 'TreeList';
 
   return (
-    <Stack.Navigator headerMode="none" initialRouteName={initialRouteName}>
-      <Stack.Screen name="MyCommunity" component={MyCommunity} />
+    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName={initialRouteName}>
+      <Stack.Screen name="TreeList">{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
       <Stack.Screen name="TreeDetails" component={TreeDetails} />
-      <Stack.Screen name="CreateGreenBlock" component={CreateGreenBlock} />
-      <Stack.Screen name="TreeUpdate" component={TreeSubmission} />
       <Stack.Screen
         name="AcceptInvitation"
         component={AcceptInvitation}

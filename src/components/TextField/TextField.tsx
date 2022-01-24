@@ -3,17 +3,17 @@ import {colors} from 'constants/values';
 
 import React from 'react';
 import {StyleSheet, TextInput, TextInputProps} from 'react-native';
-import {Controller, Control, ValidationRules, FieldError} from 'react-hook-form';
+import {Controller, Control, ValidationRule, FieldError} from 'react-hook-form';
 import PhoneInput, {PhoneInputProps} from 'react-native-phone-number-input';
 
 type OwnProps = {
   defaultValue?: string;
-  rules?: ValidationRules;
+  rules?: ValidationRule | any;
   success?: boolean;
   error?: FieldError;
 } & (
   | {
-      control: Control;
+      control: Control<any>;
       name: string;
     }
   | {
@@ -23,7 +23,7 @@ type OwnProps = {
 );
 
 type TextFieldProps = TextInputProps & OwnProps;
-type PhoneFieldProps = PhoneInputProps & OwnProps;
+type PhoneFieldProps = PhoneInputProps & OwnProps & TextInputProps;
 
 const TextField = React.forwardRef<TextInput, TextFieldProps>(
   ({control, name, rules, defaultValue = '', success, error, ...props}: TextFieldProps, ref) => {
@@ -37,8 +37,13 @@ const TextField = React.forwardRef<TextInput, TextFieldProps>(
       return (
         <Controller
           control={control}
-          render={({onChange, onBlur, value}) => (
-            <TextInput {...inputProps} onBlur={onBlur} onChangeText={value => onChange(value)} value={value} />
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+              {...inputProps}
+              onBlur={onBlur}
+              onChangeText={inputValue => onChange(inputValue)}
+              value={value}
+            />
           )}
           name={name}
           rules={rules}
@@ -64,7 +69,7 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
       return (
         <Controller
           control={control}
-          render={({onChange, onBlur, value}) => (
+          render={({field: {onBlur, onChange, value}}) => (
             <PhoneInput
               {...inputProps}
               textInputProps={{onBlur}}
@@ -77,7 +82,7 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
                 error && styles.error,
               ]}
               codeTextStyle={{height: 25, padding: 0, textAlign: 'right'}}
-              onChangeText={value => onChange(value)}
+              onChangeText={inputValue => onChange(inputValue)}
               value={value}
             />
           )}

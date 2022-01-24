@@ -3,8 +3,8 @@ import {colors} from 'constants/values';
 import qs from 'qs';
 import config from 'services/config';
 
-const API_KEY = config.googleMapsApiKey;
-const baseUrl = 'https://maps.googleapis.com/maps/api/staticmap';
+const API_KEY = config.mapboxToken;
+const baseUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static';
 
 interface Coordinate {
   lat: number;
@@ -42,7 +42,6 @@ function joinCoordinate({lat, lng}: Coordinate) {
 }
 
 const defaultColor = colors.khakiDark.replace(/^#/, '0x');
-
 function getStaticMapUrl({height, width, markers, path, zoom, maptype = 'satellite'}: Input) {
   const queryParams = {
     zoom: zoom ?? (markers && 12),
@@ -63,6 +62,14 @@ function getStaticMapUrl({height, width, markers, path, zoom, maptype = 'satelli
   };
 
   return `${baseUrl}?${qs.stringify(queryParams)}`;
+}
+
+export function getStaticMapboxUrl(long, lat, width, height, zoom = 15) {
+  return `${baseUrl}/pin-s-l+000(${long},${lat})/${long},${lat},${zoom}/${width}x${height}?access_token=${API_KEY}`;
+}
+
+export function getStaticMapboxUrlWithoutMarker(long, lat, width, height) {
+  return `${baseUrl}/${long},${lat},14.25,0,0/${width}x${height}?access_token=${API_KEY}`;
 }
 
 export default getStaticMapUrl;

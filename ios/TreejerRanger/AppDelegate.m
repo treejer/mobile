@@ -1,16 +1,13 @@
+#import <Firebase.h>
 #import "AppDelegate.h"
-
+#import <RNTorusDirectSdk/RNTorus.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+#import <React/RCTConvert.h>
 
-#import <UMCore/UMModuleRegistry.h>
-#import <UMReactNativeAdapter/UMNativeModulesProxy.h>
-#import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
-#import <UMCore/UMModuleRegistryProvider.h>
-
-#if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
+#ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
 #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
@@ -29,55 +26,60 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
-@interface AppDelegate () <RCTBridgeDelegate>
-
-@property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
-
-@end
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-#if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
-  InitializeFlipper(application);
-#endif
-  
-  self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
+  [FIRApp configure];
+
+  #if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
+     InitializeFlipper(application);
+  #endif
+//   if ([FIRApp defaultApp] == nil) {
+//       [FIRApp configure];
+//     }
+  #ifdef FB_SONARKIT_ENABLED
+    InitializeFlipper(application);
+  #endif
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                            moduleName:@"TreejerRanger"
-                                            initialProperties:nil];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"TreejerRanger" initialProperties:nil];
+  id rootViewBackgroundColor = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"RCTRootViewBackgroundColor"];
+  if (rootViewBackgroundColor != nil) {
+    rootView.backgroundColor = [RCTConvert UIColor:rootViewBackgroundColor];
+  } else {
+    rootView.backgroundColor = [UIColor whiteColor];
+  }
 
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+
   return YES;
- }
+}
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
 {
-  NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
-  // If you'd like to export some custom RCTBridgeModules that are not Expo modules, add them here!
-  return extraModules;
+    // If you'd like to export some custom RCTBridgeModules that are not Expo modules, add them here!
+    return @[];
 }
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
- #ifdef DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
- #else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
- #endif
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+  #if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
 }
 
-// Linking API
+//Linking API
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  return [RCTLinkingManager application:application openURL:url options:options];
+ return [RCTLinkingManager application:application openURL:url options:options];
 }
 
 // Universal Links

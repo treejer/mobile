@@ -1,17 +1,20 @@
 import globalStyles from 'constants/styles';
 
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import OnboardingScreen from 'screens/Onboarding/screens/OnboardingSlides';
 
 import Welcome from './Onboarding/screens/SelectLanguage';
 import SignUp from './SignUp';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 function Router() {
   return (
-    <Stack.Navigator screenOptions={{cardStyle: globalStyles.screenView}}>
+    <Stack.Navigator
+      screenOptions={{contentStyle: globalStyles.screenView}}
+      defaultScreenOptions={{headerShown: false}}
+    >
       <Stack.Screen name="Welcome" component={Welcome} options={{headerShown: false}} />
       <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}} />
       <Stack.Screen name="SignUp" component={SignUp} options={{headerShown: false}} />

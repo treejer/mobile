@@ -1,5 +1,5 @@
-mutation VerifyUser($input: any) {
-  apply(input: $input) @rest(type: "User", method: "POST", path: "/users/apply", bodyKey: "input") {
+mutation VerifyUser($input: VerifyMobileInput, $userId: String) {
+  apply(input: $input, userId: $userId) @rest(type: "User", method: "POST", path: "/users/{args.id}/application", bodyKey: "input") {
     message
   }
 }

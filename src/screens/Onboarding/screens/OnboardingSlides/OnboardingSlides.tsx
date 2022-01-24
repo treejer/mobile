@@ -8,6 +8,7 @@ import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import ProgressCircles from 'components/ProgressCircles';
 import {useSettings} from 'services/settings';
+import {useTranslation} from 'react-i18next';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
@@ -17,29 +18,29 @@ interface OnboardingData {
   content: string;
 }
 
-const onboardingData: OnboardingData[] = [
-  {
-    image: require('../../../../../assets/images/onboarding-1.png'),
-    heading: 'Connect to your Wallet',
-    content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
-  },
-  {
-    image: require('../../../../../assets/images/onboarding-2.png'),
-    heading: 'Plant Trees or Support them',
-    content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
-  },
-  {
-    image: require('../../../../../assets/images/onboarding-3.png'),
-    heading: 'Get Rewards',
-    content: 'The new member will receive a SMS to join the Green Block in a few minutes.',
-  },
-];
-
 function OnboardingScreen() {
   // const navigation = useNavigation();
   const {width: viewportWidth} = useWindowDimensions();
   const carouselRef = useRef<Carousel<OnboardingData>>(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const {t} = useTranslation();
+  const onboardingData: OnboardingData[] = [
+    {
+      image: require('../../../../../assets/images/onboarding-1.png'),
+      heading: t('onBoarding.first.title'),
+      content: t('onBoarding.first.details'),
+    },
+    {
+      image: require('../../../../../assets/images/onboarding-2.png'),
+      heading: t('onBoarding.second.title'),
+      content: t('onBoarding.second.details'),
+    },
+    {
+      image: require('../../../../../assets/images/onboarding-3.png'),
+      heading: t('onBoarding.third.title'),
+      content: t('onBoarding.third.details'),
+    },
+  ];
   const isEnd = currentStep === onboardingData.length - 1;
   const currentStepForRenderItem = currentStep;
   const {markOnboardingAsDone} = useSettings();
@@ -91,7 +92,7 @@ function OnboardingScreen() {
       </View>
       <View style={[styles.bottomWrapper, globalStyles.alignItemsCenter]}>
         <View style={globalStyles.pt3}>
-          <Button variant="cta" caption="NEXT" icon={Tree} onPress={nextItem} />
+          <Button variant="cta" caption={t('next')} icon={Tree} onPress={nextItem} />
         </View>
 
         <View style={globalStyles.pt3}>

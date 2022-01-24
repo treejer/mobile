@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "116888410915",
+    "project_id": "electric-signal-262123",
+    "storage_bucket": "electric-signal-262123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116888410915:android:10735b806ff2876be88a96",
+        "android_client_info": {
+          "package_name": "com.treejer.ranger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116888410915-jf59ahl3pa09tvt6vr91mo84f8o39vff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.treejer.ranger",
+            "certificate_hash": "237ab9b42e6f43df9bc983e51b6098fc43228380"
+          }
+        },
+        {
+          "client_id": "116888410915-1dna23u6gebpigegn9mgj2sahjo58v1d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG48LOjSwa2iN02bWRsz2nAp0oJvf-CxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116888410915-1dna23u6gebpigegn9mgj2sahjo58v1d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "116888410915-hcqgrj6rg5snrmkj1qbatrf94ke34u1e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.treejer.ranger"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

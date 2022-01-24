@@ -1,0 +1,42 @@
+query TreeDetailQuery($id: String!) {
+
+  tree(id: $id)@type(name: "Tree"){
+    id
+    planter @type(name: "planter"){
+      id
+    }
+    funder @type(name: "TreeFunder"){
+      id
+    }
+    countryCode
+    treeStatus
+    plantDate
+    birthDate
+    saleType
+    treeSpecsEntity @type(name: "TreeSpecs"){
+      id
+      name
+      description
+      externalUrl
+      imageFs
+      imageHash
+      symbolFs
+      symbolHash
+      animationUrl
+      diameter
+      latitude
+      longitude
+      attributes
+      updates
+      nursery
+      locations
+    }
+    lastUpdate @type(name: "TreeUpdate"){
+      id
+      updateStatus
+      updateSpecs
+      createdAt
+      updatedAt
+    }
+  }
+}

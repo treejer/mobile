@@ -3,21 +3,30 @@ import globalStyles from 'constants/styles';
 
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet, TouchableOpacityProps, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {StyleSheet, TouchableOpacity, TouchableOpacityProps, View} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import Animated, {useValue, Easing, timing, interpolate} from 'react-native-reanimated';
 
 import {GreenBlock, Tree, User} from '../Icons';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 
-interface Props extends BottomTabBarProps {}
+interface Props extends BottomTabBarProps {
+  tabsVisible: boolean;
+}
 
-function TabBar({state, descriptors, navigation}: Props) {
-  const {tabBarVisible} = descriptors[state.routes[state.index].key].options;
+const analyticsEvents = {
+  Profile: 'my_profile',
+  GreenBlock: 'tree_list',
+  TreeSubmission: 'add_tree',
+};
+
+function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
   const mounted = useRef(false);
   const timeout = useRef<Animated.BackwardCompatibleWrapper | undefined>();
 
-  const visibilityAnimatedValue = useValue(tabBarVisible ? 1 : 0);
+  const {sendEvent} = useAnalytics();
+
+  const visibilityAnimatedValue = useValue(tabsVisible ? 1 : 0);
 
   useEffect(() => {
     if (!mounted.current) {
@@ -27,7 +36,7 @@ function TabBar({state, descriptors, navigation}: Props) {
 
     timeout.current = timing(visibilityAnimatedValue, {
       duration: 500,
-      toValue: tabBarVisible ? 1 : 0,
+      toValue: tabsVisible ? 1 : 0,
       easing: Easing.inOut(Easing.ease),
     });
 
@@ -36,7 +45,7 @@ function TabBar({state, descriptors, navigation}: Props) {
     return () => {
       timeout.current?.stop();
     };
-  }, [visibilityAnimatedValue, tabBarVisible]);
+  }, [visibilityAnimatedValue, tabsVisible]);
 
   const translateY = interpolate(visibilityAnimatedValue, {
     inputRange: [0, 1],
@@ -75,7 +84,11 @@ function TabBar({state, descriptors, navigation}: Props) {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            sendEvent(analyticsEvents[route.name]);
+            navigation.reset({
+              index: 0,
+              routes: [{name: route.name, params: {initialRouteName: 'SelectPlantType'}}],
+            });
           }
         };
 
@@ -98,19 +111,15 @@ function TabBar({state, descriptors, navigation}: Props) {
   );
 }
 
-function renderTabItem({
-  isFocused,
-  onLongPress,
-  onPress,
-  options,
-  index,
-}: {
+interface RenderTabItemProps {
   isFocused: boolean;
-  onLongPress: TouchableOpacityProps['onLongPress'];
-  onPress: TouchableOpacityProps['onPress'];
+  onLongPress: Pick<TouchableOpacityProps, 'onLongPress'>;
+  onPress: Pick<TouchableOpacityProps, 'onPress'>;
   options: BottomTabNavigationOptions;
   index: number;
-}) {
+}
+
+function renderTabItem({isFocused, onLongPress, onPress, options, index}: RenderTabItemProps) {
   switch (index) {
     case 0:
     case 2:

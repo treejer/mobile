@@ -2,8 +2,16 @@ import {colors} from 'constants/values';
 import globalStyles, {fontMedium} from 'constants/styles';
 
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacityProps, TextProps, ViewProps, ActivityIndicator} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacityProps,
+  TextProps,
+  ViewProps,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 
 type Props = {
   caption: string;
@@ -37,8 +45,15 @@ function Button({
 }: Props) {
   const Component = (disabled ? View : TouchableOpacity) as React.ComponentType<TouchableOpacityProps>;
   return (
-    <Component style={[styles[`${variant}Container`], round ? styles.round : null, style]} onPress={onPress} {...props}>
-      {!round && <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>}
+    <Component
+      style={[styles[`${variant}Container`], round ? styles.round : null, style]}
+      onPress={onPress}
+      disabled={disabled}
+      {...props}
+    >
+      {!round && Boolean(caption) ? (
+        <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>
+      ) : null}
       {icon && (
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
@@ -47,7 +62,11 @@ function Button({
         </View>
       )}
       {loading && (
-        <ActivityIndicator style={{marginLeft: 10}} color={styles[`${variant}Text`].color ?? 'white'} size="small" />
+        <ActivityIndicator
+          style={{marginHorizontal: 10}}
+          color={styles[`${variant}Text`].color ?? 'white'}
+          size="small"
+        />
       )}
     </Component>
   );

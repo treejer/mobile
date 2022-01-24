@@ -1,0 +1,12 @@
+query TempTreesQuery($address: String!, $first: Int = 5, $skip: Int = 0) {
+  tempTrees(first: $first, skip: $skip, orderBy: createdAt, orderDirection: asc, where: {planter: $address}) {
+    id
+    planter {
+      id
+    }
+    status
+    birthDate
+    treeSpecs
+    createdAt
+  }
+}

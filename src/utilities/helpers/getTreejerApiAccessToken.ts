@@ -1,40 +1,56 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import config from 'services/config';
 import Web3 from 'web3';
+import {getUserNonce} from 'utilities/helpers/userNonce';
+import {userSign} from 'utilities/helpers/userSign';
+import {hexEncode} from 'utilities/helpers/hex';
+import {UserSignRes} from 'services/types';
 
-export async function getTreejerApiAccessToken(privateKey: string, web3: Web3) {
+export async function getTreejerApiAccessToken(privateKey: string, web3: Web3): Promise<UserSignRes> {
+  console.log(privateKey, 'private Key');
   if (!privateKey) {
     return;
   }
 
+  const wallet = web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+  console.log(wallet, 'wallet<===');
+
+  if (!wallet) {
+    console.log('gets inside 1');
+    return Promise.reject();
+  }
+
   const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey);
+  console.log(hash, 'hash 2');
   const key = `ACCESS_TOKEN_${hash}`;
+  console.log(key, 'key 3');
 
   const cachedToken = await AsyncStorage.getItem(key);
 
+  console.log(cachedToken, 'cachedToken');
+
+  const userId = await AsyncStorage.getItem('USER_ID');
+  console.log(cachedToken, 'cachedToken <==');
+
   if (cachedToken) {
-    return cachedToken;
+    return Promise.resolve({
+      userId,
+      loginToken: cachedToken,
+    });
   }
 
-  const response = await fetch(`${config.treejerApiUrl}/oauth/token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    /* eslint-disable @typescript-eslint/naming-convention */
-    body: JSON.stringify({
-      client_id: config.treejerClientId,
-      client_secret: config.treejerClientSecret,
-      grant_type: 'social',
-      provider: 'wallet',
-      access_token: web3.eth.accounts.sign(config.publicKeyRecoveryMessage, privateKey).signature,
-    }),
-    /* eslint-enable @typescript-eslint/naming-convention */
-  });
+  const userNonceResult = await getUserNonce(wallet.address);
+  console.log(userNonceResult, 'userNonceResult is here<===');
 
-  const value = await response.json();
-  AsyncStorage.setItem(key, value.access_token);
+  const signature = web3.eth.accounts.sign(hexEncode(userNonceResult.message), privateKey).signature;
+  console.log(signature, 'signature <===');
 
-  return value.access_token;
+  try {
+    const credentials = await userSign(signature, wallet.address, key);
+    console.log(credentials, 'credentials <===');
+    return Promise.resolve(credentials);
+  } catch (e) {
+    return Promise.reject(e);
+  }
 }

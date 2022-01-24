@@ -1,0 +1,11 @@
+query PlanterStatusQuery($id: String!) {
+  planter(id: $id) {
+    status
+    id
+    countryCode
+    planterType
+    plantedCount
+    balance
+    supplyCap
+  }
+}
