@@ -1,4 +1,7 @@
-import {LatLng} from 'react-native-maps';
+export interface LatLng {
+  latitude: number;
+  longitude: number;
+}
 
 export class Point implements LatLng {
   public x: number;

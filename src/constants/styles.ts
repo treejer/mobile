@@ -1,6 +1,6 @@
 import {colors} from 'constants/values';
 
-import {Platform, StatusBar, StyleSheet, TextStyle} from 'react-native';
+import {PixelRatio, Platform, StatusBar, StyleSheet, TextStyle} from 'react-native';
 
 export const fontDefaultColor: TextStyle = {
   color: colors.grayDarker,
@@ -35,6 +35,7 @@ const globalStyles = StyleSheet.create({
   screenView: {
     backgroundColor: colors.khaki,
   },
+  screenViewBottom: {paddingBottom: Platform.OS === 'android' ? 40 : 4},
   safeArea: {
     paddingTop: Platform.select({
       ios: 25,
@@ -90,6 +91,10 @@ const globalStyles = StyleSheet.create({
     fontSize: 14,
     ...fontMedium,
   },
+  tiny: {
+    fontSize: 11,
+    ...fontMedium,
+  },
   alignItemsCenter: {
     alignItems: 'center',
   },
@@ -139,5 +144,7 @@ const globalStyles = StyleSheet.create({
     paddingTop: space[3],
   },
 });
+
+export const scaleFont = (size: number) => size * PixelRatio.getFontScale();
 
 export default globalStyles;

@@ -1,16 +1,22 @@
-export type Web3Result = Record<string, any>;
+export interface whereType {
+  planter?: string | null;
+}
 export interface ApplyInput {
-  fullName: string;
-  idCardUri: string;
-  name: string;
-  idCard: string;
+  firstName: string;
+  lastName: string;
+  idCardFile: string;
   type: string;
+  organizationAddress: string;
+  referrer: string;
+  longitude: string;
+  latitude: string;
 }
 export interface VerifyMobileInput {
-  token: string;
+  verificationCode: string;
 }
-export type Any = any;
 export interface UpdateMobileInput {
-  mobile: string;
-  mobileCountry: string;
+  country: string;
+  mobileNumber: string;
 }
+export type Web3Result = Record<string, any>;
+export type Any = any;

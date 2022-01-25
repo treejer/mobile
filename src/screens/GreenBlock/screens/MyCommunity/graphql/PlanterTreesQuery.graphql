@@ -1,0 +1,41 @@
+query PlanterTreesQuery($address: String!, $first: Int = 5, $skip: Int = 0) {
+  trees(first: $first, skip: $skip, orderBy: createdAt, orderDirection: asc, where: {planter: $address})@type(name: "Tree") {
+    id
+    treeSpecs
+    planter @type(name: "planter") {
+      id
+    }
+    funder @type(name: "TreeFunder") {
+      id
+    }
+    countryCode
+    treeStatus
+    plantDate
+    birthDate
+    saleType
+    createdAt
+    treeSpecsEntity @type(name: "TreeSpecs") {
+      id
+      name
+      description
+      externalUrl
+      imageFs
+      imageHash
+      symbolFs
+      symbolHash
+      animationUrl
+      diameter
+      latitude
+      longitude
+      attributes
+      updates
+    }
+    lastUpdate @type(name: "TreeUpdate") {
+      id
+      updateStatus
+      updateSpecs
+      createdAt
+      updatedAt
+    }
+  }
+}

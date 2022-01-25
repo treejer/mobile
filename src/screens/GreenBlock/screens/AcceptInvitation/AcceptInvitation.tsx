@@ -25,7 +25,7 @@ function AcceptInvitation(_: Props) {
   const handleJoinGreenBlock = useCallback(async () => {
     setSubmitting(true);
     try {
-      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.GBFactory, 'joinGB', [
+      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.Planter, 'joinGB', [
         greenBlockId,
       ]);
 

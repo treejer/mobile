@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 import {Account} from 'web3-core';
@@ -11,13 +11,14 @@ import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
 import Steps from 'components/Steps';
 import {usePrivateKeyStorage, useWeb3} from 'services/web3';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
 
 function CreateWallet() {
   const navigation = useNavigation();
   const {handleSubmit} = useForm<{
     password: string;
   }>();
+  const {t} = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
@@ -42,7 +43,7 @@ function CreateWallet() {
     });
   });
 
-  const doneMarkup = <Text style={[globalStyles.normal]}>Done!</Text>;
+  const doneMarkup = <Text style={[globalStyles.normal]}>{t('done')}</Text>;
 
   const recoveryPhrase = ['carrot', 'basket', 'horse', 'donkey', 'camel', 'yaboo', 'pig', 'sheep', 'goat'];
 
@@ -55,7 +56,7 @@ function CreateWallet() {
             <ChevronLeft />
           </TouchableOpacity>
           <Text style={[globalStyles.fill, globalStyles.h4, globalStyles.pl1, globalStyles.textCenter]}>
-            Create Wallet
+            {t('createWallet.title')}
           </Text>
           <ChevronLeft color="transparent" />
         </View>
@@ -65,7 +66,7 @@ function CreateWallet() {
           {/* Step 1 - Enter Password */}
           <Steps.Step step={1}>
             <View>
-              <Text style={globalStyles.h6}>Set up wallet</Text>
+              <Text style={globalStyles.h6}>{t('createWallet.setup')}</Text>
               {renderSetupWallet()}
             </View>
           </Steps.Step>
@@ -73,7 +74,7 @@ function CreateWallet() {
           {/* Step 2 - Recovery Phrase */}
           <Steps.Step step={2} lastStep>
             <View style={globalStyles.alignItemsStart}>
-              <Text style={globalStyles.h6}>Recovery phrase</Text>
+              <Text style={globalStyles.h6}>{t('createWallet.recoveryPhrase')}</Text>
               <Spacer times={1} />
 
               {renderRecoveryPhrase()}
@@ -92,7 +93,12 @@ function CreateWallet() {
       <>
         <Spacer times={3} />
         <View style={[globalStyles.alignItemsStart, globalStyles.alignItemsCenter, globalStyles.horizontalStack]}>
-          <Button disabled={loading} variant="success" caption="Set up account" onPress={handleConnectWallet} />
+          <Button
+            disabled={loading}
+            variant="success"
+            caption={t('createWallet.setupAccount')}
+            onPress={handleConnectWallet}
+          />
           <Spacer />
           {loading && <ActivityIndicator color="#000000" />}
         </View>
@@ -120,7 +126,7 @@ function CreateWallet() {
         <Text style={[globalStyles.normal]}>{JSON.stringify(account)}</Text>
         <Spacer times={3} />
         <View style={globalStyles.alignItemsStart}>
-          <Button variant="success" caption="Done" onPress={() => navigation.goBack()} />
+          <Button variant="success" caption={t('done')} onPress={() => navigation.goBack()} />
         </View>
       </>
     );

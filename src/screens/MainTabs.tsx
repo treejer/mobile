@@ -17,8 +17,9 @@ interface Props {
   navigation?: NavigationProp<MainTabsParamList>;
 }
 
-function MainTabs({navigation}: Props) {
+function TabWithTabBar({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
+
   const {status} = useCurrentUser();
 
   const tabsVisible = unlocked && status === UserStatus.Verified;
@@ -28,7 +29,7 @@ function MainTabs({navigation}: Props) {
       return;
     }
     const greenBlockRegex = /\/invite\/green-block\/(\d+)$/;
-    const listener = (eventOrUrl: string | {url: string}) => {
+    const listener = (eventOrUrl: string | null | {url: string}) => {
       if (!eventOrUrl) {
         return;
       }
@@ -44,6 +45,7 @@ function MainTabs({navigation}: Props) {
         const [, greenBlockIdToJoin] = matches;
         navigation.navigate('GreenBlock', {
           greenBlockIdToJoin,
+          shouldNavigateToTreeDetails: false,
         });
       }
     };
@@ -62,9 +64,10 @@ function MainTabs({navigation}: Props) {
 
   return (
     <Tab.Navigator
-      tabBar={props => <TabBar {...props} />}
+      tabBar={props => <TabBar tabsVisible={tabsVisible} {...props} />}
       screenOptions={{
-        tabBarVisible: tabsVisible,
+        headerShown: false,
+        tabBarStyle: {display: tabsVisible ? 'flex' : 'none'},
       }}
       // initialRouteName="GreenBlock"
     >
@@ -73,6 +76,10 @@ function MainTabs({navigation}: Props) {
       <Tab.Screen name="GreenBlock" component={GreenBlock} />
     </Tab.Navigator>
   );
+}
+
+function MainTabs() {
+  return <TabWithTabBar />;
 }
 
 export default MainTabs;

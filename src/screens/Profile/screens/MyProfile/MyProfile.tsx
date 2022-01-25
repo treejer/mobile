@@ -1,86 +1,213 @@
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-
-import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, ToastAndroid} from 'react-native';
-import {NetworkStatus} from 'apollo-boost';
-import Clipboard from 'expo-clipboard';
-import {useNavigation} from '@react-navigation/native';
-import {useQuery} from '@apollo/react-hooks';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useWalletAccount, useWeb3} from 'services/web3';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useWalletAccount, useResetWeb3Data, useWalletWeb3, usePlanterFund} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import config from 'services/config';
+import {useSettings} from 'services/settings';
+import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {asyncAlert} from 'utilities/helpers/alert';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {useTranslation} from 'react-i18next';
+import Invite from 'screens/Profile/screens/MyProfile/Invite';
+import SimpleToast from 'react-native-simple-toast';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import Clipboard from '@react-native-clipboard/clipboard';
+import AppVersion from 'components/AppVersion';
 
-import planterWithdrawableBalanceQuery from './graphql/PlanterWithdrawableBalanceQuery.graphql';
-import planterTreesCountQuery, {PlanterTreesCountQueryData} from './graphql/PlanterTreesCountQuery.graphql';
-
-interface Props {}
+interface Props {
+  navigation: any;
+}
 
 function MyProfile(_: Props) {
+  const {t} = useTranslation();
+  const [minBalance, setMinBalance] = useState(null);
   const navigation = useNavigation();
-  const web3 = useWeb3();
+  const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
+  const {resetOnBoardingData} = useSettings();
+  const {resetWeb3Data} = useResetWeb3Data();
 
-  const {data, loading, status} = useCurrentUser();
+  const planterFundContract = usePlanterFund();
 
-  const isVerified = data?.me.isVerified;
+  const {sendEvent} = useAnalytics();
+
+  const {data, loading, status, statusCode, refetchUser} = useCurrentUser();
+  const isVerified = data?.user?.isVerified;
+  const {offlineTrees} = useOfflineTrees();
+
+  const requiredBalance = useMemo(() => 500000000000000000, []);
+
+  // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
+  //   variables: {},
+  //   fetchPolicy: 'cache-first',
+  // });
+
+  // @here This useEffect should be a hook or fix minBalanceQuery method
+  useEffect(() => {
+    planterFundContract.methods
+      .minWithdrawable()
+      .call()
+      .then(balance => {
+        setMinBalance(balance);
+      })
+      .catch(e => {
+        console.log(e, 'e inside get minWithdrawable');
+        setMinBalance(requiredBalance);
+      });
+  }, [planterFundContract.methods, requiredBalance]);
 
   const address = useMemo(() => wallet?.address, [wallet]);
+
   const skipStats = !address || !isVerified;
 
-  const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      address,
-    },
-    skip: skipStats,
-  });
+  const {
+    data: planterData,
+    refetchPlanterStatus: planterRefetch,
+    refetching,
+  } = usePlanterStatusQuery(address, skipStats);
 
-  const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
-    variables: {
-      address,
+  const handleLogout = useCallback(
+    async (userPressed: boolean) => {
+      try {
+        if (userPressed) {
+          try {
+            if (offlineTrees.planted || offlineTrees.updated) {
+              const trees = [...(offlineTrees.planted || []), ...(offlineTrees.updated || [])];
+
+              if (trees.length) {
+                const isMoreThanOne = trees.length > 1;
+                const treeText = isMoreThanOne ? 'trees' : 'tree';
+                const treeThereText = isMoreThanOne ? 'they are' : 'it is';
+
+                await asyncAlert(
+                  t('myProfile.attention'),
+                  t('myProfile.looseTree', {treesLength: trees.length, treeText, treeThereText}),
+                  {text: t('myProfile.logoutAndLoose')},
+                  {text: t('cancel')},
+                );
+              }
+            }
+          } catch (e) {
+            return Promise.reject(e);
+          }
+          await SecureStore.deleteItemAsync(config.storageKeys.privateKey);
+        }
+        await AsyncStorage.clear();
+        if (!userPressed) {
+          if (offlineTrees.planted) {
+            await AsyncStorage.setItem(offlineTreesStorageKey, offlineTrees.planted);
+          }
+          if (offlineTrees.updated) {
+            await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, offlineTrees.updated);
+          }
+        }
+        await resetWeb3Data();
+        await resetOnBoardingData();
+      } catch (e) {
+        console.log(e, 'e inside handleLogout');
+        return Promise.reject(e);
+      }
     },
-    fetchPolicy: 'cache-first',
-    skip: skipStats,
-  });
+    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data],
+  );
+
+  useEffect(() => {
+    if (statusCode && statusCode === 401 && address) {
+      handleLogout(false).then(() => {});
+    }
+  }, [statusCode, handleLogout, address]);
+
+  // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
+  //   variables: {
+  //     address,
+  //   },
+  //   skip: skipStats,
+  // });
+
+  // const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
+  //   variables: {
+  //     address,
+  //   },
+  //   fetchPolicy: 'cache-first',
+  //   skip: skipStats,
+  // });
+
+  const getPlanter = useCallback(async () => {
+    try {
+      await planterRefetch();
+    } catch (e) {
+      console.log(e, 'e is hereeeeee getPlanter');
+    }
+  }, [planterRefetch]);
+
+  const parseBalance = useCallback(
+    (balance: string, fixed = 5) => parseFloat(web3.utils.fromWei(balance)).toFixed(fixed),
+    [web3.utils],
+  );
+
+  useEffect(() => {
+    if (address) {
+      getPlanter().then(() => {});
+    }
+  }, [address, getPlanter]);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
     setSubmitting(true);
+    sendEvent('withdraw');
     try {
-      // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
-      const transaction = await sendTransactionWithGSN(
-        web3,
-        wallet,
-        config.contracts.TreeFactory,
-        'withdrawPlanterBalance',
-      );
+      // balance
+      const balance = planterData?.balance;
+      if (Number(balance) > minBalance) {
+        try {
+          const transaction = await sendTransactionWithGSN(
+            web3,
+            wallet,
+            config.contracts.PlanterFund,
+            'withdrawBalance',
+            [planterData?.balance.toString()],
+          );
 
-      console.log('transaction', transaction);
-      Alert.alert('Success', 'You successfully withdrew!');
+          // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
+          // const transaction = await sendTransactionWithGSN(
+          //   web3,
+          //   wallet,
+          //   config.contracts.TreeFactory,
+          //   'withdrawPlanterBalance',
+          // );
+
+          console.log('transaction', transaction);
+          Alert.alert(t('success'), t('myProfile.withdraw.success'));
+        } catch (e) {
+          Alert.alert(t('failure'), e.message || t('sthWrong'));
+        }
+      } else {
+        Alert.alert(t('myProfile.attention'), t('myProfile.lessBalance', {amount: t('myProfile.attention')}));
+      }
     } catch (error) {
       Alert.alert('Error', error.message);
       console.warn('Error', error);
     } finally {
       setSubmitting(false);
     }
-  }, [web3, wallet]);
+  }, [planterData?.balance, minBalance, web3, wallet, t]);
 
-  const onRefetch = () => {
-    planterWithdrawableBalanceResult.refetch();
+  const onRefetch = async () => {
+    await getPlanter();
+    await refetchUser();
   };
 
-  const planterWithdrawableBalance =
-    planterWithdrawableBalanceResult.data?.TreeFactory.balance > 0
-      ? parseFloat(web3.utils.fromWei(planterWithdrawableBalanceResult.data.TreeFactory.balance))
-      : 0;
-  const refetching = planterWithdrawableBalanceResult.networkStatus === NetworkStatus.refetch;
+  const planterWithdrawableBalance = planterData?.balance > 0 ? parseBalance(planterData?.balance.toString()) : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
   const avatarMarkup = loading ? (
@@ -92,13 +219,32 @@ function MyProfile(_: Props) {
       }}
     />
   ) : (
-    <Avatar type={avatarStatus} size={74} />
+    <>
+      <Avatar type={avatarStatus} size={74} />
+      <Text style={{color: avatarStatus === 'active' ? colors.green : colors.red}}>
+        {t(avatarStatus === 'active' ? 'verified' : 'notVerified')}
+      </Text>
+    </>
   );
+
+  const handleOpenHelp = () => {
+    sendEvent('help');
+    Linking.openURL('https://discuss.treejer.com/group/planters');
+  };
+
+  const handleNavigateOfflineMap = () => {
+    sendEvent('offlinemap');
+    navigation.navigate('OfflineMap');
+  };
+
+  const handleSelectLanguage = () => {
+    navigation.navigate('SelectLanguage', {back: true});
+  };
 
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
-      refreshControl={<RefreshControl refreshing={refetching} onRefresh={onRefetch} />}
+      refreshControl={<RefreshControl refreshing={refetching || loading} onRefresh={onRefetch} />}
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
@@ -112,71 +258,70 @@ function MyProfile(_: Props) {
             <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
           </View>
         )}
+        {!loading && (
+          <>
+            {Boolean(data?.user?.firstName) && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
 
-        {Boolean(data?.me?.name) && <Text style={globalStyles.h4}>{data.me.name}</Text>}
+            {Boolean(data?.user?.firstName || loading) && <Spacer times={4} />}
 
-        {Boolean(data?.me?.name || loading) && <Spacer times={4} />}
+            <TouchableOpacity
+              onPress={() => {
+                Clipboard.setString(address);
+                SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
+              }}
+            >
+              {address && (
+                <Text numberOfLines={1} style={styles.addressBox}>
+                  {address.slice(0, 15)}...
+                </Text>
+              )}
+            </TouchableOpacity>
+            <Spacer times={8} />
 
-        <TouchableOpacity
-          onPress={() => {
-            Clipboard.setString(address);
-            ToastAndroid.show('Copied to clipboard!', 1000);
-          }}
-        >
-          {address && (
-            <Text numberOfLines={1} style={styles.addressBox}>
-              {address.slice(0, 15)}...
-            </Text>
-          )}
-        </TouchableOpacity>
-        <Spacer times={8} />
+            {planterData && (
+              <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                <View style={styles.statContainer}>
+                  <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
+                  <Text style={styles.statLabel}>{t('balance')}</Text>
+                </View>
 
-        {!skipStats && (
-          <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
-            <View style={styles.statContainer}>
-              <Text style={styles.statValue}>0.00</Text>
-              <Text style={styles.statLabel}>O2 Balance</Text>
-            </View>
+                <Spacer times={6} />
 
-            <Spacer times={6} />
+                <View style={styles.statContainer}>
+                  <Text style={styles.statValue}>{planterData?.plantedCount}</Text>
+                  <Text style={styles.statLabel}>{t('plantedTrees')}</Text>
+                </View>
 
-            <View style={styles.statContainer}>
-              <Text style={styles.statValue}>{planterTreesCountResult.data?.planterTreesCount?.count}</Text>
-              <Text style={styles.statLabel}>Planted Trees</Text>
-            </View>
+                {/*<Spacer times={6} />*/}
 
-            <Spacer times={6} />
+                {/*<View style={styles.statContainer}>*/}
+                {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
+                {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
+                {/*</View>*/}
+              </View>
+            )}
 
-            <View style={styles.statContainer}>
-              <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>
-              <Text style={styles.statLabel}>ETH Earning</Text>
-            </View>
-          </View>
-        )}
+            <View style={globalStyles.p3}>
+              {planterWithdrawableBalance > 0 && (
+                <>
+                  <Button
+                    style={styles.button}
+                    caption={t('withdraw')}
+                    variant="tertiary"
+                    loading={submiting}
+                    onPress={handleWithdrawPlanterBalance}
+                  />
+                  <Spacer times={4} />
+                </>
+              )}
+              {status === UserStatus.Pending && (
+                <>
+                  <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
+                  <Spacer times={6} />
+                </>
+              )}
 
-        <View style={globalStyles.p3}>
-          {planterWithdrawableBalance > 0 && (
-            <>
-              <Button
-                style={styles.button}
-                caption="Withdraw"
-                variant="tertiary"
-                loading={submiting}
-                onPress={() => {
-                  handleWithdrawPlanterBalance();
-                }}
-              />
-              <Spacer times={4} />
-            </>
-          )}
-          {status === UserStatus.Pending && (
-            <>
-              <Text style={globalStyles.textCenter}>Pending verification</Text>
-              <Spacer times={6} />
-            </>
-          )}
-
-          {/* {
+              {/* {
             <>
               <Button
                 style={styles.button}
@@ -189,37 +334,66 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           } */}
-          {status === UserStatus.Unverified && (
-            <>
-              <Button
-                style={styles.button}
-                caption="Get Verified"
-                variant="tertiary"
-                onPress={() => {
-                  if (data?.me) {
-                    navigation.navigate('VerifyProfile', {user: data.me});
-                  }
-                }}
-              />
-              <Spacer times={4} />
-            </>
-          )}
-          {!address && (
-            <>
-              <Button
-                style={styles.button}
-                caption="Create Wallet"
-                variant="tertiary"
-                onPress={() => {
-                  navigation.navigate('CreateWallet');
-                }}
-              />
-              <Spacer times={4} />
-            </>
-          )}
+              {status === UserStatus.Unverified && (
+                <>
+                  <Button
+                    style={styles.button}
+                    caption={t('getVerified')}
+                    variant="tertiary"
+                    onPress={() => {
+                      sendEvent('get_verified');
+                      if (data?.user) {
+                        _.navigation.navigate('VerifyProfile', {user: data.user});
+                      }
+                    }}
+                  />
+                  <Spacer times={4} />
+                </>
+              )}
 
-          <Button style={styles.button} caption="Language" variant="tertiary" />
-        </View>
+              <Button
+                style={styles.button}
+                caption={t('offlineMap.title')}
+                variant="tertiary"
+                onPress={handleNavigateOfflineMap}
+              />
+              <Spacer times={4} />
+
+              {planterData?.planterType && <Invite address={address} planterType={Number(planterData?.planterType)} />}
+
+              {!address && (
+                <>
+                  <Button
+                    style={styles.button}
+                    caption={t('createWallet.title')}
+                    variant="tertiary"
+                    onPress={() => {
+                      _.navigation.navigate('CreateWallet');
+                    }}
+                    disabled
+                  />
+                  <Spacer times={4} />
+                </>
+              )}
+
+              <Button style={styles.button} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+              <Spacer times={4} />
+              <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
+              <Spacer times={4} />
+              <Button
+                style={styles.button}
+                caption={t('logout')}
+                variant="tertiary"
+                onPress={() => {
+                  sendEvent('logout');
+                  handleLogout(true);
+                }}
+              />
+              <Spacer times={4} />
+              <AppVersion />
+            </View>
+          </>
+        )}
       </View>
     </ScrollView>
   );
@@ -240,6 +414,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 180,
+  },
+  helpWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   statContainer: {
     alignItems: 'center',

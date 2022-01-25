@@ -3,20 +3,27 @@ import * as SecureStore from 'expo-secure-store';
 import Web3 from 'web3';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
+import {Alert} from 'react-native';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 
 import config from './config';
+import {useTranslation} from 'react-i18next';
 
-export const Web3Context = React.createContext({
+const initialValue = {
   web3: {} as Web3,
+  walletWeb3: {} as Web3,
   unlocked: false,
   storePrivateKey: (async () => {}) as (privateKey: string, password?: string) => Promise<void>,
   accessToken: '',
   treeFactory: {} as Contract,
-  gbFactory: {} as Contract,
-  updateFactory: {} as Contract,
+  planter: {} as Contract,
+  planterFund: {} as Contract,
+  resetWeb3Data() {},
   waiting: false,
-});
+  userId: '',
+};
+
+export const Web3Context = React.createContext(initialValue);
 
 interface Props {
   children: React.ReactNode;
@@ -26,12 +33,15 @@ interface Props {
 function Web3Provider({children, privateKey}: Props) {
   const web3 = useMemo(() => new Web3(config.web3Url), []);
 
-  const [waiting, setWaiting] = useState(true);
-  const [unlocked, setUnlocked] = useState(false);
-  const [accessToken, setAccessToken] = useState('');
+  const [walletWeb3, setWalletWeb3] = useState<Web3>();
+  const [waiting, setWaiting] = useState<boolean>(true);
+  const [unlocked, setUnlocked] = useState<boolean>(false);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
   const treeFactory = useContract(web3, config.contracts.TreeFactory);
-  const gbFactory = useContract(web3, config.contracts.GBFactory);
-  const updateFactory = useContract(web3, config.contracts.UpdateFactory);
+  const planter = useContract(web3, config.contracts.Planter);
+  const planterFund = useContract(web3, config.contracts.PlanterFund);
+  const {t} = useTranslation();
 
   const previousWeb3 = useRef<Web3 | null>(null);
 
@@ -43,17 +53,28 @@ function Web3Provider({children, privateKey}: Props) {
   );
 
   const updateAccessToken = useCallback(
-    (privateKey: string) =>
-      getTreejerApiAccessToken(privateKey, web3)
-        .then(accessToken => {
-          setAccessToken(accessToken);
-        })
-        .finally(() => {
-          setWaiting(false);
-          setUnlocked(true);
-        }),
-    [web3],
+    async (privateKey: string) => {
+      try {
+        const credentials = await getTreejerApiAccessToken(privateKey, web3);
+        setAccessToken(credentials.loginToken);
+        setUserId(credentials.userId);
+        setUnlocked(true);
+        setWalletWeb3(web3);
+      } catch (e) {
+        const {error: {message = t('loginFailed.message')} = {}} = e;
+        Alert.alert(t('loginFailed.title'), message);
+        console.log(e, 'e inside updateAccessToken');
+      }
+
+      setWaiting(false);
+    },
+    [t, web3],
   );
+
+  const resetWeb3Data = useCallback(async () => {
+    await setUnlocked(false);
+    await setAccessToken('');
+  }, []);
 
   const storePrivateKey = useCallback(
     async (privateKey: string) => {
@@ -85,12 +106,27 @@ function Web3Provider({children, privateKey}: Props) {
       storePrivateKey,
       unlocked,
       accessToken,
-      gbFactory,
+      walletWeb3,
       treeFactory,
-      updateFactory,
       waiting,
+      resetWeb3Data,
+      userId,
+      planter,
+      planterFund,
     }),
-    [web3, storePrivateKey, unlocked, accessToken, gbFactory, treeFactory, updateFactory, waiting],
+    [
+      web3,
+      storePrivateKey,
+      unlocked,
+      accessToken,
+      walletWeb3,
+      treeFactory,
+      waiting,
+      resetWeb3Data,
+      userId,
+      planter,
+      planterFund,
+    ],
   );
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
@@ -103,14 +139,21 @@ const useContract = (web3: Web3, {abi, address}: {abi: any; address: string}) =>
 export default memo(Web3Provider);
 
 export const useWeb3 = () => useContext(Web3Context).web3;
+export const useWalletWeb3 = () => useContext(Web3Context).walletWeb3;
 export const useTreeFactory = () => useContext(Web3Context).treeFactory;
-export const useGBFactory = () => useContext(Web3Context).gbFactory;
-export const useUpdateFactory = () => useContext(Web3Context).updateFactory;
+export const usePlanter = () => useContext(Web3Context).planter;
+export const usePlanterFund = () => useContext(Web3Context).planterFund;
+export const useResetWeb3Data = () => {
+  const resetWeb3Data = useContext(Web3Context).resetWeb3Data;
+  return {resetWeb3Data};
+};
 export const useWalletAccount = (): Account | null => {
   const web3 = useWeb3();
   return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
 };
 export const useAccessToken = () => useContext(Web3Context).accessToken;
+export const useUserId = () => useContext(Web3Context).userId;
+
 export const usePrivateKeyStorage = () => {
   const {storePrivateKey, unlocked} = useContext(Web3Context);
 

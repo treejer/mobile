@@ -7,4 +7,5 @@ export const colors = {
   gray: '#9E9E9E',
   grayDarker: '#424242',
   red: '#D04F45',
+  grayOpacity: '#00000033',
 };

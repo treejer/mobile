@@ -1,84 +1,108 @@
 import { DocumentNode } from "graphql-typed";
-export namespace TreeDetailsQueryQueryPartialData {
-  export interface TreeUpdates {
+export namespace TreeDetailQueryQueryPartialData {
+  export interface TreePlanter {
+    __typename?: "planter" | null;
+    id?: string | null;
+  }
+  export interface TreeFunder {
+    __typename?: "TreeFunder" | null;
+    id?: string | null;
+  }
+  export interface TreeTreeSpecsEntity {
+    __typename?: "TreeSpecs" | null;
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    externalUrl?: string | null;
+    imageFs?: string | null;
+    imageHash?: string | null;
+    symbolFs?: string | null;
+    symbolHash?: string | null;
+    animationUrl?: string | null;
+    diameter?: number | null;
+    latitude?: string | null;
+    longitude?: string | null;
+    attributes?: string | null;
+    updates?: string | null;
+  }
+  export interface TreeLastUpdate {
     __typename?: "TreeUpdate" | null;
     id?: string | null;
-    updateId?: number | null;
-    treeId?: number | null;
-    image?: string | null;
-    status?: boolean | null;
-    acceptedBy?: string | null;
-    acceptedAt?: string | null;
-    createdAt?: string | null;
-    updatedAt?: string | null;
+    updateStatus?: number | null;
+    updateSpecs?: string | null;
+    createdAt?: number | null;
+    updatedAt?: number | null;
   }
   export interface Tree {
     __typename?: "Tree" | null;
     id?: string | null;
-    treeId?: string | null;
-    gbId?: number | null;
-    typeId?: number | null;
-    owner?: string | null;
-    planter?: string | null;
-    name?: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
-    plantedDate?: string | null;
+    planter?: TreeDetailQueryQueryPartialData.TreePlanter | null;
+    funder?: TreeDetailQueryQueryPartialData.TreeFunder | null;
+    countryCode?: number | null;
+    treeStatus?: number | null;
+    plantDate?: string | null;
     birthDate?: string | null;
-    fundedDate?: string | null;
-    height?: number | null;
-    diameter?: number | null;
-    ambassadorBalance?: number | null;
-    planterBalance?: number | null;
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    updates?: (TreeDetailsQueryQueryPartialData.TreeUpdates | null)[] | null;
+    saleType?: number | null;
+    treeSpecsEntity?: TreeDetailQueryQueryPartialData.TreeTreeSpecsEntity | null;
+    lastUpdate?: TreeDetailQueryQueryPartialData.TreeLastUpdate | null;
   }
 }
-export interface TreeDetailsQueryQueryPartialData {
-  tree?: TreeDetailsQueryQueryPartialData.Tree | null;
+export interface TreeDetailQueryQueryPartialData {
+  tree?: TreeDetailQueryQueryPartialData.Tree | null;
 }
-export namespace TreeDetailsQueryQueryData {
+export namespace TreeDetailQueryQueryData {
   export interface Variables {
-    id: number;
-  }
-  export interface TreeUpdates {
-    __typename: "TreeUpdate";
     id: string;
-    updateId: number;
-    treeId: number;
-    image: string;
-    status: boolean;
-    acceptedBy?: string | null;
-    acceptedAt?: string | null;
-    createdAt: string;
-    updatedAt: string;
+  }
+  export interface TreePlanter {
+    __typename: "planter";
+    id: string;
+  }
+  export interface TreeFunder {
+    __typename: "TreeFunder";
+    id?: string | null;
+  }
+  export interface TreeTreeSpecsEntity {
+    __typename: "TreeSpecs";
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    externalUrl?: string | null;
+    imageFs?: string | null;
+    imageHash?: string | null;
+    symbolFs?: string | null;
+    symbolHash?: string | null;
+    animationUrl?: string | null;
+    diameter?: number | null;
+    latitude?: string | null;
+    longitude?: string | null;
+    attributes?: string | null;
+    updates?: string | null;
+  }
+  export interface TreeLastUpdate {
+    __typename: "TreeUpdate";
+    id?: string | null;
+    updateStatus?: number | null;
+    updateSpecs?: string | null;
+    createdAt: number;
+    updatedAt: number;
   }
   export interface Tree {
     __typename: "Tree";
-    id: string;
-    treeId: string;
-    gbId: number;
-    typeId?: number | null;
-    owner?: string | null;
-    planter?: string | null;
-    name: string;
-    latitude: number;
-    longitude: number;
-    plantedDate: string;
-    birthDate: string;
-    fundedDate?: string | null;
-    height?: number | null;
-    diameter?: number | null;
-    ambassadorBalance?: number | null;
-    planterBalance?: number | null;
-    createdAt: string;
-    updatedAt: string;
-    updates: (TreeDetailsQueryQueryData.TreeUpdates | null)[];
+    id?: string | null;
+    planter: TreeDetailQueryQueryData.TreePlanter;
+    funder: TreeDetailQueryQueryData.TreeFunder;
+    countryCode?: number | null;
+    treeStatus?: number | null;
+    plantDate?: string | null;
+    birthDate?: string | null;
+    saleType?: number | null;
+    treeSpecsEntity: TreeDetailQueryQueryData.TreeTreeSpecsEntity;
+    lastUpdate: TreeDetailQueryQueryData.TreeLastUpdate;
   }
 }
-export interface TreeDetailsQueryQueryData {
-  tree?: TreeDetailsQueryQueryData.Tree | null;
+export interface TreeDetailQueryQueryData {
+  tree?: TreeDetailQueryQueryData.Tree | null;
 }
-declare const document: DocumentNode<TreeDetailsQueryQueryData, TreeDetailsQueryQueryData.Variables, TreeDetailsQueryQueryPartialData>;
+declare const document: DocumentNode<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables, TreeDetailQueryQueryPartialData>;
 export default document;

@@ -1,4 +1,5 @@
 import { DocumentNode } from "graphql-typed";
+import { VerifyMobileInput } from "../../../../../data/schema/treejer_api-types";
 export namespace VerifyMobileMutationPartialData {
   export interface VerifyMobile {
     __typename?: "ResponseWithMessage" | null;
@@ -10,7 +11,7 @@ export interface VerifyMobileMutationPartialData {
 }
 export namespace VerifyMobileMutationData {
   export interface Variables {
-    token: string;
+    input?: VerifyMobileInput | null;
   }
   export interface VerifyMobile {
     __typename: "ResponseWithMessage";

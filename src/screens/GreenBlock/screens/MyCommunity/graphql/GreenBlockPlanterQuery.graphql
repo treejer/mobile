@@ -1,5 +1,0 @@
-query GreenBlockPlanet($greenBlockId: String!, $userId: String!) {
-  GBFactory @contract {
-    planter: gbToPlanters(id: $greenBlockId, userId: $userId)
-  }
-}

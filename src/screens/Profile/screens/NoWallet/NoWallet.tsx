@@ -2,12 +2,17 @@ import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Image, Text, View, ScrollView, Alert} from 'react-native';
-import TorusSdk from '@toruslabs/torus-direct-react-native-sdk';
+import {Image, Text, View, ScrollView, Alert, TouchableOpacity, Linking} from 'react-native';
+import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {usePrivateKeyStorage} from 'services/web3';
+import {useCamera} from 'utilities/hooks';
+import {locationPermission} from 'utilities/helpers/permissions';
+import {useTranslation} from 'react-i18next';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import config from 'services/config';
 
 interface Props {}
 
@@ -16,22 +21,39 @@ function NoWallet(_: Props) {
   const {unlocked, storePrivateKey} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
 
+  const {t} = useTranslation();
+
   /*
   const handleConnectWallet = useCallback(() => {
     navigation.navigate('CreateWallet');
   }, [navigation]);
   */
 
+  const {requestCameraPermission} = useCamera();
+
+  const {sendEvent} = useAnalytics();
+
+  useEffect(() => {
+    (async () => {
+      await requestCameraPermission();
+      await locationPermission();
+    })();
+  }, [requestCameraPermission]);
+
   const handleTorusWallet = useCallback(async () => {
     try {
-      setLoading(true);
+      console.log('started');
+      sendEvent('connect_wallet');
+      await setLoading(true);
+      console.log('before trigger login');
       const loginDetails = await TorusSdk.triggerLogin({
         typeOfLogin: 'google',
         verifier: 'treejer-ranger-google-testnet-web',
         clientId: '116888410915-1j5mi6etjrqnbfch8ovuc4i50vg7kg3c.apps.googleusercontent.com',
       });
-
+      console.log(loginDetails, 'loginDetails ????');
       requestAnimationFrame(() => {
+        console.log('inside requestAnimationFrame');
         const normalizedPrivateKey = loginDetails.privateKey.replace(/^00/, '0x');
         storePrivateKey(normalizedPrivateKey)
           .then(() => {
@@ -43,11 +65,15 @@ function NoWallet(_: Props) {
           });
       });
     } catch (error) {
-      Alert.alert('Failed to login', 'Failed to authenticate via Torus. Please try again later.');
+      Alert.alert(t('createWallet.failed.title'), t('createWallet.failed.details'));
       console.error(error, 'login caught');
       setLoading(false);
     }
-  }, [storePrivateKey]);
+  }, [sendEvent, storePrivateKey, t]);
+
+  const handleLearnMore = () => {
+    Linking.openURL(config.learnMoreLink);
+  };
 
   useEffect(() => {
     if (unlocked) {
@@ -67,13 +93,13 @@ function NoWallet(_: Props) {
           resizeMode="contain"
           style={{width: 280, height: 180}}
         />
-        <Text style={[globalStyles.h4, globalStyles.textCenter]}>Please connect {'\n'}your Ethereum wallet!</Text>
+        <Text style={[globalStyles.h4, globalStyles.textCenter]}>{t('createWallet.ethConnect')}</Text>
 
         <Spacer times={7} />
         {/* <Button variant="secondary" caption="Connect Wallet" onPress={handleConnectWallet} /> */}
         <Button
           variant="secondary"
-          caption="Connect Wallet"
+          caption={t('createWallet.connect')}
           onPress={handleTorusWallet}
           loading={loading}
           disabled={loading}
@@ -82,11 +108,12 @@ function NoWallet(_: Props) {
 
         <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
           <Card style={globalStyles.alignItemsCenter}>
-            <Text style={globalStyles.h5}>Why do I need that?</Text>
+            <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
             <Spacer times={5} />
-            <Text style={[globalStyles.normal, globalStyles.textCenter]}>
-              By connecting your Ethereum wallet, you will recieve your rewards faster and safer. Learn more
-            </Text>
+            <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.details')}</Text>
+            <TouchableOpacity onPress={handleLearnMore}>
+              <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.learnMore')}</Text>
+            </TouchableOpacity>
           </Card>
         </View>
       </View>

@@ -4,35 +4,49 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
   currentStep: number;
   children: React.ReactNode;
   isUpdate?: boolean;
+  isSingle?: boolean;
+  count?: number;
+  isNursery?: boolean;
 }
 
-function TreeSubmissionStepper({isUpdate, currentStep, children}: Props) {
-  const title = isUpdate ? 'Update tree' : 'Submit a new tree';
+function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count, isNursery}: Props) {
+  const {t} = useTranslation();
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
 
   return (
     <>
-      <Text style={[globalStyles.h5, globalStyles.textCenter]}>{title}</Text>
+      <Text style={[globalStyles.h5, globalStyles.textCenter]}>{t(title, {count})}</Text>
       <Spacer times={10} />
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
         <Steps.Step step={1}>
           <View style={{alignItems: 'flex-start'}}>
-            <Text style={globalStyles.h6}>Take a photo of the tree</Text>
+            <Text style={globalStyles.h6}>{t('submitTree.takePhoto')}</Text>
 
             {renderChildrenIfCurrentStep(1)}
           </View>
         </Steps.Step>
 
         {/* Step 2 - Only for creation */}
-        {!isUpdate && (
+        {(!isUpdate || isNursery) && (
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
-              <Text style={globalStyles.h6}>Submit tree location</Text>
+              <Text style={globalStyles.h6}>
+                {t(isNursery ? 'submitTree.updateTreeLocation' : 'submitTree.treeLocation')}
+              </Text>
 
               {renderChildrenIfCurrentStep(2)}
             </View>
@@ -40,18 +54,18 @@ function TreeSubmissionStepper({isUpdate, currentStep, children}: Props) {
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(isUpdate)}>
+        <Steps.Step step={3 - Number(isUpdate && !isNursery)}>
           <View style={{alignItems: 'flex-start'}}>
-            <Text style={globalStyles.h6}>Upload photo</Text>
+            <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
             {renderChildrenIfCurrentStep(3)}
           </View>
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(isUpdate)} lastStep>
+        <Steps.Step step={4 - Number(isUpdate && !isNursery)} lastStep>
           <View style={{alignItems: 'flex-start'}}>
-            <Text style={globalStyles.h6}>Sign with wallet</Text>
+            <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}
           </View>
         </Steps.Step>
@@ -59,7 +73,7 @@ function TreeSubmissionStepper({isUpdate, currentStep, children}: Props) {
     </>
   );
 
-  function renderChildrenIfCurrentStep(step: number) {
+  function renderChildrenIfCurrentStep(step: number, element?: JSX.Element) {
     if (step === currentStep) {
       return children;
     }

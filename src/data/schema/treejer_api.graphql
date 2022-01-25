@@ -1,6 +1,7 @@
 type User {
   id: ID!
-  name: String!
+  firstName: String!
+  lastName: String!
   email: String!
   emailVerifiedAt: String
   idCard: String
@@ -16,42 +17,18 @@ type PlanterTreesCount {
   count: Int!
 }
 
-type TreeUpdate {
-  id: ID!
-  updateId: Int!
-  treeId: Int!
-  image: String!
-  status: Boolean!
-  acceptedBy: String
-  acceptedAt: String
-  createdAt: String!
-  updatedAt: String!
-}
-
-type Tree {
-  id: ID!
-  treeId: ID!
-  gbId: Int!
-  typeId: Int
-  owner: String
-  planter: String
-  name: String!
-  latitude: Float!
-  longitude: Float!
-  plantedDate: String!
-  birthDate: String!
-  fundedDate: String
-  height: Int
-  diameter: Int
-  ambassadorBalance: Float
-  planterBalance: Float
-  createdAt: String!
-  updatedAt: String!
-  updates: [TreeUpdate]!
-}
-
 type TreeEdges {
-  current_page: Int!
+  currentPage: Int!
+  firstPageUrl: String!
+  from: Int!
+  lastPage: Int!
+  lastPageUrl: String!
+  nextPageUrl: String!
+  path: String!
+  perPage: String!
+  prevPageUrl: String!
+  to: Int!
+  total: Int!
   data: [Tree]!
 }
 
@@ -63,67 +40,163 @@ type ResponseWithMessage {
   message: String
 }
 
-type GBFactory {
-  gbToPlanters(id: String!, userId: String!): String
-  planterGB(address: String!): String
-  greenBlocks(id: String!): Web3Result
-}
-
 type TreeFactory {
   getPlanterWithdrawableBalance: String!
+}
+
+type PlanterFund {
+  minWithdrawable: String!
 }
 
 type ApplyMutationResponse {
   message: String
 }
 
+type planter {
+  id: ID!
+  status: String!
+  planterType: String!
+  countryCode: String
+  balance: Int!
+  plantedCount: Int!
+  supplyCap: Int!
+}
+
+type tempTrees {
+  id: String!
+  planter: [planter]!
+  status: String!
+  birthDate: String!
+  treeSpecs: String!
+  createdAt: Int!
+}
+
+type trees {
+  id: String!
+  treeStatus: String!
+  treeSpecs: String!
+  planter: planter!
+  funder: TreeFunder!
+  countryCode: Int
+  saleType: Int
+  plantDate: String
+  birthDate: String
+  lastUpdate: TreeUpdate!
+  createdAt: Int!
+  treeSpecsEntity: TreeSpecs!
+}
+
+type TreeSpecs {
+  id: String
+  name: String
+  description: String
+  externalUrl: String
+  imageFs: String
+  imageHash: String
+  symbolFs: String
+  symbolHash: String
+  animationUrl: String
+  diameter: Int
+  latitude: String
+  longitude: String
+  attributes: String
+  updates: String
+  nursery: String
+  locations: String
+}
+
+type TreeFunder {
+  id: String
+}
+
+type Tree {
+  id: String
+  planter: planter!
+  funder: TreeFunder!
+  countryCode: Int
+  saleType: Int
+  treeStatus: Int
+  plantDate: String
+  birthDate: String
+  lastUpdate: TreeUpdate!
+  treeSpecsEntity: TreeSpecs!
+}
+
+type TempTree {
+  id: String
+  countryCode: Int
+  status: Int
+  treeSpecs: String
+  plantDate: String
+  birthDate: String
+  treeSpecsEntity: TreeSpecs!
+}
+
+type TreeUpdate {
+  id: String
+  updateStatus: Int
+  updateSpecs: String
+  createdAt: Int!
+  updatedAt: Int!
+}
+
 type Query {
   """
   Returns the current user account.
   """
-  me: User
+  user: User
 
   """
   Returns the info for the given tree id
   """
   tree(id: Int!): Tree
 
-  """
-  Returns all trees for a given planter
-  """
-  trees(address: String!, limit: Int!): TreesResponse
+  tempTree(id: String): TempTree
 
   """
   Returns number of trees planted by a planter with the given ETH address
   """
   planterTreesCount(address: String!): PlanterTreesCount
 
-  GBFactory: GBFactory
   TreeFactory: TreeFactory
+  PlanterFund: PlanterFund
+
+  planter(id: String): planter
+  tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
+  trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
+}
+
+#input ApplyInput {
+#  fullName: String!
+#  idCardUri: String!
+#}
+
+input whereType {
+  planter: String
 }
 
 input ApplyInput {
-  fullName: String!
-  idCardUri: String!
-}
-
-input ApplyInput {
-  name: String!
-  idCard: String!
+  firstName: String!
+  lastName: String!
+  idCardFile: String!
   type: String!
+  organizationAddress: String!
+  referrer: String!
+  longitude: String!
+  latitude: String!
 }
 
 input VerifyMobileInput {
-  token: String!
+  verificationCode: String!
 }
 
 input UpdateMobileInput {
-  mobile: String!
-  mobileCountry: String!
+  country: String!
+  mobileNumber: String!
 }
 
 type Mutation {
-  apply(input: ApplyInput!): ApplyMutationResponse
+  apply(input: ApplyInput!, userId: String): ApplyMutationResponse
   verifyMobile(input: VerifyMobileInput!): ResponseWithMessage
   requestSMS(input: Any): ResponseWithMessage
   updateMobile(input: UpdateMobileInput!): ResponseWithMessage

@@ -1,40 +1,89 @@
 import globalStyles from 'constants/styles';
 
 import React from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, Alert} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'services/settings';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {ProfileRouteParamList} from 'types';
+import AppVersion from 'components/AppVersion';
 
-function SelectLanguage() {
+export interface SelectLanguageProps {
+  route?: RouteProp<ProfileRouteParamList, 'SelectLanguage'>;
+  navigation?: NavigationProp<ProfileRouteParamList>;
+}
+
+function SelectLanguage(props: SelectLanguageProps) {
+  const {route, navigation} = props;
   const settings = useSettings();
+
+  const {sendEvent} = useAnalytics();
+
+  const handleChangeLanguage = (locale: string) => {
+    if (locale !== 'en') {
+      Alert.alert('Coming Soon', 'Temporary setting language to English');
+    }
+    settings.updateLocale('en');
+    sendEvent('choose_language');
+    if (route?.params?.back) {
+      navigation.goBack();
+    }
+  };
 
   return (
     <View style={globalStyles.fill}>
       <BackgroundEntropy />
       <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
-        <Text style={[globalStyles.h2, globalStyles.textCenter, globalStyles.mb1]}>TREEJER{'\n'}RANGER APP</Text>
+        <Text style={[globalStyles.h2, globalStyles.textCenter]}>TREEJER{'\n'}RANGER APP</Text>
+        <AppVersion style={globalStyles.mb1} />
         <Image source={require('../../../../../assets/images/welcome.png')} />
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
         <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
           <Button
             caption="English"
             onPress={() => {
-              settings.updateLocale('en');
+              handleChangeLanguage('en');
             }}
           />
           <Spacer />
-          <Button disabled caption="Français" />
+          <Button
+            caption="Français"
+            onPress={() => {
+              handleChangeLanguage('fr');
+            }}
+          />
           <Spacer />
-          <Button disabled caption="فارسی" />
+          <Button
+            caption="فارسی"
+            onPress={() => {
+              handleChangeLanguage('fa');
+            }}
+          />
         </View>
         <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
-          <Button disabled caption="Español" />
+          <Button
+            caption="Español"
+            onPress={() => {
+              handleChangeLanguage('es');
+            }}
+          />
           <Spacer />
-          <Button disabled caption="Turkish" />
+          <Button
+            caption="Turkish"
+            onPress={() => {
+              handleChangeLanguage('tr');
+            }}
+          />
           <Spacer />
-          <Button disabled caption="العربيه" />
+          <Button
+            caption="العربيه"
+            onPress={() => {
+              handleChangeLanguage('ar');
+            }}
+          />
         </View>
       </View>
     </View>

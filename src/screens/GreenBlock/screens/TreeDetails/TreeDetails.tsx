@@ -2,52 +2,88 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Image, Linking, ActivityIndicator, RefreshControl} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Linking,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery, NetworkStatus} from '@apollo/client';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {NetworkStatus} from 'apollo-boost';
 import Spacer from 'components/Spacer';
 import {ChevronLeft, ChevronRight} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
-import {getStaticMapUrl} from 'utilities/helpers';
 import {GreenBlockRouteParamList} from 'types';
-
-import TreeDetailsQuery, {TreeDetailsQueryQueryData} from './graphql/TreeDetailsQuery.graphql';
+import TreeDetailQuery, {
+  TreeDetailQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {useTreeFactory, useWalletAccount} from 'services/web3';
+import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
+import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
+import {currentTimestamp} from 'utilities/helpers/date';
+import {useTranslation} from 'react-i18next';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 
 interface Props {}
 
 function TreeDetails(_: Props) {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
+  const [treeUpdateInterval, setTreeUpdateInterval] = useState(null);
   const cardRef = useRef<View>();
   const sliderRef = useRef<Carousel<any>>();
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
-  const {loading, data, networkStatus, refetch} = useQuery<TreeDetailsQueryQueryData>(TreeDetailsQuery, {
+
+  const {sendEvent} = useAnalytics();
+
+  const {t} = useTranslation();
+
+  const {loading, data, networkStatus, refetch} = useQuery<TreeDetailQueryQueryData>(TreeDetailQuery, {
     variables: {
-      id: tree.treeId,
+      id: tree?.id,
     },
   });
 
-  const mapImageUrl = getStaticMapUrl({
-    markers: [
-      {
-        coordinate: {
-          lat: Number(tree.latitude),
-          lng: Number(tree.longitude),
-        },
-      },
-    ],
-    width: 600,
-    height: 300,
-  });
+  const treeFactory = useTreeFactory();
 
-  const updates = data?.tree?.updates;
-  const updatesCount = updates?.length ?? 0;
+  useEffect(() => {
+    treeFactory.methods
+      .treeUpdateInterval()
+      .call()
+      .then(data => {
+        setTreeUpdateInterval(data);
+      })
+      .catch(e => console.log(e, 'e is here'));
+  }, [treeFactory.methods]);
+
+  const treeDetails = data?.tree;
+
+  // console.log(new Date(Number(treeDetails?.birthDate) * 1000), '====> treeDetails?.birthDate <====');
+  // console.log(treeDetails?.birthDate, '====> treeDetails?.birthDate <====');
+
+  const staticMapUrl = getStaticMapboxUrl(
+    Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+    Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+    600,
+    300,
+  );
+
+  const updates =
+    typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' && treeDetails?.treeSpecsEntity?.updates != ''
+      ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
+      : [];
+  const updatesCount = updates?.length;
 
   const [activeSlide, setActiveSlide] = useState(0);
   const [cardWidth, setCardWidth] = useState<number | null>(null);
@@ -71,6 +107,42 @@ function TreeDetails(_: Props) {
     }
   }, [cardRef]);
 
+  const handleUpdate = () => {
+    if (treeDetails?.lastUpdate?.updateStatus === '1') {
+      Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
+      return;
+    }
+
+    const differUpdateTime =
+      Number(treeDetails.plantDate) + Number(treeDetails.treeStatus * 3600 + Number(treeUpdateInterval));
+    const diff = currentTimestamp() - differUpdateTime;
+
+    if (diff < 0) {
+      // @here convert to HH:MM:SS
+      Alert.alert(t('treeDetails.cannotUpdate.details'), t('treeDetails.cannotUpdate.wait', {seconds: Math.abs(diff)}));
+      return;
+    }
+    sendEvent('update_tree');
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'TreeSubmission',
+          params: {
+            initialRouteName: 'SelectPhoto',
+            treeIdToUpdate: tree.id,
+            tree: treeDetails,
+            location: {
+              latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+              longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+            },
+          },
+        },
+      ],
+    });
+  };
+
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
@@ -80,7 +152,7 @@ function TreeDetails(_: Props) {
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
-          <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={{paddingHorizontal: 16, paddingVertical: 8}} onPress={() => navigation.goBack()}>
             <ChevronLeft />
           </TouchableOpacity>
           <View style={globalStyles.fill} />
@@ -88,23 +160,22 @@ function TreeDetails(_: Props) {
         </View>
 
         <Image style={[styles.treeImage]} source={require('../../../../../assets/icons/tree.png')} />
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{tree.treeId}</Text>
+
+        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails?.id)}</Text>
         {/* Tree id */}
         <Spacer times={8} />
 
         <View style={globalStyles.p2}>
           <Card ref={cardRef}>
             <View style={styles.updateButton}>
-              <Button
-                variant="success"
-                caption="Update"
-                textStyle={globalStyles.textCenter}
-                onPress={() => {
-                  navigation.navigate('TreeUpdate', {
-                    treeIdToUpdate: tree.treeId,
-                  });
-                }}
-              />
+              {treeDetails && (
+                <Button
+                  variant="success"
+                  caption={t('treeDetails.update')}
+                  textStyle={globalStyles.textCenter}
+                  onPress={handleUpdate}
+                />
+              )}
             </View>
             <Spacer times={4} />
 
@@ -114,25 +185,44 @@ function TreeDetails(_: Props) {
             <Spacer times={6} />
             */}
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>GPS Coordinates</Text>
+            {treeDetails?.treeSpecsEntity ? (
+              <>
+                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                  {t('treeDetails.gpsCoords')}
+                </Text>
+                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                  lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
+                  {',\n '}
+                  long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
+                </Text>
+                <Spacer times={6} />
+              </>
+            ) : (
+              <></>
+            )}
+            {/*<Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Height</Text>*/}
+            {/*<Text style={[globalStyles.h5, globalStyles.textCenter]}>{tree.height} cm</Text>*/}
+            {/*/!* TBD *!/*/}
+            {/*<Spacer times={6} />*/}
+
+            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.funder')}</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {Number(tree.latitude).toFixed(5)}, {Number(tree.longitude).toFixed(5)}
+              {treeDetails?.funder == null ? t('treeDetails.notFounded') : treeDetails?.funder?.id}
             </Text>
             <Spacer times={6} />
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Height</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>{tree.height} cm</Text>
-            {/* TBD */}
-            <Spacer times={6} />
-
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Last Update</Text>
+            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.lastUpdate')}</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {new Date(tree.updatedAt).toLocaleDateString()}
+              {treeDetails?.lastUpdate != null
+                ? new Date(Number(treeDetails?.lastUpdate?.createdAt) * 1000).toLocaleDateString()
+                : new Date(Number(treeDetails?.plantDate) * 1000).toLocaleDateString()}
             </Text>
             <Spacer times={6} />
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Born</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>{new Date(tree.createdAt).getFullYear()}</Text>
+            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.born')}</Text>
+            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+              {new Date(Number(treeDetails?.plantDate) * 1000).getFullYear()}
+            </Text>
             <Spacer times={6} />
 
             <TouchableOpacity
@@ -141,11 +231,10 @@ function TreeDetails(_: Props) {
                 marginBottom: -23,
               }}
               onPress={() => {
-                Linking.openURL(
-                  `https://www.google.com/maps?q=loc:${encodeURIComponent(
-                    `${tree.latitude},${tree.longitude}`,
-                  )}&zoom=6`,
-                );
+                const uri = `https://maps.google.com/?q=${
+                  Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)
+                },${Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}`;
+                Linking.openURL(uri);
               }}
             >
               <Image
@@ -158,7 +247,7 @@ function TreeDetails(_: Props) {
                   borderBottomRightRadius: 15,
                 }}
                 source={{
-                  uri: mapImageUrl,
+                  uri: staticMapUrl,
                 }}
               />
             </TouchableOpacity>
@@ -178,7 +267,7 @@ function TreeDetails(_: Props) {
                 ]}
               >
                 <View style={styles.titleLine} />
-                <Text style={[globalStyles.ph1, globalStyles.h5]}>Photos</Text>
+                <Text style={[globalStyles.ph1, globalStyles.h5]}>{t('treeDetails.photos')}</Text>
                 <View style={styles.titleLine} />
               </View>
               <Spacer times={8} />
@@ -196,9 +285,13 @@ function TreeDetails(_: Props) {
                   renderItem={({item: update}) => {
                     return (
                       <Image
-                        style={{width: imageWidth + (updatesCount > 1 ? 20 : 0), height: cardWidth, borderRadius: 20}}
+                        style={{
+                          width: imageWidth + (updatesCount > 1 ? 20 : 0),
+                          height: cardWidth,
+                          borderRadius: 20,
+                        }}
                         resizeMode="cover"
-                        key={update.id}
+                        key={update.createdAt}
                         source={{uri: update.image}}
                       />
                     );
@@ -253,11 +346,11 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   updateButton: {
-    position: 'absolute',
+    // position: 'absolute',
     alignItems: 'center',
     left: 0,
     right: 0,
-    marginTop: -20,
+    marginTop: -40,
   },
   treeImage: {
     width: 100,

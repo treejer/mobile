@@ -1,12 +1,13 @@
 import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 
 import React, {useMemo, useRef, useState} from 'react';
-import {View, Text, Platform, Alert} from 'react-native';
+import {View, Text, Platform, Alert, TouchableOpacity} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
-import {useNavigation} from '@react-navigation/native';
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 import * as ImagePicker from 'expo-image-picker';
 import Button from 'components/Button';
@@ -14,29 +15,72 @@ import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import TextField, {PhoneField} from 'components/TextField';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
+import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/UserApplyMutation.graphql';
+import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
+import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
+import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
+import {useUserId} from 'services/web3';
+import {useCurrentUser, UserStatus} from 'services/currentUser';
+import {urlToBlob} from 'utilities/helpers/urlToBlob';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {PlanterJoinList} from 'types';
+import RadioButton from 'components/RadioButton/RadioButton';
+import {ChevronLeft} from 'components/Icons';
+import useRefer from 'utilities/hooks/useDeepLinking';
+import {useTranslation} from 'react-i18next';
+import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 
-import userApplyMutation from './graphql/UserApplyMutation.graphql';
-import updateMobileMutation from './graphql/UpdateMobileMutation.graphql';
-import sendSmsMutation from './graphql/SendSMSMutation.graphql';
-import verifyMobileMutation from './graphql/VerifyMobileMutation.graphql';
+interface Props {
+  navigation: any;
+}
 
-function VerifyProfile() {
-  const [verifyProfile] = useMutation(userApplyMutation);
-  const [updateMobile] = useMutation(updateMobileMutation, {
-    fetchPolicy: 'no-cache',
-  });
-  const [requestSMS] = useMutation(sendSmsMutation);
-  const [verifyMobile] = useMutation(verifyMobileMutation);
-  const [submitting, setSubmitting] = useState(false);
+const radioItems = [
+  {
+    key: '2',
+    text: 'Yes',
+  },
+  {
+    key: '1',
+    text: 'No',
+  },
+];
+
+function VerifyProfile(props: Props) {
+  const {status} = useCurrentUser();
+
+  const {navigation} = props;
+  const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
+  const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
+  const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
+  const [verifyMobile, verifyMobileState] = useMutation(verifyMobileMutation);
   const [requestedMobileVerification, setRequestedMobileVerification] = useState(false);
-  const [idCardImageUri, setIdCardImageUri] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
   const phoneRef = useRef<PhoneInput>();
   const {
-    data: {me: user},
-  } = useQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
-  const navigation = useNavigation();
+    data: {user},
+  } = useQuery<GetMeQueryData>(getMeQuery);
+
+  const {
+    params: {journey},
+  } = useRoute<RouteProp<PlanterJoinList, 'SelectOnMapJoinPlanter'>>();
+
+  const [organizationKey, setOrganizationKey] = useState<string>(radioItems[1].key);
+
+  const {t} = useTranslation();
+
+  const {sendEvent} = useAnalytics();
+
+  const refer = useRefer();
+  const {referrer, organization} = refer;
+
+  const handleChangeRadioButton = (key: string) => {
+    setOrganizationKey(key);
+  };
+
+  const userId = useUserId();
 
   const parsedPhoneNumber = useMemo(() => {
     if (user.mobile && user.mobileCountry) {
@@ -48,7 +92,7 @@ function VerifyProfile() {
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
-    token: string;
+    verificationCode: string;
   }>({
     mode: 'onChange',
     defaultValues: {
@@ -56,10 +100,17 @@ function VerifyProfile() {
     },
   });
 
-  const nameForm = useForm<{fullName: string}>({
+  const nameForm = useForm<{firstName: string}>({
     mode: 'onChange',
     defaultValues: {
-      fullName: '',
+      firstName: '',
+    },
+  });
+
+  const lastNameForm = useForm<{lastName: string}>({
+    mode: 'onChange',
+    defaultValues: {
+      lastName: '',
     },
   });
 
@@ -68,88 +119,116 @@ function VerifyProfile() {
       return 2;
     }
 
-    if (!nameForm.formState.dirtyFields.fullName || nameForm.errors.fullName) {
-      return 3;
+    if (
+      !journey?.location &&
+      nameForm.formState?.dirtyFields?.firstName &&
+      lastNameForm.formState.dirtyFields.lastName
+    ) {
+      return 4;
     }
 
-    return 4;
+    if (journey && journey?.location?.latitude) {
+      return 5;
+    }
+
+    if (journey && journey.location && idCardImageUri) {
+      return 6;
+    }
+
+    return 3;
   })();
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
-        message: 'Invalid phone number',
+        message: t('errors.phoneNumber'),
       });
       return;
     }
 
     try {
-      setSubmitting(true);
+      const mobileNumber = `+${phoneRef.current.getCallingCode()}${phoneNumber}`;
       await updateMobile({
         variables: {
           input: {
-            mobile: phoneNumber,
-            mobileCountry: phoneRef.current.getCountryCode(),
+            mobileNumber,
+            country: `${phoneRef.current.getCountryCode()}`,
           },
         },
       });
-
-      await requestSMS();
-
+      setPhoneNumber(mobileNumber);
       setRequestedMobileVerification(true);
-    } catch (error) {
-      phoneNumberForm.setError('phoneNumber', {
-        message: 'Invalid phone number',
-      });
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      handleMutationAlert(e);
     }
+
+    // console.log(JSON.parse(JSON.stringify(error)), 'hererererer');
+    // if (error?.result?.error?.message) {
+    //   Alert.alert(t('error', error?.result?.error?.message));
+    // }
+    // phoneNumberForm.setError('phoneNumber', {
+    //   message: error?.networkError?.result?.error?.message || 'Unknown Error. Please contact customer support!',
+    // });
   });
 
-  const verifyPhone = phoneNumberForm.handleSubmit(async ({token}) => {
+  const resendCode = async () => {
     try {
-      setSubmitting(true);
+      await requestSMS();
+    } catch (e) {
+      handleMutationAlert(e);
+    }
+  };
+
+  const handleMutationAlert = (error: any) => {
+    const message = error?.networkError?.result?.error?.message || t('unknownError');
+    Alert.alert(t('error'), message);
+  };
+
+  const verifyPhone = phoneNumberForm.handleSubmit(async ({verificationCode}) => {
+    try {
       await verifyMobile({
         variables: {
-          token,
+          input: {
+            verificationCode,
+          },
         },
-        refetchQueries: getMeQuery,
+        refetchQueries: [{query: getMeQuery}],
         awaitRefetchQueries: true,
         update: store => {
           const currentUser = store.readQuery<GetMeQueryData>({query: getMeQuery});
-
           store.writeQuery<GetMeQueryData>({
             query: getMeQuery,
             data: {
-              me: currentUser?.me && {
-                ...currentUser.me,
+              user: currentUser?.user && {
+                ...currentUser.user,
                 mobileVerifiedAt: new Date().toISOString(),
               },
             },
           });
         },
       });
-    } catch (error) {
-      console.warn('Error', error);
-      phoneNumberForm.setError('token', {
-        message: 'PHONE_NUMBER_NOT_UNIQUE',
-      });
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      handleMutationAlert(e);
     }
   });
 
   const submitApply = nameForm.handleSubmit(async data => {
     try {
-      setSubmitting(true);
-
+      sendEvent('get_verified_submit');
+      const input = {
+        firstName: data.firstName,
+        lastName: lastNameForm.getValues().lastName,
+        idCardFile: idCardImageUri,
+        type: organizationKey,
+        organizationAddress: organization || '',
+        referrer: referrer || '',
+        longitude: journey.location.longitude,
+        latitude: journey.location.latitude,
+      };
       await verifyProfile({
         variables: {
-          input: {
-            name: data.fullName,
-            idCard: idCardImageUri,
-            type: 'planter',
-          },
+          input,
+          userId,
         },
         awaitRefetchQueries: true,
         refetchQueries: [
@@ -159,14 +238,9 @@ function VerifyProfile() {
         ],
       });
 
-      navigation.goBack();
+      navigation.navigate('VerifyPending');
     } catch (error) {
-      phoneNumberForm.setError('token', {
-        message: 'INVALID_VERIFICATION_CODE',
-      });
-      console.warn('Error', error);
-    } finally {
-      setSubmitting(false);
+      handleMutationAlert(error);
     }
   });
 
@@ -186,54 +260,143 @@ function VerifyProfile() {
     });
 
     if (result.cancelled === false) {
-      setIdCardImageUri(result.uri);
+      if (/file:\//.test(result.uri)) {
+        setIdCardImageUri(result.uri);
+      } else {
+        urlToBlob(result.uri).then(blob => {
+          // @ts-ignore
+          let fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
+          setIdCardImageUri(fileOfBlob);
+          return blob;
+        });
+      }
     }
   };
 
+  const submitButtonMarkup = idCardImageUri ? (
+    <View style={{flexDirection: 'row'}}>
+      <Button
+        variant="success"
+        onPress={submitApply}
+        caption={t('submit')}
+        disabled={verifyProfileState.loading}
+        loading={verifyProfileState.loading}
+      />
+    </View>
+  ) : null;
+
   return (
-    <KeyboardAwareScrollView>
-      <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
-        <Spacer times={4} />
-        <Text style={globalStyles.h4}>Get Verified</Text>
-        <Spacer times={9} />
+    <SafeAreaView style={globalStyles.fill}>
+      <KeyboardAwareScrollView>
+        <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p1]}>
+          <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
+            <ChevronLeft />
+          </TouchableOpacity>
+        </View>
+        <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
+          <Text style={globalStyles.h4}>{t('getVerified')}</Text>
 
-        <Steps.Container currentStep={currentStep} style={{width: 300}}>
-          {/* Step 1 - Add wallet */}
-          <Steps.Step step={1}>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text style={globalStyles.h6}>Add wallet address</Text>
-              <Spacer times={1} />
-              <Text style={[globalStyles.normal]}>Done!</Text>
-            </View>
-          </Steps.Step>
+          <Spacer times={2} />
 
-          {/* Step 2 - Add phone */}
-          <Steps.Step step={2}>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text style={globalStyles.h6}>Add phone</Text>
-              {renderAddPhone()}
-            </View>
-          </Steps.Step>
+          {status === UserStatus.Pending && (
+            <>
+              <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
+              <Spacer times={6} />
+            </>
+          )}
 
-          {/* Step 3 - Add name */}
-          <Steps.Step step={3}>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text style={globalStyles.h6}>Add name</Text>
-              {renderAddName()}
-            </View>
-          </Steps.Step>
+          {status === UserStatus.Unverified && (
+            <>
+              <Steps.Container currentStep={currentStep} style={{width: 300}}>
+                {/* Step 1 - Add wallet */}
+                <Steps.Step step={1}>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={globalStyles.h6}>{t('addWalletAddress')}</Text>
+                    <Spacer times={1} />
+                    <Text style={[globalStyles.normal]}>{t('done')}</Text>
+                  </View>
+                </Steps.Step>
 
-          {/* Step 4 - Upload ID card */}
-          <Steps.Step step={4} lastStep>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text style={globalStyles.h6}>Upload ID card</Text>
-              <Spacer times={1} />
-              {renderUploadIdCard()}
-            </View>
-          </Steps.Step>
-        </Steps.Container>
-      </View>
-    </KeyboardAwareScrollView>
+                {/* Step 2 - Add phone */}
+                <Steps.Step step={2}>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={globalStyles.h6}>{t('addPhone')}</Text>
+                    {renderAddPhone()}
+                  </View>
+                </Steps.Step>
+
+                {/* Step 3 - Add Email */}
+                <Steps.Step step={3}>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={globalStyles.h6}>{t('addName')}</Text>
+                    {renderAddName()}
+                  </View>
+                </Steps.Step>
+
+                {/* Step 4 - Add location */}
+                <Steps.Step step={4}>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={globalStyles.h6}>{t('submitLocation')}</Text>
+                    <Spacer times={1} />
+                    {journey && journey.location ? (
+                      <Text style={[globalStyles.normal]}>{t('done')}</Text>
+                    ) : currentStep === 4 ? (
+                      <Button
+                        variant="secondary"
+                        onPress={() => navigation.navigate('SelectOnMapVerifyProfile', {journey})}
+                        caption={t('openMap')}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                </Steps.Step>
+
+                {/* Step 5 - Upload ID card */}
+                <Steps.Step step={5} lastStep={!!organization?.length}>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={globalStyles.h6}>{t('uploadIdCard')}</Text>
+                    <Spacer times={1} />
+                    {renderUploadIdCard()}
+                  </View>
+                </Steps.Step>
+
+                {/* Step 6 - Join Organization */}
+                {!organization ? (
+                  <Steps.Step step={6} lastStep>
+                    <View style={{alignItems: 'flex-start'}}>
+                      <Text style={globalStyles.h6}>{t('joiningAsOrganization')}</Text>
+                      <Spacer times={1} />
+                      {renderRadioButton()}
+                    </View>
+                  </Steps.Step>
+                ) : (
+                  <></>
+                )}
+                <View>{submitButtonMarkup}</View>
+                <Spacer times={4} />
+              </Steps.Container>
+            </>
+          )}
+        </View>
+        {(referrer || organization) && (
+          <View
+            style={{
+              padding: 10,
+              backgroundColor: colors.grayLighter,
+              borderColor: colors.gray,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderRadius: 10,
+              marginHorizontal: 20,
+            }}
+          >
+            <Text>{referrer ? 'referrer' : 'organization'}</Text>
+            <Text>{referrer || organization}</Text>
+          </View>
+        )}
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 
   function renderAddPhone() {
@@ -241,7 +404,7 @@ function VerifyProfile() {
       return (
         <>
           <Spacer times={1} />
-          <Text style={[globalStyles.normal]}>Verified!</Text>
+          <Text style={[globalStyles.normal]}>{t('verified!')}</Text>
         </>
       );
     }
@@ -259,14 +422,20 @@ function VerifyProfile() {
               textInputStyle={{height: 64, paddingLeft: 0}}
               defaultCode={(user.mobileCountry as any) ?? 'CA'}
               placeholder="Phone #"
+              onSubmitEditing={submitPhoneNumber}
             />
+            {phoneNumberForm.formState.errors.phoneNumber && (
+              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
+                {phoneNumberForm.formState.errors.phoneNumber?.message}
+              </Text>
+            )}
             <Spacer times={4} />
             <Button
               variant="success"
               onPress={submitPhoneNumber}
-              caption="Verify"
-              disabled={submitting}
-              loading={submitting}
+              caption={t('sendCode')}
+              disabled={updateMobileState.loading}
+              loading={updateMobileState.loading}
             />
           </>
         )}
@@ -276,17 +445,38 @@ function VerifyProfile() {
               control={phoneNumberForm.control}
               placeholder="CODE"
               keyboardType="number-pad"
-              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.token}
-              name="token"
+              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.verificationCode}
+              name="verificationCode"
+              onSubmitEditing={verifyPhone}
             />
+            {phoneNumberForm.formState.errors.verificationCode && (
+              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
+                {phoneNumberForm.formState.errors.verificationCode?.message || t('errors.verificationCode')}
+              </Text>
+            )}
             <Spacer times={4} />
-            <Button
-              variant="success"
-              onPress={verifyPhone}
-              caption="Verify"
-              disabled={submitting}
-              loading={submitting}
-            />
+            <TouchableOpacity
+              style={{marginVertical: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
+              onPress={() => setRequestedMobileVerification(false)}
+            >
+              <Icon style={{marginHorizontal: 4, paddingVertical: 8}} name="square-edit-outline" size={20} />
+              <Text style={{marginHorizontal: 4}}>{phoneNumber}</Text>
+            </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignSelf: 'stretch', flex: 1}}>
+              <View style={{flex: 0.4, alignItems: 'flex-end', paddingHorizontal: 4}}>
+                <Button
+                  variant="success"
+                  onPress={verifyPhone}
+                  caption={t('verify')}
+                  disabled={verifyMobileState.loading}
+                  loading={verifyMobileState.loading}
+                  style={{width: 112, alignItems: 'center', justifyContent: 'center'}}
+                />
+              </View>
+              <View style={{flex: 0.6, alignItems: 'flex-start', paddingHorizontal: 4}}>
+                <ResendCodeButton resendCode={resendCode} loading={requestSMSState.loading} />
+              </View>
+            </View>
           </>
         )}
       </>
@@ -299,11 +489,20 @@ function VerifyProfile() {
         <>
           <Spacer times={6} />
           <TextField
-            name="fullName"
+            name="firstName"
             control={nameForm.control}
-            style={{width: '90%'}}
-            placeholder="Full name"
-            success={nameForm.formState.dirtyFields.fullName && !nameForm.formState.errors.fullName}
+            style={{width: '100%'}}
+            placeholder="First name"
+            success={nameForm.formState?.dirtyFields?.firstName && !nameForm.formState?.errors?.firstName}
+            rules={{required: true}}
+          />
+          <Spacer times={6} />
+          <TextField
+            name="lastName"
+            control={lastNameForm.control}
+            style={{width: '100%'}}
+            placeholder="Last name"
+            success={lastNameForm.formState?.dirtyFields?.lastName && !lastNameForm.formState?.errors?.lastName}
             rules={{required: true}}
           />
         </>
@@ -312,18 +511,26 @@ function VerifyProfile() {
   }
 
   function renderUploadIdCard() {
-    const submitButtonMarkup = idCardImageUri ? (
-      <Button variant="success" onPress={submitApply} caption="Submit" disabled={submitting} loading={submitting} />
-    ) : null;
-
     return (
-      currentStep === 4 && (
+      currentStep === 5 && (
         <>
-          <Text style={[globalStyles.normal]}>ID card, passport or driving license</Text>
+          <Text style={[globalStyles.normal]}>{t('physicalLicense')}</Text>
           <Spacer times={4} />
-          <Button onPress={pickImage} caption="Open Camera" />
+          <Button onPress={pickImage} caption={t('openCamera')} />
           <Spacer times={4} />
-          {submitButtonMarkup}
+        </>
+      )
+    );
+  }
+
+  function renderRadioButton() {
+    return (
+      currentStep === 6 && (
+        <>
+          {/* <Text style={[globalStyles.normal]}>ID card, passport or driving license</Text> */}
+          <Spacer times={1} />
+          <RadioButton items={radioItems} onChange={handleChangeRadioButton} defaultValue="1" />
+          <Spacer times={1} />
         </>
       )
     );

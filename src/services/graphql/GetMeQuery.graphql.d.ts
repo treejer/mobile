@@ -1,9 +1,10 @@
 import { DocumentNode } from "graphql-typed";
 export namespace GetMeQueryPartialData {
-  export interface Me {
+  export interface User {
     __typename?: "User" | null;
     id?: string | null;
-    name?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
     email?: string | null;
     emailVerifiedAt?: string | null;
     idCard?: string | null;
@@ -16,13 +17,14 @@ export namespace GetMeQueryPartialData {
   }
 }
 export interface GetMeQueryPartialData {
-  me?: GetMeQueryPartialData.Me | null;
+  user?: GetMeQueryPartialData.User | null;
 }
 export namespace GetMeQueryData {
-  export interface Me {
+  export interface User {
     __typename: "User";
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     emailVerifiedAt?: string | null;
     idCard?: string | null;
@@ -35,7 +37,7 @@ export namespace GetMeQueryData {
   }
 }
 export interface GetMeQueryData {
-  me?: GetMeQueryData.Me | null;
+  user?: GetMeQueryData.User | null;
 }
 declare const document: DocumentNode<GetMeQueryData, never, GetMeQueryPartialData>;
 export default document;
