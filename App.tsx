@@ -16,10 +16,12 @@ import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import {magic} from 'services/Magic';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
 };
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
@@ -80,6 +82,7 @@ export default function App() {
                             );
                           return (
                             <>
+                              <magic.Relayer />
                               <NetInfo />
                               {app}
                             </>

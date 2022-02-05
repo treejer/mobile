@@ -5,9 +5,9 @@ import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
 import {Alert} from 'react-native';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
-
 import config from './config';
 import {useTranslation} from 'react-i18next';
+import {magic} from 'services/Magic';
 
 const initialValue = {
   web3: {} as Web3,
@@ -31,9 +31,10 @@ interface Props {
 }
 
 function Web3Provider({children, privateKey}: Props) {
-  const web3 = useMemo(() => new Web3(config.web3Url), []);
+  const web3 = useMemo(() => new Web3(magic.rpcProvider), []);
 
   const [walletWeb3, setWalletWeb3] = useState<Web3>();
+  const [magicToken, setMagicToken] = useState<Web3>();
   const [waiting, setWaiting] = useState<boolean>(true);
   const [unlocked, setUnlocked] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string>('');
@@ -113,6 +114,7 @@ function Web3Provider({children, privateKey}: Props) {
       userId,
       planter,
       planterFund,
+      magicToken,
     }),
     [
       web3,
@@ -126,6 +128,7 @@ function Web3Provider({children, privateKey}: Props) {
       userId,
       planter,
       planterFund,
+      magicToken,
     ],
   );
 

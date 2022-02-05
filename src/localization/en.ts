@@ -141,6 +141,9 @@ export const en = {
     setup: 'Set up wallet',
     recoveryPhrase: 'Recovery phrase',
     ethConnect: 'Please connect \n your Ethereum wallet!',
+    connectToMagic: 'Please connect to Magic',
+    loginWithPhone: 'Log in / Sign up',
+    or: 'OR',
     connect: 'Connect Wallet',
     why: {
       title: 'Why do I need that?',
