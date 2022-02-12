@@ -54,29 +54,29 @@ export async function getTreejerPrivateKeyApiAccessToken(privateKey: string, web
 }
 
 export async function getTreejerApiAccessToken(web3: Web3): Promise<UserSignRes> {
+  let web3Accounts;
   await web3.eth.getAccounts((e, accounts) => {
     if (e) {
       console.log(e, 'e is here getAccounts eth');
     }
+    web3Accounts = accounts;
     console.log(accounts, 'accounts is here');
   });
-  // @here
-  const wallet = web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
-  console.log(wallet, 'wallet<===');
+  if (!web3Accounts) {
+    return Promise.reject(new Error('There is no web3 accounts'));
+  }
+  const wallet = web3Accounts[0];
 
   if (!wallet) {
-    console.log('gets inside 1');
-    return Promise.reject();
+    return Promise.reject(new Error('There is no wallet address'));
   }
 
-  const key = `ACCESS_TOKEN_${wallet.address}`;
-  console.log(key, 'key 3');
+  const key = `ACCESS_TOKEN_${wallet}`;
 
   const cachedToken = await AsyncStorage.getItem(key);
   console.log(cachedToken, 'cachedToken');
 
   const userId = await AsyncStorage.getItem('USER_ID');
-  console.log(cachedToken, 'cachedToken <==');
 
   if (cachedToken) {
     return Promise.resolve({
@@ -85,14 +85,14 @@ export async function getTreejerApiAccessToken(web3: Web3): Promise<UserSignRes>
     });
   }
 
-  const userNonceResult = await getUserNonce(wallet.address);
+  const userNonceResult = await getUserNonce(wallet);
   console.log(userNonceResult, 'userNonceResult is here<===');
 
-  const signature = await web3.eth.sign(hexEncode(userNonceResult.message), wallet.address);
+  const signature = await web3.eth.sign(hexEncode(userNonceResult.message), wallet);
   console.log(signature, 'signature <===');
 
   try {
-    const credentials = await userSign(signature, wallet.address, key);
+    const credentials = await userSign(signature, wallet, key);
     console.log(credentials, 'credentials <===');
     return Promise.resolve(credentials);
   } catch (e) {

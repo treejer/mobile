@@ -31,9 +31,10 @@ export const Web3Context = React.createContext(initialValue);
 interface Props {
   children: React.ReactNode;
   privateKey?: string;
+  persistedMagicToken?: string;
 }
 
-function Web3Provider({children, privateKey}: Props) {
+function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
   const web3 = useMemo(() => new Web3(magic.rpcProvider), []);
 
   const [walletWeb3, setWalletWeb3] = useState<Web3>();
@@ -83,12 +84,26 @@ function Web3Provider({children, privateKey}: Props) {
       setUnlocked(true);
       setWalletWeb3(web3);
     } catch (e) {
-      const {error: {message = t('loginFailed.message')} = {}} = e;
+      let {error: {message = t('loginFailed.message')} = {}} = e;
+      if (e.message) {
+        message = e.message;
+      }
       Alert.alert(t('loginFailed.title'), message);
+    } finally {
+      setWaiting(false);
     }
-
-    setWaiting(false);
   }, [t, web3]);
+
+  const storeMagicToken = useCallback(
+    async (token: string) => {
+      setMagicToken(token);
+      // addToWallet(token);
+
+      await AsyncStorage.setItem(config.storageKeys.magicToken, token);
+      await updateAccessToken();
+    },
+    [updateAccessToken],
+  );
 
   const resetWeb3Data = useCallback(async () => {
     await setUnlocked(false);
@@ -105,24 +120,24 @@ function Web3Provider({children, privateKey}: Props) {
     [updateAccessTokenWithPrivateKey, addToWallet],
   );
 
-  const storeMagicToken = useCallback(
-    async (token: string) => {
-      setMagicToken(token);
-      // addToWallet(token);
-
-      await AsyncStorage.setItem(config.storageKeys.magicToken, token);
-      await updateAccessToken();
-    },
-    [updateAccessToken],
-  );
-
   useEffect(() => {
-    if (privateKey) {
-      updateAccessTokenWithPrivateKey(privateKey);
-    } else {
-      setWaiting(false);
-    }
-  }, [privateKey, updateAccessTokenWithPrivateKey]);
+    (async function () {
+      if (persistedMagicToken) {
+        console.log('gets hdre', persistedMagicToken);
+        await storeMagicToken(persistedMagicToken);
+      } else {
+        setWaiting(false);
+      }
+    })();
+  }, []);
+
+  // useEffect(() => {
+  //   if (privateKey) {
+  //     updateAccessTokenWithPrivateKey(privateKey);
+  //   } else {
+  //     setWaiting(false);
+  //   }
+  // }, [privateKey, updateAccessTokenWithPrivateKey]);
 
   // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
   if (privateKey && previousWeb3.current !== web3) {
@@ -181,7 +196,24 @@ export const useResetWeb3Data = () => {
   const resetWeb3Data = useContext(Web3Context).resetWeb3Data;
   return {resetWeb3Data};
 };
-export const useWalletAccount = (): Account | null => {
+export const useWalletAccount = (): string | null => {
+  const [wallet, setWallet] = useState<null | string>(null);
+  const web3 = useWeb3();
+
+  useEffect(() => {
+    (async function () {
+      await web3.eth.getAccounts((e, accounts) => {
+        if (e) {
+          console.log(e, 'e is here getAccounts eth');
+        }
+        setWallet(accounts[0]);
+      });
+    })();
+  }, []);
+
+  return wallet;
+};
+export const useWalletAccountTorus = (): Account | null => {
   const web3 = useWeb3();
   return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
 };
@@ -217,4 +249,25 @@ export const usePersistedWallet = () => {
   }, []);
 
   return [loaded, privateKey] as const;
+};
+
+export const usePersistedMagic = () => {
+  const [magicToken, setMagicToken] = useState<string | undefined>();
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem(config.storageKeys.magicToken)
+      .then(key => {
+        if (key) {
+          setMagicToken(key);
+        }
+
+        setLoaded(true);
+      })
+      .catch(() => {
+        console.warn('Failed to get fetch stored magic token');
+      });
+  }, []);
+
+  return [loaded, magicToken] as const;
 };

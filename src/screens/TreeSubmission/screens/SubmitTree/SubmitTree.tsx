@@ -316,8 +316,6 @@ function SubmitTree(_: Props) {
         //     onPress: () => _.navigation.navigate('GreenBlock', {shouldNavigateToTreeDetails: true}),
         //   },
 
-        // @here navigation to treelist with reset
-
         Alert.alert(t('success'), t('submitTree.submitted'));
         navigation.reset({
           index: 0,

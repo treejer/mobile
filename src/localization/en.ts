@@ -211,4 +211,8 @@ export const en = {
   next: 'NEXT',
   submit: 'Submit',
   confirm: 'Confirm',
+  loading: {
+    ranger: "Ranger's App",
+    by: 'by Treejer',
+  },
 };

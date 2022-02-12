@@ -1,13 +1,12 @@
 import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Image, Text, View, ScrollView, Alert, TouchableOpacity, Linking} from 'react-native';
-import TorusSdk from '@toruslabs/customauth-react-native-sdk';
+import React, {useEffect, useRef, useState} from 'react';
+import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {usePrivateKeyStorage, useWeb3} from 'services/web3';
+import {usePrivateKeyStorage} from 'services/web3';
 import {useCamera} from 'utilities/hooks';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
@@ -24,10 +23,8 @@ interface Props {}
 
 function NoWallet(_: Props) {
   const navigation = useNavigation();
-  const {unlocked, storePrivateKey, storeMagicToken} = usePrivateKeyStorage();
+  const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
-
-  const web3 = useWeb3();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -51,12 +48,6 @@ function NoWallet(_: Props) {
 
   const {t} = useTranslation();
 
-  /*
-  const handleConnectWallet = useCallback(() => {
-    navigation.navigate('CreateWallet');
-  }, [navigation]);
-  */
-
   const {requestCameraPermission} = useCamera();
 
   const {sendEvent} = useAnalytics();
@@ -68,53 +59,12 @@ function NoWallet(_: Props) {
     })();
   }, [requestCameraPermission]);
 
-  const handleTorusWallet = useCallback(async () => {
-    try {
-      console.log('started');
-      sendEvent('connect_wallet');
-      await setLoading(true);
-      console.log('before trigger login');
-      const loginDetails = await TorusSdk.triggerLogin({
-        typeOfLogin: 'google',
-        verifier: 'treejer-ranger-google-testnet-web',
-        clientId: '116888410915-1j5mi6etjrqnbfch8ovuc4i50vg7kg3c.apps.googleusercontent.com',
-      });
-      console.log(loginDetails, 'loginDetails ????');
-      requestAnimationFrame(() => {
-        console.log('inside requestAnimationFrame');
-        const normalizedPrivateKey = loginDetails.privateKey.replace(/^00/, '0x');
-        storePrivateKey(normalizedPrivateKey)
-          .then(() => {
-            setLoading(false);
-          })
-          .catch(error => {
-            console.warn('Error saving private key', error);
-            setLoading(false);
-          });
-      });
-    } catch (error) {
-      Alert.alert(t('createWallet.failed.title'), t('createWallet.failed.details'));
-      console.error(error, 'login caught');
-      setLoading(false);
-    }
-  }, [sendEvent, storePrivateKey, t]);
-
   const handleLearnMore = () => {
     Linking.openURL(config.learnMoreLink);
   };
 
-  const handleConnectWithPhone = async () => {
-    try {
-      const result = await magic.auth.loginWithSMS({phoneNumber: '+19713741552'});
-      // const result = WyIweDUwNjZmZDAxNjNmYmFhNzY2MTY3NWFmOWY5Y2IyZTI2M2FkZGYwZDg3ZDhlNDZkZmM0NzFiMmU4OTIxNGMyMGEzMWQ4YjQ3ZjRjZjQ3MDU1MTUxNGUwMmJmNzA5MTE3YTJhMzQ4ZTA3NzFjZDkwZTVjNDVmOTEzOThkYjQ4MjAzMWIiLCJ7XCJpYXRcIjoxNjQ0MDg2NDExLFwiZXh0XCI6MTY0NDA4NzMxMSxcImlzc1wiOlwiZGlkOmV0aHI6MHg4Q0UzZTg1NDZGYTdhOTZlRTJhNzEyZkMwNjI2RmIyODc3RDIzY2E0XCIsXCJzdWJcIjpcIlpuY3B5T3JPdGVUVE83cWdvcXdBMl94SkxrZ05rOUNSZExfbTJUNmtYQ0E9XCIsXCJhdWRcIjpcIk1tZ1ZoUGRqd2dSMVlaaDJpX2I3dWNYMjlxanA3YzRUZzZzZjIxZ0hOYzA9XCIsXCJuYmZcIjoxNjQ0MDg2NDExLFwidGlkXCI6XCJjNTI2YmJjZC0zZDA5LTRlNTEtYWVhMS00MjVkMjVlOWIzYzZcIixcImFkZFwiOlwiMHg3MzUwZGY2ZDAzYzM4MGVlYjdkNTg1OTg5NjQxMTgxOWE1Nzk1OTkxZmMxMzZhZTU3NzcwNTZlM2VmZmExODQ3MTlkZWNkZjRkOGE4NDkzZjc0NTE3MmRiMGJkNjRkMzViMjE2ZjZiMTc2MjRkZGU3NmI2MGNjYmQ5ZjEzM2I2ZTFjXCJ9Il0=
-      console.log(result, 'result is here');
-    } catch (e) {
-      console.log(e, 'e is here');
-    }
-  };
-
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
-    console.log(phoneNumber, 'phoneNumber submit');
+    sendEvent('connect_wallet');
     setLoading(true);
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
@@ -123,26 +73,32 @@ function NoWallet(_: Props) {
       setLoading(false);
       return;
     }
-    const result = await magic.auth.loginWithSMS({phoneNumber: `+1${phoneNumber}`});
-    // await storeMagicToken(result);
-    console.log(result, 'result is here');
-    setLoading(false);
+    const mobileNumber = `+${phoneRef.current.getCallingCode()}${phoneNumber}`;
+    try {
+      const result = await magic.auth.loginWithSMS({phoneNumber: mobileNumber});
+      await storeMagicToken(result);
+      console.log(result, 'result is here');
+    } catch (e) {
+      Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');
+    } finally {
+      setLoading(false);
+    }
   });
 
   const handleConnectWithEmail = emailForm.handleSubmit(async ({email}) => {
-    console.log(email, 'email');
+    sendEvent('connect_wallet');
     setLoading(true);
-    const result = await magic.auth.loginWithMagicLink({email});
-    console.log(result, 'result email');
-    setLoading(false);
+    console.log(email, 'email');
+    try {
+      const result = await magic.auth.loginWithMagicLink({email});
+      await storeMagicToken(result);
+      console.log(result, 'result is here');
+    } catch (e) {
+      Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');
+    } finally {
+      setLoading(false);
+    }
   });
-
-  const handleSampleTransaction = () => {
-    // web3.eth.signTransaction();
-    storeMagicToken(
-      'WyIweGJhY2JjN2ZjNTMyOTJlNTU2YzQ1MWQ2NWI4NjU4ZDZmNWQzN2ZiMDdiZGRhNWZkMDdlYWE0ZGU5YjE2N2I2NDE1Y2Q1ZWI3N2Y4MzI2MmVhOWI2NWQ5MzIwMzRjZTczN2I2ZGIxZDAzNGQzZjYwZDZiMmFkM2JmNWJkMTgzNDQwMWMiLCJ7XCJpYXRcIjoxNjQ0Mzk3NTM3LFwiZXh0XCI6bnVsbCxcImlzc1wiOlwiZGlkOmV0aHI6MHg0RTI4ODEwMjBmMDJlMWZDZWVmMTU1NzY2N2FDZDQxMWI1MmUxOTJGXCIsXCJzdWJcIjpcIlpuY3B5T3JPdGVUVE83cWdvcXdBMl94SkxrZ05rOUNSZExfbTJUNmtYQ0E9XCIsXCJhdWRcIjpcIk1tZ1ZoUGRqd2dSMVlaaDJpX2I3dWNYMjlxanA3YzRUZzZzZjIxZ0hOYzA9XCIsXCJuYmZcIjoxNjQ0Mzk3NTM3LFwidGlkXCI6XCI1NjBlMWMyMy01ZTA1LTQyMGItODJjNC1iNWQzNDc2ZGE2N2JcIixcImFkZFwiOlwiMHhmYTQwMTQ0YjVhODhiNDdjYjU3MzM2ZjM3YzQwNjhlMzEyNzc1NTQxY2RlNmI2ZTNmNWY3NDg2YjE3NzNhMzdhNjgxOWIwYzBkMzNlODdmYzU2YTIyMWJjMTcyODRlN2I1ZjI1OGRiYzM2MWZlN2M4OWQ0MWE5YWRiZmI3M2UxOTFjXCJ9Il0=',
-    );
-  };
 
   useEffect(() => {
     if (unlocked) {
@@ -165,9 +121,6 @@ function NoWallet(_: Props) {
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>{t('createWallet.connectToMagic')}</Text>
         <Spacer times={4} />
 
-        {/*<Button caption="Auth" onPress={handleConnectWithPhone} />*/}
-
-        <Button caption="transaction" onPress={handleSampleTransaction} />
         <View style={{backgroundColor: 'white', padding: 16, marginHorizontal: 56, borderRadius: 8}}>
           <View style={{alignItems: 'center'}}>
             <PhoneField

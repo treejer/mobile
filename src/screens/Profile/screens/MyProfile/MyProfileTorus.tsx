@@ -9,8 +9,8 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {useWalletAccount, useResetWeb3Data, useWalletWeb3, usePlanterFund} from 'services/web3';
+import {sendTransactionWithGSN, sendTransactionWithGSNTorus} from 'utilities/helpers/sendTransaction';
+import {useResetWeb3Data, useWalletWeb3, usePlanterFund, useWalletAccountTorus} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import config from 'services/config';
 import {useSettings} from 'services/settings';
@@ -33,7 +33,7 @@ function MyProfile(_: Props) {
   const [minBalance, setMinBalance] = useState(null);
   const navigation = useNavigation();
   const web3 = useWalletWeb3();
-  const wallet = useWalletAccount();
+  const wallet = useWalletAccountTorus();
   const {resetOnBoardingData} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
 
@@ -66,13 +66,15 @@ function MyProfile(_: Props) {
       });
   }, [planterFundContract.methods, requiredBalance]);
 
-  const skipStats = !wallet || !isVerified;
+  const address = useMemo(() => wallet?.address, [wallet]);
+
+  const skipStats = !address || !isVerified;
 
   const {
     data: planterData,
     refetchPlanterStatus: planterRefetch,
     refetching,
-  } = usePlanterStatusQuery(wallet, skipStats);
+  } = usePlanterStatusQuery(address, skipStats);
 
   const handleLogout = useCallback(
     async (userPressed: boolean) => {
@@ -98,7 +100,7 @@ function MyProfile(_: Props) {
           } catch (e) {
             return Promise.reject(e);
           }
-          await AsyncStorage.removeItem(config.storageKeys.magicToken);
+          await SecureStore.deleteItemAsync(config.storageKeys.privateKey);
         }
         await AsyncStorage.clear();
         if (!userPressed) {
@@ -116,14 +118,14 @@ function MyProfile(_: Props) {
         return Promise.reject(e);
       }
     },
-    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data, t],
+    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data],
   );
 
   useEffect(() => {
-    if (statusCode && statusCode === 401 && wallet) {
+    if (statusCode && statusCode === 401 && address) {
       handleLogout(false).then(() => {});
     }
-  }, [statusCode, handleLogout, wallet]);
+  }, [statusCode, handleLogout, address]);
 
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
@@ -154,10 +156,10 @@ function MyProfile(_: Props) {
   );
 
   useEffect(() => {
-    if (wallet) {
+    if (address) {
       getPlanter().then(() => {});
     }
-  }, [wallet, getPlanter]);
+  }, [address, getPlanter]);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
@@ -168,8 +170,7 @@ function MyProfile(_: Props) {
       const balance = planterData?.balance;
       if (Number(balance) > minBalance) {
         try {
-          // @here
-          const transaction = await sendTransactionWithGSN(
+          const transaction = await sendTransactionWithGSNTorus(
             web3,
             wallet,
             config.contracts.PlanterFund,
@@ -199,7 +200,7 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [sendEvent, planterData?.balance, minBalance, web3, wallet, t]);
+  }, [planterData?.balance, minBalance, web3, wallet, t]);
 
   const onRefetch = async () => {
     await getPlanter();
@@ -265,13 +266,13 @@ function MyProfile(_: Props) {
 
             <TouchableOpacity
               onPress={() => {
-                Clipboard.setString(wallet);
+                Clipboard.setString(address);
                 SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
               }}
             >
-              {wallet && (
+              {address && (
                 <Text numberOfLines={1} style={styles.addressBox}>
-                  {wallet.slice(0, 15)}...
+                  {address.slice(0, 15)}...
                 </Text>
               )}
             </TouchableOpacity>
@@ -358,9 +359,9 @@ function MyProfile(_: Props) {
               />
               <Spacer times={4} />
 
-              {planterData?.planterType && <Invite address={wallet} planterType={Number(planterData?.planterType)} />}
+              {planterData?.planterType && <Invite address={address} planterType={Number(planterData?.planterType)} />}
 
-              {!wallet && (
+              {!address && (
                 <>
                   <Button
                     style={styles.button}

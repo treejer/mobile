@@ -4,7 +4,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
 import * as SplashScreen from 'expo-splash-screen';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
-import Web3Provider, {Web3Context, usePersistedWallet} from './src/services/web3';
+import Web3Provider, {Web3Context, usePersistedWallet, usePersistedMagic} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
 import {I18nextProvider} from 'react-i18next';
 import Onboarding from './src/screens/Onboarding';
@@ -15,8 +15,8 @@ import {i18next} from './src/localization';
 import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {useFonts} from 'expo-font';
-import AppLoading from 'expo-app-loading';
 import {magic} from 'services/Magic';
+import {AppLoading} from './src/components/AppLoading/AppLoading';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
@@ -30,10 +30,10 @@ export default function App() {
     'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
   });
 
-  const [privateKeyLoaded, privateKey] = usePersistedWallet();
+  const [magicTokenLoaded, magicToken] = usePersistedMagic();
   const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
-  const loading = !privateKeyLoaded || !settingsLoaded;
+  const loading = !settingsLoaded || !magicTokenLoaded;
 
   useInitialDeepLinking();
 
@@ -46,56 +46,59 @@ export default function App() {
 
   const handleInit = async () => {
     try {
-      TorusSdk.init({
-        redirectUri: 'treejer://torus/redirect',
-        network: 'testnet',
-        // proxyContractAddress: '0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183',
-        browserRedirectUri: 'https://api.treejer.com/toruswallet_redirect.html',
-      });
+      // TorusSdk.init({
+      //   redirectUri: 'treejer://torus/redirect',
+      //   network: 'testnet',
+      //   // proxyContractAddress: '0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183',
+      //   browserRedirectUri: 'https://api.treejer.com/toruswallet_redirect.html',
+      // });
     } catch (error) {
       console.log(error, '====> e <====');
     }
   };
-  if (loading) {
-    return <AppLoading />;
-  }
 
   return (
     <I18nextProvider i18n={i18next}>
+      <magic.Relayer />
       <SafeAreaProvider>
-        <SettingsProvider onboardingDoneInitialState={onboardingDone} localeInitialState={locale}>
-          <OfflineTreeProvider>
-            <Web3Provider privateKey={privateKey}>
-              <Web3Context.Consumer>
-                {({waiting}) =>
-                  waiting ? null : (
-                    <ApolloProvider>
-                      <SettingsContext.Consumer>
-                        {value => {
-                          const app =
-                            !value.locale || !value.onboardingDone ? (
-                              <Onboarding />
-                            ) : (
-                              <NavigationContainer linking={linking} ref={navigationRef}>
-                                <MainTabs />
-                              </NavigationContainer>
+        {loading ? (
+          <AppLoading />
+        ) : (
+          <SettingsProvider onboardingDoneInitialState={onboardingDone} localeInitialState={locale}>
+            <OfflineTreeProvider>
+              <Web3Provider persistedMagicToken={magicToken}>
+                <Web3Context.Consumer>
+                  {({waiting}) =>
+                    waiting ? (
+                      <AppLoading />
+                    ) : (
+                      <ApolloProvider>
+                        <SettingsContext.Consumer>
+                          {value => {
+                            const app =
+                              !value.locale || !value.onboardingDone ? (
+                                <Onboarding />
+                              ) : (
+                                <NavigationContainer linking={linking} ref={navigationRef}>
+                                  <MainTabs />
+                                </NavigationContainer>
+                              );
+                            return (
+                              <>
+                                <NetInfo />
+                                {app}
+                              </>
                             );
-                          return (
-                            <>
-                              <magic.Relayer />
-                              <NetInfo />
-                              {app}
-                            </>
-                          );
-                        }}
-                      </SettingsContext.Consumer>
-                    </ApolloProvider>
-                  )
-                }
-              </Web3Context.Consumer>
-            </Web3Provider>
-          </OfflineTreeProvider>
-        </SettingsProvider>
+                          }}
+                        </SettingsContext.Consumer>
+                      </ApolloProvider>
+                    )
+                  }
+                </Web3Context.Consumer>
+              </Web3Provider>
+            </OfflineTreeProvider>
+          </SettingsProvider>
+        )}
       </SafeAreaProvider>
     </I18nextProvider>
   );
