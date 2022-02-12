@@ -127,12 +127,12 @@ function VerifyProfile(props: Props) {
       return 4;
     }
 
-    if (journey && journey?.location?.latitude) {
-      return 5;
-    }
-
     if (journey && journey.location && idCardImageUri) {
       return 6;
+    }
+
+    if (journey && journey?.location?.latitude) {
+      return 5;
     }
 
     return 3;
