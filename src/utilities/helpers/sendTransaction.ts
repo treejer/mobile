@@ -116,7 +116,7 @@ export async function sendTransactionWithGSN(
   }).init();
   console.log('2 - Relay provider created', config.isMainnet);
 
-  gsnProvider.addAccount(wallet.privateKey);
+  gsnProvider.addAccount(wallet);
   console.log('3 - Account linked to the relay provider', config.isMainnet);
 
   const web3GSN = new Web3(gsnProvider);
@@ -124,9 +124,9 @@ export async function sendTransactionWithGSN(
 
   console.log('4 - Started sending the transaction', config.isMainnet);
   // Sends the transaction via the GSN
-  console.log(method, 'Method', args, 'args', wallet.address, 'address');
+  console.log(method, 'Method', args, 'args', wallet, 'address');
   return ethContract.methods[method](...args).send({
-    from: wallet.address,
+    from: wallet,
     gas: 1e6,
     useGSN: true,
   }) as TransactionReceipt;
