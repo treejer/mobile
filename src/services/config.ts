@@ -22,6 +22,7 @@ const config = {
   isMainnet: false /* Boolean(process.env.REACT_NATIVE_IS_MAINNET || false) */,
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
+    magicToken: '__TREEJER_MAGIC_TOKEN',
   },
   web3Url: process.env.REACT_NATIVE_WEB3_PROVIDER,
   treejerApiUrl: process.env.REACT_NATIVE_TREEJER_API_URL.replace(/\/$/, ''),

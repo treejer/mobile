@@ -7,25 +7,27 @@ import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {usePrivateKeyStorage} from 'services/web3';
+import {usePrivateKeyStorage, useWeb3} from 'services/web3';
 import {useCamera} from 'utilities/hooks';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import config from 'services/config';
-import {magic} from '../../../../../App';
 import TextField, {PhoneField} from 'components/TextField';
 import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {colors} from 'constants/values';
+import {magic} from 'services/Magic';
 
 interface Props {}
 
 function NoWallet(_: Props) {
   const navigation = useNavigation();
-  const {unlocked, storePrivateKey} = usePrivateKeyStorage();
+  const {unlocked, storePrivateKey, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
+
+  const web3 = useWeb3();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -113,15 +115,34 @@ function NoWallet(_: Props) {
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     console.log(phoneNumber, 'phoneNumber submit');
+    setLoading(true);
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
         message: t('errors.phoneNumber'),
       });
+      setLoading(false);
       return;
     }
+    const result = await magic.auth.loginWithSMS({phoneNumber: `+1${phoneNumber}`});
+    // await storeMagicToken(result);
+    console.log(result, 'result is here');
+    setLoading(false);
   });
 
-  console.log(phoneNumberForm.watch(), '<==');
+  const handleConnectWithEmail = emailForm.handleSubmit(async ({email}) => {
+    console.log(email, 'email');
+    setLoading(true);
+    const result = await magic.auth.loginWithMagicLink({email});
+    console.log(result, 'result email');
+    setLoading(false);
+  });
+
+  const handleSampleTransaction = () => {
+    // web3.eth.signTransaction();
+    storeMagicToken(
+      'WyIweGJhY2JjN2ZjNTMyOTJlNTU2YzQ1MWQ2NWI4NjU4ZDZmNWQzN2ZiMDdiZGRhNWZkMDdlYWE0ZGU5YjE2N2I2NDE1Y2Q1ZWI3N2Y4MzI2MmVhOWI2NWQ5MzIwMzRjZTczN2I2ZGIxZDAzNGQzZjYwZDZiMmFkM2JmNWJkMTgzNDQwMWMiLCJ7XCJpYXRcIjoxNjQ0Mzk3NTM3LFwiZXh0XCI6bnVsbCxcImlzc1wiOlwiZGlkOmV0aHI6MHg0RTI4ODEwMjBmMDJlMWZDZWVmMTU1NzY2N2FDZDQxMWI1MmUxOTJGXCIsXCJzdWJcIjpcIlpuY3B5T3JPdGVUVE83cWdvcXdBMl94SkxrZ05rOUNSZExfbTJUNmtYQ0E9XCIsXCJhdWRcIjpcIk1tZ1ZoUGRqd2dSMVlaaDJpX2I3dWNYMjlxanA3YzRUZzZzZjIxZ0hOYzA9XCIsXCJuYmZcIjoxNjQ0Mzk3NTM3LFwidGlkXCI6XCI1NjBlMWMyMy01ZTA1LTQyMGItODJjNC1iNWQzNDc2ZGE2N2JcIixcImFkZFwiOlwiMHhmYTQwMTQ0YjVhODhiNDdjYjU3MzM2ZjM3YzQwNjhlMzEyNzc1NTQxY2RlNmI2ZTNmNWY3NDg2YjE3NzNhMzdhNjgxOWIwYzBkMzNlODdmYzU2YTIyMWJjMTcyODRlN2I1ZjI1OGRiYzM2MWZlN2M4OWQ0MWE5YWRiZmI3M2UxOTFjXCJ9Il0=',
+    );
+  };
 
   useEffect(() => {
     if (unlocked) {
@@ -146,6 +167,7 @@ function NoWallet(_: Props) {
 
         {/*<Button caption="Auth" onPress={handleConnectWithPhone} />*/}
 
+        <Button caption="transaction" onPress={handleSampleTransaction} />
         <View style={{backgroundColor: 'white', padding: 16, marginHorizontal: 56, borderRadius: 8}}>
           <View style={{alignItems: 'center'}}>
             <PhoneField
@@ -160,11 +182,17 @@ function NoWallet(_: Props) {
           </View>
           <Spacer times={4} />
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Button variant="secondary" caption={t('createWallet.loginWithPhone')} />
+            <Button
+              variant="secondary"
+              caption={t('createWallet.loginWithPhone')}
+              disabled={loading}
+              loading={loading}
+              onPress={submitPhoneNumber}
+            />
           </View>
-          <Spacer times={4} />
+          <Spacer times={6} />
           <Text style={{textAlign: 'center'}}>{t('createWallet.or')}</Text>
-          <Spacer times={4} />
+          <Spacer times={6} />
           <TextField
             name="email"
             control={emailForm.control}
@@ -172,6 +200,7 @@ function NoWallet(_: Props) {
             success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
             rules={{required: true}}
             style={{width: '100%'}}
+            onSubmitEditing={handleConnectWithEmail}
           />
           <Spacer times={4} />
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>

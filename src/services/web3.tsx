@@ -4,10 +4,11 @@ import Web3 from 'web3';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
 import {Alert} from 'react-native';
-import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
+import {getTreejerApiAccessToken, getTreejerPrivateKeyApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 import config from './config';
 import {useTranslation} from 'react-i18next';
 import {magic} from 'services/Magic';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialValue = {
   web3: {} as Web3,
@@ -21,6 +22,8 @@ const initialValue = {
   resetWeb3Data() {},
   waiting: false,
   userId: '',
+  magicToken: '',
+  storeMagicToken: (token: string) => {},
 };
 
 export const Web3Context = React.createContext(initialValue);
@@ -34,7 +37,7 @@ function Web3Provider({children, privateKey}: Props) {
   const web3 = useMemo(() => new Web3(magic.rpcProvider), []);
 
   const [walletWeb3, setWalletWeb3] = useState<Web3>();
-  const [magicToken, setMagicToken] = useState<Web3>();
+  const [magicToken, setMagicToken] = useState<string>('');
   const [waiting, setWaiting] = useState<boolean>(true);
   const [unlocked, setUnlocked] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string>('');
@@ -53,10 +56,10 @@ function Web3Provider({children, privateKey}: Props) {
     [web3],
   );
 
-  const updateAccessToken = useCallback(
+  const updateAccessTokenWithPrivateKey = useCallback(
     async (privateKey: string) => {
       try {
-        const credentials = await getTreejerApiAccessToken(privateKey, web3);
+        const credentials = await getTreejerPrivateKeyApiAccessToken(privateKey, web3);
         setAccessToken(credentials.loginToken);
         setUserId(credentials.userId);
         setUnlocked(true);
@@ -72,6 +75,21 @@ function Web3Provider({children, privateKey}: Props) {
     [t, web3],
   );
 
+  const updateAccessToken = useCallback(async () => {
+    try {
+      const credentials = await getTreejerApiAccessToken(web3);
+      setAccessToken(credentials.loginToken);
+      setUserId(credentials.userId);
+      setUnlocked(true);
+      setWalletWeb3(web3);
+    } catch (e) {
+      const {error: {message = t('loginFailed.message')} = {}} = e;
+      Alert.alert(t('loginFailed.title'), message);
+    }
+
+    setWaiting(false);
+  }, [t, web3]);
+
   const resetWeb3Data = useCallback(async () => {
     await setUnlocked(false);
     await setAccessToken('');
@@ -82,18 +100,29 @@ function Web3Provider({children, privateKey}: Props) {
       addToWallet(privateKey);
 
       await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
-      await updateAccessToken(privateKey);
+      await updateAccessTokenWithPrivateKey(privateKey);
     },
-    [updateAccessToken, addToWallet],
+    [updateAccessTokenWithPrivateKey, addToWallet],
+  );
+
+  const storeMagicToken = useCallback(
+    async (token: string) => {
+      setMagicToken(token);
+      // addToWallet(token);
+
+      await AsyncStorage.setItem(config.storageKeys.magicToken, token);
+      await updateAccessToken();
+    },
+    [updateAccessToken],
   );
 
   useEffect(() => {
     if (privateKey) {
-      updateAccessToken(privateKey);
+      updateAccessTokenWithPrivateKey(privateKey);
     } else {
       setWaiting(false);
     }
-  }, [privateKey, updateAccessToken]);
+  }, [privateKey, updateAccessTokenWithPrivateKey]);
 
   // Because adding an account to wallet does not trigger a re-render, this needs to be done here instead of useEffect
   if (privateKey && previousWeb3.current !== web3) {
@@ -115,6 +144,7 @@ function Web3Provider({children, privateKey}: Props) {
       planter,
       planterFund,
       magicToken,
+      storeMagicToken,
     }),
     [
       web3,
@@ -129,6 +159,7 @@ function Web3Provider({children, privateKey}: Props) {
       planter,
       planterFund,
       magicToken,
+      storeMagicToken,
     ],
   );
 
@@ -158,11 +189,12 @@ export const useAccessToken = () => useContext(Web3Context).accessToken;
 export const useUserId = () => useContext(Web3Context).userId;
 
 export const usePrivateKeyStorage = () => {
-  const {storePrivateKey, unlocked} = useContext(Web3Context);
+  const {storePrivateKey, unlocked, storeMagicToken} = useContext(Web3Context);
 
   return {
     storePrivateKey,
     unlocked,
+    storeMagicToken,
   };
 };
 
