@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Image, Text, View, ScrollView, Alert, TouchableOpacity, Linking} from 'react-native';
 import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import Button from 'components/Button';
@@ -13,6 +13,8 @@ import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import config from 'services/config';
+
+import Tips from 'react-native-tips';
 
 interface Props {}
 
@@ -32,6 +34,20 @@ function NoWallet(_: Props) {
   const {requestCameraPermission} = useCamera();
 
   const {sendEvent} = useAnalytics();
+
+  const [tipsVisible, setTipsVisible] = useState<any>();
+  const waterfallTips = useMemo(
+    () => new Tips.Waterfall(['home', 'notification', 'details', 'wishList', 'clipboard', 'message']),
+    [],
+  );
+
+  const handleNextTips = () => {
+    setTipsVisible(waterfallTips.next());
+  };
+
+  useEffect(() => {
+    setTipsVisible(waterfallTips.start());
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -97,15 +113,22 @@ function NoWallet(_: Props) {
 
         <Spacer times={7} />
         {/* <Button variant="secondary" caption="Connect Wallet" onPress={handleConnectWallet} /> */}
-        <Button
-          variant="secondary"
-          caption={t('createWallet.connect')}
-          onPress={handleTorusWallet}
-          loading={loading}
-          disabled={loading}
-        />
+        <Tips
+          visible={tipsVisible === 'home'}
+          delay={1}
+          text="Hello Tips"
+          onRequestClose={handleNextTips}
+          position="top"
+        >
+          <Button
+            variant="secondary"
+            caption={t('createWallet.connect')}
+            onPress={handleTorusWallet}
+            loading={loading}
+            disabled={loading}
+          />
+        </Tips>
         <Spacer times={9} />
-
         <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
           <Card style={globalStyles.alignItemsCenter}>
             <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>

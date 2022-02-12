@@ -23,6 +23,7 @@ import SimpleToast from 'react-native-simple-toast';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
+import Tips from 'react-native-tips';
 
 interface Props {
   navigation: any;
@@ -75,6 +76,28 @@ function MyProfile(_: Props) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(address, skipStats);
+
+  const [tipsVisible, setTipsVisible] = useState<any>();
+  const waterfallTips = useMemo(() => {
+    const tips = ['offlineMap', 'language', 'help', 'logout'];
+    if (data.user) {
+      if (!isVerified) {
+        tips.unshift('getVerified');
+      }
+      return new Tips.Waterfall(tips);
+    }
+    return null;
+  }, [data.user, isVerified]);
+
+  const handleNextTips = () => {
+    setTipsVisible(waterfallTips.next());
+  };
+
+  useEffect(() => {
+    if (waterfallTips) {
+      setTipsVisible(waterfallTips.start());
+    }
+  }, [waterfallTips]);
 
   const handleLogout = useCallback(
     async (userPressed: boolean) => {
@@ -336,33 +359,52 @@ function MyProfile(_: Props) {
           } */}
               {status === UserStatus.Unverified && (
                 <>
-                  <Button
-                    style={styles.button}
-                    caption={t('getVerified')}
-                    variant="tertiary"
-                    onPress={() => {
-                      sendEvent('get_verified');
-                      if (data?.user) {
-                        _.navigation.navigate('VerifyProfile', {user: data.user});
-                      }
-                    }}
-                  />
-                  <Spacer times={4} />
+                  <Tips
+                    visible={tipsVisible === 'getVerified'}
+                    delay={1}
+                    onRequestClose={handleNextTips}
+                    text="For planting tree, first you need to Get Verified"
+                    position="bottom"
+                  >
+                    <Spacer times={2} />
+                    <Button
+                      style={styles.button}
+                      caption={t('getVerified')}
+                      variant="tertiary"
+                      onPress={() => {
+                        sendEvent('get_verified');
+                        if (data?.user) {
+                          _.navigation.navigate('VerifyProfile', {user: data.user});
+                        }
+                      }}
+                    />
+                    <Spacer times={2} />
+                  </Tips>
                 </>
               )}
 
-              <Button
-                style={styles.button}
-                caption={t('offlineMap.title')}
-                variant="tertiary"
-                onPress={handleNavigateOfflineMap}
-              />
-              <Spacer times={4} />
+              <Tips
+                visible={tipsVisible === 'offlineMap'}
+                delay={1}
+                onRequestClose={handleNextTips}
+                text="For planting tree even you are offline, you can download the area you wish to plan trees, and continue planting tree"
+                position="bottom"
+              >
+                <Spacer times={2} />
+                <Button
+                  style={styles.button}
+                  caption={t('offlineMap.title')}
+                  variant="tertiary"
+                  onPress={handleNavigateOfflineMap}
+                />
+                <Spacer times={2} />
+              </Tips>
 
               {planterData?.planterType && <Invite address={address} planterType={Number(planterData?.planterType)} />}
 
               {!address && (
                 <>
+                  <Spacer times={2} />
                   <Button
                     style={styles.button}
                     caption={t('createWallet.title')}
@@ -372,24 +414,59 @@ function MyProfile(_: Props) {
                     }}
                     disabled
                   />
-                  <Spacer times={4} />
+                  <Spacer times={2} />
                 </>
               )}
 
-              <Button style={styles.button} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
-              <Spacer times={4} />
-              <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
-              <Spacer times={4} />
-              <Button
-                style={styles.button}
-                caption={t('logout')}
-                variant="tertiary"
-                onPress={() => {
-                  sendEvent('logout');
-                  handleLogout(true);
-                }}
-              />
-              <Spacer times={4} />
+              <Tips
+                visible={tipsVisible === 'language'}
+                delay={1}
+                onRequestClose={handleNextTips}
+                text="We wish to be international"
+                position="bottom"
+              >
+                <Spacer times={2} />
+                <Button
+                  style={styles.button}
+                  caption={t('language')}
+                  variant="tertiary"
+                  onPress={handleSelectLanguage}
+                />
+                <Spacer times={2} />
+              </Tips>
+
+              <Tips
+                visible={tipsVisible === 'help'}
+                delay={1}
+                onRequestClose={handleNextTips}
+                text="If you need help press here"
+                position="top"
+              >
+                <Spacer times={2} />
+                <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
+                <Spacer times={2} />
+              </Tips>
+
+              <Tips
+                visible={tipsVisible === 'logout'}
+                delay={1}
+                onRequestClose={handleNextTips}
+                text="This is obvious"
+                position="top"
+              >
+                <Spacer times={2} />
+                <Button
+                  style={styles.button}
+                  caption={t('logout')}
+                  variant="tertiary"
+                  onPress={() => {
+                    sendEvent('logout');
+                    handleLogout(true);
+                  }}
+                />
+                <Spacer times={2} />
+              </Tips>
+
               <AppVersion />
             </View>
           </>
@@ -414,6 +491,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 180,
+    marginHorizontal: 16,
   },
   helpWrapper: {
     alignItems: 'center',
