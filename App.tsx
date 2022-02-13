@@ -28,19 +28,19 @@ export default function App() {
   //   'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
   // });
 
+  useEffect(() => {
+    SplashScreen.hide();
+    (async () => {
+      await handleInit();
+    })();
+  }, []);
+
   const [magicTokenLoaded, magicToken] = usePersistedMagic();
   const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
   const loading = !settingsLoaded || !magicTokenLoaded;
 
   useInitialDeepLinking();
-
-  useEffect(() => {
-    (async () => {
-      await handleInit();
-      SplashScreen.hide();
-    })();
-  }, []);
 
   const handleInit = async () => {
     try {

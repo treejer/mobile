@@ -113,6 +113,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   stepHeader: {
-    fontFamily: 'Montserrat-Light',
+    // fontFamily: 'Montserrat-Light',
   },
 });
