@@ -95,7 +95,7 @@ function SubmitTree(_: Props) {
       return;
     }
 
-    const photoUploadResult = await upload(journey.photo?.uri || journey.photo);
+    const photoUploadResult = await upload(journey.photo?.path);
     setPhotoHash(photoUploadResult.Hash);
 
     console.log(journey, '====> journey <====');

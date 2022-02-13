@@ -1,5 +1,4 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-// import * as SecureStore from 'expo-secure-store';
 import Web3 from 'web3';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';

@@ -50,7 +50,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const handleSubmitTree = async (treeJourney: TreeJourney) => {
     const birthDay = currentTimestamp();
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
+      const photoUploadResult = await upload(treeJourney.photo?.path);
       const jsonData = {
         location: {
           latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6)).toString(),

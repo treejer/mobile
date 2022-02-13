@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {Linking, Alert} from 'react-native';
-// import * as ImagePicker from 'expo-image-picker';
+import ImagePicker, {Image, Options} from 'react-native-image-crop-picker';
 import {useTranslation} from 'react-i18next';
 
 const useCamera = () => {
@@ -8,30 +8,31 @@ const useCamera = () => {
 
   const openLibrary = useCallback(async () => {
     try {
-      // const photo = await ImagePicker.launchImageLibraryAsync({
-      //   exif: true,
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   quality: 0.8,
-      //   allowsEditing: true,
-      // });
-      //
-      // console.log(photo, 'a<====');
-      // return photo;
+      const photo = await ImagePicker.openPicker({
+        includeExif: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.8,
+        cropping: true,
+      });
+
+      console.log(photo, 'a<====');
+      return photo;
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
     }
   }, []);
 
-  const openCamera = useCallback(async () => {
+  const openCamera = useCallback(async (options?: Options): Promise<Image> => {
     try {
-      // const photo = await ImagePicker.launchCameraAsync({
-      //   exif: true,
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   quality: 0.8,
-      //   allowsEditing: true,
-      // });
-      // console.log(photo, 'photo');
-      // return photo;
+      const photo = await ImagePicker.openCamera({
+        includeExif: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.8,
+        cropping: true,
+        ...options,
+      });
+      console.log(photo, 'photo');
+      return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
     }
@@ -48,7 +49,8 @@ const useCamera = () => {
     ]);
   };
 
-  const openCameraHook = async () => {
+  const openCameraHook = async (options?: Options): Promise<Image> => {
+    return openCamera(options);
     // const {granted: grantedCamera} = await ImagePicker.requestCameraPermissionsAsync();
     // if (grantedCamera) {
     //   return openCamera();
@@ -59,6 +61,7 @@ const useCamera = () => {
 
   // todo remove on production version
   const openLibraryHook = async () => {
+    return openLibrary();
     // const {granted: grantedCameraRoll} = await ImagePicker.requestMediaLibraryPermissionsAsync();
     // if (grantedCameraRoll) {
     //   return openLibrary();

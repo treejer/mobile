@@ -32,18 +32,18 @@ function SelectPhoto(_: Props) {
 
   const [photo, setPhoto] = useState<any>();
 
-  const {address} = useWalletAccount();
+  const address = useWalletAccount();
 
   const {canPlant} = usePlanterStatusQuery(address);
 
-  const {openCameraHook, openLibraryHook} = useCamera();
+  const {openCameraHook} = useCamera();
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
 
   const handleSelectPhoto = useCallback(async () => {
     const selectedPhoto = await openCameraHook();
     console.log(selectedPhoto);
-    if (selectedPhoto.cancelled === false) {
+    if (selectedPhoto.path) {
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,

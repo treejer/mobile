@@ -79,8 +79,7 @@ function Trees({route, navigation, filter}: Props) {
   const [offlineLoadings, setOfflineLoadings] = useState([]);
   const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
 
-  const wallet = useWalletAccount();
-  const address = useMemo(() => wallet?.address, [wallet]);
+  const address = useWalletAccount();
 
   const isConnected = useNetInfoConnected();
 
@@ -90,7 +89,7 @@ function Trees({route, navigation, filter}: Props) {
     refetchTempTrees,
     refetching: tempTreesRefetching,
     loadMore: tempLoadMore,
-  } = useTempTrees(address, wallet);
+  } = useTempTrees(address);
 
   const {
     plantedTrees,
@@ -98,7 +97,7 @@ function Trees({route, navigation, filter}: Props) {
     refetchPlantedTrees,
     refetching: plantedRefetching,
     loadMore: plantedLoadMore,
-  } = usePlantedTrees(address, wallet);
+  } = usePlantedTrees(address);
 
   const {offlineTrees, dispatchRemoveOfflineTree, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
 
@@ -142,7 +141,7 @@ function Trees({route, navigation, filter}: Props) {
     }
     setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
+      const photoUploadResult = await upload(treeJourney.photo?.path);
 
       const birthDay = currentTimestamp();
 
@@ -213,7 +212,7 @@ function Trees({route, navigation, filter}: Props) {
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'updateTree', [
+      const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'updateTree', [
         treeJourney.treeIdToUpdate,
         metaDataUploadResult.Hash,
       ]);
@@ -234,7 +233,7 @@ function Trees({route, navigation, filter}: Props) {
     }
     try {
       setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-      const photoUploadResult = await upload(journey.photo?.uri || journey.photo);
+      const photoUploadResult = await upload(journey.photo?.path);
       const birthDay = currentTimestamp();
 
       const updateSpec = {
@@ -270,7 +269,7 @@ function Trees({route, navigation, filter}: Props) {
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult, '<== check this');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantAssignedTree', [
+      const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'plantAssignedTree', [
         Hex2Dec(journey.treeIdToPlant),
         metaDataUploadResult.Hash,
         birthDay,
@@ -301,7 +300,7 @@ function Trees({route, navigation, filter}: Props) {
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
       const birthDay = currentTimestamp();
       try {
-        const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
+        const photoUploadResult = await upload(treeJourney.photo.path);
         const jsonData = {
           location: {
             latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6))?.toString(),
@@ -319,7 +318,7 @@ function Trees({route, navigation, filter}: Props) {
         const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-        const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantTree', [
+        const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'plantTree', [
           metaDataUploadResult.Hash,
           birthDay,
           0,

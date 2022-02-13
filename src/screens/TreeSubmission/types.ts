@@ -1,9 +1,9 @@
-// import {ImageInfo, OpenFileBrowserOptions} from 'expo-image-picker/build/ImagePicker.types';
+import {Image} from 'react-native-image-crop-picker';
 import {Tree} from 'types';
 
 export interface TreeJourney {
   treeIdToUpdate?: string;
-  // photo?: ImageInfo | any;
+  photo?: Image;
   location?: {
     latitude: number;
     longitude: number;

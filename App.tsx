@@ -12,7 +12,6 @@ import MainTabs from './src/screens/MainTabs';
 import NetInfo from './src/components/NetInfo';
 import {i18next} from './src/localization';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
-// import {useFonts} from 'expo-font';
 import {magic} from './src/services/Magic';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 
@@ -21,13 +20,6 @@ const linking = {
 };
 
 export default function App() {
-  // const [fontsLoaded] = useFonts({
-  //   Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
-  //   'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
-  //   'Montserrat-Light': require('./assets/fonts/Montserrat-Light.ttf'),
-  //   'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
-  // });
-
   useEffect(() => {
     SplashScreen.hide();
     (async () => {

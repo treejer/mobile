@@ -19,7 +19,7 @@ function Avatar({size = 64, address, type}: Props) {
   const imageSize = size - SIZE_OFFSET;
   const borderRadius = Math.ceil(size / 2);
   const imageBorderRadius = Math.ceil(imageSize / 2);
-  const onlyDigits = (address ?? account?.address ?? '00000').replace(/\D/g, '');
+  const onlyDigits = (address ?? account ?? '00000').replace(/\D/g, '');
   const uri = `https://www.gravatar.com/avatar/${onlyDigits}?d=robohash&s=${size}`;
 
   return (

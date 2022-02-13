@@ -9,7 +9,6 @@ import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
-// import * as ImagePicker from 'expo-image-picker';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
@@ -21,7 +20,6 @@ import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendS
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
 import {useUserId} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
-import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {PlanterJoinList} from 'types';
 import RadioButton from 'components/RadioButton/RadioButton';
@@ -31,6 +29,8 @@ import {useTranslation} from 'react-i18next';
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {useCamera} from 'utilities/hooks';
+import {urlToBlob} from 'utilities/helpers/urlToBlob';
 
 interface Props {
   navigation: any;
@@ -50,6 +50,7 @@ const radioItems = [
 function VerifyProfile(props: Props) {
   const {status} = useCurrentUser();
 
+  const {openCameraHook} = useCamera();
   const {navigation} = props;
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
@@ -246,31 +247,23 @@ function VerifyProfile(props: Props) {
 
   const pickImage = async () => {
     if (Platform.OS !== 'web') {
-      // const {status} = await ImagePicker.requestCameraPermissionsAsync();
-      // if (status !== 'granted') {
-      //   Alert.alert('Permission required', 'Sorry, we need camera permissions to make this work!');
-      // }
+      const result = await openCameraHook({
+        width: 400,
+        height: 300,
+      });
+
+      if (result.path) {
+        if (/file:\//.test(result.path)) {
+          setIdCardImageUri(result.path);
+        } else {
+          urlToBlob(result.path).then((blob: Blob) => {
+            const fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
+            setIdCardImageUri(fileOfBlob);
+            return blob;
+          });
+        }
+      }
     }
-
-    // const result = await ImagePicker.launchCameraAsync({
-    //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //   allowsEditing: true,
-    //   aspect: [4, 3],
-    //   quality: 0.75,
-    // });
-
-    // if (result.cancelled === false) {
-    //   if (/file:\//.test(result.uri)) {
-    //     setIdCardImageUri(result.uri);
-    //   } else {
-    //     urlToBlob(result.uri).then(blob => {
-    //       // @ts-ignore
-    //       let fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
-    //       setIdCardImageUri(fileOfBlob);
-    //       return blob;
-    //     });
-    //   }
-    // }
   };
 
   const submitButtonMarkup = idCardImageUri ? (
