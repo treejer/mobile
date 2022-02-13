@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import * as SecureStore from 'expo-secure-store';
+// import * as SecureStore from 'expo-secure-store';
 import Web3 from 'web3';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
@@ -114,7 +114,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
     async (privateKey: string) => {
       addToWallet(privateKey);
 
-      await SecureStore.setItemAsync(config.storageKeys.privateKey, privateKey);
+      await AsyncStorage.setItem(config.storageKeys.privateKey, privateKey);
       await updateAccessTokenWithPrivateKey(privateKey);
     },
     [updateAccessTokenWithPrivateKey, addToWallet],
@@ -235,7 +235,7 @@ export const usePersistedWallet = () => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    SecureStore.getItemAsync(config.storageKeys.privateKey)
+    AsyncStorage.getItem(config.storageKeys.privateKey)
       .then(key => {
         if (key) {
           setPrivateKey(key);

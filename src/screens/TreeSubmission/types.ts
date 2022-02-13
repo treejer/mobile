@@ -1,9 +1,9 @@
-import {ImageInfo, OpenFileBrowserOptions} from 'expo-image-picker/build/ImagePicker.types';
+// import {ImageInfo, OpenFileBrowserOptions} from 'expo-image-picker/build/ImagePicker.types';
 import {Tree} from 'types';
 
 export interface TreeJourney {
   treeIdToUpdate?: string;
-  photo?: ImageInfo | any;
+  // photo?: ImageInfo | any;
   location?: {
     latitude: number;
     longitude: number;

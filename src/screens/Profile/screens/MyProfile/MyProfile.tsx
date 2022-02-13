@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';

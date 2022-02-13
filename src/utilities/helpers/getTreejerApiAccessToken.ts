@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Crypto from 'expo-crypto';
+import Crypto from 'crypto';
 import Web3 from 'web3';
 import {getUserNonce} from 'utilities/helpers/userNonce';
 import {userSign} from 'utilities/helpers/userSign';
@@ -20,7 +20,8 @@ export async function getTreejerPrivateKeyApiAccessToken(privateKey: string, web
     return Promise.reject();
   }
 
-  const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey);
+  const hash = privateKey;
+  // const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA1, privateKey);
   console.log(hash, 'hash 2');
   const key = `ACCESS_TOKEN_${hash}`;
   console.log(key, 'key 3');

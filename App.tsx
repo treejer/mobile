@@ -1,8 +1,7 @@
-import './src/globals';
 import React, {useEffect, useRef} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
-import * as SplashScreen from 'expo-splash-screen';
+// import * as SplashScreen from 'expo-splash-screen';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
 import Web3Provider, {Web3Context, usePersistedWallet, usePersistedMagic} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
@@ -12,10 +11,9 @@ import {NavigationContainer, NavigationContainerRef} from '@react-navigation/nat
 import MainTabs from './src/screens/MainTabs';
 import NetInfo from './src/components/NetInfo';
 import {i18next} from './src/localization';
-import TorusSdk from '@toruslabs/customauth-react-native-sdk';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
-import {useFonts} from 'expo-font';
-import {magic} from 'services/Magic';
+// import {useFonts} from 'expo-font';
+import {magic} from './src/services/Magic';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 
 const linking = {
@@ -23,12 +21,12 @@ const linking = {
 };
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
-    'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
-    'Montserrat-Light': require('./assets/fonts/Montserrat-Light.ttf'),
-    'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
-  });
+  // const [fontsLoaded] = useFonts({
+  //   Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
+  //   'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
+  //   'Montserrat-Light': require('./assets/fonts/Montserrat-Light.ttf'),
+  //   'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
+  // });
 
   const [magicTokenLoaded, magicToken] = usePersistedMagic();
   const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
@@ -40,7 +38,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await handleInit();
-      await SplashScreen.hideAsync();
+      // await SplashScreen.hideAsync();
     })();
   }, []);
 

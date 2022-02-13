@@ -9,7 +9,7 @@ import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
@@ -246,31 +246,31 @@ function VerifyProfile(props: Props) {
 
   const pickImage = async () => {
     if (Platform.OS !== 'web') {
-      const {status} = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission required', 'Sorry, we need camera permissions to make this work!');
-      }
+      // const {status} = await ImagePicker.requestCameraPermissionsAsync();
+      // if (status !== 'granted') {
+      //   Alert.alert('Permission required', 'Sorry, we need camera permissions to make this work!');
+      // }
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.75,
-    });
+    // const result = await ImagePicker.launchCameraAsync({
+    //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //   allowsEditing: true,
+    //   aspect: [4, 3],
+    //   quality: 0.75,
+    // });
 
-    if (result.cancelled === false) {
-      if (/file:\//.test(result.uri)) {
-        setIdCardImageUri(result.uri);
-      } else {
-        urlToBlob(result.uri).then(blob => {
-          // @ts-ignore
-          let fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
-          setIdCardImageUri(fileOfBlob);
-          return blob;
-        });
-      }
-    }
+    // if (result.cancelled === false) {
+    //   if (/file:\//.test(result.uri)) {
+    //     setIdCardImageUri(result.uri);
+    //   } else {
+    //     urlToBlob(result.uri).then(blob => {
+    //       // @ts-ignore
+    //       let fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
+    //       setIdCardImageUri(fileOfBlob);
+    //       return blob;
+    //     });
+    //   }
+    // }
   };
 
   const submitButtonMarkup = idCardImageUri ? (
