@@ -7,22 +7,22 @@ export const fontDefaultColor: TextStyle = {
 };
 
 export const fontNormal: TextStyle = {
-  // fontFamily: 'Montserrat',
+  fontFamily: 'Montserrat',
   ...fontDefaultColor,
 };
 
 export const fontBold: TextStyle = {
-  // fontFamily: 'Montserrat-Bold',
+  fontFamily: 'Montserrat-Bold',
   ...fontDefaultColor,
 };
 
 export const fontMedium: TextStyle = {
-  // fontFamily: 'Montserrat-Medium',
+  fontFamily: 'Montserrat-Medium',
   ...fontDefaultColor,
 };
 
 export const fontLight: TextStyle = {
-  // fontFamily: 'Montserrat-Light',
+  fontFamily: 'Montserrat-Light',
   ...fontDefaultColor,
 };
 
