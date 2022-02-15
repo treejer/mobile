@@ -23,6 +23,7 @@ const initialValue = {
   userId: '',
   magicToken: '',
   storeMagicToken: (token: string) => {},
+  wallet: null,
 };
 
 export const Web3Context = React.createContext(initialValue);
@@ -37,6 +38,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
   const web3 = useMemo(() => new Web3(magic.rpcProvider), []);
 
   const [walletWeb3, setWalletWeb3] = useState<Web3>();
+  const [wallet, setWallet] = useState<null | string>(null);
   const [magicToken, setMagicToken] = useState<string>('');
   const [waiting, setWaiting] = useState<boolean>(true);
   const [unlocked, setUnlocked] = useState<boolean>(false);
@@ -82,6 +84,13 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       setUserId(credentials.userId);
       setUnlocked(true);
       setWalletWeb3(web3);
+      await web3.eth.getAccounts((e, accounts) => {
+        if (e) {
+          console.log(e, 'e is here getAccounts eth');
+          return;
+        }
+        setWallet(accounts[0]);
+      });
     } catch (e) {
       let {error: {message = t('loginFailed.message')} = {}} = e;
       if (e.message) {
@@ -122,7 +131,6 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
   useEffect(() => {
     (async function () {
       if (persistedMagicToken) {
-        console.log('gets hdre', persistedMagicToken);
         await storeMagicToken(persistedMagicToken);
       } else {
         setWaiting(false);
@@ -159,6 +167,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       planterFund,
       magicToken,
       storeMagicToken,
+      wallet,
     }),
     [
       web3,
@@ -174,6 +183,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       planterFund,
       magicToken,
       storeMagicToken,
+      wallet,
     ],
   );
 
@@ -196,21 +206,7 @@ export const useResetWeb3Data = () => {
   return {resetWeb3Data};
 };
 export const useWalletAccount = (): string | null => {
-  const [wallet, setWallet] = useState<null | string>(null);
-  const web3 = useWeb3();
-
-  useEffect(() => {
-    (async function () {
-      await web3.eth.getAccounts((e, accounts) => {
-        if (e) {
-          console.log(e, 'e is here getAccounts eth');
-        }
-        setWallet(accounts[0]);
-      });
-    })();
-  }, []);
-
-  return wallet;
+  return useContext(Web3Context).wallet;
 };
 export const useWalletAccountTorus = (): Account | null => {
   const web3 = useWeb3();

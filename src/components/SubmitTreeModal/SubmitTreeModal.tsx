@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Button, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer/Spacer';
@@ -13,6 +13,7 @@ import {useTranslation} from 'react-i18next';
 import {useWalletAccount, useWalletWeb3} from 'services/web3';
 import {useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
+import Button from 'components/Button/Button';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -48,6 +49,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   };
 
   const handleSubmitTree = async (treeJourney: TreeJourney) => {
+    console.log(wallet, 'wallet');
     const birthDay = currentTimestamp();
     try {
       const photoUploadResult = await upload(treeJourney.photo?.path);
@@ -93,7 +95,9 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     } else {
       const array = requests.filter(request => !request.hash);
       for (let i = 0; i < array.length; i++) {
-        setRequests(prevRequests => prevRequests.map((item, index) => (index === i ? {...item, loading: true} : item)));
+        setRequests(prevRequests =>
+          prevRequests.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
+        );
         try {
           const hash = await handleSubmitTree(journey);
           console.log(hash, 'hash <============');
@@ -156,7 +160,13 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                 );
               })}
               <Spacer times={10} />
-              {tryAgain && <Button title="tryAgain" onPress={handleSubmitAll} />}
+              {tryAgain && (
+                <Button
+                  caption={t('tryAgain')}
+                  onPress={handleSubmitAll}
+                  style={{alignItems: 'center', justifyContent: 'center'}}
+                />
+              )}
               <Spacer times={10} />
             </ScrollView>
           </View>
