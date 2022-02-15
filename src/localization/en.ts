@@ -141,7 +141,7 @@ export const en = {
     setup: 'Set up wallet',
     recoveryPhrase: 'Recovery phrase',
     ethConnect: 'Please connect \n your Ethereum wallet!',
-    connectToMagic: 'Please connect to Magic',
+    connectToMagic: 'Connect Wallet',
     loginWithPhone: 'Log in / Sign up',
     or: 'OR',
     connect: 'Connect Wallet',
@@ -215,4 +215,6 @@ export const en = {
     ranger: "Ranger's App",
     by: 'by Treejer',
   },
+  email: 'Email',
+  phoneNumber: 'Phone Number',
 };

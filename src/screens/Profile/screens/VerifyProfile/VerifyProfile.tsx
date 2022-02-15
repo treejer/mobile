@@ -139,6 +139,8 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
+  console.log(updateMobileState.data, 'updateMobileState', updateMobileState.loading);
+
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
@@ -156,10 +158,15 @@ function VerifyProfile(props: Props) {
             country: `${phoneRef.current.getCountryCode()}`,
           },
         },
+        errorPolicy: 'all',
+        onError: error => {
+          console.log(error, 'error is herererererererererererer');
+        },
       });
       setPhoneNumber(mobileNumber);
       setRequestedMobileVerification(true);
     } catch (e) {
+      console.log(e, 'e is hererere');
       handleMutationAlert(e);
     }
 

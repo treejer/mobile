@@ -41,6 +41,7 @@ const config = {
   relayRegistrationLookupBlocks: process.env.REACT_NATIVE_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS,
   pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
   learnMoreLink: process.env.REACT_NATIVE_LEARN_MORE_URL,
+  avatarBaseUrl: process.env.REACT_NATIVE_AVATAR_BASE_URL,
 };
 
 export default config;

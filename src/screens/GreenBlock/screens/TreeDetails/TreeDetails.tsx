@@ -107,6 +107,8 @@ function TreeDetails(_: Props) {
     }
   }, [cardRef]);
 
+  console.log(treeDetails, 'treeDetqils');
+
   const handleUpdate = () => {
     if (treeDetails?.lastUpdate?.updateStatus === '1') {
       Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
@@ -142,6 +144,14 @@ function TreeDetails(_: Props) {
       ],
     });
   };
+
+  if (loading) {
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={colors.green} size="large" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -253,8 +263,6 @@ function TreeDetails(_: Props) {
             </TouchableOpacity>
           </Card>
           <Spacer times={8} />
-
-          {loading && <ActivityIndicator color={colors.green} size="large" />}
 
           {Boolean(cardWidth) && updates && updatesCount > 0 && (
             <View>

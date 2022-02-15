@@ -25,6 +25,7 @@ function NoWallet(_: Props) {
   const navigation = useNavigation();
   const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
+  const [isEmail, setIsEmail] = useState<boolean>(false);
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -100,6 +101,10 @@ function NoWallet(_: Props) {
     }
   });
 
+  const handleToggleAuthMethod = () => {
+    setIsEmail(!isEmail);
+  };
+
   useEffect(() => {
     if (unlocked) {
       navigation.reset({
@@ -121,39 +126,50 @@ function NoWallet(_: Props) {
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>{t('createWallet.connectToMagic')}</Text>
         <Spacer times={4} />
 
-        <View style={{backgroundColor: 'white', padding: 16, marginHorizontal: 56, borderRadius: 8}}>
+        <View style={{marginHorizontal: 56, borderRadius: 8, width: 304, alignSelf: 'center'}}>
           <View style={{alignItems: 'center'}}>
-            <PhoneField
-              control={phoneNumberForm.control}
-              name="phoneNumber"
-              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
-              ref={phoneRef}
-              textInputStyle={{height: 64, paddingLeft: 0}}
-              defaultCode="CA"
-              placeholder="Phone #"
-            />
+            {isEmail ? (
+              <TextField
+                name="email"
+                control={emailForm.control}
+                placeholder={t('email')}
+                success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
+                rules={{required: true}}
+                style={{width: '100%'}}
+                onSubmitEditing={handleConnectWithEmail}
+              />
+            ) : (
+              <PhoneField
+                control={phoneNumberForm.control}
+                name="phoneNumber"
+                error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
+                ref={phoneRef}
+                textInputStyle={{height: 64, paddingLeft: 0}}
+                defaultCode="CA"
+                placeholder="Phone #"
+                containerStyle={{width: '100%'}}
+              />
+            )}
           </View>
           <Spacer times={4} />
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch'}}>
             <Button
-              variant="secondary"
+              variant="success"
               caption={t('createWallet.loginWithPhone')}
               disabled={loading}
               loading={loading}
-              onPress={submitPhoneNumber}
+              onPress={isEmail ? handleConnectWithEmail : submitPhoneNumber}
+              style={{alignSelf: 'stretch', justifyContent: 'center', alignItems: 'center'}}
             />
           </View>
-          <Spacer times={6} />
+          <Spacer times={4} />
           <Text style={{textAlign: 'center'}}>{t('createWallet.or')}</Text>
-          <Spacer times={6} />
-          <TextField
-            name="email"
-            control={emailForm.control}
-            placeholder="Email"
-            success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
-            rules={{required: true}}
-            style={{width: '100%'}}
-            onSubmitEditing={handleConnectWithEmail}
+          <Spacer times={4} />
+          <Button
+            caption={t(isEmail ? 'phoneNumber' : 'email')}
+            variant="secondary"
+            style={{alignItems: 'center', justifyContent: 'center'}}
+            onPress={handleToggleAuthMethod}
           />
           <Spacer times={4} />
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>

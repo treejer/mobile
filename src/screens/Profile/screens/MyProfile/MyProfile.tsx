@@ -97,7 +97,9 @@ function MyProfile(_: Props) {
           } catch (e) {
             return Promise.reject(e);
           }
+          console.log('before removing magicToken');
           await AsyncStorage.removeItem(config.storageKeys.magicToken);
+          console.log('after removing magicToken');
         }
         await AsyncStorage.clear();
         if (!userPressed) {

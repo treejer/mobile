@@ -257,22 +257,24 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
       <View style={[styles.bottom, {width: '100%'}]}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           {hasLocation ? <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} /> : null}
-          <View
-            style={{
-              backgroundColor: colors.khaki,
-              flex: 0.9,
-              height: 80,
-              padding: 8,
-              borderRadius: 4,
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text style={{fontSize: 10}}>lat: {location?.coords?.latitude || 'N/A'}</Text>
-            <Text style={{fontSize: 10}}>long: {location?.coords?.longitude || 'N/A'}</Text>
-            <Text style={{fontSize: 10}}>
-              accuracy: {accuracyInMeters ? Number(accuracyInMeters).toFixed(2) : 'N/A'}
-            </Text>
-          </View>
+          {hasLocation ? (
+            <View
+              style={{
+                backgroundColor: colors.khaki,
+                flex: 0.9,
+                height: 80,
+                padding: 8,
+                borderRadius: 4,
+                justifyContent: 'space-between',
+              }}
+            >
+              <Text style={{fontSize: 10}}>lat: {location?.coords?.latitude || 'N/A'}</Text>
+              <Text style={{fontSize: 10}}>long: {location?.coords?.longitude || 'N/A'}</Text>
+              <Text style={{fontSize: 10}}>
+                accuracy: {accuracyInMeters ? Number(accuracyInMeters).toFixed(2) : 'N/A'}
+              </Text>
+            </View>
+          ) : null}
           {hasLocation ? <Button caption="" icon={Check} variant="success" round onPress={handleSubmit} /> : null}
         </View>
         <TouchableOpacity

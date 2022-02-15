@@ -116,7 +116,7 @@ export async function sendTransactionWithGSN(
   }).init();
   console.log('2 - Relay provider created', config.isMainnet);
 
-  gsnProvider.addAccount(wallet);
+  // gsnProvider.addAccount(wallet);
   console.log('3 - Account linked to the relay provider', config.isMainnet);
 
   const web3GSN = new Web3(gsnProvider);

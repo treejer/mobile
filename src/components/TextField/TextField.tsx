@@ -59,7 +59,7 @@ const TextField = React.forwardRef<TextInput, TextFieldProps>(
 TextField.displayName = 'TextField';
 
 export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
-  ({control, name, rules, defaultValue = '', success, error, ...props}: PhoneFieldProps, ref) => {
+  ({control, name, rules, defaultValue = '', success, error, containerStyle, ...props}: PhoneFieldProps, ref) => {
     const inputProps = {
       ...props,
       ref,
@@ -74,12 +74,13 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
               {...inputProps}
               textInputProps={{onBlur}}
               flagButtonStyle={styles.flagButton}
-              containerStyle={styles.phoneContainer}
+              containerStyle={[styles.phoneContainer, containerStyle]}
               textContainerStyle={[
                 styles.wrapper,
                 styles.phoneInputContainer,
                 success && styles.success,
                 error && styles.error,
+                {width: '100%'},
               ]}
               codeTextStyle={{height: 25, padding: 0, textAlign: 'right'}}
               onChangeText={inputValue => onChange(inputValue)}
