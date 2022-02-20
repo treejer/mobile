@@ -3,7 +3,7 @@ import {Alert, Linking} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationProp} from '@react-navigation/native';
 import TabBar from 'components/TabBar';
-import {usePrivateKeyStorage} from 'services/web3';
+import {usePrivateKeyStorage, useWalletAccount} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import {MainTabsParamList} from 'types';
 
@@ -20,7 +20,15 @@ interface Props {
 function TabWithTabBar({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
 
-  const {status} = useCurrentUser();
+  const wallet = useWalletAccount();
+
+  const {status, refetchUser} = useCurrentUser();
+
+  useEffect(() => {
+    if (wallet) {
+      refetchUser();
+    }
+  }, [wallet]);
   console.log('status statusss', status);
 
   const tabsVisible = unlocked && status === UserStatus.Verified;

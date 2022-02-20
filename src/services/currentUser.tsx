@@ -1,5 +1,5 @@
 import {useLazyQuery} from '@apollo/client';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
@@ -16,6 +16,28 @@ export enum UserStatus {
   Verified,
 }
 
+export interface CurrentUserContextState {
+  status: UserStatus | null;
+  data: {
+    user: null | GetMeQueryData.User;
+  };
+  loading?: boolean;
+  error?: any;
+  refetchUser: () => void;
+  handleLogout: (userPressed?: boolean) => void;
+}
+
+const initialCurrentUserContext: CurrentUserContextState = {
+  status: null,
+  data: {
+    user: null,
+  },
+  refetchUser: () => {},
+  handleLogout: () => {},
+};
+
+export const CurrentUserContext = createContext<CurrentUserContextState>(initialCurrentUserContext);
+
 export interface UseCurrentUserOptions {
   didMount?: boolean;
 }
@@ -24,8 +46,23 @@ const useCurrentUserDefaultOptions: UseCurrentUserOptions = {
   didMount: false,
 };
 
-export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDefaultOptions) {
+export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDefaultOptions): CurrentUserContextState {
   const {didMount} = options;
+
+  const context = useContext(CurrentUserContext);
+  const {refetchUser} = context;
+
+  useEffect(() => {
+    if (didMount) {
+      refetchUser();
+    }
+  }, []);
+
+  return context;
+}
+
+export function CurrentUserProvider(props) {
+  const {children} = props;
   const [currentUser, setCurrentUser] = useState<GetMeQueryData.User | null>(null);
   const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
@@ -37,7 +74,7 @@ export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDe
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
 
-  const {error} = result;
+  const {error, loading} = result;
   // @ts-ignore
   const statusCode = error?.networkError?.result?.error?.statusCode;
   console.log(statusCode, 'status code');
@@ -46,10 +83,8 @@ export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDe
     (async function () {
       const localUser = await AsyncStorage.getItem(config.storageKeys.user);
       if (localUser) {
+        console.log(JSON.parse(localUser), 'localuser');
         setCurrentUser(JSON.parse(localUser));
-      }
-      if (didMount) {
-        await refetchUser();
       }
     })();
   }, []);
@@ -68,6 +103,7 @@ export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDe
 
   const status: UserStatus = useMemo(() => {
     if (!currentUser) {
+      console.log('this mother fucker');
       return UserStatus.Loading;
     }
     if (!currentUser?.isVerified && !currentUser?.firstName) {
@@ -138,14 +174,16 @@ export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDe
     }
   }, [handleLogout, statusCode, wallet]);
 
-  return {
-    ...result,
+  const value: CurrentUserContextState = {
     status,
-    statusCode,
     data: {
       user: currentUser,
     },
     refetchUser,
     handleLogout,
+    error,
+    loading,
   };
+
+  return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
 }

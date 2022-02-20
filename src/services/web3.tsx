@@ -22,6 +22,7 @@ const initialValue = {
   resetWeb3Data() {},
   waiting: false,
   userId: '',
+  user: null,
   magicToken: '',
   storeMagicToken: (token: string) => {},
   wallet: null,
