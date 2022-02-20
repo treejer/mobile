@@ -1,8 +1,13 @@
-import {useQuery} from '@apollo/client';
-import {useCallback, useEffect, useState} from 'react';
+import {useLazyQuery} from '@apollo/client';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
+import {asyncAlert} from 'utilities/helpers/alert';
+import config from 'services/config';
+import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {useSettings} from 'services/settings';
+import {useResetWeb3Data, useWalletAccount} from 'services/web3';
+import {useTranslation} from 'react-i18next';
 
 export enum UserStatus {
   Loading,
@@ -11,50 +16,57 @@ export enum UserStatus {
   Verified,
 }
 
-export function useCurrentUser() {
+export interface UseCurrentUserOptions {
+  didMount?: boolean;
+}
+
+const useCurrentUserDefaultOptions: UseCurrentUserOptions = {
+  didMount: false,
+};
+
+export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDefaultOptions) {
+  const {didMount} = options;
   const [currentUser, setCurrentUser] = useState<GetMeQueryData.User | null>(null);
-  const result = useQuery<GetMeQueryData>(getMeQuery, {
+  const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
   });
+  const {offlineTrees} = useOfflineTrees();
 
-  const {data, error, loading, refetch} = result;
+  const wallet = useWalletAccount();
+  const {resetOnBoardingData} = useSettings();
+  const {resetWeb3Data} = useResetWeb3Data();
+  const {t} = useTranslation();
+
+  const {error} = result;
   // @ts-ignore
   const statusCode = error?.networkError?.result?.error?.statusCode;
-
-  if (statusCode === 401) {
-    // logout @here
-  }
+  console.log(statusCode, 'status code');
 
   useEffect(() => {
     (async function () {
-      const localUser = await AsyncStorage.getItem('currentUser');
+      const localUser = await AsyncStorage.getItem(config.storageKeys.user);
       if (localUser) {
         setCurrentUser(JSON.parse(localUser));
       }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!loading && data) {
-        await AsyncStorage.setItem('currentUser', JSON.stringify(data.user));
-        setCurrentUser(data.user);
+      if (didMount) {
+        await refetchUser();
       }
     })();
-  }, [loading, data]);
+  }, []);
 
   const refetchUser = useCallback(async () => {
     try {
       const newUser = await refetch();
       if (newUser?.data?.user) {
         setCurrentUser(newUser.data.user);
+        await AsyncStorage.setItem(config.storageKeys.user, JSON.stringify(newUser.data.user));
       }
     } catch (e) {
       console.log(e, 'e inside refetchUser');
     }
   }, [refetch]);
 
-  const status: UserStatus = (() => {
+  const status: UserStatus = useMemo(() => {
     if (!currentUser) {
       return UserStatus.Loading;
     }
@@ -65,7 +77,66 @@ export function useCurrentUser() {
       return UserStatus.Pending;
     }
     return UserStatus.Verified;
-  })();
+  }, [currentUser]);
+
+  console.log(status, 'status');
+
+  const handleLogout = useCallback(
+    async (userPressed: boolean) => {
+      console.log('handle logout called<+======++++++++++++++');
+      try {
+        if (userPressed) {
+          try {
+            if (offlineTrees.planted || offlineTrees.updated) {
+              const trees = [...(offlineTrees.planted || []), ...(offlineTrees.updated || [])];
+
+              if (trees.length) {
+                const isMoreThanOne = trees.length > 1;
+                const treeText = isMoreThanOne ? 'trees' : 'tree';
+                const treeThereText = isMoreThanOne ? 'they are' : 'it is';
+
+                await asyncAlert(
+                  t('myProfile.attention'),
+                  t('myProfile.looseTree', {treesLength: trees.length, treeText, treeThereText}),
+                  {text: t('myProfile.logoutAndLoose')},
+                  {text: t('cancel')},
+                );
+              }
+            }
+          } catch (e) {
+            return Promise.reject(e);
+          }
+          console.log('before removing magicToken');
+          await AsyncStorage.removeItem(config.storageKeys.magicToken);
+          console.log('after removing magicToken');
+        }
+        const locale = await AsyncStorage.getItem(config.storageKeys.locale);
+        await AsyncStorage.clear();
+        await AsyncStorage.setItem(config.storageKeys.locale, locale);
+        if (!userPressed) {
+          if (offlineTrees.planted) {
+            await AsyncStorage.setItem(offlineTreesStorageKey, JSON.stringify(offlineTrees.planted));
+          }
+          if (offlineTrees.updated) {
+            await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, JSON.stringify(offlineTrees.updated));
+          }
+        }
+        await resetWeb3Data();
+        await resetOnBoardingData();
+      } catch (e) {
+        console.log(e, 'e inside handleLogout');
+        return Promise.reject(e);
+      }
+    },
+    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data, t],
+  );
+
+  useEffect(() => {
+    console.log(statusCode, 'inside useeffect', wallet);
+    if (statusCode === 401) {
+      handleLogout(false);
+    }
+  }, [handleLogout, statusCode, wallet]);
 
   return {
     ...result,
@@ -75,5 +146,6 @@ export function useCurrentUser() {
       user: currentUser,
     },
     refetchUser,
+    handleLogout,
   };
 }

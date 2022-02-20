@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import SettingsProvider, {useSettingsInitialValue, SettingsContext} from './src/services/settings';
+import SettingsProvider, {useAppInitialValue, SettingsContext} from './src/services/settings';
 import SplashScreen from 'react-native-splash-screen';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
-import Web3Provider, {Web3Context, usePersistedWallet, usePersistedMagic} from './src/services/web3';
+import Web3Provider, {Web3Context, usePersistedMagic} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
 import {I18nextProvider} from 'react-i18next';
 import Onboarding from './src/screens/Onboarding';
@@ -22,30 +22,12 @@ const linking = {
 export default function App() {
   useEffect(() => {
     SplashScreen.hide();
-    (async () => {
-      await handleInit();
-    })();
   }, []);
 
-  const [magicTokenLoaded, magicToken] = usePersistedMagic();
-  const {loaded: settingsLoaded, locale, onboardingDone} = useSettingsInitialValue();
+  const {loading, locale, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
-  const loading = !settingsLoaded || !magicTokenLoaded;
 
   useInitialDeepLinking();
-
-  const handleInit = async () => {
-    try {
-      // TorusSdk.init({
-      //   redirectUri: 'treejer://torus/redirect',
-      //   network: 'testnet',
-      //   // proxyContractAddress: '0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183',
-      //   browserRedirectUri: 'https://api.treejer.com/toruswallet_redirect.html',
-      // });
-    } catch (error) {
-      console.log(error, '====> e <====');
-    }
-  };
 
   return (
     <I18nextProvider i18n={i18next}>
@@ -56,10 +38,15 @@ export default function App() {
         ) : (
           <SettingsProvider onboardingDoneInitialState={onboardingDone} localeInitialState={locale}>
             <OfflineTreeProvider>
-              <Web3Provider persistedMagicToken={magicToken}>
+              <Web3Provider
+                persistedWallet={wallet}
+                persistedAccessToken={accessToken}
+                persistedUserId={userId}
+                persistedMagicToken={magicToken}
+              >
                 <Web3Context.Consumer>
-                  {({waiting}) =>
-                    waiting ? (
+                  {({waiting, loading}) =>
+                    waiting && loading ? (
                       <AppLoading />
                     ) : (
                       <ApolloProvider>

@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
-import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert} from 'react-native';
+import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert, TextInput, Modal} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
@@ -136,7 +136,9 @@ function NoWallet(_: Props) {
                 success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
                 rules={{required: true}}
                 style={{width: '100%'}}
+                keyboardType="email-address"
                 onSubmitEditing={handleConnectWithEmail}
+                disabled={loading}
               />
             ) : (
               <PhoneField
@@ -148,6 +150,7 @@ function NoWallet(_: Props) {
                 defaultCode="CA"
                 placeholder="Phone #"
                 containerStyle={{width: '100%'}}
+                disabled={loading}
               />
             )}
           </View>
@@ -170,14 +173,15 @@ function NoWallet(_: Props) {
             variant="secondary"
             style={{alignItems: 'center', justifyContent: 'center'}}
             onPress={handleToggleAuthMethod}
+            disabled={loading}
           />
           <Spacer times={4} />
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <SocialLoginButton name="Apple" />
+            <SocialLoginButton name="Apple" disabled={loading} />
             <Spacer times={2} />
-            <SocialLoginButton name="Google" color={colors.red} />
+            <SocialLoginButton name="Google" color={colors.red} disabled={loading} />
             <Spacer times={2} />
-            <SocialLoginButton name="Twitter" color="#24A4F3" />
+            <SocialLoginButton name="Twitter" color="#24A4F3" disabled={loading} />
           </View>
         </View>
 
@@ -189,7 +193,7 @@ function NoWallet(_: Props) {
             <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
             <Spacer times={5} />
             <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.details')}</Text>
-            <TouchableOpacity onPress={handleLearnMore}>
+            <TouchableOpacity onPress={handleLearnMore} disabled={loading}>
               <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.learnMore')}</Text>
             </TouchableOpacity>
           </Card>

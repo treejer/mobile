@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from 'services/config';
 
-export const offlineTreesStorageKey = 'OfflineTrees';
-export const offlineUpdatedTreesStorageKey = 'offlineUpdatedTreesStorageKey';
+export const offlineTreesStorageKey = config.storageKeys.offlineTrees;
+export const offlineUpdatedTreesStorageKey = config.storageKeys.offlineUpdatedTrees;
 
 export interface OfflineTreesState {
   planted: TreeJourney[] | null;
@@ -160,7 +161,7 @@ export function OfflineTreeProvider({children}) {
 
   const dispatchAddOfflineTrees = useCallback(
     (trees: TreeJourney[]) => {
-      dispatch(addOfflineTrees(trees.map(tree => ({...tree, offlineId: Date.now().toString()}))));
+      dispatch(addOfflineTrees(trees));
     },
     [dispatch],
   );

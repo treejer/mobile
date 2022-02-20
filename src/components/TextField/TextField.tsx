@@ -11,6 +11,7 @@ type OwnProps = {
   rules?: ValidationRule | any;
   success?: boolean;
   error?: FieldError;
+  disabled?: boolean;
 } & (
   | {
       control: Control<any>;

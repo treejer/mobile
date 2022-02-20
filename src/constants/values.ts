@@ -8,4 +8,5 @@ export const colors = {
   grayDarker: '#424242',
   red: '#D04F45',
   grayOpacity: '#00000033',
+  transparent: '#00000000',
 };

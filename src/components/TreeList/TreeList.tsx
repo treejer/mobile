@@ -54,6 +54,7 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
+  const [initialFilter, setInitialFilter] = useState(filter);
   const {t} = useTranslation();
   const filters = useMemo<TreeFilterItem[]>(() => {
     return [
@@ -68,12 +69,13 @@ function Trees({route, navigation, filter}: Props) {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (filter) {
-        setCurrentFilter({caption: filter});
+      if (initialFilter) {
+        setCurrentFilter({caption: initialFilter});
+        setInitialFilter(null);
       } else {
         setCurrentFilter(filters[0]);
       }
-    }, [filter, filters]),
+    }, [initialFilter, filters]),
   );
 
   const [offlineLoadings, setOfflineLoadings] = useState([]);

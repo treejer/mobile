@@ -8,6 +8,7 @@ import config from './config';
 import {useTranslation} from 'react-i18next';
 import {magic} from 'services/Magic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
 const initialValue = {
   web3: {} as Web3,
@@ -24,6 +25,7 @@ const initialValue = {
   magicToken: '',
   storeMagicToken: (token: string) => {},
   wallet: null,
+  loading: true,
 };
 
 export const Web3Context = React.createContext(initialValue);
@@ -32,22 +34,37 @@ interface Props {
   children: React.ReactNode;
   privateKey?: string;
   persistedMagicToken?: string;
+  persistedWallet?: string;
+  persistedAccessToken?: string;
+  persistedUserId?: string;
 }
 
-function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
+function Web3Provider(props: Props) {
+  const {
+    children,
+    privateKey,
+    persistedMagicToken,
+    persistedWallet = null,
+    persistedAccessToken = '',
+    persistedUserId = '',
+  } = props;
   const web3 = useMemo(() => new Web3(magic.rpcProvider), []);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [walletWeb3, setWalletWeb3] = useState<Web3>();
-  const [wallet, setWallet] = useState<null | string>(null);
-  const [magicToken, setMagicToken] = useState<string>('');
+  const [wallet, setWallet] = useState<null | string>(persistedWallet);
+  const [magicToken, setMagicToken] = useState<string>(persistedMagicToken);
   const [waiting, setWaiting] = useState<boolean>(true);
   const [unlocked, setUnlocked] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [userId, setUserId] = useState<string>('');
+  const [accessToken, setAccessToken] = useState<string>(persistedAccessToken);
+  const [userId, setUserId] = useState<string>(persistedUserId);
+
   const treeFactory = useContract(web3, config.contracts.TreeFactory);
   const planter = useContract(web3, config.contracts.Planter);
   const planterFund = useContract(web3, config.contracts.PlanterFund);
   const {t} = useTranslation();
+
+  const isConnected = useNetInfoConnected();
 
   const previousWeb3 = useRef<Web3 | null>(null);
 
@@ -63,6 +80,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       try {
         const credentials = await getTreejerPrivateKeyApiAccessToken(privateKey, web3);
         setAccessToken(credentials.loginToken);
+        await AsyncStorage.setItem(config.storageKeys.accessToken, credentials.loginToken);
         setUserId(credentials.userId);
         setUnlocked(true);
         setWalletWeb3(web3);
@@ -79,26 +97,38 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
 
   const updateAccessToken = useCallback(async () => {
     try {
+      console.log('[[[[try]]]]');
       const credentials = await getTreejerApiAccessToken(web3);
       setAccessToken(credentials.loginToken);
+      await AsyncStorage.setItem(config.storageKeys.accessToken, credentials.loginToken);
       setUserId(credentials.userId);
+      await AsyncStorage.setItem(config.storageKeys.userId, credentials.userId);
       setUnlocked(true);
       setWalletWeb3(web3);
-      await web3.eth.getAccounts((e, accounts) => {
+      await web3.eth.getAccounts(async (e, accounts) => {
         if (e) {
           console.log(e, 'e is here getAccounts eth');
+          setWaiting(false);
+          setLoading(false);
           return;
         }
-        setWallet(accounts[0]);
+        const account = accounts[0];
+        if (account) {
+          await AsyncStorage.setItem(config.storageKeys.magicWalletAddress, account);
+          setWallet(account);
+          setWaiting(false);
+          setLoading(false);
+        }
       });
     } catch (e) {
+      console.log('[[[[catch]]]]');
       let {error: {message = t('loginFailed.message')} = {}} = e;
       if (e.message) {
         message = e.message;
       }
-      Alert.alert(t('loginFailed.title'), message);
-    } finally {
       setWaiting(false);
+      setLoading(false);
+      Alert.alert(t('loginFailed.title'), message);
     }
   }, [t, web3]);
 
@@ -108,7 +138,13 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       // addToWallet(token);
 
       await AsyncStorage.setItem(config.storageKeys.magicToken, token);
-      await updateAccessToken();
+      if (isConnected) {
+        await updateAccessToken();
+      } else {
+        setWaiting(false);
+        setLoading(false);
+        setUnlocked(true);
+      }
     },
     [updateAccessToken],
   );
@@ -116,6 +152,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
   const resetWeb3Data = useCallback(async () => {
     await setUnlocked(false);
     await setAccessToken('');
+    await setWallet(null);
   }, []);
 
   const storePrivateKey = useCallback(
@@ -130,6 +167,15 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
 
   useEffect(() => {
     (async function () {
+      try {
+        const magicWalletAddress = await AsyncStorage.getItem(config.storageKeys.magicWalletAddress);
+        if (magicWalletAddress) {
+          setWallet(magicWalletAddress);
+        }
+      } catch (e) {
+        console.log(e, 'e');
+      }
+      console.log(persistedMagicToken, 'persistedMagicToken');
       if (persistedMagicToken) {
         await storeMagicToken(persistedMagicToken);
       } else {
@@ -168,6 +214,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       magicToken,
       storeMagicToken,
       wallet,
+      loading,
     }),
     [
       web3,
@@ -184,6 +231,7 @@ function Web3Provider({children, privateKey, persistedMagicToken}: Props) {
       magicToken,
       storeMagicToken,
       wallet,
+      loading,
     ],
   );
 

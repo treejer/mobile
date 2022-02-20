@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
@@ -9,12 +8,9 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {useWalletAccount, useResetWeb3Data, useWalletWeb3, usePlanterFund} from 'services/web3';
+import {useWalletAccount, useWalletWeb3, usePlanterFund} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import config from 'services/config';
-import {useSettings} from 'services/settings';
-import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {asyncAlert} from 'utilities/helpers/alert';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
@@ -22,6 +18,7 @@ import SimpleToast from 'react-native-simple-toast';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
 interface Props {
   navigation: any;
@@ -33,16 +30,15 @@ function MyProfile(_: Props) {
   const navigation = useNavigation();
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
-  const {resetOnBoardingData} = useSettings();
-  const {resetWeb3Data} = useResetWeb3Data();
 
   const planterFundContract = usePlanterFund();
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, statusCode, refetchUser} = useCurrentUser();
+  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
   const isVerified = data?.user?.isVerified;
-  const {offlineTrees} = useOfflineTrees();
+
+  const isConnected = useNetInfoConnected();
 
   const requiredBalance = useMemo(() => 500000000000000000, []);
 
@@ -73,59 +69,6 @@ function MyProfile(_: Props) {
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
 
-  const handleLogout = useCallback(
-    async (userPressed: boolean) => {
-      try {
-        if (userPressed) {
-          try {
-            if (offlineTrees.planted || offlineTrees.updated) {
-              const trees = [...(offlineTrees.planted || []), ...(offlineTrees.updated || [])];
-
-              if (trees.length) {
-                const isMoreThanOne = trees.length > 1;
-                const treeText = isMoreThanOne ? 'trees' : 'tree';
-                const treeThereText = isMoreThanOne ? 'they are' : 'it is';
-
-                await asyncAlert(
-                  t('myProfile.attention'),
-                  t('myProfile.looseTree', {treesLength: trees.length, treeText, treeThereText}),
-                  {text: t('myProfile.logoutAndLoose')},
-                  {text: t('cancel')},
-                );
-              }
-            }
-          } catch (e) {
-            return Promise.reject(e);
-          }
-          console.log('before removing magicToken');
-          await AsyncStorage.removeItem(config.storageKeys.magicToken);
-          console.log('after removing magicToken');
-        }
-        await AsyncStorage.clear();
-        if (!userPressed) {
-          if (offlineTrees.planted) {
-            await AsyncStorage.setItem(offlineTreesStorageKey, offlineTrees.planted);
-          }
-          if (offlineTrees.updated) {
-            await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, offlineTrees.updated);
-          }
-        }
-        await resetWeb3Data();
-        await resetOnBoardingData();
-      } catch (e) {
-        console.log(e, 'e inside handleLogout');
-        return Promise.reject(e);
-      }
-    },
-    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data, t],
-  );
-
-  useEffect(() => {
-    if (statusCode && statusCode === 401 && wallet) {
-      handleLogout(false).then(() => {});
-    }
-  }, [statusCode, handleLogout, wallet]);
-
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
   //     address,
@@ -142,6 +85,9 @@ function MyProfile(_: Props) {
   // });
 
   const getPlanter = useCallback(async () => {
+    if (!isConnected) {
+      return;
+    }
     try {
       await planterRefetch();
     } catch (e) {
@@ -150,18 +96,22 @@ function MyProfile(_: Props) {
   }, [planterRefetch]);
 
   const parseBalance = useCallback(
-    (balance: string, fixed = 5) => parseFloat(web3.utils.fromWei(balance)).toFixed(fixed),
-    [web3.utils],
+    (balance: string, fixed = 5) => parseFloat(web3?.utils?.fromWei(balance))?.toFixed(fixed),
+    [web3?.utils],
   );
 
   useEffect(() => {
-    if (wallet) {
+    if (wallet && isConnected) {
       getPlanter().then(() => {});
     }
-  }, [wallet, getPlanter]);
+  }, [wallet, getPlanter, isConnected]);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
+    if (!isConnected) {
+      Alert.alert(t('netInfo.error'), t('netInfo.details'));
+      return;
+    }
     setSubmitting(true);
     sendEvent('withdraw');
     try {
@@ -361,7 +311,7 @@ function MyProfile(_: Props) {
 
               {planterData?.planterType && <Invite address={wallet} planterType={Number(planterData?.planterType)} />}
 
-              {!wallet && (
+              {/* {!wallet && (
                 <>
                   <Button
                     style={styles.button}
@@ -374,7 +324,7 @@ function MyProfile(_: Props) {
                   />
                   <Spacer times={4} />
                 </>
-              )}
+              )} */}
 
               <Button style={styles.button} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
               <Spacer times={4} />

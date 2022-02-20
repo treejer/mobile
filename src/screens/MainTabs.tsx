@@ -21,6 +21,7 @@ function TabWithTabBar({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
 
   const {status} = useCurrentUser();
+  console.log('status statusss', status);
 
   const tabsVisible = unlocked && status === UserStatus.Verified;
 
@@ -58,7 +59,7 @@ function TabWithTabBar({navigation}: Props) {
       });
 
     return () => {
-      Linking.removeEventListener('url', listener);
+      Linking.removeAllListeners('url');
     };
   }, [navigation, tabsVisible]);
 

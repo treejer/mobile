@@ -1,6 +1,7 @@
 /* eslint-disable @shopify/strict-component-boundaries */
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {TreeFilter} from 'components/TreeList/TreeList';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 
@@ -10,6 +11,7 @@ export interface MainTabsParamList extends Record<string, any> {
   GreenBlock: {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
+    filter?: TreeFilter;
   };
 }
 

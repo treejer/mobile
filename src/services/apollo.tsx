@@ -140,7 +140,9 @@ interface Props {
 
 function ApolloProvider({children}: Props) {
   const accessToken = useAccessToken();
+  console.log(accessToken, 'accessToken');
   const userId = useUserId();
+  console.log(userId, 'userId');
   const web3 = useWeb3();
 
   const client = useMemo(() => createApolloClient(accessToken, userId, web3), [accessToken, web3, userId]);

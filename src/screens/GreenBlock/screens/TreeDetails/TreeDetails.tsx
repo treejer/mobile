@@ -45,6 +45,8 @@ function TreeDetails(_: Props) {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
 
+  console.log(tree, 'tree');
+
   const {sendEvent} = useAnalytics();
 
   const {t} = useTranslation();
@@ -67,7 +69,7 @@ function TreeDetails(_: Props) {
       .catch(e => console.log(e, 'e is here'));
   }, [treeFactory.methods]);
 
-  const treeDetails = data?.tree;
+  const treeDetails = data?.tree || tree;
 
   // console.log(new Date(Number(treeDetails?.birthDate) * 1000), '====> treeDetails?.birthDate <====');
   // console.log(treeDetails?.birthDate, '====> treeDetails?.birthDate <====');

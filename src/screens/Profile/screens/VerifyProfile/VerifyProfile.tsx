@@ -48,7 +48,7 @@ const radioItems = [
 ];
 
 function VerifyProfile(props: Props) {
-  const {status} = useCurrentUser();
+  const {status} = useCurrentUser({didMount: true});
 
   const {openCameraHook} = useCamera();
   const {navigation} = props;

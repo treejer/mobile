@@ -18,13 +18,17 @@ interface Props {
 }
 
 interface InitialValueHookResult {
-  loaded: boolean;
+  loading: boolean;
   locale?: string;
   onboardingDone?: boolean;
+  wallet?: string;
+  accessToken?: string;
+  userId?: string;
+  magicToken?: string;
 }
 
-const LOCALE_KEY = '__LOCALE';
-const ONBOARDING_DONE_KEY = '__ONBOARDING';
+const LOCALE_KEY = config.storageKeys.locale;
+const ONBOARDING_DONE_KEY = config.storageKeys.onBoarding;
 
 function SettingsProvider({onboardingDoneInitialState, localeInitialState, children}: Props) {
   const [onboardingDone, setOnboardingDone] = useState(onboardingDoneInitialState);
@@ -88,38 +92,71 @@ function SettingsProvider({onboardingDoneInitialState, localeInitialState, child
 export default memo(SettingsProvider);
 
 export const useSettings = () => useContext(SettingsContext);
-export const useSettingsInitialValue = () => {
+export const useAppInitialValue = () => {
   const [initialValue, setInitialValue] = useState<InitialValueHookResult>({
-    loaded: false,
+    loading: true,
   });
 
   useEffect(() => {
-    AsyncStorage.multiGet([LOCALE_KEY, ONBOARDING_DONE_KEY])
+    AsyncStorage.multiGet([
+      LOCALE_KEY,
+      ONBOARDING_DONE_KEY,
+      config.storageKeys.userId,
+      config.storageKeys.user,
+      config.storageKeys.accessToken,
+      config.storageKeys.magicWalletAddress,
+      config.storageKeys.magicToken,
+    ])
       .then(stores => {
         const result = stores.reduce(
-          (result, [key, value]) => {
+          (acc: InitialValueHookResult, [key, value]) => {
+            console.log(key, value);
             switch (key) {
               case LOCALE_KEY:
                 return {
-                  ...result,
+                  ...acc,
                   locale: value ?? '',
                 };
               case ONBOARDING_DONE_KEY:
                 return {
-                  ...result,
+                  ...acc,
                   onboardingDone: Boolean(value),
                 };
+              case config.storageKeys.magicWalletAddress:
+                return {
+                  ...acc,
+                  wallet: value,
+                };
+              case config.storageKeys.accessToken:
+                return {
+                  ...acc,
+                  accessToken: value,
+                };
+              case config.storageKeys.userId:
+                return {
+                  ...acc,
+                  userId: value,
+                };
+              case config.storageKeys.magicToken:
+                return {
+                  ...acc,
+                  magicToken: value,
+                };
               default:
-                return result;
+                return acc;
             }
           },
-          {loaded: true} as InitialValueHookResult,
+          {loading: false} as InitialValueHookResult,
         );
 
         setInitialValue(result);
       })
       .catch(() => {
         console.warn('Failed to get settings info from storage');
+        setInitialValue({
+          ...initialValue,
+          loading: false,
+        });
       });
   }, []);
 

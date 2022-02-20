@@ -15,7 +15,7 @@ export async function userSign(signature: string, publicAddress: string, tokenKe
 
   if (value.loginToken && value.userId) {
     await AsyncStorage.setItem(tokenKey, value.loginToken);
-    await AsyncStorage.setItem('USER_ID', value.userId);
+    await AsyncStorage.setItem(config.storageKeys.userId, value.userId);
     return Promise.resolve(value);
   } else {
     return Promise.reject(value);
