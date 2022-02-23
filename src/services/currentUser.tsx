@@ -77,13 +77,11 @@ export function CurrentUserProvider(props) {
   const {error, loading} = result;
   // @ts-ignore
   const statusCode = error?.networkError?.result?.error?.statusCode;
-  console.log(statusCode, 'status code');
 
   useEffect(() => {
     (async function () {
       const localUser = await AsyncStorage.getItem(config.storageKeys.user);
       if (localUser) {
-        console.log(JSON.parse(localUser), 'localuser');
         setCurrentUser(JSON.parse(localUser));
       }
     })();
@@ -103,7 +101,6 @@ export function CurrentUserProvider(props) {
 
   const status: UserStatus = useMemo(() => {
     if (!currentUser) {
-      console.log('this mother fucker');
       return UserStatus.Loading;
     }
     if (!currentUser?.isVerified && !currentUser?.firstName) {
@@ -119,7 +116,6 @@ export function CurrentUserProvider(props) {
 
   const handleLogout = useCallback(
     async (userPressed: boolean) => {
-      console.log('handle logout called<+======++++++++++++++');
       try {
         if (userPressed) {
           try {
@@ -168,7 +164,6 @@ export function CurrentUserProvider(props) {
   );
 
   useEffect(() => {
-    console.log(statusCode, 'inside useeffect', wallet);
     if (statusCode === 401) {
       handleLogout(false);
     }

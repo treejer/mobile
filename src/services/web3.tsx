@@ -1,12 +1,11 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import Web3 from 'web3';
+import Web3, {magic} from 'services/Magic';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
 import {Alert} from 'react-native';
 import {getTreejerApiAccessToken, getTreejerPrivateKeyApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 import config from './config';
 import {useTranslation} from 'react-i18next';
-import {magic} from 'services/Magic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
@@ -101,9 +100,18 @@ function Web3Provider(props: Props) {
       console.log('[[[[try]]]]');
       const credentials = await getTreejerApiAccessToken(web3);
       setAccessToken(credentials.loginToken);
-      await AsyncStorage.setItem(config.storageKeys.accessToken, credentials.loginToken);
+      if (credentials.loginToken) {
+        await AsyncStorage.setItem(config.storageKeys.accessToken, credentials.loginToken);
+      } else {
+        await AsyncStorage.removeItem(config.storageKeys.accessToken);
+      }
+
       setUserId(credentials.userId);
-      await AsyncStorage.setItem(config.storageKeys.userId, credentials.userId);
+      if (credentials.userId) {
+        await AsyncStorage.setItem(config.storageKeys.userId, credentials.userId);
+      } else {
+        await AsyncStorage.removeItem(config.storageKeys.userId);
+      }
       setUnlocked(true);
       setWalletWeb3(web3);
       await web3.eth.getAccounts(async (e, accounts) => {
@@ -246,7 +254,7 @@ const useContract = (web3: Web3, {abi, address}: {abi: any; address: string}) =>
 export default memo(Web3Provider);
 
 export const useWeb3 = () => useContext(Web3Context).web3;
-export const useWalletWeb3 = () => useContext(Web3Context).walletWeb3;
+export const useWalletWeb3 = () => useContext(Web3Context).web3;
 export const useTreeFactory = () => useContext(Web3Context).treeFactory;
 export const usePlanter = () => useContext(Web3Context).planter;
 export const usePlanterFund = () => useContext(Web3Context).planterFund;

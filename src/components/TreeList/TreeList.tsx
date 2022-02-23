@@ -112,11 +112,25 @@ function Trees({route, navigation, filter}: Props) {
 
   const handleSelectTree = tree => {
     if (tree.item?.treeStatus == 2) {
-      navigation.navigate('TreeSubmission', {
-        treeIdToPlant: tree.item.id,
-        tree: tree.item,
-        initialRouteName: 'SelectPhoto',
-      });
+      const isTreePlantedOffline = offlineTrees?.planted?.find(item => item.treeIdToPlant === tree.item?.id);
+      if (isTreePlantedOffline) {
+        Alert.alert(t('warning'), t('notVerifiedTree'));
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'TreeSubmission',
+              params: {
+                treeIdToPlant: tree.item.id,
+                tree: tree.item,
+                isSingle: true,
+                initialRouteName: 'SelectPhoto',
+              },
+            },
+          ],
+        });
+      }
     } else if (tree.item?.treeStatus == 3) {
       Alert.alert(t('warning'), t('notVerifiedTree'));
     } else {
@@ -343,7 +357,6 @@ function Trees({route, navigation, filter}: Props) {
     if (!isConnected) {
       alertNoInternet();
     } else {
-      console.log('called');
       try {
         for (const tree of trees) {
           if (isPlanted) {

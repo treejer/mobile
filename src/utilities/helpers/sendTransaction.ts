@@ -1,6 +1,6 @@
 import {RelayProvider} from '@opengsn/provider';
 import config from 'services/config';
-import Web3 from 'web3';
+import Web3 from 'services/Magic';
 import {Account, TransactionReceipt} from 'web3-core';
 
 type Contracts = typeof config['contracts'];
@@ -39,8 +39,6 @@ export async function sendTransaction(web3: Web3, tx: any, contractAddress: stri
 
   return receipt;
 }
-
-console.log(config.relayLookupWindowBlocks, 'alsdkjf');
 
 export async function sendTransactionWithGSNTorus(
   web3: Web3,

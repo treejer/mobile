@@ -49,7 +49,6 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   };
 
   const handleSubmitTree = async (treeJourney: TreeJourney) => {
-    console.log(wallet, 'wallet');
     const birthDay = currentTimestamp();
     try {
       const photoUploadResult = await upload(treeJourney.photo?.path);

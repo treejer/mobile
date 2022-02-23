@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
-import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert, TextInput, Modal} from 'react-native';
+import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
@@ -66,14 +66,13 @@ function NoWallet(_: Props) {
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     sendEvent('connect_wallet');
-    setLoading(true);
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
         message: t('errors.phoneNumber'),
       });
-      setLoading(false);
       return;
     }
+    setLoading(true);
     const mobileNumber = `+${phoneRef.current.getCallingCode()}${phoneNumber}`;
     try {
       const result = await magic.auth.loginWithSMS({phoneNumber: mobileNumber});

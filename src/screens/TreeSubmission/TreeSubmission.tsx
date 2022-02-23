@@ -36,6 +36,7 @@ function TreeSubmission({route}: Props) {
   const treeIdToPlant =
     route.params && 'treeIdToPlant' in route.params ? ((route.params as any).treeIdToPlant as string) : undefined;
   const tree = route.params && 'tree' in route.params ? ((route.params as any).tree as Tree) : undefined;
+  const isSingle = route.params && 'isSingle' in route.params ? ((route.params as any).isSingle as boolean) : undefined;
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
@@ -79,6 +80,7 @@ function TreeSubmission({route}: Props) {
             location,
             treeIdToPlant,
             tree,
+            isSingle,
           },
         }}
       />

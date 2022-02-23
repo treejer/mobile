@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Crypto from 'crypto';
-import Web3 from 'web3';
+import Web3 from 'services/Magic';
 import {getUserNonce} from 'utilities/helpers/userNonce';
 import {userSign} from 'utilities/helpers/userSign';
 import {hexEncode} from 'utilities/helpers/hex';

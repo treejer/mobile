@@ -188,13 +188,10 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
           const offlineTrees = [];
           for (let i = 0; i < newJourney.nurseryCount; i++) {
-            const timeout = setTimeout(() => {
-              offlineTrees.push({
-                ...newJourney,
-                offlineId: Date.now().toString(),
-              });
-            }, 100);
-            clearTimeout(timeout);
+            offlineTrees.push({
+              ...newJourney,
+              offlineId: Date.now() + i * 1000,
+            });
           }
           dispatchAddOfflineTrees(offlineTrees);
           Alert.alert(t('myProfile.attention'), t('myProfile.offlineNurseryAdd'));
