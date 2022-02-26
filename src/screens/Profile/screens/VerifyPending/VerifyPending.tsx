@@ -8,6 +8,7 @@ import Spacer from 'components/Spacer';
 import Card from 'components/Card';
 import {ProfileRouteParamList, MainTabsParamList} from 'types';
 import {useTranslation} from 'react-i18next';
+import {useCurrentUser} from 'services/currentUser';
 
 interface Props {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -17,7 +18,10 @@ interface Props {
 function VerifyPending(_: Props) {
   const {t} = useTranslation();
 
+  const {refetchUser} = useCurrentUser();
+
   const handleContinue = () => {
+    refetchUser();
     _.navigation.navigate('MyProfile');
   };
 

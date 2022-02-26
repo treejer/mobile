@@ -155,6 +155,7 @@ export function CurrentUserProvider(props) {
         }
         await resetWeb3Data();
         await resetOnBoardingData();
+        await setCurrentUser(null);
       } catch (e) {
         console.log(e, 'e inside handleLogout');
         return Promise.reject(e);
@@ -169,16 +170,19 @@ export function CurrentUserProvider(props) {
     }
   }, [handleLogout, statusCode, wallet]);
 
-  const value: CurrentUserContextState = {
-    status,
-    data: {
-      user: currentUser,
-    },
-    refetchUser,
-    handleLogout,
-    error,
-    loading,
-  };
+  const value: CurrentUserContextState = useMemo(
+    () => ({
+      status,
+      data: {
+        user: currentUser,
+      },
+      refetchUser,
+      handleLogout,
+      error,
+      loading,
+    }),
+    [currentUser, error, handleLogout, loading, refetchUser, status],
+  );
 
   return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
 }
