@@ -8,6 +8,8 @@
         <item name="android:forceDarkAllowed">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <item name="android:autofilledHighlight">@drawable/autofill_highlight</item>
     </style>
 
 </resources>
