@@ -14,6 +14,8 @@ import {useWalletAccount, useWalletWeb3} from 'services/web3';
 import {useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
+import Clipboard from '@react-native-clipboard/clipboard';
+import SimpleToast from 'react-native-simple-toast';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -125,6 +127,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);
   const tryAgain = !hasLoading && Boolean(requests?.find(request => request.error));
 
+  const handlePressHash = (hash: string) => {
+    Clipboard.setString(hash);
+    Alert.alert(t('submitTree.hashCopied'), hash);
+  };
+
   return (
     <Modal style={styles.modal} visible={visible} onRequestClose={null} transparent>
       <View style={styles.container}>
@@ -146,7 +153,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                     </View>
                     {request.loading && <ActivityIndicator size="small" color={color} />}
                     {request.hash && (
-                      <Text onPress={() => Alert.alert('Hash', request.hash)} style={style}>
+                      <Text onPress={() => handlePressHash(request.hash)} style={style}>
                         {request.hash.slice(0, 8)}...
                       </Text>
                     )}

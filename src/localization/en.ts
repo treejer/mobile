@@ -133,6 +133,7 @@ export const en = {
     nurserySubmitted: 'Nursery successfully submitted',
     nurserySubmitting: 'We are submitting your nursery',
     offlineLoading: 'We are submitting your offline planted trees. This is going to take a while!\nPlease be patient',
+    hashCopied: 'Hash copied to clipboard',
   },
   success: 'Success',
   failure: 'Failure',
