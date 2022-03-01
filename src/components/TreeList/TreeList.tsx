@@ -221,7 +221,7 @@ function Trees({route, navigation, filter}: Props) {
           longitude: treeJourney?.tree?.treeSpecsEntity?.longitude?.toString(),
         };
         jsonData.locations = treeSpecJson.locations?.length
-          ? [...treeSpecJson.locations, prevLocation]
+          ? [...(JSON.parse(treeSpecJson.locations) || []), prevLocation]
           : [prevLocation];
       }
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
@@ -330,6 +330,9 @@ function Trees({route, navigation, filter}: Props) {
             },
           ],
         };
+        if (treeJourney.isSingle === false) {
+          jsonData.nursery = 'true';
+        }
 
         const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');

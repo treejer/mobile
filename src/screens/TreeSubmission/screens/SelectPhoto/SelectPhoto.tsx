@@ -126,6 +126,9 @@ function SelectPhoto(_: Props) {
       </View>
     );
   }
+
+  // @here
+  const canUpdate = photo && journey?.tree?.treeSpecsEntity?.locations?.length >= 1;
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
@@ -133,13 +136,14 @@ function SelectPhoto(_: Props) {
 
         <TreeSubmissionStepper
           isUpdate={isUpdate}
-          currentStep={photo ? 2 : 1}
+          currentStep={canUpdate ? 2 : 1}
           isSingle={journey?.isSingle}
           count={journey?.nurseryCount}
           isNursery={isNursery}
         >
           <Spacer times={4} />
-          {photo ? (
+          {/* @here */}
+          {canUpdate ? (
             <View style={{flexDirection: 'row'}}>
               <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
               <Button

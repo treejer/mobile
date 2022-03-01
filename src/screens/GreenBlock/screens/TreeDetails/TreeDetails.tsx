@@ -204,7 +204,7 @@ function TreeDetails(_: Props) {
                 </Text>
                 <Text style={[globalStyles.h5, globalStyles.textCenter]}>
                   lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
-                  {',\n '}
+                  {'\n '}
                   long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
                 </Text>
                 <Spacer times={6} />

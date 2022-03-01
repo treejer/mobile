@@ -151,7 +151,7 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [sendEvent, planterData?.balance, minBalance, web3, wallet, t]);
+  }, [isConnected, sendEvent, t, planterData?.balance, minBalance, web3, wallet]);
 
   const onRefetch = async () => {
     await getPlanter();
@@ -161,7 +161,8 @@ function MyProfile(_: Props) {
   const planterWithdrawableBalance = planterData?.balance > 0 ? parseBalance(planterData?.balance.toString()) : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const avatarMarkup = loading ? (
+  const profileLoading = loading || refetching || !data?.user;
+  const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
         width: 74,
@@ -195,25 +196,25 @@ function MyProfile(_: Props) {
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
-      refreshControl={<RefreshControl refreshing={refetching || loading} onRefresh={onRefetch} />}
+      refreshControl={<RefreshControl refreshing={profileLoading} onRefresh={onRefetch} />}
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
         {avatarMarkup}
         <Spacer times={4} />
 
-        {loading && (
+        {profileLoading && (
           <View style={globalStyles.horizontalStack}>
             <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
             <Spacer times={4} />
             <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
           </View>
         )}
-        {!loading && (
+        {!profileLoading && (
           <>
             {Boolean(data?.user?.firstName) && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
 
-            {Boolean(data?.user?.firstName || loading) && <Spacer times={4} />}
+            {Boolean(data?.user?.firstName) && <Spacer times={4} />}
 
             <TouchableOpacity
               onPress={() => {
