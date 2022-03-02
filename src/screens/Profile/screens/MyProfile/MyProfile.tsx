@@ -36,7 +36,6 @@ function MyProfile(_: Props) {
   const {sendEvent} = useAnalytics();
 
   const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
-  console.log(status, 'status inside MYPROFILE');
   const isVerified = data?.user?.isVerified;
 
   const isConnected = useNetInfoConnected();

@@ -43,6 +43,7 @@ export const en = {
     notFounded: 'Not Funded Yet!',
     lastUpdate: 'Last Update',
     born: 'Born',
+    photo: 'Photo',
     photos: 'Photos',
     update: 'Update',
   },

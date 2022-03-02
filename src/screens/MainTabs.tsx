@@ -29,7 +29,6 @@ function TabWithTabBar({navigation}: Props) {
       refetchUser();
     }
   }, [wallet]);
-  console.log('status statusss', status);
 
   const tabsVisible = unlocked && status === UserStatus.Verified;
 

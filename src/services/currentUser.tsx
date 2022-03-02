@@ -112,8 +112,6 @@ export function CurrentUserProvider(props) {
     return UserStatus.Verified;
   }, [currentUser]);
 
-  console.log(status, 'status');
-
   const handleLogout = useCallback(
     async (userPressed: boolean) => {
       try {
