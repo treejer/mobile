@@ -51,6 +51,8 @@ const config = {
   pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
   learnMoreLink: process.env.REACT_NATIVE_LEARN_MORE_URL,
   avatarBaseUrl: process.env.REACT_NATIVE_AVATAR_BASE_URL,
+  magicApiKey: process.env.REACT_NATIVE_MAGIC_API_KEY,
+  magicNetwork: process.env.REACT_NATIVE_MAGIC_NETWORK,
 };
 
 export default config;

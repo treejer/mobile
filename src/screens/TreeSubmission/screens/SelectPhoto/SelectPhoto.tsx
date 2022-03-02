@@ -128,7 +128,8 @@ function SelectPhoto(_: Props) {
   }
 
   // @here
-  const canUpdate = photo && journey?.tree?.treeSpecsEntity?.locations?.length >= 1;
+  const canUpdate = photo;
+  console.log(journey?.tree?.treeSpecsEntity, 'journey?.tree?.treeSpecsEntity');
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
