@@ -91,7 +91,6 @@ function TreeDetails(_: Props) {
         : [],
     [treeDetails?.treeSpecsEntity?.updates],
   );
-  console.log(updates, 'updatessssss');
   const updatesCount = updates?.length;
 
   const [activeSlide, setActiveSlide] = useState(0);

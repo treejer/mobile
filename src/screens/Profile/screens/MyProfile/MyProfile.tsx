@@ -160,7 +160,7 @@ function MyProfile(_: Props) {
   const planterWithdrawableBalance = planterData?.balance > 0 ? parseBalance(planterData?.balance.toString()) : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const profileLoading = loading || refetching || !data?.user;
+  const profileLoading = loading || !data?.user;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
@@ -195,7 +195,7 @@ function MyProfile(_: Props) {
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
-      refreshControl={<RefreshControl refreshing={profileLoading} onRefresh={onRefetch} />}
+      refreshControl={<RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />}
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
