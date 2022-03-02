@@ -9,17 +9,21 @@ export const SettingsContext = React.createContext({
   markOnboardingAsDone() {},
   resetOnBoardingData() {},
   updateLocale(_newLocale: string) {},
+  useGSN: true,
+  setUseGSN(value: boolean) {},
 });
 
 interface Props {
   children: React.ReactNode;
   onboardingDoneInitialState: boolean;
   localeInitialState: string;
+  initialUseGSN?: boolean;
 }
 
 interface InitialValueHookResult {
   loading: boolean;
   locale?: string;
+  useGSN?: boolean;
   onboardingDone?: boolean;
   wallet?: string;
   accessToken?: string;
@@ -29,10 +33,13 @@ interface InitialValueHookResult {
 
 const LOCALE_KEY = config.storageKeys.locale;
 const ONBOARDING_DONE_KEY = config.storageKeys.onBoarding;
+const USE_GSN_KEY = config.storageKeys.useGSN;
 
-function SettingsProvider({onboardingDoneInitialState, localeInitialState, children}: Props) {
+function SettingsProvider(props: Props) {
+  const {onboardingDoneInitialState, localeInitialState, initialUseGSN, children} = props;
   const [onboardingDone, setOnboardingDone] = useState(onboardingDoneInitialState);
   const [locale, setLocale] = useState(localeInitialState);
+  const [useGSN, setUseGSN] = useState<boolean | undefined>(initialUseGSN);
 
   useEffect(() => {
     (async function () {
@@ -82,8 +89,10 @@ function SettingsProvider({onboardingDoneInitialState, localeInitialState, child
       resetOnBoardingData,
       locale,
       updateLocale,
+      useGSN,
+      setUseGSN,
     }),
-    [onboardingDone, markOnboardingAsDone, resetOnBoardingData, locale, updateLocale],
+    [onboardingDone, markOnboardingAsDone, resetOnBoardingData, locale, updateLocale, useGSN, setUseGSN],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
@@ -101,6 +110,7 @@ export const useAppInitialValue = () => {
     AsyncStorage.multiGet([
       LOCALE_KEY,
       ONBOARDING_DONE_KEY,
+      USE_GSN_KEY,
       config.storageKeys.userId,
       config.storageKeys.user,
       config.storageKeys.accessToken,
@@ -121,6 +131,11 @@ export const useAppInitialValue = () => {
                 return {
                   ...acc,
                   onboardingDone: Boolean(value),
+                };
+              case USE_GSN_KEY:
+                return {
+                  ...acc,
+                  useGSN: Boolean(value),
                 };
               case config.storageKeys.magicWalletAddress:
                 return {

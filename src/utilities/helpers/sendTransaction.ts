@@ -91,6 +91,7 @@ export async function sendTransactionWithGSN(
   contract: Contracts[keyof Contracts],
   method: string,
   args: any[] = [],
+  useGSN = true,
 ) {
   console.log('1 - Is main net?', config.isMainnet);
 
@@ -126,7 +127,7 @@ export async function sendTransactionWithGSN(
   return ethContract.methods[method](...args).send({
     from: wallet,
     gas: 1e6,
-    useGSN: true,
+    useGSN,
   }) as TransactionReceipt;
 }
 

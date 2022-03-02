@@ -31,6 +31,7 @@ const config = {
     offlineTrees: '__TREEJER_OFFLINE_TREES',
     offlineUpdatedTrees: '__TREEJER_OFFLINE_UPDATED_TREES',
     accessToken: '__TREEJER_ACCESS_TOKEN',
+    useGSN: '__TREEJER_USE_GSN',
   },
   web3Url: process.env.REACT_NATIVE_WEB3_PROVIDER,
   treejerApiUrl: process.env.REACT_NATIVE_TREEJER_API_URL.replace(/\/$/, ''),

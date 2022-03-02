@@ -33,6 +33,7 @@ import config from 'services/config';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
+import {useSettings} from 'services/settings';
 
 export enum TreeFilter {
   All = 'All',
@@ -56,6 +57,7 @@ function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
   const [initialFilter, setInitialFilter] = useState(filter);
   const {t} = useTranslation();
+  const {useGSN} = useSettings();
   const filters = useMemo<TreeFilterItem[]>(() => {
     return [
       {caption: TreeFilter.Submitted},
@@ -228,10 +230,14 @@ function Trees({route, navigation, filter}: Props) {
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'updateTree', [
-        treeJourney.treeIdToUpdate,
-        metaDataUploadResult.Hash,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        address,
+        config.contracts.TreeFactory,
+        'updateTree',
+        [treeJourney.treeIdToUpdate, metaDataUploadResult.Hash],
+        useGSN,
+      );
       dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
       setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
       console.log(receipt, 'receipt');
@@ -285,12 +291,14 @@ function Trees({route, navigation, filter}: Props) {
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult, '<== check this');
 
-      const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'plantAssignedTree', [
-        Hex2Dec(journey.treeIdToPlant),
-        metaDataUploadResult.Hash,
-        birthDay,
-        0,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        address,
+        config.contracts.TreeFactory,
+        'plantAssignedTree',
+        [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, birthDay, 0],
+        useGSN,
+      );
 
       console.log(receipt, 'receipt');
       console.log(receipt.transactionHash, 'receipt.transactionHash');
@@ -337,11 +345,14 @@ function Trees({route, navigation, filter}: Props) {
         const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-        const receipt = await sendTransactionWithGSN(web3, address, config.contracts.TreeFactory, 'plantTree', [
-          metaDataUploadResult.Hash,
-          birthDay,
-          0,
-        ]);
+        const receipt = await sendTransactionWithGSN(
+          web3,
+          address,
+          config.contracts.TreeFactory,
+          'plantTree',
+          [metaDataUploadResult.Hash, birthDay, 0],
+          useGSN,
+        );
 
         console.log(receipt, 'receipt');
         console.log(receipt.transactionHash, 'receipt.transactionHash');

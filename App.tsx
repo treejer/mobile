@@ -25,7 +25,7 @@ export default function App() {
     SplashScreen.hide();
   }, []);
 
-  const {loading, locale, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
+  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
 
   useInitialDeepLinking();
@@ -37,7 +37,11 @@ export default function App() {
         {loading ? (
           <AppLoading />
         ) : (
-          <SettingsProvider onboardingDoneInitialState={onboardingDone} localeInitialState={locale}>
+          <SettingsProvider
+            initialUseGSN={useGSN}
+            onboardingDoneInitialState={onboardingDone}
+            localeInitialState={locale}
+          >
             <OfflineTreeProvider>
               <Web3Provider
                 persistedWallet={wallet}

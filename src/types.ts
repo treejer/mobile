@@ -62,6 +62,7 @@ export interface ProfileRouteParamList extends Record<string, any> {
   SelectLanguage: {
     back: boolean;
   };
+  Settings: undefined;
 }
 
 export interface PlanterJoinJourney {

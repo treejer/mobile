@@ -15,6 +15,7 @@ import OfflineMap from 'screens/Profile/screens/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage';
+import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 
 const Stack = createNativeStackNavigator<ProfileRouteParamList>();
 const RootStack = createNativeStackNavigator();
@@ -40,6 +41,7 @@ function ProfileStack() {
       <Stack.Screen name="VerifyPending" component={VerifyPending} />
       <Stack.Screen name="SelectOnMap" component={SelectOnMap} />
       <Stack.Screen name="SelectLanguage" component={SelectLanguage} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }

@@ -16,6 +16,7 @@ import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
 import SimpleToast from 'react-native-simple-toast';
+import {useSettings} from 'services/settings';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -29,6 +30,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const web3 = useWalletWeb3();
   const {t} = useTranslation();
   const {navigate} = useNavigation();
+  const {useGSN} = useSettings();
 
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -75,11 +77,14 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantTree', [
-        metaDataUploadResult.Hash,
-        birthDay,
-        0,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'plantTree',
+        [metaDataUploadResult.Hash, birthDay, 0],
+        useGSN,
+      );
 
       console.log(receipt, 'receipt');
       console.log(receipt.transactionHash, 'receipt.transactionHash');

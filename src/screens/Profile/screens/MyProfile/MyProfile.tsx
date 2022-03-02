@@ -19,6 +19,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useSettings} from 'services/settings';
 
 interface Props {
   navigation: any;
@@ -30,6 +31,7 @@ function MyProfile(_: Props) {
   const navigation = useNavigation();
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
+  const {useGSN} = useSettings();
 
   const planterFundContract = usePlanterFund();
 
@@ -126,6 +128,7 @@ function MyProfile(_: Props) {
             config.contracts.PlanterFund,
             'withdrawBalance',
             [planterData?.balance.toString()],
+            useGSN,
           );
 
           // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
@@ -188,8 +191,8 @@ function MyProfile(_: Props) {
     navigation.navigate('OfflineMap');
   };
 
-  const handleSelectLanguage = () => {
-    navigation.navigate('SelectLanguage', {back: true});
+  const handleNavigateSettings = () => {
+    navigation.navigate('Settings');
   };
 
   return (
@@ -327,7 +330,12 @@ function MyProfile(_: Props) {
                 </>
               )} */}
 
-              <Button style={styles.button} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+              <Button
+                style={styles.button}
+                caption={t('settings.title')}
+                variant="tertiary"
+                onPress={handleNavigateSettings}
+              />
               <Spacer times={4} />
               <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
               <Spacer times={4} />

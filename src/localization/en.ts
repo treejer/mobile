@@ -219,4 +219,8 @@ export const en = {
   },
   email: 'Email',
   phoneNumber: 'Phone Number',
+  settings: {
+    title: 'Settings',
+    useGSN: 'Use GSN',
+  },
 };

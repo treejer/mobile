@@ -23,6 +23,7 @@ import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeList';
+import {useSettings} from 'services/settings';
 
 interface Props {
   navigation: any;
@@ -36,6 +37,8 @@ function SubmitTree(_: Props) {
   } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
 
   const {t} = useTranslation();
+
+  const {useGSN} = useSettings();
 
   const [photoHash, setPhotoHash] = useState<string>();
   const [metaDataHash, setMetaDataHash] = useState<string>();
@@ -242,10 +245,14 @@ function SubmitTree(_: Props) {
       // const tx = await treeFactory.methods.updateTree(treeId, metaDataHash);
       // const receipt = await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'updateTree', [
-        treeId,
-        metaDataHash,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'updateTree',
+        [treeId, metaDataHash],
+        useGSN,
+      );
 
       // const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.UpdateFactory, 'post', [
       //   treeId,
@@ -264,18 +271,23 @@ function SubmitTree(_: Props) {
       // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant),metaDataHash, birthDay, 0);
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
-      receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantAssignedTree', [
-        Hex2Dec(journey.treeIdToPlant),
-        metaDataHash,
-        birthDay,
-        0,
-      ]);
+      receipt = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'plantAssignedTree',
+        [Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0],
+        useGSN,
+      );
     } else {
-      receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantTree', [
-        metaDataHash,
-        birthDay,
-        0,
-      ]);
+      receipt = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'plantTree',
+        [metaDataHash, birthDay, 0],
+        useGSN,
+      );
     }
 
     console.log(receipt, 'receipt');
