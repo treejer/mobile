@@ -1,4 +1,3 @@
-/* eslint-disable @shopify/strict-component-boundaries */
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeList';

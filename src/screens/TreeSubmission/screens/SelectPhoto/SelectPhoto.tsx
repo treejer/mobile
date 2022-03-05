@@ -15,6 +15,7 @@ import {useWalletAccount} from 'services/web3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import {TreeFilter} from 'components/TreeList/TreeList';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {}
 
@@ -128,23 +129,25 @@ function SelectPhoto(_: Props) {
   }
 
   // @here
-  const canUpdate = photo;
-  console.log(journey?.tree?.treeSpecsEntity, 'journey?.tree?.treeSpecsEntity');
+  const canUpdate = isUpdate
+    ? photo && canUpdateTreeLocation(journey, isNursery)
+    : canUpdateTreeLocation(journey, isNursery);
+  console.log(journey?.tree?.treeSpecsEntity?.locations, 'journey?.tree?.treeSpecsEntity?.locations', isNursery);
+
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
         <Spacer times={10} />
-
         <TreeSubmissionStepper
           isUpdate={isUpdate}
           currentStep={canUpdate ? 2 : 1}
           isSingle={journey?.isSingle}
           count={journey?.nurseryCount}
-          isNursery={isNursery}
+          canUpdateLocation={canUpdate}
         >
           <Spacer times={4} />
           {/* @here */}
-          {canUpdate ? (
+          {!!canUpdate ? (
             <View style={{flexDirection: 'row'}}>
               <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
               <Button

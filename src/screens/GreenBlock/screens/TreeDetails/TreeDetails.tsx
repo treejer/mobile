@@ -69,6 +69,7 @@ function TreeDetails(_: Props) {
   }, [treeFactory.methods]);
 
   const treeDetails = useMemo(() => data?.tree || tree, [data?.tree, tree]);
+  console.log(treeDetails, 'treeDetails');
 
   // console.log(new Date(Number(treeDetails?.birthDate) * 1000), '====> treeDetails?.birthDate <====');
   // console.log(treeDetails?.birthDate, '====> treeDetails?.birthDate <====');

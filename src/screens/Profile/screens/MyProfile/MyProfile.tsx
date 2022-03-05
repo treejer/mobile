@@ -121,7 +121,6 @@ function MyProfile(_: Props) {
       const balance = planterData?.balance;
       if (Number(balance) > minBalance) {
         try {
-          // @here
           const transaction = await sendTransactionWithGSN(
             web3,
             wallet,

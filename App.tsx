@@ -14,7 +14,7 @@ import {i18next} from './src/localization';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {magic} from './src/services/Magic';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
-import {CurrentUserContextState, CurrentUserProvider} from './src/services/currentUser';
+import {CurrentUserProvider} from './src/services/currentUser';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],

@@ -165,7 +165,7 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
     } else {
       navigation.goBack();
     }
-  }, [navigation]);
+  }, [journey, navigation]);
 
   const handleSubmit = useCallback(() => {
     if (journey) {
@@ -208,7 +208,7 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
     } else {
       onSubmit?.(location);
     }
-  }, [journey, location, isConnected, navigation, dispatchAddOfflineTree, t, onSubmit]);
+  }, [journey, location, isConnected, navigation, dispatchAddOfflineTree, t, dispatchAddOfflineTrees, onSubmit]);
 
   const initialMapCamera = () => {
     locationPermission()

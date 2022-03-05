@@ -24,6 +24,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import {useSettings} from 'services/settings';
+import {assignedTreeJSON, canUpdateTreeLocation, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 
 interface Props {
   navigation: any;
@@ -105,125 +106,26 @@ function SubmitTree(_: Props) {
 
     let jsonData;
     if (isUpdate) {
-      const updateSpec = {
-        image: getHttpDownloadUrl(photoUploadResult.Hash),
-        image_hash: photoUploadResult.Hash,
-        created_at: birthDay?.toString(),
-      };
-
-      const treeSpecJson = updateTreeData?.treeSpecsEntity;
-      let updates;
-
-      if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-        updates = JSON.parse(treeSpecJson?.updates);
-        updates.push(updateSpec);
-      } else {
-        updates = [updateSpec];
-      }
-
-      jsonData = {
-        location: {
-          latitude: updateTreeData?.treeSpecsEntity?.latitude?.toString(),
-          longitude: updateTreeData?.treeSpecsEntity?.longitude?.toString(),
-        },
-        updates,
-      };
-      if (updateTreeData?.treeSpecsEntity?.name) {
-        jsonData.name = updateTreeData?.treeSpecsEntity?.name;
-      }
-      if (updateTreeData?.treeSpecsEntity?.description) {
-        jsonData.description = updateTreeData?.treeSpecsEntity?.description;
-      }
-      if (updateTreeData?.treeSpecsEntity?.externalUrl) {
-        jsonData.external_url = updateTreeData?.treeSpecsEntity?.externalUrl;
-      }
-      if (updateTreeData?.treeSpecsEntity?.imageHash) {
-        jsonData.image_ipfs_hash = updateTreeData?.treeSpecsEntity?.imageHash;
-      }
-      if (updateTreeData?.treeSpecsEntity?.symbolFs) {
-        jsonData.symbol = updateTreeData?.treeSpecsEntity?.symbolFs;
-      }
-      if (updateTreeData?.treeSpecsEntity?.symbolHash) {
-        jsonData.symbol_ipfs_hash = updateTreeData?.treeSpecsEntity?.symbolHash;
-      }
-      if (updateTreeData?.treeSpecsEntity?.animationUrl) {
-        jsonData.animation_url = updateTreeData?.treeSpecsEntity?.animationUrl;
-      }
-      if (updateTreeData?.treeSpecsEntity?.diameter) {
-        jsonData.diameter = updateTreeData?.treeSpecsEntity?.diameter;
-      }
-      if (updateTreeData?.treeSpecsEntity?.attributes) {
-        jsonData.attributes = JSON.parse(updateTreeData?.treeSpecsEntity?.attributes);
-      }
-
-      if (treeSpecJson.nursery === 'true' && journey.location?.longitude && journey.location?.latitude) {
-        jsonData.location = {
-          latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-          longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
-        };
-        const prevLocation = {
-          latitude: updateTreeData?.treeSpecsEntity?.latitude?.toString(),
-          longitude: updateTreeData?.treeSpecsEntity?.longitude?.toString(),
-        };
-        jsonData.locations = treeSpecJson.locations?.length
-          ? [...treeSpecJson.locations, prevLocation]
-          : [prevLocation];
-      }
+      jsonData = updateTreeJSON({
+        journey,
+        tree: updateTreeData,
+        photoUploadHash: photoUploadResult.Hash,
+      });
     } else {
-      // if(isAssignedTreeToPlant) {
-      //   await setTimeout(() => {  console.log("World!"); }, 2000);
-      // }
       console.log(isAssignedTreeToPlant, 'isAssignedTreeToPlant');
       console.log(assignedTreeData?.treeSpecsEntity, 'assignedTreeData?.treeSpecsEntity');
 
       if (isAssignedTreeToPlant && assignedTreeData?.treeSpecsEntity != null) {
-        const updateSpec = {
-          image: getHttpDownloadUrl(photoUploadResult.Hash),
-          image_hash: photoUploadResult.Hash,
-          created_at: birthDay?.toString(),
-        };
-
-        const treeSpecJson = assignedTreeData?.treeSpecsEntity;
-        let updates;
-
-        console.log(treeSpecJson?.updates, 'updates <=========');
-        if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-          updates = JSON.parse(treeSpecJson?.updates);
-          updates.push(updateSpec);
-        } else {
-          updates = [updateSpec];
-        }
-
-        jsonData = {
-          location: {
-            latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-            longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
-          },
-          updates,
-        };
-        if (assignedTreeData?.treeSpecsEntity?.imageFs) {
-          jsonData.image = assignedTreeData?.treeSpecsEntity?.imageFs?.toString();
-        }
-        if (assignedTreeData?.treeSpecsEntity?.image_ipfs_hash) {
-          jsonData.image_ipfs_hash = assignedTreeData?.treeSpecsEntity?.image_ipfs_hash?.toString();
-        }
+        jsonData = assignedTreeJSON({
+          journey,
+          tree: assignedTreeData,
+          photoUploadHash: photoUploadResult.Hash,
+        });
       } else {
-        jsonData = {
-          location: {
-            latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-            longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
-          },
-          updates: [
-            {
-              image: getHttpDownloadUrl(photoUploadResult.Hash),
-              image_hash: photoUploadResult.Hash,
-              created_at: birthDay?.toString(),
-            },
-          ],
-        };
-        if (journey.isSingle === false) {
-          jsonData.nursery = 'true';
-        }
+        jsonData = newTreeJSON({
+          journey,
+          photoUploadHash: photoUploadResult.Hash,
+        });
       }
     }
 
@@ -235,15 +137,12 @@ function SubmitTree(_: Props) {
     // }
 
     setIsReadyToSubmit(true);
-  }, [journey, isUpdate, updateTreeData?.treeSpecsEntity, isAssignedTreeToPlant, assignedTreeData, t, birthDay]);
+  }, [journey, isUpdate, updateTreeData, isAssignedTreeToPlant, assignedTreeData, t]);
 
   const handleSendUpdateTransaction = useCallback(
     async (treeId: number) => {
       console.log(metaDataHash, '====> metaDataHash <====');
       console.log(treeId, '====> treeId <====');
-      // console.log(Hex2Dec(treeId), '====> Hex2Dec(treeId) <====');
-      // const tx = await treeFactory.methods.updateTree(treeId, metaDataHash);
-      // const receipt = await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
       const receipt = await sendTransactionWithGSN(
         web3,
@@ -254,15 +153,11 @@ function SubmitTree(_: Props) {
         useGSN,
       );
 
-      // const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.UpdateFactory, 'post', [
-      //   treeId,
-      //   photoHash,
-      // ]);
       console.log(receipt, 'receipt');
 
       return receipt;
     },
-    [metaDataHash, web3, wallet],
+    [metaDataHash, web3, wallet, useGSN],
   );
   const handleSendCreateTransaction = useCallback(async () => {
     let receipt;
@@ -294,7 +189,7 @@ function SubmitTree(_: Props) {
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;
-  }, [web3, wallet, journey, metaDataHash, birthDay]);
+  }, [journey.treeIdToPlant, web3, wallet, metaDataHash, birthDay, useGSN]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
@@ -364,6 +259,7 @@ function SubmitTree(_: Props) {
   }, []);
 
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdate = canUpdateTreeLocation(journey, isNursery);
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper
@@ -371,7 +267,7 @@ function SubmitTree(_: Props) {
       currentStep={4}
       isSingle={journey?.isSingle}
       count={journey?.nurseryCount}
-      isNursery={isNursery}
+      canUpdateLocation={canUpdate}
     >
       <Spacer times={1} />
 
@@ -396,7 +292,7 @@ function SubmitTree(_: Props) {
       currentStep={3}
       isSingle={journey?.isSingle}
       count={journey?.nurseryCount}
-      isNursery={isNursery}
+      canUpdateLocation={canUpdate}
     >
       <Spacer times={1} />
       <Text>{t('submitTree.photoUpdated')}</Text>

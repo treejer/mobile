@@ -17,6 +17,7 @@ import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
 import SimpleToast from 'react-native-simple-toast';
 import {useSettings} from 'services/settings';
+import {newTreeJSON} from 'utilities/helpers/submitTree';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -56,23 +57,10 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     const birthDay = currentTimestamp();
     try {
       const photoUploadResult = await upload(treeJourney.photo?.path);
-      const jsonData = {
-        location: {
-          latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6)).toString(),
-          longitude: Math.trunc(treeJourney.location.longitude * Math.pow(10, 6)).toString(),
-        },
-        updates: [
-          {
-            image: getHttpDownloadUrl(photoUploadResult.Hash),
-            image_hash: photoUploadResult.Hash,
-            created_at: birthDay.toString(),
-          },
-        ],
-      };
-      if (treeJourney.isSingle === false) {
-        // @ts-ignore
-        jsonData.nursery = 'true';
-      }
+      const jsonData = newTreeJSON({
+        journey: treeJourney,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');

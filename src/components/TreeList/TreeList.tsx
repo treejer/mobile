@@ -34,6 +34,7 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
 import {useSettings} from 'services/settings';
+import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 
 export enum TreeFilter {
   All = 'All',
@@ -161,71 +162,12 @@ function Trees({route, navigation, filter}: Props) {
     try {
       const photoUploadResult = await upload(treeJourney.photo?.path);
 
-      const birthDay = currentTimestamp();
+      const jsonData = updateTreeJSON({
+        tree: treeJourney,
+        journey: treeJourney,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
-      const updateSpec = {
-        image: getHttpDownloadUrl(photoUploadResult.Hash),
-        image_hash: photoUploadResult.Hash,
-        created_at: birthDay?.toString(),
-      };
-
-      const treeSpecJson = treeJourney?.treeSpecsEntity;
-      let updates;
-
-      if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-        updates = JSON.parse(treeSpecJson?.updates);
-        updates.push(updateSpec);
-      } else {
-        updates = [updateSpec];
-      }
-
-      const jsonData = {
-        location: {
-          latitude: treeJourney?.treeSpecsEntity?.latitude?.toString(),
-          longitude: treeJourney?.treeSpecsEntity?.longitude?.toString(),
-        },
-        updates,
-      };
-      if (treeJourney?.treeSpecsEntity?.name) {
-        jsonData.name = treeJourney?.treeSpecsEntity?.name;
-      }
-      if (treeJourney?.treeSpecsEntity?.description) {
-        jsonData.description = treeJourney?.treeSpecsEntity?.description;
-      }
-      if (treeJourney?.treeSpecsEntity?.externalUrl) {
-        jsonData.external_url = treeJourney?.treeSpecsEntity?.externalUrl;
-      }
-      if (treeJourney?.treeSpecsEntity?.imageHash) {
-        jsonData.image_ipfs_hash = treeJourney?.treeSpecsEntity?.imageHash;
-      }
-      if (treeJourney?.treeSpecsEntity?.symbolFs) {
-        jsonData.symbol = treeJourney?.treeSpecsEntity?.symbolFs;
-      }
-      if (treeJourney?.treeSpecsEntity?.symbolHash) {
-        jsonData.symbol_ipfs_hash = treeJourney?.treeSpecsEntity?.symbolHash;
-      }
-      if (treeJourney?.treeSpecsEntity?.animationUrl) {
-        jsonData.animation_url = treeJourney?.treeSpecsEntity?.animationUrl;
-      }
-      if (treeJourney?.treeSpecsEntity?.diameter) {
-        jsonData.diameter = treeJourney?.treeSpecsEntity?.diameter?.toString();
-      }
-      if (treeJourney?.treeSpecsEntity?.attributes) {
-        jsonData.attributes = JSON.parse(treeJourney?.treeSpecsEntity?.attributes);
-      }
-      if (treeSpecJson.nursery === 'true' && treeJourney.location?.longitude && treeJourney.location?.latitude) {
-        jsonData.location = {
-          latitude: Math.trunc(treeJourney.location?.latitude * Math.pow(10, 6)).toString(),
-          longitude: Math.trunc(treeJourney.location?.longitude * Math.pow(10, 6)).toString(),
-        };
-        const prevLocation = {
-          latitude: treeJourney?.tree?.treeSpecsEntity?.latitude?.toString(),
-          longitude: treeJourney?.tree?.treeSpecsEntity?.longitude?.toString(),
-        };
-        jsonData.locations = treeSpecJson.locations?.length
-          ? [...(JSON.parse(treeSpecJson.locations) || []), prevLocation]
-          : [prevLocation];
-      }
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
@@ -256,37 +198,12 @@ function Trees({route, navigation, filter}: Props) {
     try {
       setOfflineLoadings([...offlineLoadings, journey.offlineId]);
       const photoUploadResult = await upload(journey.photo?.path);
-      const birthDay = currentTimestamp();
 
-      const updateSpec = {
-        image: getHttpDownloadUrl(photoUploadResult.Hash),
-        image_hash: photoUploadResult.Hash,
-        created_at: birthDay?.toString(),
-      };
-
-      const treeSpecJson = journey?.tree?.treeSpecsEntity;
-      let updates;
-
-      if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-        updates = JSON.parse(treeSpecJson?.updates);
-        updates.push(updateSpec);
-      } else {
-        updates = [updateSpec];
-      }
-
-      const jsonData = {
-        location: {
-          latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-          longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
-        },
-        updates,
-      };
-      if (journey?.tree?.treeSpecsEntity?.imageFs) {
-        jsonData.image = journey?.tree?.treeSpecsEntity?.imageFs?.toString();
-      }
-      if (journey?.tree?.treeSpecsEntity?.imageHash) {
-        jsonData.image_ipfs_hash = journey?.tree?.treeSpecsEntity?.imageHash?.toString();
-      }
+      const jsonData = assignedTreeJSON({
+        journey,
+        tree: journey?.tree,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult, '<== check this');
@@ -325,22 +242,10 @@ function Trees({route, navigation, filter}: Props) {
       const birthDay = currentTimestamp();
       try {
         const photoUploadResult = await upload(treeJourney.photo.path);
-        const jsonData = {
-          location: {
-            latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6))?.toString(),
-            longitude: Math.trunc(treeJourney.location.longitude * Math.pow(10, 6))?.toString(),
-          },
-          updates: [
-            {
-              image: getHttpDownloadUrl(photoUploadResult.Hash),
-              image_hash: photoUploadResult.Hash,
-              created_at: birthDay?.toString(),
-            },
-          ],
-        };
-        if (treeJourney.isSingle === false) {
-          jsonData.nursery = 'true';
-        }
+        const jsonData = newTreeJSON({
+          journey: treeJourney,
+          photoUploadHash: photoUploadResult.Hash,
+        });
 
         const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
