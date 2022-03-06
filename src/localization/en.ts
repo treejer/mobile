@@ -221,9 +221,9 @@ export const en = {
   phoneNumber: 'Phone Number',
   settings: {
     title: 'Settings',
-    useGSN: 'Use GSN',
+    useGSN: 'Transaction Fee Sponsorship',
     gsnDetails:
-      "Using GSN is slower but it's cash free.\nif you turn this options off, you have to pay network fee on ethereum.",
+      'Treejer sponsors your transaction fees. If your transactions are being failed, you can switch off sponsorship. Please remember you need MATIC token in your wallet send transactions. You may ask your rural ambassador for more help.',
     ethBalance: 'Eth Balance:',
   },
 };

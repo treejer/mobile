@@ -9,4 +9,8 @@ export const colors = {
   red: '#D04F45',
   grayOpacity: '#00000033',
   transparent: '#00000000',
+  claimable: '#A5A5A5',
+  pink: '#D893BA',
+  claimed: '#72B791',
+  yellow: '#d9caa9',
 };

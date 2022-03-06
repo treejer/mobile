@@ -27,14 +27,14 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import useTempTrees from 'utilities/hooks/useTempTrees';
-import {getHttpDownloadUrl, upload, uploadContent} from 'utilities/helpers/IPFS';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
 import {useSettings} from 'services/settings';
 import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {TreeImage} from 'components/TreeList/TreeImage';
 
 export enum TreeFilter {
   All = 'All',
@@ -336,10 +336,7 @@ function Trees({route, navigation, filter}: Props) {
   const RenderItem = tree => {
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <Image
-          style={[styles.treeImage, tree.item.birthDate && styles.inactiveTree]}
-          source={require('../../../assets/icons/tree.png')}
-        />
+        <TreeImage tree={tree.item} tint size={60} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -348,10 +345,7 @@ function Trees({route, navigation, filter}: Props) {
   const tempRenderItem = tree => {
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleRegSelectTree(tree)}>
-        <Image
-          style={[styles.treeImage, tree.item.birthDate && styles.inactiveTree]}
-          source={require('../../../assets/icons/tree.png')}
-        />
+        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -601,22 +595,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   tree: {
-    width: 54,
-    height: 74,
+    width: 60,
+    height: 80,
     marginHorizontal: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   offlineTree: {
-    width: 54,
+    width: 60,
     height: 100,
     marginHorizontal: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   treeImage: {
-    width: 54,
-    height: 54,
+    width: 64,
+    height: 64,
   },
   treeName: {
     fontWeight: '700',

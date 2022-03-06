@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -9,6 +9,7 @@ import Button from 'components/Button/Button';
 import {TreeSubmissionRouteParamList} from 'types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
+import treeImage from '../../../../../assets/icons/tree.png';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, 'SelectPlantType'>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, 'SelectPlantType'>;
@@ -83,7 +84,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   return (
     <SafeAreaView style={{...globalStyles.screenView, ...globalStyles.fill, ...styles.container}}>
       <TouchableOpacity style={{...styles.plantType, borderColor: singleColor}} onPress={handleSelectSingle}>
-        <Tree color={singleColor} size={32} />
+        <Image source={treeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
           <Text style={{...styles.text, color: singleColor}}>{t('submitTree.singleTree')}</Text>
         </View>
@@ -91,10 +92,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       <TouchableOpacity style={{...styles.plantType, borderColor: nurseryColor}} onPress={handleSelectNursery}>
         <View style={styles.treesWrapper}>
           <View style={styles.trees}>
-            <Tree color={nurseryColor} size={16} />
-            <Tree color={nurseryColor} size={16} />
+            <Tree color={nurseryColor} size={24} />
+            <Tree color={nurseryColor} size={24} />
           </View>
-          <Tree color={nurseryColor} size={16} />
+          <Tree color={nurseryColor} size={24} />
         </View>
         <View style={{flex: 1, paddingHorizontal: 16}}>
           <TextInput

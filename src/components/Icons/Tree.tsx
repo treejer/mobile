@@ -6,7 +6,7 @@ interface Props {
   size: number;
 }
 
-function Times({color = 'white', size = 20}: Props) {
+function TreeSvg({color = 'white', size = 20}: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 17 20" fill="none">
       <Path
@@ -45,4 +45,4 @@ function Times({color = 'white', size = 20}: Props) {
   );
 }
 
-export default Times;
+export default TreeSvg;

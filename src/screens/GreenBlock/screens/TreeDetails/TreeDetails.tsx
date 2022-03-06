@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -28,11 +28,12 @@ import TreeDetailQuery, {
   TreeDetailQueryQueryData,
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useTreeFactory} from 'services/web3';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {TreeImage} from 'components/TreeList/TreeImage';
+import {diffUpdateTime, isUpdatePended, treeColor} from 'utilities/helpers/tree';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 interface Props {}
 
@@ -40,7 +41,6 @@ const {width} = Dimensions.get('window');
 
 function TreeDetails(_: Props) {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
-  const [treeUpdateInterval, setTreeUpdateInterval] = useState(null);
   const sliderRef = useRef<Carousel<any>>(null);
   const {
     params: {tree},
@@ -56,17 +56,7 @@ function TreeDetails(_: Props) {
     },
   });
 
-  const treeFactory = useTreeFactory();
-
-  useEffect(() => {
-    treeFactory.methods
-      .treeUpdateInterval()
-      .call()
-      .then(data => {
-        setTreeUpdateInterval(data);
-      })
-      .catch(e => console.log(e, 'e is here'));
-  }, [treeFactory.methods]);
+  const treeUpdateInterval = useTreeUpdateInterval();
 
   const treeDetails = useMemo(() => data?.tree || tree, [data?.tree, tree]);
   console.log(treeDetails, 'treeDetails');
@@ -118,14 +108,12 @@ function TreeDetails(_: Props) {
   // }, [cardRef]);
 
   const handleUpdate = () => {
-    if (treeDetails?.lastUpdate?.updateStatus?.toString() === '1') {
+    if (isUpdatePended(treeDetails)) {
       Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
       return;
     }
 
-    const differUpdateTime =
-      Number(treeDetails.plantDate) + Number(treeDetails.treeStatus * 3600 + Number(treeUpdateInterval));
-    const diff = currentTimestamp() - differUpdateTime;
+    const diff = diffUpdateTime(treeDetails, treeUpdateInterval);
 
     if (diff < 0) {
       // @here convert to HH:MM:SS
@@ -177,7 +165,7 @@ function TreeDetails(_: Props) {
           <Avatar size={40} type="active" />
         </View>
 
-        <Image style={[styles.treeImage]} source={require('../../../../../assets/icons/tree.png')} />
+        <TreeImage color={colors.green} tree={treeDetails} size={120} style={{alignSelf: 'center'}} />
 
         <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails?.id)}</Text>
         {/* Tree id */}
@@ -192,6 +180,7 @@ function TreeDetails(_: Props) {
                   caption={t('treeDetails.update')}
                   textStyle={globalStyles.textCenter}
                   onPress={handleUpdate}
+                  style={{backgroundColor: treeColor(treeDetails)}}
                 />
               )}
             </View>
@@ -203,7 +192,6 @@ function TreeDetails(_: Props) {
             <Spacer times={6} />
             */}
 
-            {treeDetails?.treeSpecsEntity?.nursery ? <Text>nursery</Text> : null}
             {treeDetails?.treeSpecsEntity ? (
               <>
                 <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
@@ -268,7 +256,6 @@ function TreeDetails(_: Props) {
                 source={{
                   uri: staticMapUrl,
                 }}
-                load
               />
             </TouchableOpacity>
           </Card>
@@ -373,8 +360,8 @@ const styles = StyleSheet.create({
     marginTop: -40,
   },
   treeImage: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     alignSelf: 'center',
   },
   titleLine: {
