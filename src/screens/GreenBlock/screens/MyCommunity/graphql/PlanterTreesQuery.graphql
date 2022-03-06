@@ -29,6 +29,8 @@ query PlanterTreesQuery($address: String!, $first: Int = 5, $skip: Int = 0) {
       longitude
       attributes
       updates
+      nursery
+      locations
     }
     lastUpdate @type(name: "TreeUpdate") {
       id

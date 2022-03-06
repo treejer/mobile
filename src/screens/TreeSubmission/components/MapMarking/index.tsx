@@ -15,6 +15,7 @@ import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
+import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 
 interface IMapMarkingProps {
   journey?: TreeJourney;
@@ -35,6 +36,9 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
   const navigation = useNavigation();
 
   const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
+
+  const [persistedPlantedTrees] = usePersistedPlantedTrees();
+  const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
 
   useEffect(() => {
     checkPermission();
@@ -195,8 +199,23 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
           }
           dispatchAddOfflineTrees(offlineTrees);
           Alert.alert(t('myProfile.attention'), t('myProfile.offlineNurseryAdd'));
+        } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
+          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+          dispatchAddOfflineUpdateTree({
+            ...journey,
+            ...updatedTree,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+          return;
         }
-
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -208,7 +227,18 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
     } else {
       onSubmit?.(location);
     }
-  }, [journey, location, isConnected, navigation, dispatchAddOfflineTree, t, dispatchAddOfflineTrees, onSubmit]);
+  }, [
+    journey,
+    location,
+    isConnected,
+    navigation,
+    dispatchAddOfflineTree,
+    t,
+    dispatchAddOfflineTrees,
+    persistedPlantedTrees,
+    dispatchAddOfflineUpdateTree,
+    onSubmit,
+  ]);
 
   const initialMapCamera = () => {
     locationPermission()

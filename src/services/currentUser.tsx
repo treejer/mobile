@@ -67,7 +67,7 @@ export function CurrentUserProvider(props) {
   const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
     fetchPolicy: 'cache-and-network',
   });
-  const {offlineTrees} = useOfflineTrees();
+  const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
   const {resetOnBoardingData} = useSettings();
@@ -136,12 +136,12 @@ export function CurrentUserProvider(props) {
           } catch (e) {
             return Promise.reject(e);
           }
-          console.log('before removing magicToken');
           await AsyncStorage.removeItem(config.storageKeys.magicToken);
-          console.log('after removing magicToken');
         }
         const locale = await AsyncStorage.getItem(config.storageKeys.locale);
-        await AsyncStorage.clear();
+        const keys = (await AsyncStorage.getAllKeys()) as string[];
+        await AsyncStorage.multiRemove(keys);
+        dispatchResetOfflineTrees();
         await AsyncStorage.setItem(config.storageKeys.locale, locale);
         if (!userPressed) {
           if (offlineTrees.planted) {

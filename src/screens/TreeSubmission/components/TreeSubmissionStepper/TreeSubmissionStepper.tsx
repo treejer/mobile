@@ -57,7 +57,7 @@ function TreeSubmissionStepper(props: Props) {
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(isUpdate && !canUpdateLocation)}>
+        <Steps.Step step={3 - Number(!(!isUpdate || !!canUpdateLocation))}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
@@ -66,7 +66,7 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(isUpdate && !canUpdateLocation)} lastStep>
+        <Steps.Step step={4 - Number(!(!isUpdate || !!canUpdateLocation))} lastStep>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}

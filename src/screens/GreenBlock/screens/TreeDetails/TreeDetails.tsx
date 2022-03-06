@@ -203,6 +203,7 @@ function TreeDetails(_: Props) {
             <Spacer times={6} />
             */}
 
+            {treeDetails?.treeSpecsEntity?.nursery ? <Text>nursery</Text> : null}
             {treeDetails?.treeSpecsEntity ? (
               <>
                 <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>

@@ -26,7 +26,7 @@ function NoWallet(_: Props) {
   const navigation = useNavigation();
   const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
-  const [isEmail, setIsEmail] = useState<boolean>(false);
+  const [isEmail, setIsEmail] = useState<boolean>(true);
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;

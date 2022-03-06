@@ -24,6 +24,8 @@ export namespace PlanterTreesQueryQueryPartialData {
     longitude?: string | null;
     attributes?: string | null;
     updates?: string | null;
+    nursery?: string | null;
+    locations?: string | null;
   }
   export interface TreesLastUpdate {
     __typename?: "TreeUpdate" | null;
@@ -82,6 +84,8 @@ export namespace PlanterTreesQueryQueryData {
     longitude?: string | null;
     attributes?: string | null;
     updates?: string | null;
+    nursery?: string | null;
+    locations?: string | null;
   }
   export interface TreesLastUpdate {
     __typename: "TreeUpdate";

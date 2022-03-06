@@ -27,10 +27,17 @@ export namespace SubmitTreeData {
     longitude: string;
   }
 
-  export interface JSONData {
+  export interface ExtraLocation {
+    latitude?: string;
+    longitude?: string;
+  }
+
+  export interface JSONData extends ExtraJSONData {
     location: Location;
     updates: JSONDataUpdate[];
-    locations?: Location[];
+  }
+
+  export interface ExtraJSONData {
     name?: string;
     description?: string;
     external_url?: string;
@@ -41,12 +48,16 @@ export namespace SubmitTreeData {
     diameter?: string;
     attributes?: string;
     image?: string;
+    location?: ExtraLocation;
     nursery?: string;
+    locations?: Location[];
   }
 }
 
 export function updateTreeJSON(options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
+
+  console.log(tree, 'updateTreeJSON tree');
 
   const birthDay = currentTimestamp();
 
@@ -66,42 +77,25 @@ export function updateTreeJSON(options: SubmitTreeData.Options) {
     updates = [updateSpec];
   }
 
-  const jsonData: SubmitTreeData.JSONData = {
+  let jsonData: SubmitTreeData.JSONData = {
     location: {
       latitude: tree?.treeSpecsEntity?.latitude?.toString(),
       longitude: tree?.treeSpecsEntity?.longitude?.toString(),
     },
     updates,
   };
-  if (tree?.treeSpecsEntity?.name) {
-    jsonData.name = tree?.treeSpecsEntity?.name;
-  }
-  if (tree?.treeSpecsEntity?.description) {
-    jsonData.description = tree?.treeSpecsEntity?.description;
-  }
-  if (tree?.treeSpecsEntity?.externalUrl) {
-    jsonData.external_url = tree?.treeSpecsEntity?.externalUrl;
-  }
-  if (tree?.treeSpecsEntity?.imageHash) {
-    jsonData.image_ipfs_hash = tree?.treeSpecsEntity?.imageHash;
-  }
-  if (tree?.treeSpecsEntity?.symbolFs) {
-    jsonData.symbol = tree?.treeSpecsEntity?.symbolFs;
-  }
-  if (tree?.treeSpecsEntity?.symbolHash) {
-    jsonData.symbol_ipfs_hash = tree?.treeSpecsEntity?.symbolHash;
-  }
-  if (tree?.treeSpecsEntity?.animationUrl) {
-    jsonData.animation_url = tree?.treeSpecsEntity?.animationUrl;
-  }
-  if (tree?.treeSpecsEntity?.diameter) {
-    jsonData.diameter = tree?.treeSpecsEntity?.diameter?.toString();
-  }
-  if (tree?.treeSpecsEntity?.attributes) {
-    jsonData.attributes = JSON.parse(tree?.treeSpecsEntity?.attributes);
-  }
 
-  if (treeSpecJson.nursery === 'true' && journey.location?.longitude && journey.location?.latitude) {
+  jsonData = {
+    ...fillExtraJsonData(tree),
+    ...jsonData,
+  };
+
+  if (
+    treeSpecJson.nursery === 'true' &&
+    journey.location?.longitude &&
+    journey.location?.latitude &&
+    !journey.nurseryContinuedUpdatingLocation
+  ) {
     jsonData.location = {
       latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
       longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
@@ -123,6 +117,8 @@ export function updateTreeJSON(options: SubmitTreeData.Options) {
 export function assignedTreeJSON(options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
 
+  console.log(tree, 'assignedTreeJSON tree');
+
   const birthDay = currentTimestamp();
 
   const updateSpec: SubmitTreeData.JSONDataUpdate = {
@@ -141,19 +137,18 @@ export function assignedTreeJSON(options: SubmitTreeData.Options) {
     updates = [updateSpec];
   }
 
-  const jsonData: SubmitTreeData.JSONData = {
+  let jsonData: SubmitTreeData.JSONData = {
     location: {
       latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
       longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
     },
     updates,
   };
-  if (tree?.treeSpecsEntity?.imageFs) {
-    jsonData.image = tree?.treeSpecsEntity?.imageFs?.toString();
-  }
-  if (tree?.treeSpecsEntity?.image_ipfs_hash) {
-    jsonData.image_ipfs_hash = tree?.treeSpecsEntity?.image_ipfs_hash?.toString();
-  }
+
+  jsonData = {
+    ...fillExtraJsonData(tree),
+    ...jsonData,
+  };
 
   console.log(jsonData, 'assignedTreeJSON jsonData');
 
@@ -188,5 +183,74 @@ export function newTreeJSON(options: SubmitTreeData.NewTreeOptions) {
 }
 
 export function canUpdateTreeLocation(journey: TreeJourney, isNursery: boolean) {
+  console.log(journey?.tree?.treeSpecsEntity?.locations, 'ourney?.tree?.treeSpecsEntity?.locations');
   return journey?.tree?.treeSpecsEntity?.locations?.length === 0 && isNursery;
+}
+
+export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTreeData.ExtraJSONData {
+  const extraJson: SubmitTreeData.ExtraJSONData = {};
+  if (tree?.treeSpecsEntity?.name) {
+    extraJson.name = tree?.treeSpecsEntity?.name;
+  }
+  if (tree?.treeSpecsEntity?.description) {
+    extraJson.description = tree?.treeSpecsEntity?.description;
+  }
+  if (tree?.treeSpecsEntity?.externalUrl) {
+    extraJson.external_url = tree?.treeSpecsEntity?.externalUrl;
+  }
+  if (tree?.treeSpecsEntity?.imageHash) {
+    extraJson.image_ipfs_hash = tree?.treeSpecsEntity?.imageHash;
+  }
+  if (tree?.treeSpecsEntity?.symbolFs) {
+    extraJson.symbol = tree?.treeSpecsEntity?.symbolFs;
+  }
+  if (tree?.treeSpecsEntity?.symbolHash) {
+    extraJson.symbol_ipfs_hash = tree?.treeSpecsEntity?.symbolHash;
+  }
+  if (tree?.treeSpecsEntity?.animationUrl) {
+    extraJson.animation_url = tree?.treeSpecsEntity?.animationUrl;
+  }
+  if (tree?.treeSpecsEntity?.diameter) {
+    extraJson.diameter = tree?.treeSpecsEntity?.diameter?.toString();
+  }
+  if (tree?.treeSpecsEntity?.attributes) {
+    try {
+      const attributes = JSON.parse(tree?.treeSpecsEntity?.attributes);
+      extraJson.attributes = attributes;
+    } catch (e) {}
+  }
+  if (tree?.treeSpecsEntity?.updates) {
+    try {
+      const updates = JSON.parse(tree?.treeSpecsEntity?.updates);
+      extraJson.updates = updates;
+    } catch (e) {}
+  }
+  if (tree?.treeSpecsEntity?.locations) {
+    try {
+      const locations = JSON.parse(tree?.treeSpecsEntity?.locations);
+      extraJson.locations = locations;
+    } catch (e) {}
+  }
+  if (tree?.treeSpecsEntity?.imageFs) {
+    extraJson.image = tree?.treeSpecsEntity?.imageFs?.toString();
+  }
+  if (tree?.treeSpecsEntity?.image_ipfs_hash) {
+    extraJson.image_ipfs_hash = tree?.treeSpecsEntity?.image_ipfs_hash?.toString();
+  }
+  if (tree?.treeSpecsEntity?.nursery) {
+    extraJson.nursery = tree?.treeSpecsEntity?.nursery?.toString();
+  }
+  if (tree?.treeSpecsEntity?.latitude) {
+    extraJson.location = {
+      ...(extraJson.location || {}),
+      latitude: tree.treeSpecsEntity?.latitude,
+    };
+  }
+  if (tree?.treeSpecsEntity?.longitude) {
+    extraJson.location = {
+      ...(extraJson.location || {}),
+      longitude: tree.treeSpecsEntity?.longitude,
+    };
+  }
+  return extraJson;
 }

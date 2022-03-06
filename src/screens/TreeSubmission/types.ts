@@ -13,4 +13,5 @@ export interface TreeJourney {
   tree?: Tree;
   isSingle?: boolean | null;
   nurseryCount?: number;
+  nurseryContinuedUpdatingLocation?: boolean;
 }

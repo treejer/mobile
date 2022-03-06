@@ -213,7 +213,7 @@ function Trees({route, navigation, filter}: Props) {
         address,
         config.contracts.TreeFactory,
         'plantAssignedTree',
-        [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, birthDay, 0],
+        [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
         useGSN,
       );
 
@@ -239,7 +239,6 @@ function Trees({route, navigation, filter}: Props) {
       alertNoInternet();
     } else {
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
-      const birthDay = currentTimestamp();
       try {
         const photoUploadResult = await upload(treeJourney.photo.path);
         const jsonData = newTreeJSON({
@@ -255,7 +254,7 @@ function Trees({route, navigation, filter}: Props) {
           address,
           config.contracts.TreeFactory,
           'plantTree',
-          [metaDataUploadResult.Hash, birthDay, 0],
+          [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
           useGSN,
         );
 

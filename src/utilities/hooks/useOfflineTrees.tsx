@@ -53,6 +53,11 @@ export const removeOfflineUpdateTree = (id: string) => ({
   id,
 });
 
+export const RESET_OFFLINE_TREES = 'RESET_OFFLINE_TREES';
+export const resetOfflineTrees = () => ({
+  type: RESET_OFFLINE_TREES,
+});
+
 function reducer(state: OfflineTreesState, action) {
   switch (action.type) {
     case INIT_OFFLINE_TREES:
@@ -100,6 +105,8 @@ function reducer(state: OfflineTreesState, action) {
         ...state,
         updated: state.updated === null ? null : state.updated.filter(item => item.treeIdToUpdate !== action.id),
       };
+    case RESET_OFFLINE_TREES:
+      return initialState;
     default:
       throw new Error(`${action.type}, is not a valid action`);
   }
@@ -187,6 +194,10 @@ export function OfflineTreeProvider({children}) {
     [dispatch],
   );
 
+  const dispatchResetOfflineTrees = useCallback(() => {
+    dispatch(resetOfflineTrees());
+  }, []);
+
   const value = useMemo(
     () => ({
       offlineTrees: state,
@@ -196,6 +207,7 @@ export function OfflineTreeProvider({children}) {
       dispatchRemoveOfflineTree,
       dispatchAddOfflineUpdateTree,
       dispatchRemoveOfflineUpdateTree,
+      dispatchResetOfflineTrees,
     }),
     [
       dispatchAddOfflineTree,
@@ -204,6 +216,7 @@ export function OfflineTreeProvider({children}) {
       dispatchRemoveOfflineTree,
       dispatchRemoveOfflineUpdateTree,
       state,
+      dispatchResetOfflineTrees,
     ],
   );
 
