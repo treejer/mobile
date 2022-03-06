@@ -222,5 +222,8 @@ export const en = {
   settings: {
     title: 'Settings',
     useGSN: 'Use GSN',
+    gsnDetails:
+      "Using GSN is slower but it's cash free.\nif you turn this options off, you have to pay network fee on ethereum.",
+    ethBalance: 'Eth Balance:',
   },
 };

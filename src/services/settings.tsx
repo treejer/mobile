@@ -10,7 +10,7 @@ export const SettingsContext = React.createContext({
   resetOnBoardingData() {},
   updateLocale(_newLocale: string) {},
   useGSN: true,
-  setUseGSN(value: boolean) {},
+  changeUseGsn(value: boolean) {},
 });
 
 interface Props {
@@ -52,8 +52,6 @@ function SettingsProvider(props: Props) {
     })();
   }, []);
 
-  // AsyncStorage.clear();
-
   const markOnboardingAsDone = useCallback(async () => {
     try {
       await AsyncStorage.setItem(ONBOARDING_DONE_KEY, '1');
@@ -82,6 +80,15 @@ function SettingsProvider(props: Props) {
     }
   }, []);
 
+  const changeUseGsn = useCallback(async value => {
+    try {
+      await AsyncStorage.setItem(USE_GSN_KEY, JSON.stringify(value));
+      setUseGSN(value);
+    } catch (e) {
+      console.log(e, 'e inside changeUseGsn');
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       onboardingDone,
@@ -90,9 +97,9 @@ function SettingsProvider(props: Props) {
       locale,
       updateLocale,
       useGSN,
-      setUseGSN,
+      changeUseGsn,
     }),
-    [onboardingDone, markOnboardingAsDone, resetOnBoardingData, locale, updateLocale, useGSN, setUseGSN],
+    [onboardingDone, markOnboardingAsDone, resetOnBoardingData, locale, updateLocale, useGSN, changeUseGsn],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
@@ -133,9 +140,15 @@ export const useAppInitialValue = () => {
                   onboardingDone: Boolean(value),
                 };
               case USE_GSN_KEY:
+                let gsnValue = value;
+                try {
+                  gsnValue = JSON.parse(value);
+                } catch (e) {
+                  console.log(e, 'error inside USE_GSN_KEY');
+                }
                 return {
                   ...acc,
-                  useGSN: Boolean(value),
+                  useGSN: gsnValue === null ? true : Boolean(gsnValue),
                 };
               case config.storageKeys.magicWalletAddress:
                 return {

@@ -70,7 +70,7 @@ export function CurrentUserProvider(props) {
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
-  const {resetOnBoardingData} = useSettings();
+  const {resetOnBoardingData, changeUseGsn} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
 
@@ -142,6 +142,7 @@ export function CurrentUserProvider(props) {
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
+        changeUseGsn(true);
         await AsyncStorage.setItem(config.storageKeys.locale, locale);
         if (!userPressed) {
           if (offlineTrees.planted) {
