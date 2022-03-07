@@ -119,6 +119,11 @@ export async function sendTransactionWithGSN(
   // gsnProvider.addAccount(wallet);
   console.log('3 - Account linked to the relay provider', config.isMainnet);
 
+  const gas = await web3.eth.estimateGas({from: wallet});
+  console.log('Gas estimated', gas);
+
+  const gasPrice = await web3.eth.getGasPrice();
+
   const web3GSN = new Web3(gsnProvider);
   const ethContract = new web3GSN.eth.Contract(contract.abi, contract.address);
 
@@ -128,6 +133,7 @@ export async function sendTransactionWithGSN(
   return ethContract.methods[method](...args).send({
     from: wallet,
     gas: 1e6,
+    gasPrice,
     useGSN,
   }) as TransactionReceipt;
 }
