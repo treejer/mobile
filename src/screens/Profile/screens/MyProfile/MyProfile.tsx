@@ -27,7 +27,8 @@ interface Props {
 
 function MyProfile(_: Props) {
   const {t} = useTranslation();
-  const [minBalance, setMinBalance] = useState(null);
+  const requiredBalance = useMemo(() => 500000000000000000, []);
+  const [minBalance, setMinBalance] = useState(requiredBalance);
   const navigation = useNavigation();
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
@@ -41,8 +42,6 @@ function MyProfile(_: Props) {
   const isVerified = data?.user?.isVerified;
 
   const isConnected = useNetInfoConnected();
-
-  const requiredBalance = useMemo(() => 500000000000000000, []);
 
   // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
   //   variables: {},
@@ -144,7 +143,7 @@ function MyProfile(_: Props) {
           Alert.alert(t('failure'), e.message || t('sthWrong'));
         }
       } else {
-        Alert.alert(t('myProfile.attention'), t('myProfile.lessBalance', {amount: t('myProfile.attention')}));
+        Alert.alert(t('myProfile.attention'), t('myProfile.lessBalance', {amount: parseBalance(minBalance)}));
       }
     } catch (error) {
       Alert.alert('Error', error.message);

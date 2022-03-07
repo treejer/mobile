@@ -163,7 +163,7 @@ function Trees({route, navigation, filter}: Props) {
       const photoUploadResult = await upload(treeJourney.photo?.path);
 
       const jsonData = updateTreeJSON({
-        tree: treeJourney,
+        tree: treeJourney.tree,
         journey: treeJourney,
         photoUploadHash: photoUploadResult.Hash,
       });

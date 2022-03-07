@@ -83,7 +83,7 @@ function SelectPhoto(_: Props) {
           const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
           dispatchAddOfflineUpdateTree({
             ...newJourney,
-            ...updatedTree,
+            tree: updatedTree,
           });
           Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
           navigation.dispatch(
@@ -99,7 +99,7 @@ function SelectPhoto(_: Props) {
           const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
           dispatchAddOfflineUpdateTree({
             ...newJourney,
-            ...updatedTree,
+            tree: updatedTree,
           });
           Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
           navigation.dispatch(
