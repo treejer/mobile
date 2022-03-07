@@ -152,7 +152,7 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [isConnected, sendEvent, t, planterData?.balance, minBalance, web3, wallet]);
+  }, [isConnected, sendEvent, t, planterData?.balance, minBalance, web3, wallet, useGSN]);
 
   const onRefetch = async () => {
     await getPlanter();

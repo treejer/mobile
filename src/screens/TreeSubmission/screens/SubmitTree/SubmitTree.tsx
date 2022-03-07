@@ -82,10 +82,6 @@ function SubmitTree(_: Props) {
   // });
   const handleUploadToIpfs = useCallback(async () => {
     console.log(journey.photo, '<====');
-    if (!journey.photo || (!journey.location && !isUpdate)) {
-      return;
-    }
-
     if (
       isUpdate &&
       (updateTreeData?.treeSpecsEntity == null || typeof updateTreeData?.treeSpecsEntity === 'undefined')
@@ -99,44 +95,48 @@ function SubmitTree(_: Props) {
       return;
     }
 
-    const photoUploadResult = await upload(journey.photo?.path);
-    setPhotoHash(photoUploadResult.Hash);
+    try {
+      const photoUploadResult = await upload(journey.photo?.path);
+      setPhotoHash(photoUploadResult.Hash);
 
-    console.log(journey, '====> journey <====');
+      console.log(journey, '====> journey <====');
 
-    let jsonData;
-    if (isUpdate) {
-      jsonData = updateTreeJSON({
-        journey,
-        tree: updateTreeData,
-        photoUploadHash: photoUploadResult.Hash,
-      });
-    } else {
-      console.log(isAssignedTreeToPlant, 'isAssignedTreeToPlant');
-      console.log(assignedTreeData?.treeSpecsEntity, 'assignedTreeData?.treeSpecsEntity');
-
-      if (isAssignedTreeToPlant && assignedTreeData?.treeSpecsEntity != null) {
-        jsonData = assignedTreeJSON({
+      let jsonData;
+      if (isUpdate) {
+        jsonData = updateTreeJSON({
           journey,
-          tree: assignedTreeData,
+          tree: updateTreeData,
           photoUploadHash: photoUploadResult.Hash,
         });
       } else {
-        jsonData = newTreeJSON({
-          journey,
-          photoUploadHash: photoUploadResult.Hash,
-        });
+        console.log(isAssignedTreeToPlant, 'isAssignedTreeToPlant');
+        console.log(assignedTreeData?.treeSpecsEntity, 'assignedTreeData?.treeSpecsEntity');
+
+        if (isAssignedTreeToPlant && assignedTreeData?.treeSpecsEntity != null) {
+          jsonData = assignedTreeJSON({
+            journey,
+            tree: assignedTreeData,
+            photoUploadHash: photoUploadResult.Hash,
+          });
+        } else {
+          jsonData = newTreeJSON({
+            journey,
+            photoUploadHash: photoUploadResult.Hash,
+          });
+        }
       }
+
+      const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+
+      console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
+
+      setMetaDataHash(metaDataUploadResult.Hash);
+      // }
+
+      setIsReadyToSubmit(true);
+    } catch (e) {
+      Alert.alert(e?.message || t('tryAgain'));
     }
-
-    const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
-
-    console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
-
-    setMetaDataHash(metaDataUploadResult.Hash);
-    // }
-
-    setIsReadyToSubmit(true);
   }, [journey, isUpdate, updateTreeData, isAssignedTreeToPlant, assignedTreeData, t]);
 
   const handleSendUpdateTransaction = useCallback(
@@ -251,8 +251,10 @@ function SubmitTree(_: Props) {
 
   useEffect(() => {
     if (
-      (typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
-      !isReadyToSubmit
+      ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
+        !isReadyToSubmit) ||
+      !journey.photo ||
+      (!journey.location && !isUpdate)
     ) {
       handleUploadToIpfs();
     }

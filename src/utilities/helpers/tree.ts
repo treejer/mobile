@@ -12,7 +12,7 @@ export function treeImageSrc(tree: Tree): ImageSourcePropType {
 }
 
 export function treeColor(tree: Tree, treeUpdateInterval: number): string {
-  const id = Number(Hex2Dec(tree.id));
+  const id = Number(Hex2Dec(tree?.id));
   let color: string;
   if (id >= 0 && id <= 10) {
     color = colors.claimable;
@@ -21,7 +21,7 @@ export function treeColor(tree: Tree, treeUpdateInterval: number): string {
   } else {
     color = colors.claimed;
   }
-  if (tree.treeStatus?.toString() === '3') {
+  if (tree?.treeStatus?.toString() === '3') {
     color = colors.yellow;
     return color;
   } else if (isUpdatePended(tree)) {
@@ -35,15 +35,23 @@ export function treeColor(tree: Tree, treeUpdateInterval: number): string {
 }
 
 export function isUpdatePended(tree: Tree): boolean {
-  return tree.lastUpdate?.updateStatus?.toString() === '1';
+  return tree?.lastUpdate?.updateStatus?.toString() === '1';
 }
 
 export function diffUpdateTime(tree: Tree, treeUpdateInterval: number | string): number {
-  const differUpdateTime = Number(tree.plantDate) + Number(tree.treeStatus * 3600 + Number(treeUpdateInterval));
+  const differUpdateTime = Number(tree?.plantDate) + Number(tree?.treeStatus * 3600 + Number(treeUpdateInterval));
   return currentTimestamp() - differUpdateTime;
   // if (return < 0) {Last update is pending} else {can update}
 }
 
 export function isTheTimeToUpdate(tree: Tree, treeUpdateInterval: number | string): boolean {
   return diffUpdateTime(tree, treeUpdateInterval) >= 0;
+}
+
+export function treeUpdateTimeRemained(diff: number) {
+  console.log(diff, 'diff');
+  const hours = Math.floor(diff / 3600);
+  const minutes = Math.floor((diff / 3600 - hours) * 60);
+
+  return `${hours} hours and ${minutes} minutes`;
 }

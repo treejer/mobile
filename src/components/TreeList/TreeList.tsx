@@ -467,7 +467,7 @@ function Trees({route, navigation, filter}: Props) {
 
       return (
         <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree}>
-          <Image style={[styles.treeImage, styles.inactiveTree]} source={require('../../../assets/icons/tree.png')} />
+          <TreeImage tree={item.tree} tint size={60} isNursery={item.isSingle === false} color={colors.yellow} />
           <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{id}</Text>
           <Button
             variant="secondary"

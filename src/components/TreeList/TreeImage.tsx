@@ -10,15 +10,18 @@ export interface TreeImageProps extends Omit<ImageProps, 'source'> {
   tree: Tree;
   tint?: boolean;
   color?: string;
+  isNursery?: boolean;
 }
 
 export function TreeImage(props: TreeImageProps) {
-  const {size = 64, tree, style, tint, color, ...restProps} = props;
+  const {size = 64, tree, style, tint, color, isNursery, ...restProps} = props;
 
   const treeUpdateInterval = useTreeUpdateInterval();
   const tintColor = color || treeColor(tree, treeUpdateInterval);
 
-  if (tree.treeSpecsEntity?.nursery === 'true') {
+  const nurseryHasLocations = tree?.treeSpecsEntity?.locations?.length;
+
+  if ((!nurseryHasLocations && tree?.treeSpecsEntity?.nursery === 'true') || isNursery) {
     return (
       <View style={{alignItems: 'center', marginBottom: 3}}>
         <View style={{flexDirection: 'row'}}>

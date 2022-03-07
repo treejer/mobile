@@ -32,7 +32,7 @@ import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
-import {diffUpdateTime, isUpdatePended, treeColor} from 'utilities/helpers/tree';
+import {diffUpdateTime, isUpdatePended, treeColor, treeUpdateTimeRemained} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 interface Props {}
@@ -117,7 +117,10 @@ function TreeDetails(_: Props) {
 
     if (diff < 0) {
       // @here convert to HH:MM:SS
-      Alert.alert(t('treeDetails.cannotUpdate.details'), t('treeDetails.cannotUpdate.wait', {seconds: Math.abs(diff)}));
+      Alert.alert(
+        t('treeDetails.cannotUpdate.details'),
+        t('treeDetails.cannotUpdate.wait', {seconds: treeUpdateTimeRemained(Math.abs(diff))}),
+      );
       return;
     }
     sendEvent('update_tree');
@@ -180,7 +183,7 @@ function TreeDetails(_: Props) {
                   caption={t('treeDetails.update')}
                   textStyle={globalStyles.textCenter}
                   onPress={handleUpdate}
-                  style={{backgroundColor: treeColor(treeDetails)}}
+                  style={{backgroundColor: treeColor(treeDetails, treeUpdateInterval)}}
                 />
               )}
             </View>

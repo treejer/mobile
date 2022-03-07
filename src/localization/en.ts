@@ -36,7 +36,7 @@ export const en = {
     cannotUpdate: {
       title: 'Cannot Update',
       details: 'Last update is pending',
-      wait: 'Please wait for {{seconds}} seconds',
+      wait: 'Please wait for {{seconds}}',
     },
     gpsCoords: 'GPS Coordinates',
     funder: 'Funder',
@@ -104,6 +104,7 @@ export const en = {
   supplyCapReached: 'You reached your supply cap limit. Please contact customer support to plant more trees!',
   openCamera: 'Open Camera',
   submitTree: {
+    journeyIssue: 'Photo, Location',
     treeSpecEmpty: "TreeSpec is empty, You can't update tree, please contact support.",
     treeDataNotLoaded: "TreeData not loaded, You can't plant tree, refresh the page and try again.",
     noWallet: {
