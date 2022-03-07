@@ -42,7 +42,6 @@ function MyProfile(_: Props) {
       .minWithdrawable()
       .call()
       .then(balance => {
-        console.log(balance, 'balance useEffect');
         setMinBalance(balance);
       })
       .catch(e => {
@@ -126,13 +125,6 @@ function MyProfile(_: Props) {
       // balance
       const balance = parseBalance(planterData?.balance);
       const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
-      console.log(
-        '================================================',
-        planterData?.balance,
-        minBalance,
-        'ina cgiye',
-        balance > bnMinBalance,
-      );
       if (balance > bnMinBalance) {
         try {
           // const transaction = await sendTransactionWithGSN(

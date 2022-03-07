@@ -154,15 +154,6 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const handleUpdateOfflineTree = async (treeJourney: Tree & TreeJourney) => {
-    console.log(
-      updateTreeJSON({
-        tree: treeJourney.tree,
-        journey: treeJourney,
-        photoUploadHash: 'photoUploadResult.Hash',
-      }),
-      'treeJourney',
-    );
-    return;
     if (treeJourney?.treeSpecsEntity == null || typeof treeJourney?.treeSpecsEntity === 'undefined') {
       Alert.alert(t('cannotUpdateTree'));
       return;
@@ -215,7 +206,6 @@ function Trees({route, navigation, filter}: Props) {
       });
 
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
-      console.log(metaDataUploadResult, '<== check this');
 
       const receipt = await sendTransactionWithGSN(
         web3,
