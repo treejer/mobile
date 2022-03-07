@@ -39,6 +39,7 @@
     "google-libphonenumber": "3.2.26",
     "graphql": "16.3.0",
     "graphql-anywhere": "4.2.7",
+    "humanize-duration": "^3.27.1",
     "i18next": "21.6.11",
     "lodash": "4.17.21",
     "node-libs-browser": "2.2.1",

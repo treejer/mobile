@@ -5,6 +5,7 @@ import treeImage from '../../../assets/icons/tree.png';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {colors} from 'constants/values';
 import {currentTimestamp} from 'utilities/helpers/date';
+import humanize from 'humanize-duration';
 
 export function treeImageSrc(tree: Tree): ImageSourcePropType {
   const imageFs = tree?.treeSpecsEntity?.imageFs;
@@ -48,10 +49,6 @@ export function isTheTimeToUpdate(tree: Tree, treeUpdateInterval: number | strin
   return diffUpdateTime(tree, treeUpdateInterval) >= 0;
 }
 
-export function treeUpdateTimeRemained(diff: number) {
-  console.log(diff, 'diff');
-  const hours = Math.floor(diff / 3600);
-  const minutes = Math.floor((diff / 3600 - hours) * 60);
-
-  return `${hours} hours and ${minutes} minutes`;
+export function treeDiffUpdateHumanized(diff: number, language = 'en') {
+  return humanize(diff * 1000, {language});
 }

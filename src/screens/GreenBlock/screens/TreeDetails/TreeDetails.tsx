@@ -32,7 +32,7 @@ import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
-import {diffUpdateTime, isUpdatePended, treeColor, treeUpdateTimeRemained} from 'utilities/helpers/tree';
+import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 interface Props {}
@@ -119,7 +119,7 @@ function TreeDetails(_: Props) {
       // @here convert to HH:MM:SS
       Alert.alert(
         t('treeDetails.cannotUpdate.details'),
-        t('treeDetails.cannotUpdate.wait', {seconds: treeUpdateTimeRemained(Math.abs(diff))}),
+        t('treeDetails.cannotUpdate.wait', {seconds: treeDiffUpdateHumanized(Math.abs(diff))}),
       );
       return;
     }
