@@ -20,6 +20,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'services/settings';
+import BN from 'bn.js';
 
 interface Props {
   navigation: any;
@@ -27,14 +28,33 @@ interface Props {
 
 function MyProfile(_: Props) {
   const {t} = useTranslation();
+
   const requiredBalance = useMemo(() => 500000000000000000, []);
-  const [minBalance, setMinBalance] = useState(requiredBalance);
+  const [minBalance, setMinBalance] = useState<number>(requiredBalance);
+  const planterFundContract = usePlanterFund();
+  // @here This useEffect should be a hook or fix minBalanceQuery method
+  useEffect(() => {
+    getMinBalance();
+  }, []);
+
+  const getMinBalance = () => {
+    planterFundContract.methods
+      .minWithdrawable()
+      .call()
+      .then(balance => {
+        console.log(balance, 'balance useEffect');
+        setMinBalance(balance);
+      })
+      .catch(e => {
+        console.log(e, 'e inside get minWithdrawable');
+        setMinBalance(requiredBalance);
+      });
+  };
+
   const navigation = useNavigation();
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
   const {useGSN} = useSettings();
-
-  const planterFundContract = usePlanterFund();
 
   const {sendEvent} = useAnalytics();
 
@@ -47,20 +67,6 @@ function MyProfile(_: Props) {
   //   variables: {},
   //   fetchPolicy: 'cache-first',
   // });
-
-  // @here This useEffect should be a hook or fix minBalanceQuery method
-  useEffect(() => {
-    planterFundContract.methods
-      .minWithdrawable()
-      .call()
-      .then(balance => {
-        setMinBalance(balance);
-      })
-      .catch(e => {
-        console.log(e, 'e inside get minWithdrawable');
-        setMinBalance(requiredBalance);
-      });
-  }, [planterFundContract.methods, requiredBalance]);
 
   const skipStats = !wallet || !isVerified;
 
@@ -91,6 +97,7 @@ function MyProfile(_: Props) {
     }
     try {
       await planterRefetch();
+      await getMinBalance();
     } catch (e) {
       console.log(e, 'e is hereeeeee getPlanter');
     }
@@ -117,17 +124,25 @@ function MyProfile(_: Props) {
     sendEvent('withdraw');
     try {
       // balance
-      const balance = planterData?.balance;
-      if (Number(balance) > minBalance) {
+      const balance = parseBalance(planterData?.balance);
+      const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
+      console.log(
+        '================================================',
+        planterData?.balance,
+        minBalance,
+        'ina cgiye',
+        balance > bnMinBalance,
+      );
+      if (balance > bnMinBalance) {
         try {
-          const transaction = await sendTransactionWithGSN(
-            web3,
-            wallet,
-            config.contracts.PlanterFund,
-            'withdrawBalance',
-            [planterData?.balance.toString()],
-            useGSN,
-          );
+          // const transaction = await sendTransactionWithGSN(
+          //   web3,
+          //   wallet,
+          //   config.contracts.PlanterFund,
+          //   'withdrawBalance',
+          //   [planterData?.balance.toString()],
+          //   useGSN,
+          // );
 
           // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
           // const transaction = await sendTransactionWithGSN(
@@ -137,13 +152,16 @@ function MyProfile(_: Props) {
           //   'withdrawPlanterBalance',
           // );
 
-          console.log('transaction', transaction);
+          // console.log('transaction', transaction);
           Alert.alert(t('success'), t('myProfile.withdraw.success'));
         } catch (e) {
           Alert.alert(t('failure'), e.message || t('sthWrong'));
         }
       } else {
-        Alert.alert(t('myProfile.attention'), t('myProfile.lessBalance', {amount: parseBalance(minBalance)}));
+        Alert.alert(
+          t('myProfile.attention'),
+          t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
+        );
       }
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -151,7 +169,18 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [isConnected, sendEvent, t, planterData?.balance, minBalance, web3, wallet, useGSN]);
+  }, [
+    isConnected,
+    sendEvent,
+    t,
+    planterData?.balance,
+    minBalance,
+    requiredBalance,
+    web3,
+    wallet,
+    useGSN,
+    parseBalance,
+  ]);
 
   const onRefetch = async () => {
     await getPlanter();
@@ -254,7 +283,7 @@ function MyProfile(_: Props) {
             )}
 
             <View style={globalStyles.p3}>
-              {planterWithdrawableBalance > 0 && (
+              {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
                 <>
                   <Button
                     style={styles.button}

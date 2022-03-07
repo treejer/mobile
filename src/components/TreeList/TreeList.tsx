@@ -154,6 +154,15 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const handleUpdateOfflineTree = async (treeJourney: Tree & TreeJourney) => {
+    console.log(
+      updateTreeJSON({
+        tree: treeJourney.tree,
+        journey: treeJourney,
+        photoUploadHash: 'photoUploadResult.Hash',
+      }),
+      'treeJourney',
+    );
+    return;
     if (treeJourney?.treeSpecsEntity == null || typeof treeJourney?.treeSpecsEntity === 'undefined') {
       Alert.alert(t('cannotUpdateTree'));
       return;

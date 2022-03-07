@@ -150,7 +150,6 @@ function SelectPhoto(_: Props) {
         ...journey,
         photo,
         nurseryContinuedUpdatingLocation: true,
-        ...updatedTree,
         tree: updatedTree,
       });
       Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));

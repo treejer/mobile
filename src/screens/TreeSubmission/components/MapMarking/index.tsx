@@ -202,8 +202,7 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
           const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
           dispatchAddOfflineUpdateTree({
-            ...journey,
-            ...updatedTree,
+            ...newJourney,
             tree: updatedTree,
           });
           Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
