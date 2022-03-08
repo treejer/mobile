@@ -19,6 +19,7 @@ import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginBut
 import {colors} from 'constants/values';
 import {magic} from 'services/Magic';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
+import {useCurrentUser} from 'services/currentUser';
 
 interface Props {}
 
@@ -27,6 +28,8 @@ function NoWallet(_: Props) {
   const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
+
+  const {refetchUser} = useCurrentUser({didMount: false});
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -79,6 +82,7 @@ function NoWallet(_: Props) {
     try {
       const result = await magic.auth.loginWithSMS({phoneNumber: mobileNumber});
       await storeMagicToken(result);
+      await refetchUser();
       console.log(result, 'result is here');
     } catch (e) {
       Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');
@@ -95,6 +99,7 @@ function NoWallet(_: Props) {
     try {
       const result = await magic.auth.loginWithMagicLink({email});
       await storeMagicToken(result);
+      await refetchUser();
       console.log(result, 'result is here');
     } catch (e) {
       Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');

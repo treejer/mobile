@@ -22,7 +22,7 @@ function VerifyPending(_: Props) {
 
   const handleContinue = () => {
     refetchUser();
-    _.navigation.navigate('MyProfile');
+    _.navigation.navigate('MyProfile', {hideVerification: true});
   };
 
   return (

@@ -114,14 +114,16 @@ function Web3Provider(props: Props) {
       }
       setUnlocked(true);
       setWalletWeb3(web3);
+      let web3Accounts = [credentials.wallet];
       await web3.eth.getAccounts(async (e, accounts) => {
         if (e) {
           console.log(e, 'e is here getAccounts eth');
           setWaiting(false);
           setLoading(false);
+          web3Accounts = accounts;
           return;
         }
-        const account = accounts[0];
+        const account = web3Accounts[0];
         if (account) {
           await AsyncStorage.setItem(config.storageKeys.magicWalletAddress, account);
           setWallet(account);

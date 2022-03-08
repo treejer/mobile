@@ -94,7 +94,7 @@ export async function getTreejerApiAccessToken(web3: Web3): Promise<UserSignRes>
   try {
     const credentials = await userSign(signature, wallet, key);
     console.log(credentials, 'credentials <===');
-    return Promise.resolve(credentials);
+    return Promise.resolve({...credentials, wallet});
   } catch (e) {
     return Promise.reject(e);
   }

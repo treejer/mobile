@@ -55,7 +55,9 @@ export interface TreeSubmissionRouteParamList extends Record<string, any> {
 
 export interface ProfileRouteParamList extends Record<string, any> {
   NoWallet: undefined;
-  MyProfile: undefined;
+  MyProfile: {
+    hideVerification?: boolean;
+  };
   VerifyProfile: undefined;
   SelectWallet: undefined;
   SelectLanguage: {

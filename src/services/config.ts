@@ -19,7 +19,7 @@ const config = {
     },
   },
   networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
-  isMainnet: false /* Boolean(process.env.REACT_NATIVE_IS_MAINNET || false) */,
+  isMainnet: process.env.REACT_NATIVE_IS_MAINNET?.toString() === 'true',
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
     magicToken: '__TREEJER_MAGIC_TOKEN',
@@ -53,6 +53,7 @@ const config = {
   avatarBaseUrl: process.env.REACT_NATIVE_AVATAR_BASE_URL,
   magicApiKey: process.env.REACT_NATIVE_MAGIC_API_KEY,
   magicNetwork: process.env.REACT_NATIVE_MAGIC_NETWORK,
+  chainId: process.env.REACT_NATIVE_CHAIN_ID,
 };
 
 export default config;

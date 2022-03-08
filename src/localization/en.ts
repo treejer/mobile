@@ -64,6 +64,7 @@ export const en = {
   submitWhenOnline: 'You can submit this tree when you have fast and stable internet connection',
   offlineTreesSubmitted: 'All offline trees Submitted',
   tryAgain: 'Please try again!',
+  cancel: 'Cancel',
   error: 'Error',
   plantFirstTree: 'Plant your first tree',
   noOfflineTree: 'No offline {{type}} tree',
@@ -226,5 +227,6 @@ export const en = {
     gsnDetails:
       'Treejer sponsors your transaction fees. If your transactions are being failed, you can switch off sponsorship. Please remember you need MATIC token in your wallet send transactions. You may ask your rural ambassador for more help.',
     ethBalance: 'Eth Balance:',
+    maticBalance: 'Matic Balance:',
   },
 };

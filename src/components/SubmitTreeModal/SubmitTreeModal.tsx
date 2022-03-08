@@ -111,6 +111,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     }
   };
 
+  const handleCancel = () => {
+    setVisible(false);
+    navigate('GreenBlock');
+  };
+
   useEffect(() => {
     if (journey.isSingle === false && journey.nurseryCount && isConnected) {
       handleSubmitAll();
@@ -160,11 +165,20 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
               })}
               <Spacer times={10} />
               {tryAgain && (
-                <Button
-                  caption={t('tryAgain')}
-                  onPress={handleSubmitAll}
-                  style={{alignItems: 'center', justifyContent: 'center'}}
-                />
+                <>
+                  <Button
+                    caption={t('tryAgain')}
+                    onPress={handleSubmitAll}
+                    style={{alignItems: 'center', justifyContent: 'center'}}
+                  />
+                  <Spacer times={4} />
+                  <Button
+                    variant="secondary"
+                    caption={t('cancel')}
+                    onPress={handleCancel}
+                    style={{alignItems: 'center', justifyContent: 'center'}}
+                  />
+                </>
               )}
               <Spacer times={10} />
             </ScrollView>

@@ -69,3 +69,4 @@ buck-out/
 *.hprof
 
 .env
+.env.old

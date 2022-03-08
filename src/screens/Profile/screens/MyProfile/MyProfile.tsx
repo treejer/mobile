@@ -1,16 +1,14 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useWalletAccount, useWalletWeb3, usePlanterFund} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
-import config from 'services/config';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
@@ -20,10 +18,11 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'services/settings';
-import BN from 'bn.js';
+import {ProfileRouteParamList} from 'types';
 
 interface Props {
   navigation: any;
+  route?: RouteProp<ProfileRouteParamList, 'MyProfile'>;
 }
 
 function MyProfile(_: Props) {
@@ -287,7 +286,7 @@ function MyProfile(_: Props) {
                   <Spacer times={4} />
                 </>
               )}
-              {status === UserStatus.Pending && (
+              {(status === UserStatus.Pending || Boolean(_.route.params?.hideVerification)) && (
                 <>
                   <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                   <Spacer times={6} />
@@ -307,7 +306,7 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           } */}
-              {status === UserStatus.Unverified && (
+              {!_.route.params?.hideVerification && status === UserStatus.Unverified && (
                 <>
                   <Button
                     style={styles.button}

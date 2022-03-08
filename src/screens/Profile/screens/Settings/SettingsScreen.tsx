@@ -11,6 +11,7 @@ import {useSettings} from 'services/settings';
 import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
 import {useWalletAccount, useWeb3} from 'services/web3';
+import {isMatic} from 'services/Magic';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -97,7 +98,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
           <View
             style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
           >
-            <Text>{t('settings.ethBalance')}</Text>
+            <Text>{t(isMatic() ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
             {ether ? <Text>{Number(ether).toFixed(7)}</Text> : <ActivityIndicator color={colors.gray} />}
           </View>
         </View>
