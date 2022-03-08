@@ -1,21 +1,14 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {useWalletAccount, useResetWeb3Data, useWalletWeb3, usePlanterFund} from 'services/web3';
+import {useWalletAccount, useWalletWeb3, usePlanterFund} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
-import config from 'services/config';
-import {useSettings} from 'services/settings';
-import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {asyncAlert} from 'utilities/helpers/alert';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
@@ -23,37 +16,27 @@ import SimpleToast from 'react-native-simple-toast';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useSettings} from 'services/settings';
+import {ProfileRouteParamList} from 'types';
 
 interface Props {
   navigation: any;
+  route?: RouteProp<ProfileRouteParamList, 'MyProfile'>;
 }
 
 function MyProfile(_: Props) {
   const {t} = useTranslation();
-  const [minBalance, setMinBalance] = useState(null);
-  const navigation = useNavigation();
-  const web3 = useWalletWeb3();
-  const wallet = useWalletAccount();
-  const {resetOnBoardingData} = useSettings();
-  const {resetWeb3Data} = useResetWeb3Data();
-
-  const planterFundContract = usePlanterFund();
-
-  const {sendEvent} = useAnalytics();
-
-  const {data, loading, status, statusCode, refetchUser} = useCurrentUser();
-  const isVerified = data?.user?.isVerified;
-  const {offlineTrees} = useOfflineTrees();
 
   const requiredBalance = useMemo(() => 500000000000000000, []);
-
-  // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
-  //   variables: {},
-  //   fetchPolicy: 'cache-first',
-  // });
-
+  const [minBalance, setMinBalance] = useState<number>(requiredBalance);
+  const planterFundContract = usePlanterFund();
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
+    getMinBalance();
+  }, []);
+
+  const getMinBalance = () => {
     planterFundContract.methods
       .minWithdrawable()
       .call()
@@ -64,68 +47,32 @@ function MyProfile(_: Props) {
         console.log(e, 'e inside get minWithdrawable');
         setMinBalance(requiredBalance);
       });
-  }, [planterFundContract.methods, requiredBalance]);
+  };
 
-  const address = useMemo(() => wallet?.address, [wallet]);
+  const navigation = useNavigation();
+  const web3 = useWalletWeb3();
+  const wallet = useWalletAccount();
+  const {useGSN} = useSettings();
 
-  const skipStats = !address || !isVerified;
+  const {sendEvent} = useAnalytics();
+
+  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
+  const isVerified = data?.user?.isVerified;
+
+  const isConnected = useNetInfoConnected();
+
+  // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
+  //   variables: {},
+  //   fetchPolicy: 'cache-first',
+  // });
+
+  const skipStats = !wallet || !isVerified;
 
   const {
     data: planterData,
     refetchPlanterStatus: planterRefetch,
     refetching,
-  } = usePlanterStatusQuery(address, skipStats);
-
-  const handleLogout = useCallback(
-    async (userPressed: boolean) => {
-      try {
-        if (userPressed) {
-          try {
-            if (offlineTrees.planted || offlineTrees.updated) {
-              const trees = [...(offlineTrees.planted || []), ...(offlineTrees.updated || [])];
-
-              if (trees.length) {
-                const isMoreThanOne = trees.length > 1;
-                const treeText = isMoreThanOne ? 'trees' : 'tree';
-                const treeThereText = isMoreThanOne ? 'they are' : 'it is';
-
-                await asyncAlert(
-                  t('myProfile.attention'),
-                  t('myProfile.looseTree', {treesLength: trees.length, treeText, treeThereText}),
-                  {text: t('myProfile.logoutAndLoose')},
-                  {text: t('cancel')},
-                );
-              }
-            }
-          } catch (e) {
-            return Promise.reject(e);
-          }
-          await SecureStore.deleteItemAsync(config.storageKeys.privateKey);
-        }
-        await AsyncStorage.clear();
-        if (!userPressed) {
-          if (offlineTrees.planted) {
-            await AsyncStorage.setItem(offlineTreesStorageKey, offlineTrees.planted);
-          }
-          if (offlineTrees.updated) {
-            await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, offlineTrees.updated);
-          }
-        }
-        await resetWeb3Data();
-        await resetOnBoardingData();
-      } catch (e) {
-        console.log(e, 'e inside handleLogout');
-        return Promise.reject(e);
-      }
-    },
-    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data],
-  );
-
-  useEffect(() => {
-    if (statusCode && statusCode === 401 && address) {
-      handleLogout(false).then(() => {});
-    }
-  }, [statusCode, handleLogout, address]);
+  } = usePlanterStatusQuery(wallet, skipStats);
 
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
@@ -143,40 +90,50 @@ function MyProfile(_: Props) {
   // });
 
   const getPlanter = useCallback(async () => {
+    if (!isConnected) {
+      return;
+    }
     try {
       await planterRefetch();
+      await getMinBalance();
     } catch (e) {
       console.log(e, 'e is hereeeeee getPlanter');
     }
   }, [planterRefetch]);
 
   const parseBalance = useCallback(
-    (balance: string, fixed = 5) => parseFloat(web3.utils.fromWei(balance)).toFixed(fixed),
-    [web3.utils],
+    (balance: string, fixed = 5) => parseFloat(web3?.utils?.fromWei(balance))?.toFixed(fixed),
+    [web3?.utils],
   );
 
   useEffect(() => {
-    if (address) {
+    if (wallet && isConnected) {
       getPlanter().then(() => {});
     }
-  }, [address, getPlanter]);
+  }, [wallet, getPlanter, isConnected]);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
+    if (!isConnected) {
+      Alert.alert(t('netInfo.error'), t('netInfo.details'));
+      return;
+    }
     setSubmitting(true);
     sendEvent('withdraw');
     try {
       // balance
-      const balance = planterData?.balance;
-      if (Number(balance) > minBalance) {
+      const balance = parseBalance(planterData?.balance);
+      const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
+      if (balance > bnMinBalance) {
         try {
-          const transaction = await sendTransactionWithGSN(
-            web3,
-            wallet,
-            config.contracts.PlanterFund,
-            'withdrawBalance',
-            [planterData?.balance.toString()],
-          );
+          // const transaction = await sendTransactionWithGSN(
+          //   web3,
+          //   wallet,
+          //   config.contracts.PlanterFund,
+          //   'withdrawBalance',
+          //   [planterData?.balance.toString()],
+          //   useGSN,
+          // );
 
           // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
           // const transaction = await sendTransactionWithGSN(
@@ -186,13 +143,16 @@ function MyProfile(_: Props) {
           //   'withdrawPlanterBalance',
           // );
 
-          console.log('transaction', transaction);
+          // console.log('transaction', transaction);
           Alert.alert(t('success'), t('myProfile.withdraw.success'));
         } catch (e) {
           Alert.alert(t('failure'), e.message || t('sthWrong'));
         }
       } else {
-        Alert.alert(t('myProfile.attention'), t('myProfile.lessBalance', {amount: t('myProfile.attention')}));
+        Alert.alert(
+          t('myProfile.attention'),
+          t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
+        );
       }
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -200,7 +160,18 @@ function MyProfile(_: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [planterData?.balance, minBalance, web3, wallet, t]);
+  }, [
+    isConnected,
+    sendEvent,
+    t,
+    planterData?.balance,
+    minBalance,
+    requiredBalance,
+    web3,
+    wallet,
+    useGSN,
+    parseBalance,
+  ]);
 
   const onRefetch = async () => {
     await getPlanter();
@@ -210,7 +181,8 @@ function MyProfile(_: Props) {
   const planterWithdrawableBalance = planterData?.balance > 0 ? parseBalance(planterData?.balance.toString()) : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const avatarMarkup = loading ? (
+  const profileLoading = loading || !data?.user;
+  const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
         width: 74,
@@ -237,42 +209,42 @@ function MyProfile(_: Props) {
     navigation.navigate('OfflineMap');
   };
 
-  const handleSelectLanguage = () => {
-    navigation.navigate('SelectLanguage', {back: true});
+  const handleNavigateSettings = () => {
+    navigation.navigate('Settings');
   };
 
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
-      refreshControl={<RefreshControl refreshing={refetching || loading} onRefresh={onRefetch} />}
+      refreshControl={<RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />}
     >
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}>
         <Spacer times={8} />
         {avatarMarkup}
         <Spacer times={4} />
 
-        {loading && (
+        {profileLoading && (
           <View style={globalStyles.horizontalStack}>
             <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
             <Spacer times={4} />
             <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
           </View>
         )}
-        {!loading && (
+        {!profileLoading && (
           <>
             {Boolean(data?.user?.firstName) && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
 
-            {Boolean(data?.user?.firstName || loading) && <Spacer times={4} />}
+            {Boolean(data?.user?.firstName) && <Spacer times={4} />}
 
             <TouchableOpacity
               onPress={() => {
-                Clipboard.setString(address);
+                Clipboard.setString(wallet);
                 SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
               }}
             >
-              {address && (
+              {wallet && (
                 <Text numberOfLines={1} style={styles.addressBox}>
-                  {address.slice(0, 15)}...
+                  {wallet.slice(0, 15)}...
                 </Text>
               )}
             </TouchableOpacity>
@@ -302,7 +274,7 @@ function MyProfile(_: Props) {
             )}
 
             <View style={globalStyles.p3}>
-              {planterWithdrawableBalance > 0 && (
+              {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
                 <>
                   <Button
                     style={styles.button}
@@ -314,7 +286,7 @@ function MyProfile(_: Props) {
                   <Spacer times={4} />
                 </>
               )}
-              {status === UserStatus.Pending && (
+              {(status === UserStatus.Pending || Boolean(_.route.params?.hideVerification)) && (
                 <>
                   <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                   <Spacer times={6} />
@@ -334,7 +306,7 @@ function MyProfile(_: Props) {
               <Spacer times={4} />
             </>
           } */}
-              {status === UserStatus.Unverified && (
+              {!_.route.params?.hideVerification && status === UserStatus.Unverified && (
                 <>
                   <Button
                     style={styles.button}
@@ -359,9 +331,9 @@ function MyProfile(_: Props) {
               />
               <Spacer times={4} />
 
-              {planterData?.planterType && <Invite address={address} planterType={Number(planterData?.planterType)} />}
+              {planterData?.planterType && <Invite address={wallet} planterType={Number(planterData?.planterType)} />}
 
-              {!address && (
+              {/* {!wallet && (
                 <>
                   <Button
                     style={styles.button}
@@ -374,9 +346,14 @@ function MyProfile(_: Props) {
                   />
                   <Spacer times={4} />
                 </>
-              )}
+              )} */}
 
-              <Button style={styles.button} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+              <Button
+                style={styles.button}
+                caption={t('settings.title')}
+                variant="tertiary"
+                onPress={handleNavigateSettings}
+              />
               <Spacer times={4} />
               <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
               <Spacer times={4} />

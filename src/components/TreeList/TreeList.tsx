@@ -27,12 +27,14 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import useTempTrees from 'utilities/hooks/useTempTrees';
-import {getHttpDownloadUrl, upload, uploadContent} from 'utilities/helpers/IPFS';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
+import {useSettings} from 'services/settings';
+import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {TreeImage} from 'components/TreeList/TreeImage';
 
 export enum TreeFilter {
   All = 'All',
@@ -54,7 +56,9 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
+  const [initialFilter, setInitialFilter] = useState(filter);
   const {t} = useTranslation();
+  const {useGSN} = useSettings();
   const filters = useMemo<TreeFilterItem[]>(() => {
     return [
       {caption: TreeFilter.Submitted},
@@ -68,19 +72,19 @@ function Trees({route, navigation, filter}: Props) {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (filter) {
-        setCurrentFilter({caption: filter});
+      if (initialFilter) {
+        setCurrentFilter({caption: initialFilter});
+        setInitialFilter(null);
       } else {
         setCurrentFilter(filters[0]);
       }
-    }, [filter, filters]),
+    }, [initialFilter, filters]),
   );
 
   const [offlineLoadings, setOfflineLoadings] = useState([]);
   const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
 
-  const wallet = useWalletAccount();
-  const address = useMemo(() => wallet?.address, [wallet]);
+  const address = useWalletAccount();
 
   const isConnected = useNetInfoConnected();
 
@@ -90,7 +94,7 @@ function Trees({route, navigation, filter}: Props) {
     refetchTempTrees,
     refetching: tempTreesRefetching,
     loadMore: tempLoadMore,
-  } = useTempTrees(address, wallet);
+  } = useTempTrees(address);
 
   const {
     plantedTrees,
@@ -98,7 +102,7 @@ function Trees({route, navigation, filter}: Props) {
     refetchPlantedTrees,
     refetching: plantedRefetching,
     loadMore: plantedLoadMore,
-  } = usePlantedTrees(address, wallet);
+  } = usePlantedTrees(address);
 
   const {offlineTrees, dispatchRemoveOfflineTree, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
 
@@ -111,11 +115,25 @@ function Trees({route, navigation, filter}: Props) {
 
   const handleSelectTree = tree => {
     if (tree.item?.treeStatus == 2) {
-      navigation.navigate('TreeSubmission', {
-        treeIdToPlant: tree.item.id,
-        tree: tree.item,
-        initialRouteName: 'SelectPhoto',
-      });
+      const isTreePlantedOffline = offlineTrees?.planted?.find(item => item.treeIdToPlant === tree.item?.id);
+      if (isTreePlantedOffline) {
+        Alert.alert(t('warning'), t('notVerifiedTree'));
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'TreeSubmission',
+              params: {
+                treeIdToPlant: tree.item.id,
+                tree: tree.item,
+                isSingle: true,
+                initialRouteName: 'SelectPhoto',
+              },
+            },
+          ],
+        });
+      }
     } else if (tree.item?.treeStatus == 3) {
       Alert.alert(t('warning'), t('notVerifiedTree'));
     } else {
@@ -142,81 +160,26 @@ function Trees({route, navigation, filter}: Props) {
     }
     setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
+      const photoUploadResult = await upload(treeJourney.photo?.path);
 
-      const birthDay = currentTimestamp();
+      const jsonData = updateTreeJSON({
+        tree: treeJourney.tree,
+        journey: treeJourney,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
-      const updateSpec = {
-        image: getHttpDownloadUrl(photoUploadResult.Hash),
-        image_hash: photoUploadResult.Hash,
-        created_at: birthDay?.toString(),
-      };
-
-      const treeSpecJson = treeJourney?.treeSpecsEntity;
-      let updates;
-
-      if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-        updates = JSON.parse(treeSpecJson?.updates);
-        updates.push(updateSpec);
-      } else {
-        updates = [updateSpec];
-      }
-
-      const jsonData = {
-        location: {
-          latitude: treeJourney?.treeSpecsEntity?.latitude?.toString(),
-          longitude: treeJourney?.treeSpecsEntity?.longitude?.toString(),
-        },
-        updates,
-      };
-      if (treeJourney?.treeSpecsEntity?.name) {
-        jsonData.name = treeJourney?.treeSpecsEntity?.name;
-      }
-      if (treeJourney?.treeSpecsEntity?.description) {
-        jsonData.description = treeJourney?.treeSpecsEntity?.description;
-      }
-      if (treeJourney?.treeSpecsEntity?.externalUrl) {
-        jsonData.external_url = treeJourney?.treeSpecsEntity?.externalUrl;
-      }
-      if (treeJourney?.treeSpecsEntity?.imageHash) {
-        jsonData.image_ipfs_hash = treeJourney?.treeSpecsEntity?.imageHash;
-      }
-      if (treeJourney?.treeSpecsEntity?.symbolFs) {
-        jsonData.symbol = treeJourney?.treeSpecsEntity?.symbolFs;
-      }
-      if (treeJourney?.treeSpecsEntity?.symbolHash) {
-        jsonData.symbol_ipfs_hash = treeJourney?.treeSpecsEntity?.symbolHash;
-      }
-      if (treeJourney?.treeSpecsEntity?.animationUrl) {
-        jsonData.animation_url = treeJourney?.treeSpecsEntity?.animationUrl;
-      }
-      if (treeJourney?.treeSpecsEntity?.diameter) {
-        jsonData.diameter = treeJourney?.treeSpecsEntity?.diameter?.toString();
-      }
-      if (treeJourney?.treeSpecsEntity?.attributes) {
-        jsonData.attributes = JSON.parse(treeJourney?.treeSpecsEntity?.attributes);
-      }
-      if (treeSpecJson.nursery === 'true' && treeJourney.location?.longitude && treeJourney.location?.latitude) {
-        jsonData.location = {
-          latitude: Math.trunc(treeJourney.location?.latitude * Math.pow(10, 6)).toString(),
-          longitude: Math.trunc(treeJourney.location?.longitude * Math.pow(10, 6)).toString(),
-        };
-        const prevLocation = {
-          latitude: treeJourney?.tree?.treeSpecsEntity?.latitude?.toString(),
-          longitude: treeJourney?.tree?.treeSpecsEntity?.longitude?.toString(),
-        };
-        jsonData.locations = treeSpecJson.locations?.length
-          ? [...treeSpecJson.locations, prevLocation]
-          : [prevLocation];
-      }
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'updateTree', [
-        treeJourney.treeIdToUpdate,
-        metaDataUploadResult.Hash,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        address,
+        config.contracts.TreeFactory,
+        'updateTree',
+        [treeJourney.treeIdToUpdate, metaDataUploadResult.Hash],
+        useGSN,
+      );
       dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
       setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
       console.log(receipt, 'receipt');
@@ -234,48 +197,24 @@ function Trees({route, navigation, filter}: Props) {
     }
     try {
       setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-      const photoUploadResult = await upload(journey.photo?.uri || journey.photo);
-      const birthDay = currentTimestamp();
+      const photoUploadResult = await upload(journey.photo?.path);
 
-      const updateSpec = {
-        image: getHttpDownloadUrl(photoUploadResult.Hash),
-        image_hash: photoUploadResult.Hash,
-        created_at: birthDay?.toString(),
-      };
-
-      const treeSpecJson = journey?.tree?.treeSpecsEntity;
-      let updates;
-
-      if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
-        updates = JSON.parse(treeSpecJson?.updates);
-        updates.push(updateSpec);
-      } else {
-        updates = [updateSpec];
-      }
-
-      const jsonData = {
-        location: {
-          latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-          longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
-        },
-        updates,
-      };
-      if (journey?.tree?.treeSpecsEntity?.imageFs) {
-        jsonData.image = journey?.tree?.treeSpecsEntity?.imageFs?.toString();
-      }
-      if (journey?.tree?.treeSpecsEntity?.imageHash) {
-        jsonData.image_ipfs_hash = journey?.tree?.treeSpecsEntity?.imageHash?.toString();
-      }
+      const jsonData = assignedTreeJSON({
+        journey,
+        tree: journey?.tree,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
-      console.log(metaDataUploadResult, '<== check this');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantAssignedTree', [
-        Hex2Dec(journey.treeIdToPlant),
-        metaDataUploadResult.Hash,
-        birthDay,
-        0,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        address,
+        config.contracts.TreeFactory,
+        'plantAssignedTree',
+        [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
+        useGSN,
+      );
 
       console.log(receipt, 'receipt');
       console.log(receipt.transactionHash, 'receipt.transactionHash');
@@ -299,31 +238,24 @@ function Trees({route, navigation, filter}: Props) {
       alertNoInternet();
     } else {
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
-      const birthDay = currentTimestamp();
       try {
-        const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
-        const jsonData = {
-          location: {
-            latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6))?.toString(),
-            longitude: Math.trunc(treeJourney.location.longitude * Math.pow(10, 6))?.toString(),
-          },
-          updates: [
-            {
-              image: getHttpDownloadUrl(photoUploadResult.Hash),
-              image_hash: photoUploadResult.Hash,
-              created_at: birthDay?.toString(),
-            },
-          ],
-        };
+        const photoUploadResult = await upload(treeJourney.photo.path);
+        const jsonData = newTreeJSON({
+          journey: treeJourney,
+          photoUploadHash: photoUploadResult.Hash,
+        });
 
         const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-        const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantTree', [
-          metaDataUploadResult.Hash,
-          birthDay,
-          0,
-        ]);
+        const receipt = await sendTransactionWithGSN(
+          web3,
+          address,
+          config.contracts.TreeFactory,
+          'plantTree',
+          [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
+          useGSN,
+        );
 
         console.log(receipt, 'receipt');
         console.log(receipt.transactionHash, 'receipt.transactionHash');
@@ -342,7 +274,6 @@ function Trees({route, navigation, filter}: Props) {
     if (!isConnected) {
       alertNoInternet();
     } else {
-      console.log('called');
       try {
         for (const tree of trees) {
           if (isPlanted) {
@@ -404,10 +335,7 @@ function Trees({route, navigation, filter}: Props) {
   const RenderItem = tree => {
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <Image
-          style={[styles.treeImage, tree.item.birthDate && styles.inactiveTree]}
-          source={require('../../../assets/icons/tree.png')}
-        />
+        <TreeImage tree={tree.item} tint size={60} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -416,10 +344,7 @@ function Trees({route, navigation, filter}: Props) {
   const tempRenderItem = tree => {
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleRegSelectTree(tree)}>
-        <Image
-          style={[styles.treeImage, tree.item.birthDate && styles.inactiveTree]}
-          source={require('../../../assets/icons/tree.png')}
-        />
+        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -541,7 +466,7 @@ function Trees({route, navigation, filter}: Props) {
 
       return (
         <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree}>
-          <Image style={[styles.treeImage, styles.inactiveTree]} source={require('../../../assets/icons/tree.png')} />
+          <TreeImage tree={item.tree} tint size={60} isNursery={item.isSingle === false} color={colors.yellow} />
           <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{id}</Text>
           <Button
             variant="secondary"
@@ -669,22 +594,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   tree: {
-    width: 54,
-    height: 74,
+    width: 60,
+    height: 80,
     marginHorizontal: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   offlineTree: {
-    width: 54,
+    width: 60,
     height: 100,
     marginHorizontal: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   treeImage: {
-    width: 54,
-    height: 54,
+    width: 64,
+    height: 64,
   },
   treeName: {
     fontWeight: '700',

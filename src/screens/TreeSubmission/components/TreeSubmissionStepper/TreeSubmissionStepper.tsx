@@ -12,10 +12,11 @@ interface Props {
   isUpdate?: boolean;
   isSingle?: boolean;
   count?: number;
-  isNursery?: boolean;
+  canUpdateLocation?: boolean;
 }
 
-function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count, isNursery}: Props) {
+function TreeSubmissionStepper(props: Props) {
+  const {isUpdate, currentStep, children, isSingle, count, canUpdateLocation = true} = props;
   const {t} = useTranslation();
 
   const title = isSingle
@@ -25,6 +26,8 @@ function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count
     : isUpdate
     ? 'submitTree.updateTree'
     : 'submitTree.submitTree';
+
+  console.log(canUpdateLocation, 'canUpdateLocation inside TreeSubmisionStepper');
 
   return (
     <>
@@ -41,11 +44,11 @@ function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count
         </Steps.Step>
 
         {/* Step 2 - Only for creation */}
-        {(!isUpdate || isNursery) && (
+        {(!isUpdate || !!canUpdateLocation) && (
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>
-                {t(isNursery ? 'submitTree.updateTreeLocation' : 'submitTree.treeLocation')}
+                {t(canUpdateLocation ? 'submitTree.updateTreeLocation' : 'submitTree.treeLocation')}
               </Text>
 
               {renderChildrenIfCurrentStep(2)}
@@ -54,7 +57,7 @@ function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(isUpdate && !isNursery)}>
+        <Steps.Step step={3 - Number(!(!isUpdate || !!canUpdateLocation))}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
@@ -63,7 +66,7 @@ function TreeSubmissionStepper({isUpdate, currentStep, children, isSingle, count
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(isUpdate && !isNursery)} lastStep>
+        <Steps.Step step={4 - Number(!(!isUpdate || !!canUpdateLocation))} lastStep>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}

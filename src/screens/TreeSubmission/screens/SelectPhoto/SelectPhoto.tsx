@@ -15,6 +15,7 @@ import {useWalletAccount} from 'services/web3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import {TreeFilter} from 'components/TreeList/TreeList';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {}
 
@@ -32,44 +33,82 @@ function SelectPhoto(_: Props) {
 
   const [photo, setPhoto] = useState<any>();
 
-  const {address} = useWalletAccount();
+  const address = useWalletAccount();
 
   const {canPlant} = usePlanterStatusQuery(address);
 
-  const {openCameraHook, openLibraryHook} = useCamera();
+  const {openCameraHook} = useCamera();
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  // @here
+  const canUpdate = canUpdateTreeLocation(journey, isNursery);
+  console.log(journey?.tree?.treeSpecsEntity?.locations, 'journey?.tree?.treeSpecsEntity?.locations', isNursery);
 
   const handleSelectPhoto = useCallback(async () => {
     const selectedPhoto = await openCameraHook();
     console.log(selectedPhoto);
-    if (selectedPhoto.cancelled === false) {
+    if (selectedPhoto.path) {
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,
       };
 
-      if (isUpdate && !isConnected) {
-        const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-        dispatchAddOfflineUpdateTree({
-          ...newJourney,
-          ...updatedTree,
-        });
-        Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: 'Profile'}],
-          }),
-        );
-        navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-      } else {
-        if (isUpdate && isNursery) {
+      if (isConnected) {
+        if (isUpdate && isNursery && !canUpdate) {
+          navigation.navigate('SubmitTree', {
+            journey: {
+              ...newJourney,
+              nurseryContinuedUpdatingLocation: true,
+            },
+          });
+        } else if (isUpdate && isNursery) {
           setPhoto(selectedPhoto);
         } else if (isUpdate && !isNursery) {
           navigation.navigate('SubmitTree', {
             journey: newJourney,
           });
+        } else if (!isUpdate) {
+          navigation.navigate('Profile', {
+            screen: 'MainProfile',
+            params: {
+              screen: 'SelectOnMap',
+              params: {
+                journey: newJourney,
+              },
+            },
+          });
+        }
+      } else {
+        if (isUpdate && isNursery && !canUpdate) {
+          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+        } else if (isUpdate && isNursery) {
+          setPhoto(selectedPhoto);
+        } else if (isUpdate && !isNursery) {
+          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
         } else if (!isUpdate) {
           navigation.navigate('Profile', {
             screen: 'MainProfile',
@@ -96,15 +135,36 @@ function SelectPhoto(_: Props) {
   ]);
 
   const handleContinue = useCallback(() => {
-    navigation.navigate('SubmitTree', {
-      journey: {
+    console.log(journey, 'journey handleContinue');
+    if (isConnected) {
+      navigation.navigate('SubmitTree', {
+        journey: {
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+        },
+      });
+    } else {
+      const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+      dispatchAddOfflineUpdateTree({
         ...journey,
         photo,
-      },
-    });
-  }, [journey, navigation, photo]);
+        nurseryContinuedUpdatingLocation: true,
+        tree: updatedTree,
+      });
+      Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'Profile'}],
+        }),
+      );
+      navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+    }
+  }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
 
   const handleUpdateLocation = useCallback(() => {
+    const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
     navigation.navigate('Profile', {
       screen: 'MainProfile',
       params: {
@@ -113,6 +173,8 @@ function SelectPhoto(_: Props) {
           journey: {
             ...journey,
             photo,
+            ...updatedTree,
+            tree: updatedTree,
           },
         },
       },
@@ -126,20 +188,21 @@ function SelectPhoto(_: Props) {
       </View>
     );
   }
+
   return (
     <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
         <Spacer times={10} />
-
         <TreeSubmissionStepper
           isUpdate={isUpdate}
-          currentStep={photo ? 2 : 1}
+          currentStep={canUpdate && photo ? 2 : 1}
           isSingle={journey?.isSingle}
           count={journey?.nurseryCount}
-          isNursery={isNursery}
+          canUpdateLocation={canUpdate}
         >
           <Spacer times={4} />
-          {photo ? (
+          {/* @here */}
+          {!!(canUpdate && photo) ? (
             <View style={{flexDirection: 'row'}}>
               <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
               <Button

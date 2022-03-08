@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from 'services/config';
 
-export const offlineTreesStorageKey = 'OfflineTrees';
-export const offlineUpdatedTreesStorageKey = 'offlineUpdatedTreesStorageKey';
+export const offlineTreesStorageKey = config.storageKeys.offlineTrees;
+export const offlineUpdatedTreesStorageKey = config.storageKeys.offlineUpdatedTrees;
 
 export interface OfflineTreesState {
   planted: TreeJourney[] | null;
@@ -50,6 +51,11 @@ export const REMOVE_OFFLINE_UPDATE_TREE = 'REMOVE_OFFLINE_UPDATE_TREE';
 export const removeOfflineUpdateTree = (id: string) => ({
   type: REMOVE_OFFLINE_UPDATE_TREE,
   id,
+});
+
+export const RESET_OFFLINE_TREES = 'RESET_OFFLINE_TREES';
+export const resetOfflineTrees = () => ({
+  type: RESET_OFFLINE_TREES,
 });
 
 function reducer(state: OfflineTreesState, action) {
@@ -99,6 +105,8 @@ function reducer(state: OfflineTreesState, action) {
         ...state,
         updated: state.updated === null ? null : state.updated.filter(item => item.treeIdToUpdate !== action.id),
       };
+    case RESET_OFFLINE_TREES:
+      return initialState;
     default:
       throw new Error(`${action.type}, is not a valid action`);
   }
@@ -160,7 +168,7 @@ export function OfflineTreeProvider({children}) {
 
   const dispatchAddOfflineTrees = useCallback(
     (trees: TreeJourney[]) => {
-      dispatch(addOfflineTrees(trees.map(tree => ({...tree, offlineId: Date.now().toString()}))));
+      dispatch(addOfflineTrees(trees));
     },
     [dispatch],
   );
@@ -186,6 +194,10 @@ export function OfflineTreeProvider({children}) {
     [dispatch],
   );
 
+  const dispatchResetOfflineTrees = useCallback(() => {
+    dispatch(resetOfflineTrees());
+  }, []);
+
   const value = useMemo(
     () => ({
       offlineTrees: state,
@@ -195,6 +207,7 @@ export function OfflineTreeProvider({children}) {
       dispatchRemoveOfflineTree,
       dispatchAddOfflineUpdateTree,
       dispatchRemoveOfflineUpdateTree,
+      dispatchResetOfflineTrees,
     }),
     [
       dispatchAddOfflineTree,
@@ -203,6 +216,7 @@ export function OfflineTreeProvider({children}) {
       dispatchRemoveOfflineTree,
       dispatchRemoveOfflineUpdateTree,
       state,
+      dispatchResetOfflineTrees,
     ],
   );
 

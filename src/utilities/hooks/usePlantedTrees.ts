@@ -6,7 +6,7 @@ import planterTreeQuery, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TreeFilter} from 'components/TreeList/TreeList';
 
-export default function usePlantedTrees(address, wallet) {
+export default function usePlantedTrees(address) {
   const [plantedTrees, setPlantedTrees] = usePersistedPlantedTrees();
 
   const perPage = useMemo(() => 40, []);
@@ -26,7 +26,7 @@ export default function usePlantedTrees(address, wallet) {
       address: address?.toString().toLocaleLowerCase(),
       ...paginationProps(page),
     },
-    skip: !wallet,
+    skip: !address,
   });
 
   const trees = query?.data?.trees;

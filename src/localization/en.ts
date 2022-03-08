@@ -36,13 +36,14 @@ export const en = {
     cannotUpdate: {
       title: 'Cannot Update',
       details: 'Last update is pending',
-      wait: 'Please wait for {{seconds}} seconds',
+      wait: 'Please wait for {{seconds}}',
     },
     gpsCoords: 'GPS Coordinates',
     funder: 'Funder',
     notFounded: 'Not Funded Yet!',
     lastUpdate: 'Last Update',
     born: 'Born',
+    photo: 'Photo',
     photos: 'Photos',
     update: 'Update',
   },
@@ -63,6 +64,7 @@ export const en = {
   submitWhenOnline: 'You can submit this tree when you have fast and stable internet connection',
   offlineTreesSubmitted: 'All offline trees Submitted',
   tryAgain: 'Please try again!',
+  cancel: 'Cancel',
   error: 'Error',
   plantFirstTree: 'Plant your first tree',
   noOfflineTree: 'No offline {{type}} tree',
@@ -103,6 +105,7 @@ export const en = {
   supplyCapReached: 'You reached your supply cap limit. Please contact customer support to plant more trees!',
   openCamera: 'Open Camera',
   submitTree: {
+    journeyIssue: 'Photo, Location',
     treeSpecEmpty: "TreeSpec is empty, You can't update tree, please contact support.",
     treeDataNotLoaded: "TreeData not loaded, You can't plant tree, refresh the page and try again.",
     noWallet: {
@@ -133,6 +136,7 @@ export const en = {
     nurserySubmitted: 'Nursery successfully submitted',
     nurserySubmitting: 'We are submitting your nursery',
     offlineLoading: 'We are submitting your offline planted trees. This is going to take a while!\nPlease be patient',
+    hashCopied: 'Hash copied to clipboard',
   },
   success: 'Success',
   failure: 'Failure',
@@ -141,6 +145,9 @@ export const en = {
     setup: 'Set up wallet',
     recoveryPhrase: 'Recovery phrase',
     ethConnect: 'Please connect \n your Ethereum wallet!',
+    connectToMagic: 'Connect Wallet',
+    loginWithPhone: 'Log in / Sign up',
+    or: 'OR',
     connect: 'Connect Wallet',
     why: {
       title: 'Why do I need that?',
@@ -208,4 +215,18 @@ export const en = {
   next: 'NEXT',
   submit: 'Submit',
   confirm: 'Confirm',
+  loading: {
+    ranger: "Ranger's App",
+    by: 'by Treejer',
+  },
+  email: 'Email',
+  phoneNumber: 'Phone Number',
+  settings: {
+    title: 'Settings',
+    useGSN: 'Transaction Fee Sponsorship',
+    gsnDetails:
+      'Treejer sponsors your transaction fees. If your transactions are being failed, you can switch off sponsorship. Please remember you need MATIC token in your wallet send transactions. You may ask your rural ambassador for more help.',
+    ethBalance: 'Eth Balance:',
+    maticBalance: 'Matic Balance:',
+  },
 };

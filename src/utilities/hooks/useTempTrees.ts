@@ -6,7 +6,7 @@ import TempTreeQuery, {
   TempTreesQueryQueryData,
 } from 'screens/GreenBlock/screens/MyCommunity/graphql/TempTreesQuery.graphql';
 
-export default function useTempTrees(address, wallet) {
+export default function useTempTrees(address) {
   const [tempTrees, setTempTrees] = useState(null);
 
   const perPage = useMemo(() => 40, []);
@@ -26,7 +26,7 @@ export default function useTempTrees(address, wallet) {
       address: address?.toString().toLocaleLowerCase(),
       ...paginationProps(page),
     },
-    skip: !wallet,
+    skip: !address,
   });
 
   const trees = query?.data?.tempTrees;

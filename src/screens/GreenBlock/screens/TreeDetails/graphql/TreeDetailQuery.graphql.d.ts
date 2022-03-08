@@ -25,6 +25,7 @@ export namespace TreeDetailQueryQueryPartialData {
     attributes?: string | null;
     updates?: string | null;
     nursery?: string | null;
+    locations?: string | null;
   }
   export interface TreeLastUpdate {
     __typename?: "TreeUpdate" | null;
@@ -80,6 +81,7 @@ export namespace TreeDetailQueryQueryData {
     attributes?: string | null;
     updates?: string | null;
     nursery?: string | null;
+    locations?: string | null;
   }
   export interface TreeLastUpdate {
     __typename: "TreeUpdate";

@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import {
   RefreshControl,
   Alert,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
 import {useQuery, NetworkStatus} from '@apollo/client';
@@ -27,20 +28,20 @@ import TreeDetailQuery, {
   TreeDetailQueryQueryData,
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useTreeFactory, useWalletAccount} from 'services/web3';
-import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {TreeImage} from 'components/TreeList/TreeImage';
+import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 interface Props {}
 
+const {width} = Dimensions.get('window');
+
 function TreeDetails(_: Props) {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
-  const [treeUpdateInterval, setTreeUpdateInterval] = useState(null);
-  const cardRef = useRef<View>();
-  const sliderRef = useRef<Carousel<any>>();
+  const sliderRef = useRef<Carousel<any>>(null);
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
@@ -55,38 +56,36 @@ function TreeDetails(_: Props) {
     },
   });
 
-  const treeFactory = useTreeFactory();
+  const treeUpdateInterval = useTreeUpdateInterval();
 
-  useEffect(() => {
-    treeFactory.methods
-      .treeUpdateInterval()
-      .call()
-      .then(data => {
-        setTreeUpdateInterval(data);
-      })
-      .catch(e => console.log(e, 'e is here'));
-  }, [treeFactory.methods]);
-
-  const treeDetails = data?.tree;
+  const treeDetails = useMemo(() => data?.tree || tree, [data?.tree, tree]);
+  console.log(treeDetails, 'treeDetails');
 
   // console.log(new Date(Number(treeDetails?.birthDate) * 1000), '====> treeDetails?.birthDate <====');
   // console.log(treeDetails?.birthDate, '====> treeDetails?.birthDate <====');
 
-  const staticMapUrl = getStaticMapboxUrl(
-    Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-    Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-    600,
-    300,
+  const staticMapUrl = useMemo(
+    () =>
+      getStaticMapboxUrl(
+        Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        600,
+        300,
+      ),
+    [treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
   );
 
-  const updates =
-    typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' && treeDetails?.treeSpecsEntity?.updates != ''
-      ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
-      : [];
+  const updates = useMemo(
+    () =>
+      typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' && treeDetails?.treeSpecsEntity?.updates != ''
+        ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
+        : [],
+    [treeDetails?.treeSpecsEntity?.updates],
+  );
   const updatesCount = updates?.length;
 
   const [activeSlide, setActiveSlide] = useState(0);
-  const [cardWidth, setCardWidth] = useState<number | null>(null);
+  const cardWidth = useMemo(() => width - globalStyles.p2.padding - globalStyles.p3.padding, []);
   const imageWidth = useMemo(() => {
     if (!cardWidth) {
       return null;
@@ -99,27 +98,29 @@ function TreeDetails(_: Props) {
     return cardWidth;
   }, [cardWidth, updatesCount]);
 
-  useEffect(() => {
-    if (cardRef.current) {
-      cardRef.current.measureInWindow((_x, _y, width) => {
-        setCardWidth(width);
-      });
-    }
-  }, [cardRef]);
+  // useEffect(() => {
+  //   console.log(cardRef.current, '<=====');
+  //   if (cardRef.current) {
+  //     cardRef.current.measureInWindow((_x, _y, width) => {
+  //       setCardWidth(width);
+  //     });
+  //   }
+  // }, [cardRef]);
 
   const handleUpdate = () => {
-    if (treeDetails?.lastUpdate?.updateStatus === '1') {
+    if (isUpdatePended(treeDetails)) {
       Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
       return;
     }
 
-    const differUpdateTime =
-      Number(treeDetails.plantDate) + Number(treeDetails.treeStatus * 3600 + Number(treeUpdateInterval));
-    const diff = currentTimestamp() - differUpdateTime;
+    const diff = diffUpdateTime(treeDetails, treeUpdateInterval);
 
     if (diff < 0) {
       // @here convert to HH:MM:SS
-      Alert.alert(t('treeDetails.cannotUpdate.details'), t('treeDetails.cannotUpdate.wait', {seconds: Math.abs(diff)}));
+      Alert.alert(
+        t('treeDetails.cannotUpdate.details'),
+        t('treeDetails.cannotUpdate.wait', {seconds: treeDiffUpdateHumanized(Math.abs(diff))}),
+      );
       return;
     }
     sendEvent('update_tree');
@@ -143,6 +144,14 @@ function TreeDetails(_: Props) {
     });
   };
 
+  if (loading) {
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={colors.green} size="large" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={[globalStyles.screenView, globalStyles.fill]}
@@ -159,14 +168,14 @@ function TreeDetails(_: Props) {
           <Avatar size={40} type="active" />
         </View>
 
-        <Image style={[styles.treeImage]} source={require('../../../../../assets/icons/tree.png')} />
+        <TreeImage color={colors.green} tree={treeDetails} size={120} style={{alignSelf: 'center'}} />
 
         <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails?.id)}</Text>
         {/* Tree id */}
         <Spacer times={8} />
 
         <View style={globalStyles.p2}>
-          <Card ref={cardRef}>
+          <Card>
             <View style={styles.updateButton}>
               {treeDetails && (
                 <Button
@@ -174,6 +183,7 @@ function TreeDetails(_: Props) {
                   caption={t('treeDetails.update')}
                   textStyle={globalStyles.textCenter}
                   onPress={handleUpdate}
+                  style={{backgroundColor: treeColor(treeDetails, treeUpdateInterval)}}
                 />
               )}
             </View>
@@ -192,7 +202,7 @@ function TreeDetails(_: Props) {
                 </Text>
                 <Text style={[globalStyles.h5, globalStyles.textCenter]}>
                   lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
-                  {',\n '}
+                  {'\n '}
                   long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
                 </Text>
                 <Spacer times={6} />
@@ -254,8 +264,6 @@ function TreeDetails(_: Props) {
           </Card>
           <Spacer times={8} />
 
-          {loading && <ActivityIndicator color={colors.green} size="large" />}
-
           {Boolean(cardWidth) && updates && updatesCount > 0 && (
             <View>
               <View
@@ -263,11 +271,13 @@ function TreeDetails(_: Props) {
                   globalStyles.horizontalStack,
                   globalStyles.alignItemsCenter,
                   styles.titleContainer,
-                  {width: imageWidth},
+                  {width: cardWidth},
                 ]}
               >
                 <View style={styles.titleLine} />
-                <Text style={[globalStyles.ph1, globalStyles.h5]}>{t('treeDetails.photos')}</Text>
+                <Text style={[globalStyles.ph1, globalStyles.h5]}>
+                  {t(`treeDetails.${updatesCount > 1 ? 'photos' : 'photo'}`)}
+                </Text>
                 <View style={styles.titleLine} />
               </View>
               <Spacer times={8} />
@@ -353,8 +363,8 @@ const styles = StyleSheet.create({
     marginTop: -40,
   },
   treeImage: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     alignSelf: 'center',
   },
   titleLine: {

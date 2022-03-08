@@ -1,6 +1,6 @@
-/* eslint-disable @shopify/strict-component-boundaries */
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {TreeFilter} from 'components/TreeList/TreeList';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 
@@ -10,6 +10,7 @@ export interface MainTabsParamList extends Record<string, any> {
   GreenBlock: {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
+    filter?: TreeFilter;
   };
 }
 
@@ -54,12 +55,15 @@ export interface TreeSubmissionRouteParamList extends Record<string, any> {
 
 export interface ProfileRouteParamList extends Record<string, any> {
   NoWallet: undefined;
-  MyProfile: undefined;
+  MyProfile: {
+    hideVerification?: boolean;
+  };
   VerifyProfile: undefined;
   SelectWallet: undefined;
   SelectLanguage: {
     back: boolean;
   };
+  Settings: undefined;
 }
 
 export interface PlanterJoinJourney {

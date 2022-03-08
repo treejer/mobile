@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Button, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer/Spacer';
@@ -13,6 +13,11 @@ import {useTranslation} from 'react-i18next';
 import {useWalletAccount, useWalletWeb3} from 'services/web3';
 import {useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
+import Button from 'components/Button/Button';
+import Clipboard from '@react-native-clipboard/clipboard';
+import SimpleToast from 'react-native-simple-toast';
+import {useSettings} from 'services/settings';
+import {newTreeJSON} from 'utilities/helpers/submitTree';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -26,6 +31,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const web3 = useWalletWeb3();
   const {t} = useTranslation();
   const {navigate} = useNavigation();
+  const {useGSN} = useSettings();
 
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -50,33 +56,23 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const handleSubmitTree = async (treeJourney: TreeJourney) => {
     const birthDay = currentTimestamp();
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.uri || treeJourney.photo);
-      const jsonData = {
-        location: {
-          latitude: Math.trunc(treeJourney.location.latitude * Math.pow(10, 6)).toString(),
-          longitude: Math.trunc(treeJourney.location.longitude * Math.pow(10, 6)).toString(),
-        },
-        updates: [
-          {
-            image: getHttpDownloadUrl(photoUploadResult.Hash),
-            image_hash: photoUploadResult.Hash,
-            created_at: birthDay.toString(),
-          },
-        ],
-      };
-      if (treeJourney.isSingle === false) {
-        // @ts-ignore
-        jsonData.nursery = 'true';
-      }
+      const photoUploadResult = await upload(treeJourney.photo?.path);
+      const jsonData = newTreeJSON({
+        journey: treeJourney,
+        photoUploadHash: photoUploadResult.Hash,
+      });
 
       const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(web3, wallet, config.contracts.TreeFactory, 'plantTree', [
-        metaDataUploadResult.Hash,
-        birthDay,
-        0,
-      ]);
+      const receipt = await sendTransactionWithGSN(
+        web3,
+        wallet,
+        config.contracts.TreeFactory,
+        'plantTree',
+        [metaDataUploadResult.Hash, birthDay, 0],
+        useGSN,
+      );
 
       console.log(receipt, 'receipt');
       console.log(receipt.transactionHash, 'receipt.transactionHash');
@@ -93,7 +89,9 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     } else {
       const array = requests.filter(request => !request.hash);
       for (let i = 0; i < array.length; i++) {
-        setRequests(prevRequests => prevRequests.map((item, index) => (index === i ? {...item, loading: true} : item)));
+        setRequests(prevRequests =>
+          prevRequests.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
+        );
         try {
           const hash = await handleSubmitTree(journey);
           console.log(hash, 'hash <============');
@@ -113,6 +111,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     }
   };
 
+  const handleCancel = () => {
+    setVisible(false);
+    navigate('GreenBlock');
+  };
+
   useEffect(() => {
     if (journey.isSingle === false && journey.nurseryCount && isConnected) {
       handleSubmitAll();
@@ -121,6 +124,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
 
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);
   const tryAgain = !hasLoading && Boolean(requests?.find(request => request.error));
+
+  const handlePressHash = (hash: string) => {
+    Clipboard.setString(hash);
+    Alert.alert(t('submitTree.hashCopied'), hash);
+  };
 
   return (
     <Modal style={styles.modal} visible={visible} onRequestClose={null} transparent>
@@ -143,7 +151,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                     </View>
                     {request.loading && <ActivityIndicator size="small" color={color} />}
                     {request.hash && (
-                      <Text onPress={() => Alert.alert('Hash', request.hash)} style={style}>
+                      <Text onPress={() => handlePressHash(request.hash)} style={style}>
                         {request.hash.slice(0, 8)}...
                       </Text>
                     )}
@@ -156,7 +164,22 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                 );
               })}
               <Spacer times={10} />
-              {tryAgain && <Button title="tryAgain" onPress={handleSubmitAll} />}
+              {tryAgain && (
+                <>
+                  <Button
+                    caption={t('tryAgain')}
+                    onPress={handleSubmitAll}
+                    style={{alignItems: 'center', justifyContent: 'center'}}
+                  />
+                  <Spacer times={4} />
+                  <Button
+                    variant="secondary"
+                    caption={t('cancel')}
+                    onPress={handleCancel}
+                    style={{alignItems: 'center', justifyContent: 'center'}}
+                  />
+                </>
+              )}
               <Spacer times={10} />
             </ScrollView>
           </View>

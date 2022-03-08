@@ -19,9 +19,19 @@ const config = {
     },
   },
   networkId: Number(process.env.REACT_NATIVE_WEB3_NETWORK_ID || 3),
-  isMainnet: false /* Boolean(process.env.REACT_NATIVE_IS_MAINNET || false) */,
+  isMainnet: process.env.REACT_NATIVE_IS_MAINNET?.toString() === 'true',
   storageKeys: {
     privateKey: '__TREEJER_PRIVATE_KEY',
+    magicToken: '__TREEJER_MAGIC_TOKEN',
+    magicWalletAddress: '__TREEJER_MAGIC_WALLET_ADDRESS',
+    user: '__TREEJER_CURRENT_USER',
+    onBoarding: '__TREEJER_ONBOARDING',
+    locale: '__TREEJER_LOCALE',
+    userId: '__TREEJER_USER_ID',
+    offlineTrees: '__TREEJER_OFFLINE_TREES',
+    offlineUpdatedTrees: '__TREEJER_OFFLINE_UPDATED_TREES',
+    accessToken: '__TREEJER_ACCESS_TOKEN',
+    useGSN: '__TREEJER_USE_GSN',
   },
   web3Url: process.env.REACT_NATIVE_WEB3_PROVIDER,
   treejerApiUrl: process.env.REACT_NATIVE_TREEJER_API_URL.replace(/\/$/, ''),
@@ -40,6 +50,10 @@ const config = {
   relayRegistrationLookupBlocks: process.env.REACT_NATIVE_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS,
   pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
   learnMoreLink: process.env.REACT_NATIVE_LEARN_MORE_URL,
+  avatarBaseUrl: process.env.REACT_NATIVE_AVATAR_BASE_URL,
+  magicApiKey: process.env.REACT_NATIVE_MAGIC_API_KEY,
+  magicNetwork: process.env.REACT_NATIVE_MAGIC_NETWORK,
+  chainId: process.env.REACT_NATIVE_CHAIN_ID,
 };
 
 export default config;
