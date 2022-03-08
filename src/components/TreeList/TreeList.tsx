@@ -333,9 +333,13 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const RenderItem = tree => {
+    const imageFs = tree.item?.treeSpecsEntity?.imageFs;
+    const size = imageFs ? 60 : 48;
+    const style = !imageFs ? {marginTop: 8} : {};
+
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <TreeImage tree={tree.item} tint size={60} />
+        <TreeImage tree={tree.item} tint size={size} style={style} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -599,6 +603,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginBottom: 15,
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   offlineTree: {
     width: 60,

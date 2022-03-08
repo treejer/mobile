@@ -13,15 +13,15 @@ export function treeImageSrc(tree: Tree): ImageSourcePropType {
 }
 
 export function treeColor(tree: Tree, treeUpdateInterval: number): string {
-  const id = Number(Hex2Dec(tree?.id));
   let color: string;
-  if (id >= 0 && id <= 10) {
-    color = colors.claimable;
-  } else if (id >= 11 && id <= 100) {
-    color = colors.pink;
-  } else {
-    color = colors.claimed;
-  }
+  const id = Number(Hex2Dec(tree?.id));
+  // if (id >= 0 && id <= 10) {
+  //   color = colors.claimable;
+  // } else if (id >= 11 && id <= 100) {
+  //   color = colors.pink;
+  // } else {
+  //   color = colors.claimed;
+  // }
   if (tree?.treeStatus?.toString() === '3') {
     color = colors.yellow;
     return color;
@@ -30,9 +30,15 @@ export function treeColor(tree: Tree, treeUpdateInterval: number): string {
     return color;
   } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
     color = colors.gray;
+  } else {
+    if (id <= 10000) {
+      color = null;
+    } else {
+      color = colors.green;
+    }
   }
 
-  return color || colors.green;
+  return color;
 }
 
 export function isUpdatePended(tree: Tree): boolean {

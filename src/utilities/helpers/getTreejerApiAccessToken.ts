@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Web3 from 'services/Magic';
 import {getUserNonce} from 'utilities/helpers/userNonce';
 import {userSign} from 'utilities/helpers/userSign';
-import {hexEncode} from 'utilities/helpers/hex';
 import {UserSignRes} from 'services/types';
 
 export async function getTreejerPrivateKeyApiAccessToken(privateKey: string, web3: Web3): Promise<UserSignRes> {
@@ -41,7 +40,7 @@ export async function getTreejerPrivateKeyApiAccessToken(privateKey: string, web
   const userNonceResult = await getUserNonce(wallet.address);
   console.log(userNonceResult, 'userNonceResult is here<===');
 
-  const signature = web3.eth.accounts.sign(hexEncode(userNonceResult.message), privateKey).signature;
+  const signature = web3.eth.accounts.sign(userNonceResult.message, privateKey).signature;
   console.log(signature, 'signature <===');
 
   try {
@@ -88,7 +87,7 @@ export async function getTreejerApiAccessToken(web3: Web3): Promise<UserSignRes>
   const userNonceResult = await getUserNonce(wallet);
   console.log(userNonceResult, 'userNonceResult is here<===');
 
-  const signature = await web3.eth.sign(hexEncode(userNonceResult.message), wallet);
+  const signature = await web3.eth.sign(userNonceResult.message, wallet);
   console.log(signature, 'signature <===');
 
   try {

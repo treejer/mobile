@@ -23,7 +23,17 @@ export function TreeImage(props: TreeImageProps) {
 
   if ((!nurseryHasLocations && tree?.treeSpecsEntity?.nursery === 'true') || isNursery) {
     return (
-      <View style={{alignItems: 'center', marginBottom: 3}}>
+      <View
+        style={[
+          {
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: size,
+            height: size,
+          },
+          style,
+        ]}
+      >
         <View style={{flexDirection: 'row'}}>
           <TreeSvg color={tintColor} size={size / 2.1} />
           <TreeSvg color={tintColor} size={size / 2.1} />
@@ -35,7 +45,7 @@ export function TreeImage(props: TreeImageProps) {
 
   return (
     <Image
-      style={[{width: size, height: size, tintColor: tint ? tintColor : undefined}, style]}
+      style={[{width: size, height: size, tintColor: tint && tintColor ? tintColor : undefined}, style]}
       source={treeImageSrc(tree)}
       {...restProps}
     />
