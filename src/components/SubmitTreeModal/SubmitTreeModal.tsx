@@ -5,7 +5,7 @@ import {colors} from 'constants/values';
 import Spacer from 'components/Spacer/Spacer';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {currentTimestamp} from 'utilities/helpers/date';
-import {getHttpDownloadUrl, upload, uploadContent} from 'utilities/helpers/IPFS';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import config from 'services/config';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -15,7 +15,6 @@ import {useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
-import SimpleToast from 'react-native-simple-toast';
 import {useSettings} from 'services/settings';
 import {newTreeJSON} from 'utilities/helpers/submitTree';
 

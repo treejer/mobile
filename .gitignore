@@ -76,3 +76,5 @@ buck-out/
 matic-test
 matic-main
 rinkeby
+
+.expo

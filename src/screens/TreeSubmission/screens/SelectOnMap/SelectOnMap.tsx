@@ -5,7 +5,7 @@ import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {TreeSubmissionRouteParamList} from 'types';
-import MapMarking from 'screens/TreeSubmission/components/MapMarking';
+import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 
 interface Props {}
 

@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import OnboardingScreen from 'screens/Onboarding/screens/OnboardingSlides';
+import OnboardingScreen from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
 
 import Welcome from './Onboarding/screens/SelectLanguage';
 import SignUp from './SignUp';

@@ -12,7 +12,7 @@ import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import SimpleToast from 'react-native-simple-toast';
+// import SimpleToast from 'react-native-simple-toast';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
@@ -239,7 +239,8 @@ function MyProfile(_: Props) {
             <TouchableOpacity
               onPress={() => {
                 Clipboard.setString(wallet);
-                SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
+                // SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
+                Alert.alert('myProfile.copied');
               }}
             >
               {wallet && (

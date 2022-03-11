@@ -5,7 +5,7 @@ import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {PlanterJoinList} from 'types';
-import MapMarking from 'screens/TreeSubmission/components/MapMarking';
+import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {GeoPosition} from 'react-native-geolocation-service';
 
 interface Props {}

@@ -10,7 +10,7 @@ import TreeDetailQuery, {
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 
 import SubmitTree from './screens/SubmitTree';
-import SelectPhoto from './screens/SelectPhoto';
+import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<

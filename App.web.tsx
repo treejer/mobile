@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SettingsProvider, {useAppInitialValue, SettingsContext} from './src/services/settings';
-import SplashScreen from 'react-native-splash-screen';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
 import Web3Provider, {Web3Context} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
@@ -20,10 +19,6 @@ const linking = {
 };
 
 export default function App() {
-  useEffect(() => {
-    SplashScreen.hide();
-  }, []);
-
   const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
 

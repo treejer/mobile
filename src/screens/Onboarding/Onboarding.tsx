@@ -2,7 +2,7 @@ import React from 'react';
 import {useSettings} from 'services/settings';
 
 import SelectLanguage from './screens/SelectLanguage';
-import OnboardingSlides from './screens/OnboardingSlides';
+import OnboardingSlides from './screens/OnboardingSlides/OnboardingSlides';
 
 function Onboarding() {
   const settings = useSettings();
