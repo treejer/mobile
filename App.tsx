@@ -14,6 +14,7 @@ import {i18next} from './src/localization';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 import {CurrentUserProvider} from './src/services/currentUser';
+import {magic} from './src/services/Magic';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <I18nextProvider i18n={i18next}>
+      <magic.Relayer />
       <SafeAreaProvider>
         {loading ? (
           <AppLoading />

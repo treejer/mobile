@@ -20,6 +20,7 @@ import {colors} from 'constants/values';
 import {magic} from 'services/Magic';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {useCurrentUser} from 'services/currentUser';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props {}
 
@@ -124,7 +125,7 @@ function NoWallet(_: Props) {
   return (
     <ScrollView keyboardShouldPersistTaps="always" style={{flex: 1}}>
       <KeyboardAwareScrollView keyboardShouldPersistTaps="always" style={{flex: 1}}>
-        <KeyboardDismiss>
+        <KeyboardDismiss noDismiss={isWeb()}>
           <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
             <Spacer times={8} />
             <Image

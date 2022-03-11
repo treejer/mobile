@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SettingsProvider, {useAppInitialValue, SettingsContext} from './src/services/settings';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
