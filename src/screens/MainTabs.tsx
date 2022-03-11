@@ -70,12 +70,15 @@ function TabWithTabBar({navigation}: Props) {
     };
   }, [navigation, tabsVisible]);
 
+  console.log(tabsVisible, 'tabsVisible')
+
   return (
     <Tab.Navigator
       tabBar={props => <TabBar tabsVisible={tabsVisible} {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarStyle: {display: tabsVisible ? 'flex' : 'none'},
+        // tabBar
       }}
       // initialRouteName="GreenBlock"
     >

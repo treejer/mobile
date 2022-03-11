@@ -6,3 +6,11 @@
 .slick-slider .slick-list .slick-track .slick-slide > div > div {
   height: 100%;
 }
+
+#ranger-web {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  background-color: #faf8f0;
+}

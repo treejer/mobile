@@ -6,7 +6,7 @@ export interface KeyboardDismissProps extends TouchableWithoutFeedbackProps {
 }
 
 export default function KeyboardDismiss(props: KeyboardDismissProps) {
-  const {noDismiss} = props;
+  const {noDismiss, style} = props;
 
   const handlePress = () => {
     if (!noDismiss) {
@@ -14,5 +14,5 @@ export default function KeyboardDismiss(props: KeyboardDismissProps) {
     }
   };
 
-  return <TouchableWithoutFeedback style={{flex: 1}} onPress={handlePress} {...props} />;
+  return <TouchableWithoutFeedback style={[{flex: 1}, style]} onPress={handlePress} {...props} />;
 }

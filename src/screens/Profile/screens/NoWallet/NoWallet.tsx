@@ -123,92 +123,100 @@ function NoWallet(_: Props) {
   }, [unlocked, navigation]);
 
   return (
-    <ScrollView keyboardShouldPersistTaps="always" style={{flex: 1}}>
-      <KeyboardAwareScrollView keyboardShouldPersistTaps="always" style={{flex: 1}}>
-        <KeyboardDismiss noDismiss={isWeb()}>
-          <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
-            <Spacer times={8} />
-            <Image
-              source={require('../../../../../assets/images/no-wallet.png')}
-              resizeMode="contain"
-              style={{width: 280, height: 180, alignSelf: 'center'}}
-            />
-            <Text style={[globalStyles.h4, globalStyles.textCenter]}>{t('createWallet.connectToMagic')}</Text>
-            <Spacer times={4} />
-
-            <View style={{marginHorizontal: 56, borderRadius: 8, width: 304, alignSelf: 'center'}}>
-              <View style={{alignItems: 'center'}}>
-                {isEmail ? (
-                  <TextField
-                    name="email"
-                    control={emailForm.control}
-                    placeholder={t('email')}
-                    success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
-                    rules={{required: true}}
-                    style={{width: '100%'}}
-                    keyboardType="email-address"
-                    onSubmitEditing={handleConnectWithEmail}
-                    disabled={loading}
-                  />
-                ) : (
-                  <PhoneField
-                    control={phoneNumberForm.control}
-                    name="phoneNumber"
-                    error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
-                    ref={phoneRef}
-                    textInputStyle={{height: 64, paddingLeft: 0}}
-                    defaultCode="CA"
-                    placeholder="Phone #"
-                    containerStyle={{width: '100%'}}
-                    disabled={loading}
-                  />
-                )}
-              </View>
-              <Spacer times={4} />
-              <View style={{alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch'}}>
-                <Button
-                  variant="success"
-                  caption={t('createWallet.loginWithPhone')}
-                  disabled={loading}
-                  loading={loading}
-                  onPress={isEmail ? handleConnectWithEmail : submitPhoneNumber}
-                  style={{alignSelf: 'stretch', justifyContent: 'center', alignItems: 'center'}}
-                />
-              </View>
-              <Spacer times={4} />
-              <Text style={{textAlign: 'center'}}>{t('createWallet.or')}</Text>
-              <Spacer times={4} />
-              <Button
-                caption={t(isEmail ? 'phoneNumber' : 'email')}
-                variant="secondary"
-                style={{alignItems: 'center', justifyContent: 'center'}}
-                onPress={handleToggleAuthMethod}
-                disabled={loading}
+    <View style={[globalStyles.screenView, globalStyles.fill, {height: '100%'}]}>
+      <ScrollView keyboardShouldPersistTaps="always" style={[{height: '100%', flex: 1}, globalStyles.screenView]}>
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{height: '100%', flex: 1}}
+          style={{height: '100%', flex: 1}}
+        >
+          <KeyboardDismiss noDismiss={isWeb()} style={{height: '100%'}}>
+            <View style={{height: '100%', flex: 1}}>
+              <Spacer times={8} />
+              <Image
+                source={require('../../../../../assets/images/no-wallet.png')}
+                resizeMode="contain"
+                style={{width: 280, height: 180, alignSelf: 'center'}}
               />
+              <Text style={[globalStyles.h4, globalStyles.textCenter]}>{t('createWallet.connectToMagic')}</Text>
               <Spacer times={4} />
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <SocialLoginButton name="Apple" disabled={loading} />
-                <Spacer times={2} />
-                <SocialLoginButton name="Google" color={colors.red} disabled={loading} />
-                <Spacer times={2} />
-                <SocialLoginButton name="Twitter" color="#24A4F3" disabled={loading} />
+
+              <View style={{marginHorizontal: 56, borderRadius: 8, width: 304, alignSelf: 'center'}}>
+                <View style={{alignItems: 'center'}}>
+                  {isEmail ? (
+                    <TextField
+                      name="email"
+                      control={emailForm.control}
+                      placeholder={t('email')}
+                      success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
+                      rules={{required: true}}
+                      style={{width: '100%'}}
+                      keyboardType="email-address"
+                      onSubmitEditing={handleConnectWithEmail}
+                      disabled={loading}
+                    />
+                  ) : (
+                    <PhoneField
+                      control={phoneNumberForm.control}
+                      name="phoneNumber"
+                      error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
+                      ref={phoneRef}
+                      textInputStyle={{height: 64, paddingLeft: 0}}
+                      defaultCode="CA"
+                      placeholder="Phone #"
+                      containerStyle={{width: '100%'}}
+                      disabled={loading}
+                    />
+                  )}
+                </View>
+                <Spacer times={4} />
+                <View style={{alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch'}}>
+                  <Button
+                    variant="success"
+                    caption={t('createWallet.loginWithPhone')}
+                    disabled={loading}
+                    loading={loading}
+                    onPress={isEmail ? handleConnectWithEmail : submitPhoneNumber}
+                    style={{alignSelf: 'stretch', justifyContent: 'center', alignItems: 'center'}}
+                  />
+                </View>
+                <Spacer times={4} />
+                <Text style={{textAlign: 'center'}}>{t('createWallet.or')}</Text>
+                <Spacer times={4} />
+                <Button
+                  caption={t(isEmail ? 'phoneNumber' : 'email')}
+                  variant="secondary"
+                  style={{alignItems: 'center', justifyContent: 'center'}}
+                  onPress={handleToggleAuthMethod}
+                  disabled={loading}
+                />
+                <Spacer times={4} />
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                  <SocialLoginButton name="Apple" disabled={loading} />
+                  <Spacer times={2} />
+                  <SocialLoginButton name="Google" color={colors.red} disabled={loading} />
+                  <Spacer times={2} />
+                  <SocialLoginButton name="Twitter" color="#24A4F3" disabled={loading} />
+                </View>
+              </View>
+              <Spacer times={4} />
+              <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
+                <Card style={globalStyles.alignItemsCenter}>
+                  <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
+                  <Spacer times={5} />
+                  <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.details')}</Text>
+                  <TouchableOpacity onPress={handleLearnMore} disabled={loading}>
+                    <Text style={[globalStyles.normal, globalStyles.textCenter]}>
+                      {t('createWallet.why.learnMore')}
+                    </Text>
+                  </TouchableOpacity>
+                </Card>
               </View>
             </View>
-            <Spacer times={4} />
-            <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
-              <Card style={globalStyles.alignItemsCenter}>
-                <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
-                <Spacer times={5} />
-                <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.details')}</Text>
-                <TouchableOpacity onPress={handleLearnMore} disabled={loading}>
-                  <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.learnMore')}</Text>
-                </TouchableOpacity>
-              </Card>
-            </View>
-          </View>
-        </KeyboardDismiss>
-      </KeyboardAwareScrollView>
-    </ScrollView>
+          </KeyboardDismiss>
+        </KeyboardAwareScrollView>
+      </ScrollView>
+    </View>
   );
 }
 

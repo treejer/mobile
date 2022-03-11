@@ -25,58 +25,60 @@ export default function App() {
   useInitialDeepLinking();
 
   return (
-    <I18nextProvider i18n={i18next}>
-      <SafeAreaProvider>
-        {loading ? (
-          <AppLoading />
-        ) : (
-          <SettingsProvider
-            initialUseGSN={useGSN}
-            onboardingDoneInitialState={onboardingDone}
-            localeInitialState={locale}
-          >
-            <OfflineTreeProvider>
-              <Web3Provider
-                persistedWallet={wallet}
-                persistedAccessToken={accessToken}
-                persistedUserId={userId}
-                persistedMagicToken={magicToken}
-              >
-                <Web3Context.Consumer>
-                  {({waiting, loading}) =>
-                    waiting && loading ? (
-                      <AppLoading />
-                    ) : (
-                      <ApolloProvider>
-                        <CurrentUserProvider>
-                          <SettingsContext.Consumer>
-                            {value => {
-                              const app =
-                                !value.locale || !value.onboardingDone ? (
-                                  <Onboarding />
-                                ) : (
-                                  <NavigationContainer linking={linking} ref={navigationRef}>
-                                    <MainTabs />
-                                  </NavigationContainer>
+    <div id="ranger-web">
+      <I18nextProvider i18n={i18next}>
+        <SafeAreaProvider>
+          {loading ? (
+            <AppLoading />
+          ) : (
+            <SettingsProvider
+              initialUseGSN={useGSN}
+              onboardingDoneInitialState={onboardingDone}
+              localeInitialState={locale}
+            >
+              <OfflineTreeProvider>
+                <Web3Provider
+                  persistedWallet={wallet}
+                  persistedAccessToken={accessToken}
+                  persistedUserId={userId}
+                  persistedMagicToken={magicToken}
+                >
+                  <Web3Context.Consumer>
+                    {({waiting, loading}) =>
+                      waiting && loading ? (
+                        <AppLoading />
+                      ) : (
+                        <ApolloProvider>
+                          <CurrentUserProvider>
+                            <SettingsContext.Consumer>
+                              {value => {
+                                const app =
+                                  !value.locale || !value.onboardingDone ? (
+                                    <Onboarding />
+                                  ) : (
+                                    <NavigationContainer linking={linking} ref={navigationRef}>
+                                      <MainTabs />
+                                    </NavigationContainer>
+                                  );
+                                return (
+                                  <>
+                                    <NetInfo />
+                                    {app}
+                                  </>
                                 );
-                              return (
-                                <>
-                                  <NetInfo />
-                                  {app}
-                                </>
-                              );
-                            }}
-                          </SettingsContext.Consumer>
-                        </CurrentUserProvider>
-                      </ApolloProvider>
-                    )
-                  }
-                </Web3Context.Consumer>
-              </Web3Provider>
-            </OfflineTreeProvider>
-          </SettingsProvider>
-        )}
-      </SafeAreaProvider>
-    </I18nextProvider>
+                              }}
+                            </SettingsContext.Consumer>
+                          </CurrentUserProvider>
+                        </ApolloProvider>
+                      )
+                    }
+                  </Web3Context.Consumer>
+                </Web3Provider>
+              </OfflineTreeProvider>
+            </SettingsProvider>
+          )}
+        </SafeAreaProvider>
+      </I18nextProvider>
+    </div>
   );
 }
