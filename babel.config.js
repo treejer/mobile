@@ -1,5 +1,5 @@
 module.exports = function (api) {
-  console.log(process.env.REACT_APP_WEB, 'process.env.REACT_APP_WEB')
+  console.log(process.env.REACT_APP_WEB, 'process.env.REACT_APP_WEB');
   api.cache(true);
   return {
     // eslint-disable-next-line no-process-env

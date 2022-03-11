@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Alert, Linking} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationProp} from '@react-navigation/native';
-import TabBar from 'components/TabBar';
+import TabBar from 'components/TabBar/TabBar';
 import {usePrivateKeyStorage, useWalletAccount} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import {MainTabsParamList} from 'types';
