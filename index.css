@@ -1,0 +1,8 @@
+.slick-slider,
+.slick-slider .slick-list,
+.slick-slider .slick-list .slick-track,
+.slick-slider .slick-list .slick-track .slick-slide,
+.slick-slider .slick-list .slick-track .slick-slide > div,
+.slick-slider .slick-list .slick-track .slick-slide > div > div {
+  height: 100%;
+}
