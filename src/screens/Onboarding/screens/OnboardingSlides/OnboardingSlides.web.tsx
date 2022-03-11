@@ -1,9 +1,7 @@
 import globalStyles from 'constants/styles';
 
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Image, ListRenderItem, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
-// import Carousel from 'react-native-snap-carousel';
-// import {scrollInterpolator, animatedStyles} from 'utilities/helpers/animations';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
@@ -24,7 +22,6 @@ interface OnboardingData {
 }
 
 function OnboardingScreen() {
-  // const navigation = useNavigation();
   const {t} = useTranslation();
 
   const carouselRef = useRef<Slider>(null);
@@ -69,10 +66,6 @@ function OnboardingScreen() {
     carouselRef.current?.slickNext();
   }, [isEnd, markOnboardingAsDone]);
 
-  // const onSnapToItem = useCallback((newIndex: number) => {
-  //   setCurrentStep(newIndex);
-  // }, []);
-
   return (
     <View style={globalStyles.fill}>
       <BackgroundEntropy />
@@ -80,9 +73,9 @@ function OnboardingScreen() {
         <Slider {...settings} ref={carouselRef}>
           {onboardingData?.map(item => (
             <div key={item.heading}>
-              <View style={{display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+              <View style={styles.sliderWrapper}>
                 <View style={[globalStyles.justifyContentEnd]}>
-                  <Image source={item.image} style={{height: 300, width: 300}} />
+                  <Image source={item.image} style={styles.sliderImage} />
                 </View>
                 <Text style={[globalStyles.h3, globalStyles.textCenter, globalStyles.pt1]}>{item.heading}</Text>
                 <Text style={[globalStyles.normal, globalStyles.textCenter, globalStyles.pt1]}>{item.content}</Text>
@@ -109,5 +102,15 @@ export default OnboardingScreen;
 const styles = StyleSheet.create({
   bottomWrapper: {
     height: 200,
+  },
+  sliderWrapper: {
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sliderImage: {
+    height: 300,
+    width: 300,
   },
 });
