@@ -19,6 +19,8 @@ import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'services/settings';
 import {ProfileRouteParamList} from 'types';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import config from 'services/config';
 
 interface Props {
   navigation: any;
@@ -126,14 +128,14 @@ function MyProfile(_: Props) {
       const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
       if (balance > bnMinBalance) {
         try {
-          // const transaction = await sendTransactionWithGSN(
-          //   web3,
-          //   wallet,
-          //   config.contracts.PlanterFund,
-          //   'withdrawBalance',
-          //   [planterData?.balance.toString()],
-          //   useGSN,
-          // );
+          const transaction = await sendTransactionWithGSN(
+            web3,
+            wallet,
+            config.contracts.PlanterFund,
+            'withdrawBalance',
+            [planterData?.balance.toString()],
+            useGSN,
+          );
 
           // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
           // const transaction = await sendTransactionWithGSN(
@@ -143,7 +145,7 @@ function MyProfile(_: Props) {
           //   'withdrawPlanterBalance',
           // );
 
-          // console.log('transaction', transaction);
+          console.log('transaction', transaction);
           Alert.alert(t('success'), t('myProfile.withdraw.success'));
         } catch (e) {
           Alert.alert(t('failure'), e.message || t('sthWrong'));
