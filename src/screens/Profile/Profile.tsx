@@ -27,14 +27,12 @@ function ProfileStack() {
 
   return (
     <Stack.Navigator
-      // initialRouteName={initialRoute}
-      initialRouteName="MapWeb"
+      initialRouteName={initialRoute}
       screenOptions={{
         contentStyle: globalStyles.screenView,
         headerShown: false,
       }}
     >
-      <Stack.Screen name="MapWeb" component={MapWeb} />
       <Stack.Screen name="NoWallet" component={NoWallet} />
       <Stack.Screen name="MyProfile" component={MyProfile} />
       <Stack.Screen name="OfflineMap" component={OfflineMap} />

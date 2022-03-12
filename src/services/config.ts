@@ -57,4 +57,7 @@ const config = {
   chainId: process.env.REACT_NATIVE_CHAIN_ID,
 };
 
+console.log(config,'hello');
+
+
 export default config;
