@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, Text, Image, Alert} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
@@ -10,6 +10,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {ProfileRouteParamList} from 'types';
 import AppVersion from 'components/AppVersion';
+import {isWeb} from 'utilities/helpers/web';
 
 export interface SelectLanguageProps {
   route?: RouteProp<ProfileRouteParamList, 'SelectLanguage'>;
@@ -33,13 +34,17 @@ function SelectLanguage(props: SelectLanguageProps) {
     }
   };
 
+  const imageStyle = useMemo(() => {
+    return isWeb() ? {height: '40vh', width: '100%'} : {};
+  }, []);
+
   return (
     <View style={globalStyles.fill}>
       <BackgroundEntropy />
       <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
         <Text style={[globalStyles.h2, globalStyles.textCenter]}>TREEJER{'\n'}RANGER APP</Text>
         <AppVersion style={globalStyles.mb1} />
-        <Image source={require('../../../../../assets/images/welcome.png')} />
+        <Image source={require('../../../../../assets/images/welcome.png')} style={imageStyle} />
         <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
         <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
           <Button

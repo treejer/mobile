@@ -82,14 +82,14 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   );
 
   return (
-    <SafeAreaView style={{...globalStyles.screenView, ...globalStyles.fill, ...styles.container}}>
-      <TouchableOpacity style={{...styles.plantType, borderColor: singleColor}} onPress={handleSelectSingle}>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
+      <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectSingle}>
         <Image source={treeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
-          <Text style={{...styles.text, color: singleColor}}>{t('submitTree.singleTree')}</Text>
+          <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.singleTree')}</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={{...styles.plantType, borderColor: nurseryColor}} onPress={handleSelectNursery}>
+      <TouchableOpacity style={[{borderColor: nurseryColor}, styles.plantType]} onPress={handleSelectNursery}>
         <View style={styles.treesWrapper}>
           <View style={styles.trees}>
             <Tree color={nurseryColor} size={24} />
