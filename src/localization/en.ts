@@ -16,6 +16,8 @@ export const en = {
     addArea: 'Add Area',
     viewAll: 'View All',
     download: 'Download',
+    notSupported: "Offline map is not available on web",
+    downloadApplication: "Download Ranger mobile application",
   },
   getVerified: 'Get Verified',
   help: 'Help',

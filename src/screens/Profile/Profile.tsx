@@ -16,6 +16,7 @@ import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
+import {MapWeb} from './screens/MapWeb';
 
 const Stack = createNativeStackNavigator<ProfileRouteParamList>();
 const RootStack = createNativeStackNavigator();

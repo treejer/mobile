@@ -34,7 +34,7 @@ const config = {
     useGSN: '__TREEJER_USE_GSN',
   },
   web3Url: process.env.REACT_NATIVE_WEB3_PROVIDER,
-  treejerApiUrl: process.env.REACT_NATIVE_TREEJER_API_URL.replace(/\/$/, ''),
+  treejerApiUrl: process.env.REACT_NATIVE_TREEJER_API_URL?.replace(/\/$/, ''),
   publicKeyRecoveryMessage: process.env.REACT_NATIVE_PUBLIC_KEY_RECOVERY_MESSAGE,
   treejerClientSecret: process.env.REACT_NATIVE_TREEJER_CLIENT_SECRET,
   treejerClientId: process.env.REACT_NATIVE_TREEJER_CLIENT_ID,
@@ -43,6 +43,7 @@ const config = {
   ipfsPostURL: process.env.REACT_NATIVE_IPFS_POST_URL,
   ipfsGetURL: process.env.REACT_NATIVE_IPFS_GET_URL,
   mapboxToken: process.env.REACT_NATIVE_MAPBOX,
+  mapboxPublicToken: process.env.REACT_NATIVE_MAPBOX_PUBLIC_TOKEN,
   defaultLocale: 'en',
   rangerUrl: process.env.REACT_NATIVE_RANGER_URL,
   preferredRelays: process.env.REACT_NATIVE_WEB3_PREFERREDRELAYS,
@@ -55,5 +56,8 @@ const config = {
   magicNetwork: process.env.REACT_NATIVE_MAGIC_NETWORK,
   chainId: process.env.REACT_NATIVE_CHAIN_ID,
 };
+
+console.log(config,'hello');
+
 
 export default config;
