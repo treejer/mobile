@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from 'services/config';
+import {storageKeys} from 'services/config';
 
-export const offlineTreesStorageKey = config.storageKeys.offlineTrees;
-export const offlineUpdatedTreesStorageKey = config.storageKeys.offlineUpdatedTrees;
+export const offlineTreesStorageKey = storageKeys.offlineTrees;
+export const offlineUpdatedTreesStorageKey = storageKeys.offlineUpdatedTrees;
 
 export interface OfflineTreesState {
   planted: TreeJourney[] | null;

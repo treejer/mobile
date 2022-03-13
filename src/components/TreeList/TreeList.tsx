@@ -2,21 +2,20 @@ import globalStyles from 'constants/styles';
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
+  FlatList,
+  Modal,
+  RefreshControl,
   StyleSheet,
   Text,
-  View,
-  Image,
-  ActivityIndicator,
-  FlatList,
-  useWindowDimensions,
-  RefreshControl,
   TouchableOpacity,
-  Modal,
+  useWindowDimensions,
+  View,
 } from 'react-native';
 import {NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
 import Button from '../Button';
@@ -29,12 +28,12 @@ import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import useTempTrees from 'utilities/hooks/useTempTrees';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
 import {useSettings} from 'services/settings';
 import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {TreeImage} from 'components/TreeList/TreeImage';
+import {ContractType} from 'services/config';
 
 export enum TreeFilter {
   All = 'All',
@@ -81,6 +80,7 @@ function Trees({route, navigation, filter}: Props) {
     }, [initialFilter, filters]),
   );
 
+  const config = useConfig();
   const [offlineLoadings, setOfflineLoadings] = useState([]);
   const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
 
@@ -160,22 +160,23 @@ function Trees({route, navigation, filter}: Props) {
     }
     setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
 
-      const jsonData = updateTreeJSON({
+      const jsonData = updateTreeJSON(config.ipfsGetURL, {
         tree: treeJourney.tree,
         journey: treeJourney,
         photoUploadHash: photoUploadResult.Hash,
       });
 
-      const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
       const receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         address,
-        config.contracts.TreeFactory,
         'updateTree',
         [treeJourney.treeIdToUpdate, metaDataUploadResult.Hash],
         useGSN,
@@ -197,20 +198,21 @@ function Trees({route, navigation, filter}: Props) {
     }
     try {
       setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-      const photoUploadResult = await upload(journey.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
 
-      const jsonData = assignedTreeJSON({
+      const jsonData = assignedTreeJSON(config.ipfsGetURL, {
         journey,
         tree: journey?.tree,
         photoUploadHash: photoUploadResult.Hash,
       });
 
-      const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
 
       const receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         address,
-        config.contracts.TreeFactory,
         'plantAssignedTree',
         [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
         useGSN,
@@ -239,19 +241,20 @@ function Trees({route, navigation, filter}: Props) {
     } else {
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
       try {
-        const photoUploadResult = await upload(treeJourney.photo.path);
-        const jsonData = newTreeJSON({
+        const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo.path);
+        const jsonData = newTreeJSON(config.ipfsGetURL, {
           journey: treeJourney,
           photoUploadHash: photoUploadResult.Hash,
         });
 
-        const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+        const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
         const receipt = await sendTransactionWithGSN(
+          config,
+          ContractType.TreeFactory,
           web3,
           address,
-          config.contracts.TreeFactory,
           'plantTree',
           [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
           useGSN,

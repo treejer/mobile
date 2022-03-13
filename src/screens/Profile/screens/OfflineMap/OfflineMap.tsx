@@ -95,8 +95,8 @@ const OfflineMap = ({navigation}) => {
     const offlineMapId = `TreeMapper-offline-map-id-${Date.now()}`;
     if (isConnected) {
       setIsLoaderShow(true);
-      const coords = await MapBoxGLRef.current.getCenter();
-      const bounds = await MapBoxGLRef.current.getVisibleBounds();
+      const coords = await MapBoxGLRef?.current.getCenter();
+      const bounds = await MapBoxGLRef?.current.getVisibleBounds();
       getAreaName({coords})
         .then(async areaName => {
           setAreaName(areaName);
