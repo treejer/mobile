@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from 'constants/values';
@@ -8,6 +8,8 @@ import {useChangeNetwork, useConfig} from 'services/web3';
 import {BlockchainNetwork} from 'services/config';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
+import RNRestart from 'react-native-restart';
+import {useCurrentUser} from 'services/currentUser';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -16,6 +18,8 @@ export function SwitchNetwork() {
   const config = useConfig();
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
   const changeNetwork = useChangeNetwork();
+
+  const {handleLogout} = useCurrentUser();
 
   const {t} = useTranslation();
 
@@ -37,8 +41,10 @@ export function SwitchNetwork() {
       changeNetwork(network);
       setConfirming(null);
       setShowModal(false);
+      handleLogout();
+      RNRestart.Restart();
     },
-    [changeNetwork],
+    [changeNetwork, handleLogout],
   );
 
   return (
@@ -56,7 +62,7 @@ export function SwitchNetwork() {
                       onConfirm={handleConfirmNetwork}
                     />
                   ) : (
-                    <SelectNetwork handleSelectNetwork={handleSelectNetwork} />
+                    <SelectNetwork handleSelectNetwork={handleSelectNetwork} activeNetwork={config.magicNetwork} />
                   )}
                 </ScrollView>
               </View>

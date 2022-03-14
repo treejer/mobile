@@ -8,10 +8,11 @@ import Spacer from 'components/Spacer/Spacer';
 
 export interface SelectNetworkProps {
   handleSelectNetwork: (network: BlockchainNetwork) => void;
+  activeNetwork: BlockchainNetwork;
 }
 
 export function SelectNetwork(props: SelectNetworkProps) {
-  const {handleSelectNetwork} = props;
+  const {handleSelectNetwork, activeNetwork} = props;
 
   const {t} = useTranslation();
 
@@ -29,12 +30,22 @@ export function SelectNetwork(props: SelectNetworkProps) {
       <Text style={[globalStyles.h6]}>{t('networks.testTitle')}</Text>
       <Spacer times={4} />
       {networks.test.map(network => (
-        <NetworkItem key={network} network={network} onPress={() => handleSelectNetwork(network)} />
+        <NetworkItem
+          activeNetwork={activeNetwork}
+          key={network}
+          network={network}
+          onPress={() => handleSelectNetwork(network)}
+        />
       ))}
       <Text style={[globalStyles.h6]}>{t('networks.mainTitle')}</Text>
       <Spacer times={4} />
       {networks.main.map(network => (
-        <NetworkItem key={network} network={network} onPress={() => handleSelectNetwork(network)} />
+        <NetworkItem
+          activeNetwork={activeNetwork}
+          key={network}
+          network={network}
+          onPress={() => handleSelectNetwork(network)}
+        />
       ))}
     </View>
   );

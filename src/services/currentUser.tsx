@@ -139,11 +139,13 @@ export function CurrentUserProvider(props) {
           await AsyncStorage.removeItem(storageKeys.magicToken);
         }
         const locale = await AsyncStorage.getItem(storageKeys.locale);
+        const network = await AsyncStorage.getItem(storageKeys.blockchainNetwork);
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
         changeUseGsn(true);
         await AsyncStorage.setItem(storageKeys.locale, locale);
+        await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         if (!userPressed) {
           if (offlineTrees.planted) {
             await AsyncStorage.setItem(offlineTreesStorageKey, JSON.stringify(offlineTrees.planted));
