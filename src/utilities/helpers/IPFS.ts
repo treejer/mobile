@@ -1,5 +1,3 @@
-import config from 'services/config';
-
 interface IPFSUploadResponse {
   Hash: string;
   Name: string;

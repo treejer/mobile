@@ -355,6 +355,7 @@ function MyProfile(_: Props) {
           </>
         )}
       </View>
+      <Spacer times={4} />
     </ScrollView>
   );
 }

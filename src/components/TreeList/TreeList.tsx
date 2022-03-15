@@ -413,7 +413,7 @@ function Trees({route, navigation, filter}: Props) {
           renderItem={RenderItem}
           keyExtractor={item => item.id}
           ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
-          style={{paddingVertical: 20, flex: 1}}
+          style={{flex: 1}}
           refreshing
           onEndReached={plantedLoadMore}
           onRefresh={refetchPlantedTrees}
@@ -438,7 +438,7 @@ function Trees({route, navigation, filter}: Props) {
           onEndReached={tempLoadMore}
           keyExtractor={item => item.id}
           ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
-          style={{paddingVertical: 20, flex: 1}}
+          style={{flex: 1}}
           refreshing
           onRefresh={refetchTempTrees}
           numColumns={calcTreeColumnNumber()}
@@ -505,7 +505,7 @@ function Trees({route, navigation, filter}: Props) {
           renderItem={renderItem}
           keyExtractor={item => (isPlanted ? item.offlineId : item.treeIdToUpdate)}
           ListEmptyComponent={isConnected ? () => offlineEmpty(isPlanted) : NoInternetTrees}
-          style={{paddingVertical: 20, flex: 1}}
+          style={{flex: 1}}
           numColumns={calcTreeColumnNumber()}
           contentContainerStyle={styles.listScrollWrapper}
         />
@@ -560,8 +560,7 @@ function Trees({route, navigation, filter}: Props) {
         globalStyles.screenView,
         globalStyles.safeArea,
         {
-          paddingBottom: 60,
-          paddingVertical: 10,
+          paddingBottom: 40,
           paddingHorizontal: 12,
           flex: 1,
         },
@@ -589,9 +588,6 @@ function Trees({route, navigation, filter}: Props) {
 }
 
 const styles = StyleSheet.create({
-  listWrapper: {
-    paddingBottom: 120,
-  },
   listScrollWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
