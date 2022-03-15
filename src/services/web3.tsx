@@ -78,8 +78,6 @@ function Web3Provider(props: Props) {
   const magic = useMemo<Magic>(() => magicGenerator(config), [config]);
   const web3 = useMemo(() => new Web3(magic.rpcProvider), [magic]);
 
-  console.log(config, 'config is here');
-
   const [wallet, setWallet] = useState<null | string>(persistedWallet);
   const [magicToken, setMagicToken] = useState<string>(persistedMagicToken);
   const [waiting, setWaiting] = useState<boolean>(true);

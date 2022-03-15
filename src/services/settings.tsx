@@ -185,7 +185,7 @@ export const useAppInitialValue = () => {
               case storageKeys.blockchainNetwork:
                 return {
                   ...acc,
-                  blockchainNetwork: value === null ? BlockchainNetwork.Rinkeby : value,
+                  blockchainNetwork: value === null ? BlockchainNetwork.MaticMain : value,
                 };
               default:
                 return acc;

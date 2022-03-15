@@ -62,7 +62,11 @@ export function SwitchNetwork() {
                       onConfirm={handleConfirmNetwork}
                     />
                   ) : (
-                    <SelectNetwork handleSelectNetwork={handleSelectNetwork} activeNetwork={config.magicNetwork} />
+                    <SelectNetwork
+                      handleSelectNetwork={handleSelectNetwork}
+                      activeNetwork={config.magicNetwork}
+                      handleCloseModal={handleCloseModal}
+                    />
                   )}
                 </ScrollView>
               </View>

@@ -1,18 +1,21 @@
 import React, {useMemo} from 'react';
-import {Text, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import globalStyles from 'constants/styles';
 import {NetworkItem} from 'components/SwitchNetwork/NetworkItem';
 import {BlockchainNetwork} from 'services/config';
 import {useTranslation} from 'react-i18next';
 import Spacer from 'components/Spacer/Spacer';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {colors} from 'constants/values';
 
 export interface SelectNetworkProps {
   handleSelectNetwork: (network: BlockchainNetwork) => void;
   activeNetwork: BlockchainNetwork;
+  handleCloseModal: () => void;
 }
 
 export function SelectNetwork(props: SelectNetworkProps) {
-  const {handleSelectNetwork, activeNetwork} = props;
+  const {handleSelectNetwork, activeNetwork, handleCloseModal} = props;
 
   const {t} = useTranslation();
 
@@ -26,10 +29,15 @@ export function SelectNetwork(props: SelectNetworkProps) {
 
   return (
     <View style={{flex: 1}}>
-      <Text style={[globalStyles.h5, {marginBottom: 12}]}>{t('networks.selectNetwork')}</Text>
-      <Text style={[globalStyles.h6]}>{t('networks.testTitle')}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12}}>
+        <Text style={[globalStyles.h5]}>{t('networks.selectNetwork')}</Text>
+        <TouchableOpacity onPress={handleCloseModal}>
+          <MaterialIcons name="close" size={20} color={colors.grayDarker} />
+        </TouchableOpacity>
+      </View>
+      <Text style={[globalStyles.h6]}>{t('networks.mainTitle')}</Text>
       <Spacer times={4} />
-      {networks.test.map(network => (
+      {networks.main.map(network => (
         <NetworkItem
           activeNetwork={activeNetwork}
           key={network}
@@ -37,9 +45,9 @@ export function SelectNetwork(props: SelectNetworkProps) {
           onPress={() => handleSelectNetwork(network)}
         />
       ))}
-      <Text style={[globalStyles.h6]}>{t('networks.mainTitle')}</Text>
+      <Text style={[globalStyles.h6]}>{t('networks.testTitle')}</Text>
       <Spacer times={4} />
-      {networks.main.map(network => (
+      {networks.test.map(network => (
         <NetworkItem
           activeNetwork={activeNetwork}
           key={network}
