@@ -1,9 +1,6 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from '../../services/config';
-
-export async function getUserNonce(publicAddress: string) {
+export async function getUserNonce(treejerApiUrl: string, publicAddress: string) {
   try {
-    const response = await fetch(`${config.treejerApiUrl}/user/nonce?publicAddress=${publicAddress}`, {
+    const response = await fetch(`${treejerApiUrl}/user/nonce?publicAddress=${publicAddress}`, {
       method: 'GET',
     });
 

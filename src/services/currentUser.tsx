@@ -3,7 +3,7 @@ import React, {createContext, useCallback, useContext, useEffect, useMemo, useSt
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
-import config from 'services/config';
+import {BlockchainNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
@@ -80,7 +80,7 @@ export function CurrentUserProvider(props) {
 
   useEffect(() => {
     (async function () {
-      const localUser = await AsyncStorage.getItem(config.storageKeys.user);
+      const localUser = await AsyncStorage.getItem(storageKeys.user);
       if (localUser) {
         setCurrentUser(JSON.parse(localUser));
       }
@@ -92,7 +92,7 @@ export function CurrentUserProvider(props) {
       const newUser = await refetch();
       if (newUser?.data?.user) {
         setCurrentUser(newUser.data.user);
-        await AsyncStorage.setItem(config.storageKeys.user, JSON.stringify(newUser.data.user));
+        await AsyncStorage.setItem(storageKeys.user, JSON.stringify(newUser.data.user));
       }
     } catch (e) {
       console.log(e, 'e inside refetchUser');
@@ -136,14 +136,16 @@ export function CurrentUserProvider(props) {
           } catch (e) {
             return Promise.reject(e);
           }
-          await AsyncStorage.removeItem(config.storageKeys.magicToken);
+          await AsyncStorage.removeItem(storageKeys.magicToken);
         }
-        const locale = await AsyncStorage.getItem(config.storageKeys.locale);
+        const locale = await AsyncStorage.getItem(storageKeys.locale);
+        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || BlockchainNetwork.MaticMain;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
         changeUseGsn(true);
-        await AsyncStorage.setItem(config.storageKeys.locale, locale);
+        await AsyncStorage.setItem(storageKeys.locale, locale);
+        await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         if (!userPressed) {
           if (offlineTrees.planted) {
             await AsyncStorage.setItem(offlineTreesStorageKey, JSON.stringify(offlineTrees.planted));

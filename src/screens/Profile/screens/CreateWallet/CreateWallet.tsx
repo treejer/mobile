@@ -23,7 +23,7 @@ function CreateWallet() {
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
   const web3 = useWeb3();
-  const {storePrivateKey} = usePrivateKeyStorage();
+  // const {storePrivateKey} = usePrivateKeyStorage();
 
   const handleConnectWallet = handleSubmit(({password}) => {
     setLoading(true);
@@ -31,15 +31,15 @@ function CreateWallet() {
     requestAnimationFrame(() => {
       const account = web3.eth.accounts.create();
       web3.eth.accounts.wallet.add(account);
-      storePrivateKey(account.privateKey, password)
-        .then(() => {
-          setAccount(account);
-          setCurrentStep(2);
-          setLoading(false);
-        })
-        .catch(() => {
-          console.warn('Error saving private key');
-        });
+      // storePrivateKey(account.privateKey, password)
+      //   .then(() => {
+      //     setAccount(account);
+      //     setCurrentStep(2);
+      //     setLoading(false);
+      //   })
+      //   .catch(() => {
+      //     console.warn('Error saving private key');
+      //   });
     });
   });
 

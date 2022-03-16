@@ -1,13 +1,12 @@
 import axios from 'axios';
 import Realm from 'realm';
 import {getSchema} from './default';
-import config from '../../services/config';
 
-export const getAreaName = ({coords}) => {
+export const getAreaName = ({coords}, mapboxToken) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'GET',
-      url: `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?types=place&access_token=${config.mapboxToken}`,
+      url: `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?types=place&access_token=${mapboxToken}`,
       headers: {
         'Content-Type': 'application/json',
       },

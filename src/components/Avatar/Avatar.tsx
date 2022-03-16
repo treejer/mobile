@@ -2,8 +2,7 @@ import {colors} from 'constants/values';
 
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
-import {useWalletAccount} from 'services/web3';
-import config from 'services/config';
+import {useConfig, useWalletAccount} from 'services/web3';
 
 interface Props {
   size?: number;
@@ -17,10 +16,12 @@ const SIZE_OFFSET = (BORDER_WIDTH + BORDER_GAP) * 2;
 function Avatar({size = 64, type}: Props) {
   const [uri, setUri] = useState('');
 
+  const config = useConfig();
   const account = useWalletAccount();
+
   useEffect(() => {
     setUri(`${config.avatarBaseUrl}/${account ? account.toLowerCase() : 'null'}`);
-  }, []);
+  }, [account, config.avatarBaseUrl]);
 
   const imageSize = size - SIZE_OFFSET;
   const borderRadius = Math.ceil(size / 2);
