@@ -17,6 +17,7 @@ import {NetworkConfig} from './config';
 import {useAccessToken, useConfig, useUserId, useWeb3} from './web3';
 
 function createRestLink(config: NetworkConfig, accessToken?: string, userId?: string) {
+  console.log(config, 'config is ejre');
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
     console.log(`[Network error]:`, networkError ? JSON.parse(JSON.stringify(networkError)) : response);
     // console.log(`[graphQLErrors error]:`, graphQLErrors);

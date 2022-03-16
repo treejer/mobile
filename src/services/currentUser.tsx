@@ -3,7 +3,7 @@ import React, {createContext, useCallback, useContext, useEffect, useMemo, useSt
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {storageKeys} from 'services/config';
+import {BlockchainNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
@@ -139,7 +139,7 @@ export function CurrentUserProvider(props) {
           await AsyncStorage.removeItem(storageKeys.magicToken);
         }
         const locale = await AsyncStorage.getItem(storageKeys.locale);
-        const network = await AsyncStorage.getItem(storageKeys.blockchainNetwork);
+        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || BlockchainNetwork.MaticMain;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();

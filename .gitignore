@@ -69,6 +69,3 @@ buck-out/
 *.hprof
 
 .env
-.env.rinkeby
-.env.maticmain
-.env.matictest
