@@ -13,10 +13,11 @@ import {Web3JSResolver} from 'apollo-link-ethereum-resolver-web3js/lib';
 import camelCase from 'lodash/camelCase';
 import Web3 from 'services/Magic';
 
-import config from './config';
-import {useAccessToken, useUserId, useWeb3} from './web3';
+import {NetworkConfig} from './config';
+import {useAccessToken, useConfig, useUserId, useWeb3} from './web3';
 
-function createRestLink(accessToken?: string, userId?: string) {
+function createRestLink(config: NetworkConfig, accessToken?: string, userId?: string) {
+  console.log(config, 'config is ejre');
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
     console.log(`[Network error]:`, networkError ? JSON.parse(JSON.stringify(networkError)) : response);
     // console.log(`[graphQLErrors error]:`, graphQLErrors);
@@ -75,7 +76,7 @@ function createRestLink(accessToken?: string, userId?: string) {
   );
 }
 
-function createEthereumLink(web3?: Web3) {
+function createEthereumLink(config: NetworkConfig, web3?: Web3) {
   const abiMapping = new AbiMapping();
   Object.entries(config.contracts).map(([name, contract]) => {
     abiMapping.addAbi(name, contract.abi);
@@ -102,9 +103,9 @@ function createEthereumLink(web3?: Web3) {
   return new EthereumLink(resolver);
 }
 
-function createApolloClient(accessToken?: string, userId?: string, web3?: Web3) {
-  const restLink = createRestLink(accessToken, userId);
-  const ethereumLink = createEthereumLink(web3);
+function createApolloClient(config: NetworkConfig, accessToken?: string, userId?: string, web3?: Web3) {
+  const restLink = createRestLink(config, accessToken, userId);
+  const ethereumLink = createEthereumLink(config, web3);
 
   const uri = config.thegraphUrl;
   const graphqlLink = new HttpLink({uri});
@@ -144,8 +145,12 @@ function ApolloProvider({children}: Props) {
   const userId = useUserId();
   console.log(userId, 'userId');
   const web3 = useWeb3();
+  const config = useConfig();
 
-  const client = useMemo(() => createApolloClient(accessToken, userId, web3), [accessToken, web3, userId]);
+  const client = useMemo(
+    () => createApolloClient(config, accessToken, userId, web3),
+    [config, accessToken, userId, web3],
+  );
 
   return <OriginalApolloProvider client={client}>{children}</OriginalApolloProvider>;
 }

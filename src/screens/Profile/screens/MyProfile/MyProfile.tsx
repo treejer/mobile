@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, RefreshControl, Alert, Linking, TouchableOpacity} from 'react-native';
+import {Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RouteProp, useNavigation} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -7,7 +7,7 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useWalletAccount, useWalletWeb3, usePlanterFund} from 'services/web3';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
@@ -20,7 +20,7 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'services/settings';
 import {ProfileRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
+import {ContractType} from 'services/config';
 
 interface Props {
   navigation: any;
@@ -33,6 +33,7 @@ function MyProfile(_: Props) {
   const requiredBalance = useMemo(() => 500000000000000000, []);
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
+  const config = useConfig();
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
@@ -101,7 +102,7 @@ function MyProfile(_: Props) {
     } catch (e) {
       console.log(e, 'e is hereeeeee getPlanter');
     }
-  }, [planterRefetch]);
+  }, [getMinBalance, isConnected, planterRefetch]);
 
   const parseBalance = useCallback(
     (balance: string, fixed = 5) => parseFloat(web3?.utils?.fromWei(balance))?.toFixed(fixed),
@@ -129,21 +130,14 @@ function MyProfile(_: Props) {
       if (balance > bnMinBalance) {
         try {
           const transaction = await sendTransactionWithGSN(
+            config,
+            ContractType.PlanterFund,
             web3,
             wallet,
-            config.contracts.PlanterFund,
             'withdrawBalance',
             [planterData?.balance.toString()],
             useGSN,
           );
-
-          // const transaction = await treeFactory.methods.withdrawPlanterBalance().send({from: wallet.address, gas: 1e6});
-          // const transaction = await sendTransactionWithGSN(
-          //   web3,
-          //   wallet,
-          //   config.contracts.TreeFactory,
-          //   'withdrawPlanterBalance',
-          // );
 
           console.log('transaction', transaction);
           Alert.alert(t('success'), t('myProfile.withdraw.success'));
@@ -295,19 +289,6 @@ function MyProfile(_: Props) {
                 </>
               )}
 
-              {/* {
-            <>
-              <Button
-                style={styles.button}
-                caption="CLEAR"
-                variant="tertiary"
-                onPress={() => {
-                  SecureStore.deleteItemAsync(config.storageKeys.privateKey);
-                }}
-              />
-              <Spacer times={4} />
-            </>
-          } */}
               {!_.route.params?.hideVerification && status === UserStatus.Unverified && (
                 <>
                   <Button
@@ -374,6 +355,7 @@ function MyProfile(_: Props) {
           </>
         )}
       </View>
+      <Spacer times={4} />
     </ScrollView>
   );
 }
