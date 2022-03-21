@@ -13,13 +13,15 @@ import {i18next} from './src/localization';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 import {CurrentUserProvider} from './src/services/currentUser';
+import {SwitchNetwork} from './src/components/SwitchNetwork/SwitchNetwork';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
 };
 
 export default function App() {
-  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
+  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken, blockchainNetwork} =
+    useAppInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
 
   useInitialDeepLinking();
@@ -42,6 +44,7 @@ export default function App() {
                   persistedAccessToken={accessToken}
                   persistedUserId={userId}
                   persistedMagicToken={magicToken}
+                  blockchainNetwork={blockchainNetwork}
                 >
                   <Web3Context.Consumer>
                     {({waiting, loading}) =>
@@ -63,6 +66,7 @@ export default function App() {
                                 return (
                                   <>
                                     <NetInfo />
+                                    <SwitchNetwork />
                                     {app}
                                   </>
                                 );

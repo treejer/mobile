@@ -35,7 +35,7 @@ function SelectLanguage(props: SelectLanguageProps) {
   };
 
   const imageStyle = useMemo(() => {
-    return isWeb() ? {height: '40vh', width: '100%'} : {};
+    return isWeb() ? {height: 200} : {};
   }, []);
 
   return (

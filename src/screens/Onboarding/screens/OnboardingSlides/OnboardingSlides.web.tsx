@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   sliderImage: {
     height: 300,

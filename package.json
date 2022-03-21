@@ -11,7 +11,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'"
+    "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'",
+    "web": "yarn add expo && REACT_APP_WEB=true expo web"
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
