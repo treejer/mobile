@@ -34,6 +34,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {useConfig} from 'services/web3';
 
 interface Props {}
 
@@ -46,6 +47,7 @@ function TreeDetails(_: Props) {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
 
+  const config = useConfig();
   const {sendEvent} = useAnalytics();
 
   const {t} = useTranslation();
@@ -67,12 +69,13 @@ function TreeDetails(_: Props) {
   const staticMapUrl = useMemo(
     () =>
       getStaticMapboxUrl(
+        config.mapboxToken,
         Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
         Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
         600,
         300,
       ),
-    [treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
+    [config.mapboxToken, treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
   );
 
   const updates = useMemo(

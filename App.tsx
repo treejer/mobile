@@ -14,7 +14,7 @@ import {i18next} from './src/localization';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 import {CurrentUserProvider} from './src/services/currentUser';
-import {magic} from './src/services/Magic';
+import {SwitchNetwork} from './src/components/SwitchNetwork/SwitchNetwork';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
@@ -25,14 +25,14 @@ export default function App() {
     SplashScreen.hide();
   }, []);
 
-  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken} = useAppInitialValue();
+  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken, blockchainNetwork} =
+    useAppInitialValue();
   const navigationRef = useRef<NavigationContainerRef<any>>();
 
   useInitialDeepLinking();
 
   return (
     <I18nextProvider i18n={i18next}>
-      <magic.Relayer />
       <SafeAreaProvider>
         {loading ? (
           <AppLoading />
@@ -48,9 +48,10 @@ export default function App() {
                 persistedAccessToken={accessToken}
                 persistedUserId={userId}
                 persistedMagicToken={magicToken}
+                blockchainNetwork={blockchainNetwork}
               >
                 <Web3Context.Consumer>
-                  {({waiting, loading}) =>
+                  {({waiting, loading, magic}) =>
                     waiting && loading ? (
                       <AppLoading />
                     ) : (
@@ -68,7 +69,9 @@ export default function App() {
                                 );
                               return (
                                 <>
+                                  <magic.Relayer />
                                   <NetInfo />
+                                  <SwitchNetwork />
                                   {app}
                                 </>
                               );

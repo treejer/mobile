@@ -1,8 +1,8 @@
 import i18next from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import config from 'services/config';
 import {en} from './en';
 import {fa} from './fa';
+import {defaultLocale} from 'services/config';
 
 i18next.use(initReactI18next).init({
   resources: {
@@ -13,8 +13,8 @@ i18next.use(initReactI18next).init({
       translation: fa,
     },
   },
-  lng: config.defaultLocale,
-  // fallbackLng: config.defaultLocale,
+  lng: defaultLocale,
+  // fallbackLng: defaultLocale,
   interpolation: {
     escapeValue: false,
   },

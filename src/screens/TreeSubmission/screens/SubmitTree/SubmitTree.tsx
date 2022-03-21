@@ -8,10 +8,10 @@ import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useWalletAccount, useWalletWeb3} from 'services/web3';
-import {getHttpDownloadUrl, upload, uploadContent} from 'utilities/helpers/IPFS';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {TreeSubmissionRouteParamList} from 'types';
-import config from 'services/config';
+import {ContractType} from 'services/config';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
@@ -46,6 +46,7 @@ function SubmitTree(_: Props) {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   const [txHash, setTxHash] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
+  const config = useConfig();
 
   const birthDay = currentTimestamp();
 
@@ -96,14 +97,14 @@ function SubmitTree(_: Props) {
     }
 
     try {
-      const photoUploadResult = await upload(journey.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
       setPhotoHash(photoUploadResult.Hash);
 
       console.log(journey, '====> journey <====');
 
       let jsonData;
       if (isUpdate) {
-        jsonData = updateTreeJSON({
+        jsonData = updateTreeJSON(config.ipfsGetURL, {
           journey,
           tree: updateTreeData,
           photoUploadHash: photoUploadResult.Hash,
@@ -113,20 +114,20 @@ function SubmitTree(_: Props) {
         console.log(assignedTreeData?.treeSpecsEntity, 'assignedTreeData?.treeSpecsEntity');
 
         if (isAssignedTreeToPlant && assignedTreeData?.treeSpecsEntity != null) {
-          jsonData = assignedTreeJSON({
+          jsonData = assignedTreeJSON(config.ipfsGetURL, {
             journey,
             tree: assignedTreeData,
             photoUploadHash: photoUploadResult.Hash,
           });
         } else {
-          jsonData = newTreeJSON({
+          jsonData = newTreeJSON(config.ipfsGetURL, {
             journey,
             photoUploadHash: photoUploadResult.Hash,
           });
         }
       }
 
-      const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
 
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
@@ -145,9 +146,10 @@ function SubmitTree(_: Props) {
       console.log(treeId, '====> treeId <====');
 
       const receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         wallet,
-        config.contracts.TreeFactory,
         'updateTree',
         [treeId, metaDataHash],
         useGSN,
@@ -167,18 +169,20 @@ function SubmitTree(_: Props) {
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
       receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         wallet,
-        config.contracts.TreeFactory,
         'plantAssignedTree',
         [Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0],
         useGSN,
       );
     } else {
       receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         wallet,
-        config.contracts.TreeFactory,
         'plantTree',
         [metaDataHash, birthDay, 0],
         useGSN,

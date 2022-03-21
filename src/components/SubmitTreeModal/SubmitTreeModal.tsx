@@ -7,16 +7,16 @@ import {TreeJourney} from 'screens/TreeSubmission/types';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTranslation} from 'react-i18next';
-import {useWalletAccount, useWalletWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
 import {useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useSettings} from 'services/settings';
 import {newTreeJSON} from 'utilities/helpers/submitTree';
+import {ContractType} from 'services/config';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -31,6 +31,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const {t} = useTranslation();
   const {navigate} = useNavigation();
   const {useGSN} = useSettings();
+  const config = useConfig();
 
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -55,19 +56,20 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const handleSubmitTree = async (treeJourney: TreeJourney) => {
     const birthDay = currentTimestamp();
     try {
-      const photoUploadResult = await upload(treeJourney.photo?.path);
-      const jsonData = newTreeJSON({
+      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
+      const jsonData = newTreeJSON(config.ipfsGetURL, {
         journey: treeJourney,
         photoUploadHash: photoUploadResult.Hash,
       });
 
-      const metaDataUploadResult = await uploadContent(JSON.stringify(jsonData));
+      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
       const receipt = await sendTransactionWithGSN(
+        config,
+        ContractType.TreeFactory,
         web3,
         wallet,
-        config.contracts.TreeFactory,
         'plantTree',
         [metaDataUploadResult.Hash, birthDay, 0],
         useGSN,

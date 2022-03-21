@@ -19,7 +19,6 @@ interface Props {
 
 function TabWithTabBar({navigation}: Props) {
   const {unlocked} = usePrivateKeyStorage();
-
   const wallet = useWalletAccount();
 
   const {status, refetchUser} = useCurrentUser();

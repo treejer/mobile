@@ -1,5 +1,3 @@
-import config from 'services/config';
-
 interface IPFSUploadResponse {
   Hash: string;
   Name: string;
@@ -8,9 +6,7 @@ interface IPFSUploadResponse {
 
 // const gatewayEndpoint = 'https://ipfs.infura.io:5001/api/v0/add';
 // const gatewayEndpoint = 'https://api.thegraph.com/ipfs/';
-const gatewayEndpoint = config.ipfsPostURL;
-
-export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploadResponse> {
+export async function upload(url: string, uri: string, type = 'image/jpg'): Promise<IPFSUploadResponse> {
   const formData = new FormData();
 
   if (typeof uri === 'string') {
@@ -25,36 +21,36 @@ export async function upload(uri: string, type = 'image/jpg'): Promise<IPFSUploa
       type,
       name: fileName,
     } as any);
-    const response = await callUploadEndpoint(formData, true);
+    const response = await callUploadEndpoint(url, formData, true);
 
     return response.json();
   } else {
     formData.append('file', uri);
-    const response = await callUploadEndpoint(formData, false);
+    const response = await callUploadEndpoint(url, formData, false);
 
     return response.json();
   }
 }
 
-export async function uploadContent(content: string): Promise<IPFSUploadResponse> {
+export async function uploadContent(url: string, content: string): Promise<IPFSUploadResponse> {
   const formData = new FormData();
 
   console.log(content, 'content');
 
   formData.append('file', content);
 
-  const response = await callUploadEndpoint(formData, false);
+  const response = await callUploadEndpoint(url, formData, false);
 
   return response.json();
 }
 
-export function getHttpDownloadUrl(hash: string) {
+export function getHttpDownloadUrl(url: string, hash: string) {
   // return `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`;
-  return `${config.ipfsGetURL}${hash}`;
+  return `${url}/${hash}`;
 }
 
-function callUploadEndpoint(formData: FormData, setHeader: boolean) {
-  return fetch(`${gatewayEndpoint}`, {
+function callUploadEndpoint(url: string, formData: FormData, setHeader: boolean) {
+  return fetch(`${url}`, {
     method: 'POST',
     body: formData,
     headers: setHeader

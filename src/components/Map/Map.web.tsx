@@ -1,14 +1,27 @@
-import React, {ForwardedRef, forwardRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactMapboxGl, {Layer, Feature} from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {Text, View} from 'react-native';
-import config from 'services/config';
-
-const MapBox = ReactMapboxGl({
-  accessToken: config.mapboxPublicToken,
-});
+import {View} from 'react-native';
+import {useConfig} from 'services/web3';
 
 export function Map() {
+  const [MapBox, setMapBox] = useState<any>();
+  const config = useConfig();
+
+  useEffect(() => {
+    if (config.mapboxPublicToken) {
+      setMapBox(
+        ReactMapboxGl({
+          accessToken: config.mapboxPublicToken,
+        }),
+      );
+    }
+  }, [config.mapboxPublicToken, config.mapboxToken]);
+
+  if (!MapBox) {
+    return null;
+  }
+
   return (
     <View>
       <MapBox

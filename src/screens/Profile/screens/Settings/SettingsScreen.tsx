@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, Dimensions, Switch, Text, View} from 'react-native';
 import Button from 'components/Button';
 import {useTranslation} from 'react-i18next';
@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer/Spacer';
 import {useSettings} from 'services/settings';
 import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
-import {useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {isMatic} from 'services/Magic';
 
 export interface SettingsScreenProps {
@@ -27,6 +27,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   const {useGSN, changeUseGsn} = useSettings();
   const web3 = useWeb3();
   const walletAccount = useWalletAccount();
+  const config = useConfig();
 
   console.log(useGSN, 'useGsn');
 
@@ -98,7 +99,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
           <View
             style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
           >
-            <Text>{t(isMatic() ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
+            <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
             {ether ? <Text>{Number(ether).toFixed(7)}</Text> : <ActivityIndicator color={colors.gray} />}
           </View>
         </View>

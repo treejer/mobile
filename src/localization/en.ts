@@ -178,7 +178,6 @@ export const en = {
       'We are detected that you are offline.\nPlease submit this nursery when you have fast and stable internet connection',
     copied: 'Copied to clipboard!',
   },
-  cancel: 'Cancel',
   sthWrong: 'Something went wrong!',
   verifyPending: {
     title: 'You’ll be verified soon!',
@@ -230,5 +229,15 @@ export const en = {
       'Treejer sponsors your transaction fees. If your transactions are being failed, you can switch off sponsorship. Please remember you need MATIC token in your wallet send transactions. You may ask your rural ambassador for more help.',
     ethBalance: 'Eth Balance:',
     maticBalance: 'Matic Balance:',
+  },
+  networks: {
+    switchHeader: 'Network',
+    selectNetwork: 'Select a network:',
+    areYouSure: 'Are you SURE?',
+    yes: 'Yes',
+    no: 'No',
+    testTitle: 'Test Networks',
+    mainTitle: 'Main Networks',
+    restartApp: 'The application will be restart and automatically log you out',
   },
 };

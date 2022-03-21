@@ -6,18 +6,16 @@ import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert, Keyboar
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {usePrivateKeyStorage} from 'services/web3';
+import {useConfig, useMagic, usePrivateKeyStorage} from 'services/web3';
 import {useCamera} from 'utilities/hooks';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import config from 'services/config';
 import TextField, {PhoneField} from 'components/TextField';
 import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {colors} from 'constants/values';
-import {magic} from 'services/Magic';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
@@ -29,6 +27,9 @@ function NoWallet(_: Props) {
   const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
+
+  const config = useConfig();
+  const magic = useMagic();
 
   const {refetchUser} = useCurrentUser({didMount: false});
 

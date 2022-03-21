@@ -1,15 +1,15 @@
 import globalStyles from 'constants/styles';
 
 import React, {useCallback, useState} from 'react';
-import {View, Text, Alert} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
-import {useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {GreenBlockRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import config from 'services/config';
+import {ContractType} from 'services/config';
 
 interface Props {}
 
@@ -21,11 +21,12 @@ function AcceptInvitation(_: Props) {
   const wallet = useWalletAccount();
   const web3 = useWeb3();
   const navigation = useNavigation();
+  const config = useConfig();
 
   const handleJoinGreenBlock = useCallback(async () => {
     setSubmitting(true);
     try {
-      const transaction = await sendTransactionWithGSN(web3, wallet, config.contracts.Planter, 'joinGB', [
+      const transaction = await sendTransactionWithGSN(config, ContractType.Planter, web3, wallet, 'joinGB', [
         greenBlockId,
       ]);
 

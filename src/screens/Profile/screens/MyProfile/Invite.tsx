@@ -3,8 +3,9 @@ import {Share, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import config from 'services/config';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {useConfig} from 'services/web3';
+import {rangerUrl} from 'services/config';
 
 export interface InviteProps {
   planterType: number;
@@ -27,6 +28,7 @@ export function InviteOrgAndFriends(props: InviteProps) {
   const {t} = useTranslation();
 
   const {sendEvent} = useAnalytics();
+  const config = useConfig();
 
   const isOrg = planterType === 2;
   const text = `${t('invite.title')}`;
@@ -35,7 +37,7 @@ export function InviteOrgAndFriends(props: InviteProps) {
     sendEvent('invite');
     const key = isOrg ? 'organization' : 'referrer';
     Share.share({
-      message: `${config.rangerUrl}/${key}/${address}`,
+      message: `${rangerUrl}/${key}/${address}`,
     });
   };
 

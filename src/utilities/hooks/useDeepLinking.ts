@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from 'services/config';
+import {rangerUrl} from 'services/config';
 
 export function useInitialDeepLinking() {
   useEffect(() => {
@@ -97,7 +97,7 @@ export function deepLinkingKey(action) {
 }
 
 export function convertUrlParams(url: string) {
-  const baseUrl = Platform.OS === 'android' ? `${config.rangerUrl}/` : 'treejer-ranger://';
+  const baseUrl = Platform.OS === 'android' ? `${rangerUrl}/` : 'treejer-ranger://';
   const [action, value] = url?.replace(baseUrl, '')?.split('/');
   return {action, value};
 }

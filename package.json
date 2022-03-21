@@ -1,7 +1,7 @@
 {
   "name": "treejer-ranger",
-  "version": "1.0.2",
   "main": "index",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,8 +11,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'",
-    "web": "yarn add expo && REACT_APP_WEB=true expo web"
+    "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'"
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
@@ -69,6 +68,7 @@
     "react-native-phone-number-input": "2.1.0",
     "react-native-randombytes": "3.6.1",
     "react-native-reanimated": "1.13.3",
+    "react-native-restart": "^0.0.24",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "3.11.1",
     "react-native-shimmer-placeholder": "2.0.8",

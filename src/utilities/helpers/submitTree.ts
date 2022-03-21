@@ -51,10 +51,11 @@ export namespace SubmitTreeData {
     location?: ExtraLocation;
     nursery?: string;
     locations?: Location[];
+    updates?: JSONDataUpdate[];
   }
 }
 
-export function updateTreeJSON(options: SubmitTreeData.Options) {
+export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
 
   console.log(tree, 'updateTreeJSON tree');
@@ -62,7 +63,7 @@ export function updateTreeJSON(options: SubmitTreeData.Options) {
   const birthDay = currentTimestamp();
 
   const updateSpec: SubmitTreeData.JSONDataUpdate = {
-    image: getHttpDownloadUrl(photoUploadHash),
+    image: getHttpDownloadUrl(url, photoUploadHash),
     image_hash: photoUploadHash,
     created_at: birthDay?.toString(),
   };
@@ -114,7 +115,7 @@ export function updateTreeJSON(options: SubmitTreeData.Options) {
   return jsonData;
 }
 
-export function assignedTreeJSON(options: SubmitTreeData.Options) {
+export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
 
   console.log(tree, 'assignedTreeJSON tree');
@@ -122,7 +123,7 @@ export function assignedTreeJSON(options: SubmitTreeData.Options) {
   const birthDay = currentTimestamp();
 
   const updateSpec: SubmitTreeData.JSONDataUpdate = {
-    image: getHttpDownloadUrl(photoUploadHash),
+    image: getHttpDownloadUrl(url, photoUploadHash),
     image_hash: photoUploadHash,
     created_at: birthDay?.toString(),
   };
@@ -155,7 +156,7 @@ export function assignedTreeJSON(options: SubmitTreeData.Options) {
   return jsonData;
 }
 
-export function newTreeJSON(options: SubmitTreeData.NewTreeOptions) {
+export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions) {
   const {journey, photoUploadHash} = options;
 
   const birthDay = currentTimestamp();
@@ -167,7 +168,7 @@ export function newTreeJSON(options: SubmitTreeData.NewTreeOptions) {
     },
     updates: [
       {
-        image: getHttpDownloadUrl(photoUploadHash),
+        image: getHttpDownloadUrl(url, photoUploadHash),
         image_hash: photoUploadHash,
         created_at: birthDay?.toString(),
       },

@@ -1,11 +1,21 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {i18next} from '../localization';
-import config from 'services/config';
+import {BlockchainNetwork, defaultLocale, storageKeys} from 'services/config';
 
-export const SettingsContext = React.createContext({
+export interface SettingsState {
+  onboardingDone: boolean;
+  locale: string;
+  markOnboardingAsDone: () => void;
+  resetOnBoardingData: () => void;
+  updateLocale: (locale: string) => void;
+  useGSN: boolean;
+  changeUseGsn: (value: boolean) => void;
+}
+
+export const SettingsContext = React.createContext<SettingsState>({
   onboardingDone: false,
-  locale: '',
+  locale: defaultLocale,
   markOnboardingAsDone() {},
   resetOnBoardingData() {},
   updateLocale(_newLocale: string) {},
@@ -29,11 +39,12 @@ interface InitialValueHookResult {
   accessToken?: string;
   userId?: string;
   magicToken?: string;
+  blockchainNetwork?: BlockchainNetwork;
 }
 
-const LOCALE_KEY = config.storageKeys.locale;
-const ONBOARDING_DONE_KEY = config.storageKeys.onBoarding;
-const USE_GSN_KEY = config.storageKeys.useGSN;
+const LOCALE_KEY = storageKeys.locale;
+const ONBOARDING_DONE_KEY = storageKeys.onBoarding;
+const USE_GSN_KEY = storageKeys.useGSN;
 
 function SettingsProvider(props: Props) {
   const {onboardingDoneInitialState, localeInitialState, initialUseGSN, children} = props;
@@ -44,7 +55,7 @@ function SettingsProvider(props: Props) {
   useEffect(() => {
     (async function () {
       try {
-        const cachedLocale = (await AsyncStorage.getItem(LOCALE_KEY)) || config.defaultLocale;
+        const cachedLocale = (await AsyncStorage.getItem(LOCALE_KEY)) || defaultLocale;
         await i18next.changeLanguage(cachedLocale);
       } catch (e) {
         console.log(e, 'e inside cachedLocale');
@@ -118,11 +129,12 @@ export const useAppInitialValue = () => {
       LOCALE_KEY,
       ONBOARDING_DONE_KEY,
       USE_GSN_KEY,
-      config.storageKeys.userId,
-      config.storageKeys.user,
-      config.storageKeys.accessToken,
-      config.storageKeys.magicWalletAddress,
-      config.storageKeys.magicToken,
+      storageKeys.userId,
+      storageKeys.user,
+      storageKeys.accessToken,
+      storageKeys.magicWalletAddress,
+      storageKeys.magicToken,
+      storageKeys.blockchainNetwork,
     ])
       .then(stores => {
         const result = stores.reduce(
@@ -150,25 +162,30 @@ export const useAppInitialValue = () => {
                   ...acc,
                   useGSN: gsnValue === null ? true : Boolean(gsnValue),
                 };
-              case config.storageKeys.magicWalletAddress:
+              case storageKeys.magicWalletAddress:
                 return {
                   ...acc,
                   wallet: value,
                 };
-              case config.storageKeys.accessToken:
+              case storageKeys.accessToken:
                 return {
                   ...acc,
                   accessToken: value,
                 };
-              case config.storageKeys.userId:
+              case storageKeys.userId:
                 return {
                   ...acc,
                   userId: value,
                 };
-              case config.storageKeys.magicToken:
+              case storageKeys.magicToken:
                 return {
                   ...acc,
                   magicToken: value,
+                };
+              case storageKeys.blockchainNetwork:
+                return {
+                  ...acc,
+                  blockchainNetwork: value === null ? BlockchainNetwork.MaticMain : value,
                 };
               default:
                 return acc;
