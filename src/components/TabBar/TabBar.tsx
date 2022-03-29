@@ -80,6 +80,7 @@ interface RenderTabItemProps {
 }
 
 function renderTabItem({isFocused, onLongPress, onPress, options, index}: RenderTabItemProps) {
+  console.log(isFocused, 'isFocused', index)
   switch (index) {
     case 0:
     case 2:
@@ -91,7 +92,8 @@ function renderTabItem({isFocused, onLongPress, onPress, options, index}: Render
           testID={options.tabBarTestID}
           onPress={onPress}
           onLongPress={onLongPress}
-          style={{padding: 30}}
+          style={styles.button}
+          hitSlop={{top: 32, right: 32, bottom: 32, left: 32}}
           key={index}
         >
           {React.createElement(index === 0 ? User : GreenBlock, {
@@ -167,6 +169,12 @@ const styles = StyleSheet.create({
     height: 54,
     backgroundColor: colors.green,
     borderRadius: 27,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    alignSelf: 'stretch',
+    paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
