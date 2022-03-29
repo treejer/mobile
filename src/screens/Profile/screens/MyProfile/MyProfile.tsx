@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {RouteProp, useNavigation} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
@@ -18,16 +17,16 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'services/settings';
-import {ProfileRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 
-interface Props {
-  navigation: any;
-  route?: RouteProp<ProfileRouteParamList, 'MyProfile'>;
-}
+export type MyProfileProps =
+  | VerifiedUserNavigationProp<Routes.MyProfile>
+  | UnVerifiedUserNavigationProp<Routes.MyProfile>;
 
-function MyProfile(_: Props) {
+function MyProfile(props: MyProfileProps) {
+  const {navigation, route} = props;
   const {t} = useTranslation();
 
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -52,7 +51,6 @@ function MyProfile(_: Props) {
       });
   };
 
-  const navigation = useNavigation();
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
   const {useGSN} = useSettings();
@@ -141,8 +139,8 @@ function MyProfile(_: Props) {
 
           console.log('transaction', transaction);
           Alert.alert(t('success'), t('myProfile.withdraw.success'));
-        } catch (e) {
-          Alert.alert(t('failure'), e.message || t('sthWrong'));
+        } catch (e: any) {
+          Alert.alert(t('failure'), e?.message || t('sthWrong'));
         }
       } else {
         Alert.alert(
@@ -150,8 +148,8 @@ function MyProfile(_: Props) {
           t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
         );
       }
-    } catch (error) {
-      Alert.alert('Error', error.message);
+    } catch (error: any) {
+      Alert.alert('Error', error?.message);
       console.warn('Error', error);
     } finally {
       setSubmitting(false);
@@ -197,17 +195,27 @@ function MyProfile(_: Props) {
 
   const handleOpenHelp = () => {
     sendEvent('help');
-    Linking.openURL('https://discuss.treejer.com/group/planters');
+    return Linking.openURL('https://discuss.treejer.com/group/planters');
   };
 
   const handleNavigateOfflineMap = () => {
     sendEvent('offlinemap');
-    navigation.navigate('OfflineMap');
+    // @ts-ignore
+    navigation.navigate(Routes.OfflineMap);
   };
 
   const handleNavigateSettings = () => {
-    navigation.navigate('Settings');
+    // @ts-ignore
+    navigation.navigate(Routes.Settings);
   };
+
+  const handleCopyWalletAddress = useCallback(() => {
+    if (wallet) {
+      Clipboard.setString(wallet);
+      // SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
+      Alert.alert('myProfile.copied');
+    }
+  }, [wallet]);
 
   return (
     <ScrollView
@@ -228,23 +236,16 @@ function MyProfile(_: Props) {
         )}
         {!profileLoading && (
           <>
-            {Boolean(data?.user?.firstName) && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
+            {!!data?.user?.firstName && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
 
-            {Boolean(data?.user?.firstName) && <Spacer times={4} />}
-
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString(wallet);
-                // SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
-                Alert.alert('myProfile.copied');
-              }}
-            >
-              {wallet && (
+            {!!data?.user?.firstName && <Spacer times={4} />}
+            {wallet && (
+              <TouchableOpacity onPress={handleCopyWalletAddress}>
                 <Text numberOfLines={1} style={styles.addressBox}>
                   {wallet.slice(0, 15)}...
                 </Text>
-              )}
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
             <Spacer times={8} />
 
             {planterData && (
@@ -283,14 +284,14 @@ function MyProfile(_: Props) {
                   <Spacer times={4} />
                 </>
               )}
-              {(status === UserStatus.Pending || Boolean(_.route.params?.hideVerification)) && (
+              {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                 <>
                   <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                   <Spacer times={6} />
                 </>
               )}
 
-              {!_.route.params?.hideVerification && status === UserStatus.Unverified && (
+              {!route.params?.hideVerification && status === UserStatus.Unverified && (
                 <>
                   <Button
                     style={styles.button}
@@ -299,7 +300,8 @@ function MyProfile(_: Props) {
                     onPress={() => {
                       sendEvent('get_verified');
                       if (data?.user) {
-                        _.navigation.navigate('VerifyProfile', {user: data.user});
+                        // @ts-ignore
+                        navigation.navigate(Routes.VerifyProfile);
                       }
                     }}
                   />
@@ -307,15 +309,21 @@ function MyProfile(_: Props) {
                 </>
               )}
 
-              <Button
-                style={styles.button}
-                caption={t('offlineMap.title')}
-                variant="tertiary"
-                onPress={handleNavigateOfflineMap}
-              />
-              <Spacer times={4} />
+              {!route.params?.unVerified && (
+                <>
+                  <Button
+                    style={styles.button}
+                    caption={t('offlineMap.title')}
+                    variant="tertiary"
+                    onPress={handleNavigateOfflineMap}
+                  />
+                  <Spacer times={4} />
+                </>
+              )}
 
-              {planterData?.planterType && <Invite address={wallet} planterType={Number(planterData?.planterType)} />}
+              {planterData?.planterType && !!wallet && (
+                <Invite address={wallet} planterType={Number(planterData?.planterType)} />
+              )}
 
               {/* {!wallet && (
                 <>
@@ -324,7 +332,7 @@ function MyProfile(_: Props) {
                     caption={t('createWallet.title')}
                     variant="tertiary"
                     onPress={() => {
-                      _.navigation.navigate('CreateWallet');
+                      navigation.navigate('CreateWallet');
                     }}
                     disabled
                   />

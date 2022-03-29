@@ -6,7 +6,7 @@ import Svg, {Path} from 'react-native-svg';
 import {useTransition} from 'utilities/hooks';
 
 interface Props {
-  color: string;
+  color?: string;
   fill?: boolean;
 }
 

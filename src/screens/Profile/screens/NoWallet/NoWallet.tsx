@@ -1,7 +1,6 @@
 import globalStyles from 'constants/styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert, Keyboard} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
@@ -19,11 +18,13 @@ import {colors} from 'constants/values';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
+import {RootNavigationProp, Routes} from 'navigation';
 
-interface Props {}
+export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
-function NoWallet(_: Props) {
-  const navigation = useNavigation();
+function NoWallet(props: NoWalletProps) {
+  const {navigation} = props;
+
   const {unlocked, storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
@@ -31,7 +32,7 @@ function NoWallet(_: Props) {
   const config = useConfig();
   const magic = useMagic();
 
-  const {refetchUser} = useCurrentUser({didMount: false});
+  const {refetchUser} = useCurrentUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -51,7 +52,7 @@ function NoWallet(_: Props) {
     },
   });
 
-  const phoneRef = useRef<PhoneInput>();
+  const phoneRef = useRef<PhoneInput>(null);
 
   const {t} = useTranslation();
 
@@ -61,14 +62,16 @@ function NoWallet(_: Props) {
 
   useEffect(() => {
     (async () => {
-      await requestCameraPermission();
-      await locationPermission();
+      if (!isWeb()) {
+        await requestCameraPermission();
+        await locationPermission();
+      }
     })();
   }, [requestCameraPermission]);
 
-  const handleLearnMore = () => {
-    Linking.openURL(config.learnMoreLink);
-  };
+  const handleLearnMore = useCallback(async () => {
+    await Linking.openURL(config.learnMoreLink);
+  }, []);
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     Keyboard.dismiss();
@@ -80,14 +83,18 @@ function NoWallet(_: Props) {
       return;
     }
     setLoading(true);
-    const mobileNumber = `+${phoneRef.current.getCallingCode()}${phoneNumber}`;
+    const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
     try {
-      const result = await magic.auth.loginWithSMS({phoneNumber: mobileNumber});
-      await storeMagicToken(result);
-      await refetchUser();
-      console.log(result, 'result is here');
-    } catch (e) {
-      Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');
+      const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
+      if (result) {
+        await storeMagicToken(result);
+        await refetchUser();
+        console.log(result, 'result is here');
+      } else {
+        Alert.alert(t('createWallet.failed.title'), 'tryAgain');
+      }
+    } catch (e: any) {
+      Alert.alert(t('createWallet.failed.title'), e?.message || 'tryAgain');
     } finally {
       setLoading(false);
     }
@@ -99,12 +106,16 @@ function NoWallet(_: Props) {
     setLoading(true);
     console.log(email, 'email');
     try {
-      const result = await magic.auth.loginWithMagicLink({email});
-      await storeMagicToken(result);
-      await refetchUser();
-      console.log(result, 'result is here');
-    } catch (e) {
-      Alert.alert(t('createWallet.failed.title'), e.message || 'tryAgain');
+      const result = await magic?.auth.loginWithMagicLink({email});
+      if (result) {
+        await storeMagicToken(result);
+        await refetchUser();
+        console.log(result, 'result is here');
+      } else {
+        Alert.alert(t('createWallet.failed.title'), 'tryAgain');
+      }
+    } catch (e: any) {
+      Alert.alert(t('createWallet.failed.title'), e?.message || 'tryAgain');
     } finally {
       setLoading(false);
     }
@@ -114,14 +125,14 @@ function NoWallet(_: Props) {
     setIsEmail(!isEmail);
   };
 
-  useEffect(() => {
-    if (unlocked) {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'MyProfile'}],
-      });
-    }
-  }, [unlocked, navigation]);
+  // useEffect(() => {
+  //   if (unlocked) {
+  //     navigation.reset({
+  //       index: 0,
+  //       routes: [{name: Routes.Settings}],
+  //     });
+  //   }
+  // }, [unlocked, navigation]);
 
   return (
     <View style={[globalStyles.screenView, globalStyles.fill, {height: '100%'}]}>
@@ -160,7 +171,9 @@ function NoWallet(_: Props) {
                     <PhoneField
                       control={phoneNumberForm.control}
                       name="phoneNumber"
-                      error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
+                      error={
+                        phoneNumberForm.formState.isDirty ? phoneNumberForm.formState.errors.phoneNumber : undefined
+                      }
                       ref={phoneRef}
                       textInputStyle={{height: 64, paddingLeft: 0}}
                       defaultCode="CA"
@@ -201,8 +214,8 @@ function NoWallet(_: Props) {
                 </View>
               </View>
               <Spacer times={4} />
-              <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
-                <Card style={globalStyles.alignItemsCenter}>
+              <View style={{width: 304, alignSelf: 'center', paddingVertical: 16}}>
+                <Card style={[globalStyles.alignItemsCenter, {width: '100%'}]}>
                   <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
                   <Spacer times={5} />
                   <Text style={[globalStyles.normal, globalStyles.textCenter]}>{t('createWallet.why.details')}</Text>

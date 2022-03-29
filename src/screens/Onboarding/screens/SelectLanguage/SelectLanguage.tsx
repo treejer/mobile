@@ -7,15 +7,11 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'services/settings';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {ProfileRouteParamList} from 'types';
 import AppVersion from 'components/AppVersion';
 import {isWeb} from 'utilities/helpers/web';
+import {RootNavigationProp, Routes} from 'navigation';
 
-export interface SelectLanguageProps {
-  route?: RouteProp<ProfileRouteParamList, 'SelectLanguage'>;
-  navigation?: NavigationProp<ProfileRouteParamList>;
-}
+export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;
 
 function SelectLanguage(props: SelectLanguageProps) {
   const {route, navigation} = props;
@@ -35,7 +31,7 @@ function SelectLanguage(props: SelectLanguageProps) {
   };
 
   const imageStyle = useMemo(() => {
-    return isWeb() ? {height: 200} : {};
+    return isWeb() ? {height: 200, width: 200} : {};
   }, []);
 
   return (

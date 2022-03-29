@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SettingsProvider, {useAppInitialValue, SettingsContext} from './src/services/settings';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
@@ -6,7 +6,7 @@ import Web3Provider, {Web3Context} from './src/services/web3';
 import ApolloProvider from './src/services/apollo';
 import {I18nextProvider} from 'react-i18next';
 import Onboarding from './src/screens/Onboarding';
-import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import MainTabs from './src/screens/MainTabs';
 import NetInfo from './src/components/NetInfo';
 import {i18next} from './src/localization';
@@ -22,7 +22,6 @@ const linking = {
 export default function App() {
   const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken, blockchainNetwork} =
     useAppInitialValue();
-  const navigationRef = useRef<NavigationContainerRef<any>>();
 
   useInitialDeepLinking();
 
@@ -47,8 +46,8 @@ export default function App() {
                   blockchainNetwork={blockchainNetwork}
                 >
                   <Web3Context.Consumer>
-                    {({waiting, loading}) =>
-                      waiting && loading ? (
+                    {({loading}) =>
+                      loading ? (
                         <AppLoading />
                       ) : (
                         <ApolloProvider>
@@ -59,7 +58,7 @@ export default function App() {
                                   !value.locale || !value.onboardingDone ? (
                                     <Onboarding />
                                   ) : (
-                                    <NavigationContainer linking={linking} ref={navigationRef}>
+                                    <NavigationContainer linking={linking}>
                                       <MainTabs />
                                     </NavigationContainer>
                                   );

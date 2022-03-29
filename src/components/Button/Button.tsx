@@ -15,7 +15,7 @@ import {
 
 type Props = {
   caption: string;
-  variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary';
+  variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary' | 'fourth';
   icon?: React.ComponentType<any>;
   style?: TouchableOpacityProps['style'];
   textStyle?: TextProps['style'];

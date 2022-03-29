@@ -1,7 +1,7 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {i18next} from '../localization';
-import {BlockchainNetwork, defaultLocale, storageKeys} from 'services/config';
+import {BlockchainNetwork, defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 
 export interface SettingsState {
   onboardingDone: boolean;
@@ -25,8 +25,8 @@ export const SettingsContext = React.createContext<SettingsState>({
 
 interface Props {
   children: React.ReactNode;
-  onboardingDoneInitialState: boolean;
-  localeInitialState: string;
+  onboardingDoneInitialState?: boolean;
+  localeInitialState?: string;
   initialUseGSN?: boolean;
 }
 
@@ -47,10 +47,15 @@ const ONBOARDING_DONE_KEY = storageKeys.onBoarding;
 const USE_GSN_KEY = storageKeys.useGSN;
 
 function SettingsProvider(props: Props) {
-  const {onboardingDoneInitialState, localeInitialState, initialUseGSN, children} = props;
+  const {
+    onboardingDoneInitialState = false,
+    localeInitialState = defaultLocale,
+    initialUseGSN = true,
+    children,
+  } = props;
   const [onboardingDone, setOnboardingDone] = useState(onboardingDoneInitialState);
   const [locale, setLocale] = useState(localeInitialState);
-  const [useGSN, setUseGSN] = useState<boolean | undefined>(initialUseGSN);
+  const [useGSN, setUseGSN] = useState<boolean>(initialUseGSN);
 
   useEffect(() => {
     (async function () {
@@ -137,64 +142,68 @@ export const useAppInitialValue = () => {
       storageKeys.blockchainNetwork,
     ])
       .then(stores => {
-        const result = stores.reduce(
-          (acc: InitialValueHookResult, [key, value]) => {
-            console.log(key, value);
-            switch (key) {
-              case LOCALE_KEY:
-                return {
-                  ...acc,
-                  locale: value ?? '',
-                };
-              case ONBOARDING_DONE_KEY:
-                return {
-                  ...acc,
-                  onboardingDone: Boolean(value),
-                };
-              case USE_GSN_KEY:
-                let gsnValue = value;
-                try {
-                  gsnValue = JSON.parse(value);
-                } catch (e) {
-                  console.log(e, 'error inside USE_GSN_KEY');
-                }
-                return {
-                  ...acc,
-                  useGSN: gsnValue === null ? true : Boolean(gsnValue),
-                };
-              case storageKeys.magicWalletAddress:
-                return {
-                  ...acc,
-                  wallet: value,
-                };
-              case storageKeys.accessToken:
-                return {
-                  ...acc,
-                  accessToken: value,
-                };
-              case storageKeys.userId:
-                return {
-                  ...acc,
-                  userId: value,
-                };
-              case storageKeys.magicToken:
-                return {
-                  ...acc,
-                  magicToken: value,
-                };
-              case storageKeys.blockchainNetwork:
-                return {
-                  ...acc,
-                  blockchainNetwork: value === null ? BlockchainNetwork.MaticMain : value,
-                };
-              default:
-                return acc;
-            }
-          },
-          {loading: false} as InitialValueHookResult,
-        );
-
-        setInitialValue(result);
+        if (Array.isArray(stores)) {
+          const result = stores.reduce(
+            (acc, [key, value]) => {
+              switch (key) {
+                case LOCALE_KEY:
+                  return {
+                    ...acc,
+                    locale: value ?? '',
+                  };
+                case ONBOARDING_DONE_KEY:
+                  return {
+                    ...acc,
+                    onboardingDone: Boolean(value),
+                  };
+                case USE_GSN_KEY:
+                  let gsnValue = value;
+                  try {
+                    if (value) {
+                      gsnValue = JSON.parse(value);
+                    }
+                  } catch (e) {
+                    console.log(e, 'error inside USE_GSN_KEY');
+                  }
+                  return {
+                    ...acc,
+                    useGSN: gsnValue === null ? true : Boolean(gsnValue),
+                  };
+                case storageKeys.magicWalletAddress:
+                  return {
+                    ...acc,
+                    wallet: value,
+                  };
+                case storageKeys.accessToken:
+                  return {
+                    ...acc,
+                    accessToken: value,
+                  };
+                case storageKeys.userId:
+                  return {
+                    ...acc,
+                    userId: value,
+                  };
+                case storageKeys.magicToken:
+                  return {
+                    ...acc,
+                    magicToken: value,
+                  };
+                case storageKeys.blockchainNetwork:
+                  return {
+                    ...acc,
+                    blockchainNetwork: value === null ? defaultNetwork : value,
+                  };
+                default:
+                  return acc;
+              }
+            },
+            {loading: false} as InitialValueHookResult,
+          );
+          setInitialValue(result);
+        } else {
+          setInitialValue({loading: false});
+        }
       })
       .catch(() => {
         console.warn('Failed to get settings info from storage');

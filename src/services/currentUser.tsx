@@ -3,7 +3,7 @@ import React, {createContext, useCallback, useContext, useEffect, useMemo, useSt
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {BlockchainNetwork, storageKeys} from 'services/config';
+import {BlockchainNetwork, defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
@@ -113,7 +113,7 @@ export function CurrentUserProvider(props) {
   }, [currentUser]);
 
   const handleLogout = useCallback(
-    async (userPressed: boolean) => {
+    async (userPressed?: boolean) => {
       try {
         if (userPressed) {
           try {
@@ -139,12 +139,12 @@ export function CurrentUserProvider(props) {
           await AsyncStorage.removeItem(storageKeys.magicToken);
         }
         const locale = await AsyncStorage.getItem(storageKeys.locale);
-        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || BlockchainNetwork.MaticMain;
+        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || defaultNetwork;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
         changeUseGsn(true);
-        await AsyncStorage.setItem(storageKeys.locale, locale);
+        await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
         await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         if (!userPressed) {
           if (offlineTrees.planted) {

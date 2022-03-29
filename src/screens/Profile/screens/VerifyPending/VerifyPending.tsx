@@ -1,28 +1,25 @@
-import globalStyles from 'constants/styles';
-
 import React from 'react';
 import {View, Text, Image} from 'react-native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
+import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Card from 'components/Card';
-import {ProfileRouteParamList, MainTabsParamList} from 'types';
 import {useTranslation} from 'react-i18next';
 import {useCurrentUser} from 'services/currentUser';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 
-interface Props {
-  navigation: NavigationProp<ProfileRouteParamList>;
-  route: RouteProp<MainTabsParamList, 'Profile'>;
-}
+interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyPending> {}
 
-function VerifyPending(_: Props) {
+function VerifyPending(props: Props) {
+  const {navigation} = props;
+
   const {t} = useTranslation();
 
   const {refetchUser} = useCurrentUser();
 
   const handleContinue = () => {
     refetchUser();
-    _.navigation.navigate('MyProfile', {hideVerification: true});
+    navigation.navigate(Routes.MyProfile, {hideVerification: true});
   };
 
   return (

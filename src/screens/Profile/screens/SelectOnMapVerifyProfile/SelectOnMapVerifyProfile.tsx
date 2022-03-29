@@ -3,23 +3,22 @@ import globalStyles from 'constants/styles';
 
 import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {PlanterJoinList} from 'types';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {GeoPosition} from 'react-native-geolocation-service';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 
-interface Props {}
+interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyProfile> {}
 
-function SelectOnMapVerifyProfile(_: Props) {
-  const navigation = useNavigation<NavigationProp<PlanterJoinList>>();
+function SelectOnMapVerifyProfile(props: Props) {
+  const {navigation, route} = props;
   const {
     params: {journey},
-  } = useRoute<RouteProp<PlanterJoinList, 'SelectOnMapJoinPlanter'>>();
+  } = route;
 
   const handleSubmit = useCallback(
     (location: GeoPosition) => {
       const {coords} = location;
-      navigation.navigate('VerifyProfile', {
+      navigation.navigate(Routes.VerifyProfile, {
         journey: {
           ...journey,
           location: {

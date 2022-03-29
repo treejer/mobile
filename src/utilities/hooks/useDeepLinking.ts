@@ -52,8 +52,8 @@ export function useInitialDeepLinking() {
 }
 
 export default function useRefer() {
-  const [referrer, setReferrer] = useState(null);
-  const [organization, setOrganization] = useState(null);
+  const [referrer, setReferrer] = useState<string | null>(null);
+  const [organization, setOrganization] = useState<string | null>(null);
 
   useEffect(() => {
     (async function () {
@@ -100,15 +100,4 @@ export function convertUrlParams(url: string) {
   const baseUrl = Platform.OS === 'android' ? `${rangerUrl}/` : 'treejer-ranger://';
   const [action, value] = url?.replace(baseUrl, '')?.split('/');
   return {action, value};
-}
-
-export async function getDeepLikingValues(): Promise<{referrer?: string; organization?: string}> {
-  try {
-    const referrer = await AsyncStorage.getItem(deepLinkingKey('referrer'));
-    const organization = await AsyncStorage.getItem(deepLinkingKey('organization'));
-
-    return {referrer, organization};
-  } catch (e) {
-    console.log(e, 'e inside getDeepLikingValues');
-  }
 }

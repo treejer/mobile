@@ -2,17 +2,14 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {StyleSheet, TouchableOpacity, TouchableOpacityProps, View} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import Animated, {useValue, Easing, timing, interpolate} from 'react-native-reanimated';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 
-interface Props extends BottomTabBarProps {
-  tabsVisible: boolean;
-}
+interface Props extends BottomTabBarProps {}
 
 const analyticsEvents = {
   Profile: 'my_profile',
@@ -20,57 +17,16 @@ const analyticsEvents = {
   TreeSubmission: 'add_tree',
 };
 
-function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
-  const mounted = useRef(false);
-  const timeout = useRef<Animated.BackwardCompatibleWrapper | undefined>();
-
+function TabBar({state, descriptors, navigation}: Props) {
   const {sendEvent} = useAnalytics();
 
-  console.log(tabsVisible, 'tabsVisibletabsVisibletabsVisible')
-
-  const visibilityAnimatedValue = useValue(tabsVisible ? 1 : 0);
-
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-
-    timeout.current = timing(visibilityAnimatedValue, {
-      duration: 500,
-      toValue: tabsVisible ? 1 : 0,
-      easing: Easing.inOut(Easing.ease),
-    });
-
-    timeout.current.start();
-
-    return () => {
-      timeout.current?.stop();
-    };
-  }, [visibilityAnimatedValue, tabsVisible]);
-
-  const translateY = interpolate(visibilityAnimatedValue, {
-    inputRange: [0, 1],
-    outputRange: [100, 0],
-  });
-
-  const maxHeight = interpolate(visibilityAnimatedValue, {
-    inputRange: [0, 1],
-    outputRange: [0, 80],
-  });
-
   return (
-    <Animated.View
+    <View
       style={[
         styles.wrapper,
         globalStyles.horizontalStack,
         globalStyles.justifyContentEvenly,
         globalStyles.alignItemsCenter,
-        {
-          transform: [{translateY}],
-          opacity: visibilityAnimatedValue,
-          maxHeight,
-        },
       ]}
     >
       {state.routes.map((route, index) => {
@@ -103,13 +59,15 @@ function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
 
         return renderTabItem({
           isFocused,
+          // @ts-ignore
           onLongPress,
+          // @ts-ignore
           onPress,
           options,
           index,
         });
       })}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -126,6 +84,7 @@ function renderTabItem({isFocused, onLongPress, onPress, options, index}: Render
     case 0:
     case 2:
       return (
+        // @ts-ignore
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -145,6 +104,7 @@ function renderTabItem({isFocused, onLongPress, onPress, options, index}: Render
         <View key={index} style={styles.middleTabWrapper}>
           {renderCirclePath(false)}
           <View style={styles.middleButtonWrapper}>
+            {/* @ts-ignore */}
             <TouchableOpacity
               accessibilityRole="button"
               accessibilityLabel={options.tabBarAccessibilityLabel}

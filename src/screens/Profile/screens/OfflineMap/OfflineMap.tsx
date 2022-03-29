@@ -27,7 +27,7 @@ const OfflineMap = ({navigation}) => {
   const {mapboxToken} = useConfig();
 
   const MapBoxGLRef = useRef();
-  const camera = useRef();
+  const camera = useRef<MapboxGL.Camera>(null);
 
   const getAllOfflineMapsLocal = useCallback(() => {
     getAllOfflineMaps()

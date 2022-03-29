@@ -1,16 +1,29 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
     "baseUrl": ".",
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": false,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": false,
+    "types": [],
     "paths": {
       "*": [
         "./src/*",
@@ -19,8 +32,14 @@
     }
   },
   "include": [
-    "./src/**/*",
-    "src/components/TreeList/TreeList/.tsx"
+    "src"
+  ],
+  "exclude": [
+    "__mocks__/*",
+    "node_modules/*",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
   ],
   "extends": "expo/tsconfig.base"
 }

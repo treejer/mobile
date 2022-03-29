@@ -2,8 +2,7 @@
 import {AbiDefinition} from 'apollo-link-ethereum';
 import {ImageURISource} from 'react-native';
 
-import MaticLogo from '../../assets/images/matic-network-logo-vector.png';
-import RinkebyLogo from '../../assets/images/rinkeby-logo.jpeg';
+import {RinkebyLogo, MaticLogo} from '../../assets/images';
 
 export enum ContractType {
   TreeFactory = 'TreeFactory',
@@ -71,124 +70,124 @@ export interface Config {
   [BlockchainNetwork.MaticMain]: NetworkConfig;
 }
 
-export function formatUrl(url: string) {
-  return url?.replace(/\/$/, '');
+export function formatUrl(url?: string) {
+  return url ? url?.replace(/\/$/, '') : '';
 }
 
 const config: Config = {
   [BlockchainNetwork.MaticMain]: {
     contracts: {
       TreeFactory: {
-        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_TREE_FACTORY_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_TREE_FACTORY_ADDRESS || '',
         abi: require('../abis/TreeFactory.json'),
       },
       Paymaster: {
-        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PAYMASTER_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PAYMASTER_ADDRESS || '',
         abi: require('../abis/WhitelistPaymaster.json'),
       },
       Planter: {
-        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_ADDRESS || '',
         abi: require('../abis/Planter.json'),
       },
       PlanterFund: {
-        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_FUND_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_MAIN_WEB3_NETWORK_ID || 3),
     isMainnet: true,
-    web3Url: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PROVIDER,
+    web3Url: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_TREEJER_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX,
-    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX_PUBLIC_TOKEN,
-    preferredRelays: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PREFERREDRELAYS,
-    relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS,
-    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS,
-    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
-    learnMoreLink: process.env.REACT_NATIVE_MATIC_MAIN_LEARN_MORE_URL,
-    avatarBaseUrl: process.env.REACT_NATIVE_MATIC_MAIN_AVATAR_BASE_URL,
-    magicApiKey: process.env.REACT_NATIVE_MATIC_MAIN_MAGIC_API_KEY,
+    mapboxToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX || '',
+    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX_PUBLIC_TOKEN || '',
+    preferredRelays: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PREFERREDRELAYS || '',
+    relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
+    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
+    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
+    learnMoreLink: process.env.REACT_NATIVE_MATIC_MAIN_LEARN_MORE_URL || '',
+    avatarBaseUrl: process.env.REACT_NATIVE_MATIC_MAIN_AVATAR_BASE_URL || '',
+    magicApiKey: process.env.REACT_NATIVE_MATIC_MAIN_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticMain,
-    chainId: process.env.REACT_NATIVE_MATIC_MAIN_CHAIN_ID,
+    chainId: process.env.REACT_NATIVE_MATIC_MAIN_CHAIN_ID || '',
   },
   [BlockchainNetwork.MaticTest]: {
     contracts: {
       TreeFactory: {
-        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_TREE_FACTORY_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_TREE_FACTORY_ADDRESS || '',
         abi: require('../abis/TreeFactory.json'),
       },
       Paymaster: {
-        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PAYMASTER_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PAYMASTER_ADDRESS || '',
         abi: require('../abis/WhitelistPaymaster.json'),
       },
       Planter: {
-        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_ADDRESS || '',
         abi: require('../abis/Planter.json'),
       },
       PlanterFund: {
-        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_FUND_ADDRESS,
+        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_TEST_WEB3_NETWORK_ID || 3),
     isMainnet: false,
-    web3Url: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PROVIDER,
+    web3Url: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_TREEJER_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX,
-    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX_PUBLIC_TOKEN,
-    preferredRelays: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PREFERREDRELAYS,
-    relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS,
-    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS,
-    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
-    learnMoreLink: process.env.REACT_NATIVE_MATIC_TEST_LEARN_MORE_URL,
-    avatarBaseUrl: process.env.REACT_NATIVE_MATIC_TEST_AVATAR_BASE_URL,
-    magicApiKey: process.env.REACT_NATIVE_MATIC_TEST_MAGIC_API_KEY,
+    mapboxToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX || '',
+    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX_PUBLIC_TOKEN || '',
+    preferredRelays: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PREFERREDRELAYS || '',
+    relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
+    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
+    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
+    learnMoreLink: process.env.REACT_NATIVE_MATIC_TEST_LEARN_MORE_URL || '',
+    avatarBaseUrl: process.env.REACT_NATIVE_MATIC_TEST_AVATAR_BASE_URL || '',
+    magicApiKey: process.env.REACT_NATIVE_MATIC_TEST_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticTest,
-    chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID,
+    chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID || '',
   },
   [BlockchainNetwork.Rinkeby]: {
     contracts: {
       TreeFactory: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_TREE_FACTORY_ADDRESS,
+        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_TREE_FACTORY_ADDRESS || '',
         abi: require('../abis/TreeFactory.json'),
       },
       Paymaster: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PAYMASTER_ADDRESS,
+        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PAYMASTER_ADDRESS || '',
         abi: require('../abis/WhitelistPaymaster.json'),
       },
       Planter: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_ADDRESS,
+        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_ADDRESS || '',
         abi: require('../abis/Planter.json'),
       },
       PlanterFund: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_FUND_ADDRESS,
+        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
     },
     networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),
     isMainnet: false,
-    web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER,
+    web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX,
-    mapboxPublicToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX_PUBLIC_TOKEN,
-    preferredRelays: process.env.REACT_NATIVE_RINKEBY_WEB3_PREFERREDRELAYS,
-    relayLookupWindowBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS,
-    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS,
-    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_RINKEBY_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE,
-    learnMoreLink: process.env.REACT_NATIVE_RINKEBY_LEARN_MORE_URL,
-    avatarBaseUrl: process.env.REACT_NATIVE_RINKEBY_AVATAR_BASE_URL,
-    magicApiKey: process.env.REACT_NATIVE_RINKEBY_MAGIC_API_KEY,
+    mapboxToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX || '',
+    mapboxPublicToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX_PUBLIC_TOKEN || '',
+    preferredRelays: process.env.REACT_NATIVE_RINKEBY_WEB3_PREFERREDRELAYS || '',
+    relayLookupWindowBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
+    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
+    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_RINKEBY_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
+    learnMoreLink: process.env.REACT_NATIVE_RINKEBY_LEARN_MORE_URL || '',
+    avatarBaseUrl: process.env.REACT_NATIVE_RINKEBY_AVATAR_BASE_URL || '',
+    magicApiKey: process.env.REACT_NATIVE_RINKEBY_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.Rinkeby,
-    chainId: process.env.REACT_NATIVE_RINKEBY_CHAIN_ID,
+    chainId: process.env.REACT_NATIVE_RINKEBY_CHAIN_ID || '',
   },
 };
 
@@ -209,6 +208,7 @@ export const storageKeys: StorageKeys = {
 
 export const rangerUrl = 'https://ranger.treejer.com';
 export const defaultLocale = 'en';
+export const defaultNetwork = BlockchainNetwork.MaticMain;
 
 export interface NetworkInfo {
   title: string;

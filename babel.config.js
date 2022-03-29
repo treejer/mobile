@@ -16,6 +16,7 @@ module.exports = function (api) {
             services: './src/services',
             constants: './src/constants',
             utilities: './src/utilities',
+            navigation: './src/navigation',
           },
         },
       ],

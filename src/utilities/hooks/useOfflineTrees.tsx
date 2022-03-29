@@ -112,7 +112,29 @@ function reducer(state: OfflineTreesState, action) {
   }
 }
 
-export const OfflineTressContext = React.createContext(null);
+export type OfflineTreeContextValue = {
+  offlineTrees: OfflineTreesState;
+  dispatch: (action: any) => void;
+  dispatchAddOfflineTree: (tree: TreeJourney) => void;
+  dispatchAddOfflineTrees: (tree: TreeJourney[]) => void;
+  dispatchRemoveOfflineTree: (id: string) => void;
+  dispatchAddOfflineUpdateTree: (tree: TreeJourney) => void;
+  dispatchRemoveOfflineUpdateTree: (id: string) => void;
+  dispatchResetOfflineTrees: () => void;
+};
+
+export const initialContextValue: OfflineTreeContextValue = {
+  offlineTrees: initialState,
+  dispatch: () => {},
+  dispatchAddOfflineTree: () => {},
+  dispatchAddOfflineTrees: () => {},
+  dispatchRemoveOfflineTree: () => {},
+  dispatchAddOfflineUpdateTree: () => {},
+  dispatchRemoveOfflineUpdateTree: () => {},
+  dispatchResetOfflineTrees: () => {},
+};
+
+export const OfflineTressContext = React.createContext<OfflineTreeContextValue>(initialContextValue);
 
 export function OfflineTreeProvider({children}) {
   const [state, dispatch] = useReducer(reducer, initialState);
