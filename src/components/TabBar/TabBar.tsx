@@ -8,13 +8,14 @@ import Svg, {Path} from 'react-native-svg';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {Routes} from 'navigation';
 
 interface Props extends BottomTabBarProps {}
 
 const analyticsEvents = {
-  Profile: 'my_profile',
-  GreenBlock: 'tree_list',
-  TreeSubmission: 'add_tree',
+  [Routes.MyProfile]: 'my_profile',
+  [Routes.GreenBlock]: 'tree_list',
+  [Routes.TreeSubmission]: 'add_tree',
 };
 
 function TabBar({state, descriptors, navigation}: Props) {
@@ -80,7 +81,7 @@ interface RenderTabItemProps {
 }
 
 function renderTabItem({isFocused, onLongPress, onPress, options, index}: RenderTabItemProps) {
-  console.log(isFocused, 'isFocused', index)
+  console.log(isFocused, 'isFocused', index);
   switch (index) {
     case 0:
     case 2:

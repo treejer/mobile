@@ -8,6 +8,7 @@ import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} 
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
 import {useTranslation} from 'react-i18next';
+import {isWeb} from 'utilities/helpers/web';
 
 export enum UserStatus {
   Loading,
@@ -70,14 +71,16 @@ export function CurrentUserProvider(props) {
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
-  const {resetOnBoardingData, changeUseGsn} = useSettings();
+  const {changeUseGsn} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
 
   const {error, loading} = result;
   // @ts-ignore
-  const statusCode = error?.networkError?.result?.error?.statusCode;
+  const statusCode = error?.networkError?.statusCode;
 
+  console.log(error ? JSON.parse(JSON.stringify(error)) : null, 'error');
+  console.log(statusCode, 'statusCode');
   useEffect(() => {
     (async function () {
       const localUser = await AsyncStorage.getItem(storageKeys.user);
@@ -155,14 +158,13 @@ export function CurrentUserProvider(props) {
           }
         }
         await resetWeb3Data();
-        await resetOnBoardingData();
         await setCurrentUser(null);
       } catch (e) {
         console.log(e, 'e inside handleLogout');
         return Promise.reject(e);
       }
     },
-    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data, t],
+    [offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
   );
 
   useEffect(() => {
