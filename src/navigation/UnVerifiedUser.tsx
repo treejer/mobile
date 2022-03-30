@@ -1,6 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator, NativeStackScreenProps as LibraryProp} from '@react-navigation/native-stack';
-import {Routes} from 'navigation';
+import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile';
 import VerifyProfile from 'screens/Profile/screens/VerifyProfile';
 import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyProfile';
@@ -33,8 +33,8 @@ export const UnVerifiedUserStack = createNativeStackNavigator<UnVerifiedUserNavi
 
 export function UnVerifiedUserNavigation() {
   return (
-    <UnVerifiedUserStack.Navigator>
-      <UnVerifiedUserStack.Screen name={Routes.MyProfile} initialParams={{unVerified: true}} component={MyProfile} />
+    <UnVerifiedUserStack.Navigator screenOptions={{headerShown: false}}>
+      <UnVerifiedUserStack.Screen name={Routes.MyProfile} component={MyProfile} />
       <UnVerifiedUserStack.Screen name={Routes.VerifyProfile} component={VerifyProfile} />
       <UnVerifiedUserStack.Screen name={Routes.SelectOnMapVerifyProfile} component={SelectOnMapVerifyProfile} />
       <UnVerifiedUserStack.Screen name={Routes.VerifyPending} component={VerifyPending} />

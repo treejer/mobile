@@ -8,7 +8,8 @@ import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
-import {VerifiedUserNavigation, UnVerifiedUserNavigation} from 'navigation';
+import {VerifiedUserNavigation} from './VerifiedUser';
+import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
@@ -96,3 +97,9 @@ export function RootNavigation() {
     </>
   );
 }
+
+export const analyticsTabEvents = {
+  [Routes.MyProfile]: 'my_profile',
+  [Routes.GreenBlock]: 'tree_list',
+  [Routes.TreeSubmission]: 'add_tree',
+};

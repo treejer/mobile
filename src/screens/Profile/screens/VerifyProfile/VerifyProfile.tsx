@@ -282,7 +282,7 @@ function VerifyProfile(props: Props) {
   ) : null;
 
   return (
-    <SafeAreaView style={globalStyles.fill}>
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <KeyboardAwareScrollView>
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p1]}>
           <TouchableOpacity onPress={() => navigation.navigate(Routes.MyProfile)}>

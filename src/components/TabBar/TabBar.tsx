@@ -8,15 +8,9 @@ import Svg, {Path} from 'react-native-svg';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {Routes} from 'navigation';
+import {analyticsTabEvents} from 'navigation';
 
 interface Props extends BottomTabBarProps {}
-
-const analyticsEvents = {
-  [Routes.MyProfile]: 'my_profile',
-  [Routes.GreenBlock]: 'tree_list',
-  [Routes.TreeSubmission]: 'add_tree',
-};
 
 function TabBar({state, descriptors, navigation}: Props) {
   const {sendEvent} = useAnalytics();
@@ -43,7 +37,7 @@ function TabBar({state, descriptors, navigation}: Props) {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            sendEvent(analyticsEvents[route.name]);
+            sendEvent(analyticsTabEvents[route.name]);
             navigation.reset({
               index: 0,
               routes: [{name: route.name, params: {initialRouteName: 'SelectPlantType'}}],

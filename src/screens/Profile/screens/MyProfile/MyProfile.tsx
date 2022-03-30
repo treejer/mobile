@@ -309,7 +309,7 @@ function MyProfile(props: MyProfileProps) {
                 </>
               )}
 
-              {!route.params?.unVerified && (
+              {!route.params?.unVerified ? (
                 <>
                   <Button
                     style={styles.button}
@@ -319,7 +319,7 @@ function MyProfile(props: MyProfileProps) {
                   />
                   <Spacer times={4} />
                 </>
-              )}
+              ) : null}
 
               {planterData?.planterType && !!wallet && (
                 <Invite address={wallet} planterType={Number(planterData?.planterType)} />

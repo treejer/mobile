@@ -1,7 +1,7 @@
 import React from 'react';
 import {BottomTabScreenProps as LibraryProp, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TabBar from 'components/TabBar/TabBar';
-import {Routes} from 'navigation';
+import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile/MyProfile';
 import TreeSubmission from 'screens/TreeSubmission';
 import GreenBlock from 'screens/GreenBlock';
