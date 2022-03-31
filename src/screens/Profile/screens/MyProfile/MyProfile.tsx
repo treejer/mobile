@@ -218,9 +218,9 @@ function MyProfile(props: MyProfileProps) {
     if (wallet) {
       Clipboard.setString(wallet);
       // SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
-      Alert.alert('myProfile.copied');
+      Alert.alert(t('myProfile.copied'));
     }
-  }, [wallet]);
+  }, [t, wallet]);
 
   return (
     <ScrollView
