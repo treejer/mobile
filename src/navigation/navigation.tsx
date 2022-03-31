@@ -54,6 +54,7 @@ export enum Routes {
   SelectOnMap = 'SelectOnMap',
   TreeSubmission = 'TreeSubmission',
   GreenBlock = 'GreenBlock',
+  Test = 'Test',
 }
 
 export function RootNavigation() {

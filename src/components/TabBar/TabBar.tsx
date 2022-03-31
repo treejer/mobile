@@ -75,7 +75,6 @@ interface RenderTabItemProps {
 }
 
 function renderTabItem({isFocused, onLongPress, onPress, options, index}: RenderTabItemProps) {
-  console.log(isFocused, 'isFocused', index);
   switch (index) {
     case 0:
     case 2:

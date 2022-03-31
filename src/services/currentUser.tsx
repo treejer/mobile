@@ -3,12 +3,11 @@ import React, {createContext, useCallback, useContext, useEffect, useMemo, useSt
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {BlockchainNetwork, defaultLocale, defaultNetwork, storageKeys} from 'services/config';
+import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
 import {useTranslation} from 'react-i18next';
-import {isWeb} from 'utilities/helpers/web';
 
 export enum UserStatus {
   Loading,
@@ -79,8 +78,6 @@ export function CurrentUserProvider(props) {
   // @ts-ignore
   const statusCode = error?.networkError?.statusCode;
 
-  console.log(error ? JSON.parse(JSON.stringify(error)) : null, 'error');
-  console.log(statusCode, 'statusCode');
   useEffect(() => {
     (async function () {
       const localUser = await AsyncStorage.getItem(storageKeys.user);
@@ -164,7 +161,7 @@ export function CurrentUserProvider(props) {
         return Promise.reject(e);
       }
     },
-    [offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
+    [changeUseGsn, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
   );
 
   useEffect(() => {

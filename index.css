@@ -14,3 +14,11 @@
   display: flex;
   background-color: #faf8f0;
 }
+
+video {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 48px;
+  left: 0;
+}

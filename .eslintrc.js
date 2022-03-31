@@ -4,7 +4,7 @@ module.exports = {
     // 'plugin:@shopify/graphql',
     // 'plugin:@shopify/react',
     // 'plugin:@shopify/prettier',
-    // '@react-native-community',
+    '@react-native-community',
   ],
   plugins: ['unused-imports'],
   rules: {

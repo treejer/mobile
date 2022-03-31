@@ -47,91 +47,94 @@ function SelectPhoto(_: Props) {
   const handleSelectPhoto = useCallback(async () => {
     const selectedPhoto = await openCameraHook();
     console.log(selectedPhoto);
-    if (selectedPhoto.path) {
-      const newJourney = {
-        ...(journey ?? {}),
-        photo: selectedPhoto,
-      };
+    if (selectedPhoto) {
+      if (selectedPhoto.path) {
+        const newJourney = {
+          ...(journey ?? {}),
+          photo: selectedPhoto,
+        };
 
-      if (isConnected) {
-        if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate('SubmitTree', {
-            journey: {
+        if (isConnected) {
+          if (isUpdate && isNursery && !canUpdate) {
+            navigation.navigate('SubmitTree', {
+              journey: {
+                ...newJourney,
+                nurseryContinuedUpdatingLocation: true,
+              },
+            });
+          } else if (isUpdate && isNursery) {
+            setPhoto(selectedPhoto);
+          } else if (isUpdate && !isNursery) {
+            navigation.navigate('SubmitTree', {
+              journey: newJourney,
+            });
+          } else if (!isUpdate) {
+            navigation.navigate('Profile', {
+              screen: 'MainProfile',
+              params: {
+                screen: 'SelectOnMap',
+                params: {
+                  journey: newJourney,
+                },
+              },
+            });
+          }
+        } else {
+          if (isUpdate && isNursery && !canUpdate) {
+            const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+            dispatchAddOfflineUpdateTree({
               ...newJourney,
-              nurseryContinuedUpdatingLocation: true,
-            },
-          });
-        } else if (isUpdate && isNursery) {
-          setPhoto(selectedPhoto);
-        } else if (isUpdate && !isNursery) {
-          navigation.navigate('SubmitTree', {
-            journey: newJourney,
-          });
-        } else if (!isUpdate) {
-          navigation.navigate('Profile', {
-            screen: 'MainProfile',
-            params: {
-              screen: 'SelectOnMap',
+              tree: updatedTree,
+            });
+            Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'Profile'}],
+              }),
+            );
+            navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+          } else if (isUpdate && isNursery) {
+            setPhoto(selectedPhoto);
+          } else if (isUpdate && !isNursery) {
+            const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'Profile'}],
+              }),
+            );
+            navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+          } else if (!isUpdate) {
+            navigation.navigate('Profile', {
+              screen: 'MainProfile',
               params: {
-                journey: newJourney,
+                screen: 'SelectOnMap',
+                params: {
+                  journey: newJourney,
+                },
               },
-            },
-          });
-        }
-      } else {
-        if (isUpdate && isNursery && !canUpdate) {
-          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'Profile'}],
-            }),
-          );
-          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-        } else if (isUpdate && isNursery) {
-          setPhoto(selectedPhoto);
-        } else if (isUpdate && !isNursery) {
-          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'Profile'}],
-            }),
-          );
-          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-        } else if (!isUpdate) {
-          navigation.navigate('Profile', {
-            screen: 'MainProfile',
-            params: {
-              screen: 'SelectOnMap',
-              params: {
-                journey: newJourney,
-              },
-            },
-          });
+            });
+          }
         }
       }
     }
   }, [
     openCameraHook,
     journey,
-    isUpdate,
     isConnected,
+    isUpdate,
+    isNursery,
+    canUpdate,
+    navigation,
     persistedPlantedTrees,
     dispatchAddOfflineUpdateTree,
     t,
-    navigation,
-    isNursery,
   ]);
 
   const handleContinue = useCallback(() => {

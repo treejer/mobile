@@ -20,6 +20,7 @@ import {useSettings} from 'services/settings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
+// import { useCamera } from "utilities/hooks";
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -33,23 +34,27 @@ function MyProfile(props: MyProfileProps) {
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const config = useConfig();
+
+  // const {openCameraHook} = useCamera();
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
+    // openCameraHook()
   }, []);
 
-  const getMinBalance = () => {
-    planterFundContract.methods
-      .minWithdrawable()
-      .call()
-      .then(balance => {
-        setMinBalance(balance);
-      })
-      .catch(e => {
-        console.log(e, 'e inside get minWithdrawable');
-        setMinBalance(requiredBalance);
-      });
-  };
+  const getMinBalance = useCallback(() => {
+    // @here
+    // planterFundContract.methods
+    //   .minWithdrawable()
+    //   .call()
+    //   .then(balance => {
+    //     setMinBalance(balance);
+    //   })
+    //   .catch(e => {
+    //     console.log(e, 'e inside get minWithdrawable');
+    //     setMinBalance(requiredBalance);
+    //   });
+  }, [planterFundContract.methods, requiredBalance]);
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
@@ -158,13 +163,14 @@ function MyProfile(props: MyProfileProps) {
     isConnected,
     sendEvent,
     t,
+    parseBalance,
     planterData?.balance,
     minBalance,
     requiredBalance,
+    config,
     web3,
     wallet,
     useGSN,
-    parseBalance,
   ]);
 
   const onRefetch = async () => {
@@ -227,25 +233,25 @@ function MyProfile(props: MyProfileProps) {
         {avatarMarkup}
         <Spacer times={4} />
 
-        {profileLoading && (
+        {profileLoading ? (
           <View style={globalStyles.horizontalStack}>
             <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
             <Spacer times={4} />
             <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
           </View>
-        )}
+        ) : null}
         {!profileLoading && (
           <>
-            {!!data?.user?.firstName && <Text style={globalStyles.h4}>{data.user.firstName}</Text>}
+            {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
 
-            {!!data?.user?.firstName && <Spacer times={4} />}
-            {wallet && (
+            {data?.user?.firstName ? <Spacer times={4} /> : null}
+            {wallet ? (
               <TouchableOpacity onPress={handleCopyWalletAddress}>
                 <Text numberOfLines={1} style={styles.addressBox}>
                   {wallet.slice(0, 15)}...
                 </Text>
               </TouchableOpacity>
-            )}
+            ) : null}
             <Spacer times={8} />
 
             {planterData && (
@@ -321,9 +327,9 @@ function MyProfile(props: MyProfileProps) {
                 </>
               ) : null}
 
-              {planterData?.planterType && !!wallet && (
+              {planterData?.planterType && !!wallet ? (
                 <Invite address={wallet} planterType={Number(planterData?.planterType)} />
-              )}
+              ) : null}
 
               {/* {!wallet && (
                 <>
