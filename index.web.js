@@ -3,7 +3,7 @@
  */
 
 import {registerRootComponent} from 'expo';
-import App from './NewApp';
+import App from './App';
 import './index.css';
 
 console.log('running index.web');

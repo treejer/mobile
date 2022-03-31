@@ -38,10 +38,7 @@ function TabBar({state, descriptors, navigation}: Props) {
 
           if (!isFocused && !event.defaultPrevented) {
             sendEvent(analyticsTabEvents[route.name]);
-            navigation.reset({
-              index: 0,
-              routes: [{name: route.name, params: {initialRouteName: 'SelectPlantType'}}],
-            });
+            navigation.navigate(route.name);
           }
         };
 

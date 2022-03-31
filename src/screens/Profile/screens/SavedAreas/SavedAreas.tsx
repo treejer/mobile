@@ -11,7 +11,7 @@ import Spacer from 'components/Spacer';
 import {useTranslation} from 'react-i18next';
 
 const SavedAreas = ({navigation}) => {
-  const [areas, setAreas] = useState(null);
+  const [areas, setAreas] = useState<any>(null);
 
   const {t} = useTranslation();
 
@@ -66,9 +66,9 @@ const SavedAreas = ({navigation}) => {
           </Text>
         </View>
         <View style={styles.areaListContainer}>
-          {areas && areas.length ? (
+          {areas && areas?.length ? (
             <FlatList data={areas} renderItem={renderSavedAreaItem} keyExtractor={(_, i) => i.toString()} />
-          ) : areas && areas.length == 0 ? (
+          ) : areas && areas?.length === 0 ? (
             <Text style={{alignSelf: 'center', textAlignVertical: 'center', margin: 20}}>
               {t('offlineMap.noOfflineArea')}
             </Text>
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
   areaListContainer: {
     marginHorizontal: -25,
     flex: 1,
+
   },
   subHeadingText: {
     ...fontBold,

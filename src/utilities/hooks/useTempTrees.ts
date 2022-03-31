@@ -4,10 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import TempTreeQuery, {
   TempTreesQueryQueryData,
+  TempTreesQueryQueryPartialData,
 } from 'screens/GreenBlock/screens/MyCommunity/graphql/TempTreesQuery.graphql';
 
 export default function useTempTrees(address) {
-  const [tempTrees, setTempTrees] = useState(null);
+  const [tempTrees, setTempTrees] = useState<TempTreesQueryQueryPartialData.TempTrees[] | null>(null);
 
   const perPage = useMemo(() => 40, []);
 
@@ -36,8 +37,8 @@ export default function useTempTrees(address) {
       try {
         let storedTempTrees = await AsyncStorage.getItem(TreeFilter.Temp);
         if (storedTempTrees) {
-          storedTempTrees = JSON.parse(storedTempTrees);
-          setTempTrees(storedTempTrees);
+          const _storedTempTrees = JSON.parse(storedTempTrees);
+          setTempTrees(_storedTempTrees);
         }
       } catch (e) {
         console.log(e, 'Error inside ===> useTempTrees get');

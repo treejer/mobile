@@ -9,10 +9,11 @@ import Button from 'components/Button/Button';
 import {TreeSubmissionRouteParamList} from 'types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
-import treeImage from '../../../../../assets/icons/tree.png';
+import {TreeImage} from '../../../../../assets/icons';
+import {Routes} from 'navigation';
 
-type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, 'SelectPlantType'>;
-type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, 'SelectPlantType'>;
+type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
+type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 
 export interface SelectPlantTypeProps {
   navigation: NavigationProps;
@@ -26,7 +27,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {t} = useTranslation();
 
   const [isSingle, setIsSingle] = useState<boolean | null>(null);
-  const [count, setCount] = useState<string>();
+  const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const handleStart = useCallback(
@@ -44,7 +45,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
           nurseryCount: Number(nurseryCount),
         };
       }
-      navigation.navigate('SelectPhoto', {
+      navigation.navigate(Routes.SelectPhoto, {
         journey: newJourney,
       });
     },
@@ -84,7 +85,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
       <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectSingle}>
-        <Image source={treeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
+        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
           <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.singleTree')}</Text>
         </View>

@@ -80,7 +80,9 @@ function TreeDetails(_: Props) {
 
   const updates = useMemo(
     () =>
-      typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' && treeDetails?.treeSpecsEntity?.updates != ''
+      typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' &&
+      treeDetails?.treeSpecsEntity?.updates != '' &&
+      treeDetails?.treeSpecsEntity?.updates != null
         ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
         : [],
     [treeDetails?.treeSpecsEntity?.updates],
@@ -91,7 +93,7 @@ function TreeDetails(_: Props) {
   const cardWidth = useMemo(() => width - globalStyles.p2.padding - globalStyles.p3.padding, []);
   const imageWidth = useMemo(() => {
     if (!cardWidth) {
-      return null;
+      return undefined;
     }
 
     if (updatesCount > 1) {
@@ -111,6 +113,10 @@ function TreeDetails(_: Props) {
   // }, [cardRef]);
 
   const handleUpdate = () => {
+    if (!treeDetails) {
+      Alert.alert(t('cannotUpdateTree'));
+      return;
+    }
     if (isUpdatePended(treeDetails)) {
       Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
       return;
@@ -135,7 +141,7 @@ function TreeDetails(_: Props) {
           name: 'TreeSubmission',
           params: {
             initialRouteName: 'SelectPhoto',
-            treeIdToUpdate: tree.id,
+            treeIdToUpdate: tree?.id,
             tree: treeDetails,
             location: {
               latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
@@ -171,9 +177,13 @@ function TreeDetails(_: Props) {
           <Avatar size={40} type="active" />
         </View>
 
-        <TreeImage color={colors.green} tree={treeDetails} size={120} style={{alignSelf: 'center'}} />
+        {treeDetails ? (
+          <TreeImage color={colors.green} tree={treeDetails} size={120} style={{alignSelf: 'center'}} />
+        ) : null}
 
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails?.id)}</Text>
+        {treeDetails?.id ? (
+          <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails.id)}</Text>
+        ) : null}
         {/* Tree id */}
         <Spacer times={8} />
 
@@ -288,7 +298,7 @@ function TreeDetails(_: Props) {
                 style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack, globalStyles.alignItemsCenter]}
               >
                 {updatesCount > 1 && (
-                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current.snapToPrev()}>
+                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToPrev()}>
                     <ChevronLeft />
                   </TouchableOpacity>
                 )}
@@ -299,7 +309,7 @@ function TreeDetails(_: Props) {
                     return (
                       <Image
                         style={{
-                          width: imageWidth + (updatesCount > 1 ? 20 : 0),
+                          width: (imageWidth || 0) + (updatesCount > 1 ? 20 : 0),
                           height: cardWidth,
                           borderRadius: 20,
                         }}
@@ -320,7 +330,7 @@ function TreeDetails(_: Props) {
                   onSnapToItem={index => setActiveSlide(index)}
                 />
                 {updatesCount > 1 && (
-                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current.snapToNext()}>
+                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToNext()}>
                     <ChevronRight />
                   </TouchableOpacity>
                 )}
@@ -341,7 +351,7 @@ function TreeDetails(_: Props) {
                   inactiveDotColor={colors.gray}
                   inactiveDotOpacity={0.4}
                   inactiveDotScale={0.6}
-                  carouselRef={sliderRef.current}
+                  carouselRef={sliderRef.current || undefined}
                   tappableDots={Boolean(sliderRef.current)}
                 />
               )}

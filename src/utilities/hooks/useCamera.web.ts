@@ -22,7 +22,7 @@ const useCamera = () => {
     }
   }, []);
 
-  const openCamera = useCallback(async (options?: Options): Promise<Image | void> => {
+  const openCamera = useCallback(async (options): Promise<void> => {
     // try {
     //   const photo = await ImagePicker.openCamera({
     //     includeExif: true,
@@ -49,7 +49,7 @@ const useCamera = () => {
     // ]);
   };
 
-  const openCameraHook = async (options) => {
+  const openCameraHook = async options => {
     return openCamera(options);
     // const {granted: grantedCamera} = await ImagePicker.requestCameraPermissionsAsync();
     // if (grantedCamera) {

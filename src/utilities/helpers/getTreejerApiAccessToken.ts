@@ -29,7 +29,7 @@ export async function getTreejerApiAccessToken(treejerApiUrl: string, web3: Web3
 
   const userId = await AsyncStorage.getItem('USER_ID');
 
-  if (cachedToken) {
+  if (cachedToken && userId) {
     return Promise.resolve({
       userId,
       loginToken: cachedToken,

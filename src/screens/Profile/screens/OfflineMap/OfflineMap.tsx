@@ -15,6 +15,7 @@ import {ChevronLeft} from 'components/Icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {useConfig} from 'services/web3';
+import {Routes} from 'navigation';
 
 const OfflineMap = ({navigation}) => {
   const [isLoaderShow, setIsLoaderShow] = useState(false);
@@ -26,7 +27,7 @@ const OfflineMap = ({navigation}) => {
   const {t} = useTranslation();
   const {mapboxToken} = useConfig();
 
-  const MapBoxGLRef = useRef();
+  const MapBoxGLRef = useRef<MapboxGL.MapView>(null);
   const camera = useRef<MapboxGL.Camera>(null);
 
   const getAllOfflineMapsLocal = useCallback(() => {
@@ -69,9 +70,6 @@ const OfflineMap = ({navigation}) => {
               android: 'high',
               ios: 'bestForNavigation',
             },
-            useSignificantChanges: true,
-            interval: 1000,
-            fastestInterval: 1000,
           },
         );
       })
@@ -97,8 +95,8 @@ const OfflineMap = ({navigation}) => {
     const offlineMapId = `TreeMapper-offline-map-id-${Date.now()}`;
     if (isConnected) {
       setIsLoaderShow(true);
-      const coords = await MapBoxGLRef?.current.getCenter();
-      const bounds = await MapBoxGLRef?.current.getVisibleBounds();
+      const coords = await MapBoxGLRef.current?.getCenter();
+      const bounds = await MapBoxGLRef.current?.getVisibleBounds();
       getAreaName({coords}, mapboxToken)
         .then(async areaName => {
           setAreaName(areaName);
@@ -140,7 +138,7 @@ const OfflineMap = ({navigation}) => {
               styleURL: 'mapbox://styles/sagararl/ckdfyrsw80y3a1il9eqpecoc7',
               minZoom: 14,
               maxZoom: 20,
-              bounds: bounds,
+              bounds: bounds ? [bounds[0], bounds[1]] : undefined,
             },
             progressListener,
             errorListener,
@@ -173,8 +171,8 @@ const OfflineMap = ({navigation}) => {
   };
 
   const onPressViewAll = useCallback(() => {
-    navigation.navigate('SavedAreas');
-  }, []);
+    navigation.navigate(Routes.SavedAreas);
+  }, [navigation]);
 
   return (
     <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom]}>
@@ -194,8 +192,6 @@ const OfflineMap = ({navigation}) => {
             onWillStartRenderingFrame={zoomLevelChanged}
             ref={MapBoxGLRef}
             style={styles.cont}
-            zoomLevel={15}
-            centerCoordinate={[11.256, 43.77]}
           >
             <MapboxGL.UserLocation showsUserHeadingIndicator />
             <MapboxGL.Camera ref={camera} />

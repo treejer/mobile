@@ -3,7 +3,6 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SubmitTreeData {
   export interface Options {
     photoUploadHash: string;
@@ -23,8 +22,8 @@ export namespace SubmitTreeData {
   }
 
   export interface Location {
-    latitude: string;
-    longitude: string;
+    latitude?: string;
+    longitude?: string;
   }
 
   export interface ExtraLocation {
@@ -33,7 +32,7 @@ export namespace SubmitTreeData {
   }
 
   export interface JSONData extends ExtraJSONData {
-    location: Location;
+    location?: Location;
     updates: JSONDataUpdate[];
   }
 
@@ -71,7 +70,7 @@ export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
   const treeSpecJson = tree?.treeSpecsEntity;
   let updates: SubmitTreeData.JSONDataUpdate[];
 
-  if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
+  if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '' && treeSpecJson?.updates != null) {
     updates = JSON.parse(treeSpecJson?.updates);
     updates.push(updateSpec);
   } else {
@@ -131,7 +130,7 @@ export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
   const treeSpecJson = tree?.treeSpecsEntity;
   let updates: SubmitTreeData.JSONDataUpdate[];
 
-  if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '') {
+  if (typeof treeSpecJson?.updates != 'undefined' && treeSpecJson?.updates != '' && treeSpecJson?.updates !== null) {
     updates = JSON.parse(treeSpecJson?.updates);
     updates.push(updateSpec);
   } else {
@@ -235,6 +234,7 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
   if (tree?.treeSpecsEntity?.imageFs) {
     extraJson.image = tree?.treeSpecsEntity?.imageFs?.toString();
   }
+  // @here
   if (tree?.treeSpecsEntity?.image_ipfs_hash) {
     extraJson.image_ipfs_hash = tree?.treeSpecsEntity?.image_ipfs_hash?.toString();
   }

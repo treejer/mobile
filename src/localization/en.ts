@@ -58,6 +58,7 @@ export const en = {
     OfflineUpdate: 'Updated Offline',
   },
   cannotUpdateTree: "TreeSpec is empty, You can't update tree, please contact support.",
+  cannotSubmitTree: "TreeSpec is empty, You can't plant tree, please contact support.",
   transactionFailed: {
     title: 'Transaction Failed!',
     tryAgain: 'Please try again, contact customer support if needed',

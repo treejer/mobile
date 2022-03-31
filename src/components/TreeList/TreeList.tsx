@@ -55,7 +55,7 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
-  const [initialFilter, setInitialFilter] = useState(filter);
+  const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
   const {t} = useTranslation();
   const {useGSN} = useSettings();
   const filters = useMemo<TreeFilterItem[]>(() => {
@@ -67,7 +67,7 @@ function Trees({route, navigation, filter}: Props) {
     ];
   }, []);
 
-  const [currentFilter, setCurrentFilter] = useState<TreeFilterItem>(null);
+  const [currentFilter, setCurrentFilter] = useState<TreeFilterItem | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -81,8 +81,8 @@ function Trees({route, navigation, filter}: Props) {
   );
 
   const config = useConfig();
-  const [offlineLoadings, setOfflineLoadings] = useState([]);
-  const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
+  const [offlineLoadings, setOfflineLoadings] = useState<string[]>([]);
+  const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState<string[]>([]);
 
   const address = useWalletAccount();
 
@@ -141,26 +141,26 @@ function Trees({route, navigation, filter}: Props) {
     }
   };
 
-  useEffect(() => {
-    if (route?.params?.shouldNavigateToTreeDetails) {
-      refetchPlantedTrees();
-    }
-  }, [plantedRefetching, route.params, refetchPlantedTrees]);
-
-  const handleRegSelectTree = tree => {
+  const handleRegSelectTree = () => {
     Alert.alert(t('warning'), t('notVerifiedTree'));
 
     return;
   };
 
   const handleUpdateOfflineTree = async (treeJourney: Tree & TreeJourney) => {
-    if (treeJourney?.treeSpecsEntity == null || typeof treeJourney?.treeSpecsEntity === 'undefined') {
+    if (
+      treeJourney?.treeSpecsEntity == null ||
+      typeof treeJourney?.treeSpecsEntity === 'undefined' ||
+      !treeJourney.treeIdToUpdate ||
+      !treeJourney.tree ||
+      !treeJourney.photo?.path
+    ) {
       Alert.alert(t('cannotUpdateTree'));
       return;
     }
     setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
     try {
-      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo.path);
 
       const jsonData = updateTreeJSON(config.ipfsGetURL, {
         tree: treeJourney.tree,
@@ -184,7 +184,7 @@ function Trees({route, navigation, filter}: Props) {
       dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
       setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
       console.log(receipt, 'receipt');
-    } catch (e) {
+    } catch (e: any) {
       setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
       Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
     }
@@ -196,9 +196,14 @@ function Trees({route, navigation, filter}: Props) {
       Alert.alert(t('noInternet'), t('submitWhenOnline'));
       return;
     }
+    if (!journey.offlineId || !journey?.tree || !journey.treeIdToPlant || !journey.photo?.path) {
+      Alert.alert(t('cannotSubmitTree'));
+      return;
+    }
+
     try {
       setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo.path);
 
       const jsonData = assignedTreeJSON(config.ipfsGetURL, {
         journey,
@@ -223,7 +228,7 @@ function Trees({route, navigation, filter}: Props) {
 
       setOfflineLoadings(offlineLoadings.filter(id => id !== journey.offlineId));
       dispatchRemoveOfflineTree(journey.offlineId);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e, 'e inside handleSubmitOfflineAssignedTree');
       Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
       setOfflineLoadings(offlineLoadings.filter(id => id !== journey.treeIdToPlant));
@@ -239,6 +244,10 @@ function Trees({route, navigation, filter}: Props) {
     if (!isConnected) {
       alertNoInternet();
     } else {
+      if (!treeJourney.offlineId || !treeJourney?.photo?.path) {
+        Alert.alert(t('cannotSubmitTree'));
+        return;
+      }
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
       try {
         const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo.path);
@@ -265,7 +274,7 @@ function Trees({route, navigation, filter}: Props) {
 
         setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
         dispatchRemoveOfflineTree(treeJourney.offlineId);
-      } catch (e) {
+      } catch (e: any) {
         Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
         setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
       }
@@ -286,20 +295,20 @@ function Trees({route, navigation, filter}: Props) {
               await handleSubmitOfflineTree(tree as TreeJourney);
             }
           } else {
-            await handleUpdateOfflineTree(tree as Tree);
+            await handleUpdateOfflineTree(tree as Tree & TreeJourney);
           }
         }
         Alert.alert(t('offlineTreesSubmitted'));
-      } catch (e) {
+      } catch (e: any) {
         Alert.alert(t('error'), e.message || t('tryAgain'));
       }
     }
   };
 
   const renderFilters = () =>
-    filters.map(filter => {
-      const {caption} = filter;
-      const variant = currentFilter.caption === caption ? 'secondary' : 'primary';
+    filters.map(item => {
+      const {caption} = item;
+      const variant = currentFilter?.caption === caption ? 'secondary' : 'primary';
 
       return (
         <Button
@@ -307,7 +316,7 @@ function Trees({route, navigation, filter}: Props) {
           caption={t(caption)}
           variant={variant}
           style={{marginHorizontal: 8, marginBottom: 8}}
-          onPress={() => setCurrentFilter(filter)}
+          onPress={() => setCurrentFilter(item)}
         />
       );
     });
@@ -350,7 +359,7 @@ function Trees({route, navigation, filter}: Props) {
 
   const tempRenderItem = tree => {
     return (
-      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleRegSelectTree(tree)}>
+      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={handleRegSelectTree}>
         <TreeImage tree={tree.item} size={60} tint color={colors.yellow} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
@@ -358,7 +367,7 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const tempEmptyContent = () => {
-    if (tempTrees?.length === 0 && plantedTrees?.length > 0) {
+    if (tempTrees?.length === 0 && (plantedTrees?.length || 0) > 0) {
       return null;
     }
     return (
@@ -411,7 +420,7 @@ function Trees({route, navigation, filter}: Props) {
           initialNumToRender={20}
           onEndReachedThreshold={0.1}
           renderItem={RenderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
           style={{flex: 1}}
           refreshing
@@ -436,7 +445,7 @@ function Trees({route, navigation, filter}: Props) {
           initialNumToRender={20}
           onEndReachedThreshold={0.1}
           onEndReached={tempLoadMore}
-          keyExtractor={item => item.id}
+          keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
           style={{flex: 1}}
           refreshing
@@ -453,14 +462,21 @@ function Trees({route, navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
+      if (!item.tree) {
+        return null;
+      }
       const isAssignedTree = item.treeIdToPlant;
-      const id = isPlanted ? (isAssignedTree ? Hex2Dec(isAssignedTree) : index + 1) : Hex2Dec(item.treeIdToUpdate);
+      const id = isPlanted
+        ? isAssignedTree
+          ? Hex2Dec(isAssignedTree)
+          : index + 1
+        : Hex2Dec(item.treeIdToUpdate || '');
       const submitLoading = offlineLoadings.find(
         offlineId => offlineId === item.offlineId || offlineId === item.treeIdToPlant,
       );
       const updateLoading = offlineUpdateLoadings.find(offlineId => offlineId === item.treeIdToUpdate);
 
-      const loading = isPlanted ? submitLoading : updateLoading;
+      const loading = isPlanted ? !!submitLoading : !!updateLoading;
       const disabled = isPlanted ? offlineLoadings.length > 0 : offlineUpdateLoadings.length > 0;
 
       const caption = loading ? null : 'Send';
@@ -488,7 +504,7 @@ function Trees({route, navigation, filter}: Props) {
             caption={caption}
             loading={loading}
             disabled={disabled}
-            onPress={!disabled && !loading && onPress}
+            onPress={!disabled && !loading ? onPress : undefined}
           />
         </TouchableOpacity>
       );
@@ -503,13 +519,13 @@ function Trees({route, navigation, filter}: Props) {
         <FlatList<TreeJourney>
           data={data}
           renderItem={renderItem}
-          keyExtractor={item => (isPlanted ? item.offlineId : item.treeIdToUpdate)}
+          keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? () => offlineEmpty(isPlanted) : NoInternetTrees}
           style={{flex: 1}}
           numColumns={calcTreeColumnNumber()}
           contentContainerStyle={styles.listScrollWrapper}
         />
-        {data?.length > 1 && (
+        {data && data.length > 1 && (
           <Button
             caption={t('treeInventory.submitAll')}
             variant="tertiary"
@@ -524,7 +540,7 @@ function Trees({route, navigation, filter}: Props) {
 
   const renderLoadingModal = () => {
     return (
-      <Modal style={{flex: 1}} visible={offlineLoading} onRequestClose={null} transparent>
+      <Modal style={{flex: 1}} visible={offlineLoading} onRequestClose={() => {}} transparent>
         <View style={{backgroundColor: colors.grayOpacity, flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <View
             style={{

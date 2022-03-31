@@ -82,17 +82,7 @@ function SelectPhoto(_: Props) {
     //     }
     //   }
     // }
-  }, [
-    // openCameraHook,
-    journey,
-    isUpdate,
-    isConnected,
-    persistedPlantedTrees,
-    dispatchAddOfflineUpdateTree,
-    t,
-    navigation,
-    isNursery,
-  ]);
+  }, []);
 
   const handleContinue = useCallback(() => {
     navigation.navigate('SubmitTree', {
@@ -139,7 +129,6 @@ function SelectPhoto(_: Props) {
           currentStep={canUpdate ? 2 : 1}
           isSingle={journey?.isSingle}
           count={journey?.nurseryCount}
-          isNursery={isNursery}
         >
           <Spacer times={4} />
           {/* @here */}

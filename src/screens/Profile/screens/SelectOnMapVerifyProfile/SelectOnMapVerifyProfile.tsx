@@ -11,9 +11,8 @@ interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyPro
 
 function SelectOnMapVerifyProfile(props: Props) {
   const {navigation, route} = props;
-  const {
-    params: {journey},
-  } = route;
+  const {params} = route;
+  const {journey} = params || {};
 
   const handleSubmit = useCallback(
     (location: GeoPosition) => {

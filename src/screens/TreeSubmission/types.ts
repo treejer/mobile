@@ -4,7 +4,7 @@ import {Tree} from 'types';
 export interface TreeJourney {
   treeIdToUpdate?: string;
   photo?: Image;
-  location?: {
+  location: {
     latitude: number;
     longitude: number;
   };

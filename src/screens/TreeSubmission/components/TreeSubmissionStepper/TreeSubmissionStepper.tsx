@@ -10,7 +10,7 @@ interface Props {
   currentStep: number;
   children: React.ReactNode;
   isUpdate?: boolean;
-  isSingle?: boolean;
+  isSingle?: boolean | null;
   count?: number;
   canUpdateLocation?: boolean;
 }
@@ -44,7 +44,7 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 2 - Only for creation */}
-        {(!isUpdate || !!canUpdateLocation) && (
+        {(!isUpdate || Boolean(canUpdateLocation)) && (
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>
@@ -57,7 +57,7 @@ function TreeSubmissionStepper(props: Props) {
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(!(!isUpdate || !!canUpdateLocation))}>
+        <Steps.Step step={3 - Number(!(!isUpdate || Boolean(canUpdateLocation)))}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
@@ -66,7 +66,7 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(!(!isUpdate || !!canUpdateLocation))} lastStep>
+        <Steps.Step step={4 - Number(!(!isUpdate || Boolean(canUpdateLocation)))} lastStep>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}
@@ -76,7 +76,7 @@ function TreeSubmissionStepper(props: Props) {
     </>
   );
 
-  function renderChildrenIfCurrentStep(step: number, element?: JSX.Element) {
+  function renderChildrenIfCurrentStep(step: number) {
     if (step === currentStep) {
       return children;
     }

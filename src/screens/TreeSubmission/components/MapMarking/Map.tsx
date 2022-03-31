@@ -67,9 +67,6 @@ export default function Map({map, camera, setLocation}: IMapProps) {
               android: 'high',
               ios: 'bestForNavigation',
             },
-            useSignificantChanges: true,
-            interval: 1000,
-            fastestInterval: 1000,
           },
         );
       })
@@ -88,12 +85,12 @@ export default function Map({map, camera, setLocation}: IMapProps) {
         onDidFinishRenderingMapFully={initialMapCamera}
         ref={map}
         style={styles.container}
-        zoomLevel={15}
-        centerCoordinate={[11.256, 43.77]}
         onRegionDidChange={onChangeRegionComplete}
       >
-        <MapboxGL.UserLocation visible showsUserHeadingIndicator />
-        <MapboxGL.Camera ref={camera} />
+        <>
+          <MapboxGL.UserLocation visible showsUserHeadingIndicator />
+          <MapboxGL.Camera ref={camera} />
+        </>
       </MapKit>
     </View>
   );

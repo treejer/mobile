@@ -2,7 +2,7 @@ import {useTreeFactory} from 'services/web3';
 import {useEffect, useState} from 'react';
 
 export function useTreeUpdateInterval() {
-  const [treeUpdateInterval, setTreeUpdateInterval] = useState(null);
+  const [treeUpdateInterval, setTreeUpdateInterval] = useState(0);
 
   const treeFactory = useTreeFactory();
 

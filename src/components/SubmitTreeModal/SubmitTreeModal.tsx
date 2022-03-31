@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from 'constants/values';
@@ -17,10 +17,13 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {useSettings} from 'services/settings';
 import {newTreeJSON} from 'utilities/helpers/submitTree';
 import {ContractType} from 'services/config';
+import {Routes} from 'navigation';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
 }
+
+export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 
 export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const {journey} = props;
@@ -29,17 +32,17 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
   const {t} = useTranslation();
-  const {navigate} = useNavigation();
+  const {navigate} = useNavigation<any>();
   const {useGSN} = useSettings();
   const config = useConfig();
 
   const [visible, setVisible] = useState<boolean>(true);
 
-  const [requests, setRequests] = useState<{loading: boolean; error: string | null; hash: string | null}[]>();
+  const [requests, setRequests] = useState<TreeRequests>();
 
   useEffect(() => {
-    const array = [];
-    for (let i = 0; i < journey.nurseryCount; i++) {
+    const array: TreeRequests = [];
+    for (let i = 0; i < (journey?.nurseryCount || 0); i++) {
       array.push({
         loading: false,
         hash: null,
@@ -49,90 +52,100 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     setRequests(array);
   }, [journey.nurseryCount]);
 
-  const alertNoInternet = () => {
+  const alertNoInternet = useCallback(() => {
     Alert.alert(t('noInternet'), t('submitWhenOnline'));
-  };
+  }, [t]);
 
-  const handleSubmitTree = async (treeJourney: TreeJourney) => {
-    const birthDay = currentTimestamp();
-    try {
-      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
-      const jsonData = newTreeJSON(config.ipfsGetURL, {
-        journey: treeJourney,
-        photoUploadHash: photoUploadResult.Hash,
-      });
+  const handleSubmitTree = useCallback(
+    async (treeJourney: TreeJourney) => {
+      if (!treeJourney.photo?.path) {
+        return;
+      }
+      const birthDay = currentTimestamp();
+      try {
+        const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
+        const jsonData = newTreeJSON(config.ipfsGetURL, {
+          journey: treeJourney,
+          photoUploadHash: photoUploadResult.Hash,
+        });
 
-      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
-      console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
+        const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
+        console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-      const receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.TreeFactory,
-        web3,
-        wallet,
-        'plantTree',
-        [metaDataUploadResult.Hash, birthDay, 0],
-        useGSN,
-      );
+        const receipt = await sendTransactionWithGSN(
+          config,
+          ContractType.TreeFactory,
+          web3,
+          wallet,
+          'plantTree',
+          [metaDataUploadResult.Hash, birthDay, 0],
+          useGSN,
+        );
 
-      console.log(receipt, 'receipt');
-      console.log(receipt.transactionHash, 'receipt.transactionHash');
-      return Promise.resolve(receipt.transactionHash);
-    } catch (e) {
-      console.log(e, 'e happened submit <======');
-      return Promise.reject(e?.message || e.error?.message || t('transactionFailed.tryAgain'));
-    }
-  };
+        console.log(receipt, 'receipt');
+        console.log(receipt.transactionHash, 'receipt.transactionHash');
+        return Promise.resolve(receipt.transactionHash);
+      } catch (e: any) {
+        console.log(e, 'e happened submit <======');
+        return Promise.reject(e?.message || e.error?.message || t('transactionFailed.tryAgain'));
+      }
+    },
+    [config, t, useGSN, wallet, web3],
+  );
 
-  const handleSubmitAll = async () => {
+  const handleSubmitAll = useCallback(async () => {
     if (!isConnected) {
       alertNoInternet();
     } else {
-      const array = requests.filter(request => !request.hash);
-      for (let i = 0; i < array.length; i++) {
+      const array = requests?.filter(request => !request.hash);
+      for (let i = 0; i < (array?.length || 0); i++) {
         setRequests(prevRequests =>
-          prevRequests.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
+          prevRequests?.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
         );
         try {
           const hash = await handleSubmitTree(journey);
           console.log(hash, 'hash <============');
           setRequests(prevRequests =>
-            prevRequests.map((item, index) => (index === i ? {...item, loading: false, hash} : item)),
+            prevRequests?.map((item, index) => (index === i && hash ? {...item, loading: false, hash} : item)),
           );
-        } catch (e) {
+        } catch (e: any) {
           setRequests(prevRequests =>
-            prevRequests.map((item, index) => (index === i ? {...item, loading: false, error: e} : item)),
+            prevRequests?.map((item, index) => (index === i ? {...item, loading: false, error: e} : item)),
           );
           return Promise.reject(e);
         }
       }
       Alert.alert(t('success'), t('submitTree.nurserySubmitted'));
-      navigate('GreenBlock');
+      navigate(Routes.GreenBlock);
       setVisible(false);
     }
-  };
+  }, [alertNoInternet, handleSubmitTree, isConnected, journey, navigate, requests, t]);
 
   const handleCancel = () => {
     setVisible(false);
-    navigate('GreenBlock');
+    navigate(Routes.GreenBlock);
   };
 
   useEffect(() => {
-    if (journey.isSingle === false && journey.nurseryCount && isConnected) {
-      handleSubmitAll();
-    }
-  }, [journey.isSingle, journey.nurseryCount, isConnected]);
+    (async function () {
+      if (journey.isSingle === false && journey.nurseryCount && isConnected) {
+        await handleSubmitAll();
+      }
+    })();
+  }, [journey.isSingle, journey.nurseryCount, isConnected, handleSubmitAll]);
 
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);
   const tryAgain = !hasLoading && Boolean(requests?.find(request => request.error));
 
-  const handlePressHash = (hash: string) => {
-    Clipboard.setString(hash);
-    Alert.alert(t('submitTree.hashCopied'), hash);
+  const handlePressHash = (hash: string | null) => {
+    if (hash) {
+      Clipboard.setString(hash);
+      Alert.alert(t('submitTree.hashCopied'), hash);
+    }
   };
 
   return (
-    <Modal style={styles.modal} visible={visible} onRequestClose={null} transparent>
+    <Modal style={styles.modal} visible={visible} onRequestClose={() => {}} transparent>
       <View style={styles.container}>
         <SafeAreaView style={styles.safe}>
           <View style={styles.loader}>
@@ -157,7 +170,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                       </Text>
                     )}
                     {request.error && (
-                      <Text onPress={() => Alert.alert('Error', request.error)} style={style}>
+                      <Text onPress={() => Alert.alert('Error', request.error || '')} style={style}>
                         {request.error.slice(0, 8)}...
                       </Text>
                     )}

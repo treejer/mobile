@@ -1,39 +1,47 @@
 import React, {useEffect} from 'react';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import SettingsProvider, {useAppInitialValue, SettingsContext} from './src/services/settings';
 import SplashScreen from 'react-native-splash-screen';
-import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
-import Web3Provider, {Web3Context} from './src/services/web3';
-import ApolloProvider from './src/services/apollo';
-import {I18nextProvider} from 'react-i18next';
-import Onboarding from './src/screens/Onboarding';
-import {NavigationContainer} from '@react-navigation/native';
-import MainTabs from './src/screens/MainTabs';
-import NetInfo from './src/components/NetInfo';
+import {isWeb} from './src/utilities/helpers/web';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {i18next} from './src/localization';
-import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
+import {I18nextProvider} from 'react-i18next';
+import SettingsProvider, {useAppInitialValue} from './src/services/settings';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
-import {CurrentUserProvider} from './src/services/currentUser';
+import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
+import Web3Provider from './src/services/web3';
+import {NavigationContainer} from '@react-navigation/native';
+import {RootNavigation} from './src/navigation';
 import {SwitchNetwork} from './src/components/SwitchNetwork/SwitchNetwork';
+import NetInfo from './src/components/NetInfo/NetInfo';
+import ApolloProvider from './src/services/apollo';
+import {CurrentUserProvider} from './src/services/currentUser';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
 };
 
 export default function App() {
+  const {
+    loading: initialValuesLoading,
+    locale,
+    useGSN,
+    onboardingDone,
+    wallet,
+    accessToken,
+    userId,
+    magicToken,
+    blockchainNetwork,
+  } = useAppInitialValue();
+
   useEffect(() => {
-    SplashScreen.hide();
+    if (!isWeb()) {
+      SplashScreen.hide();
+    }
   }, []);
-
-  const {loading, locale, useGSN, onboardingDone, wallet, accessToken, userId, magicToken, blockchainNetwork} =
-    useAppInitialValue();
-
-  useInitialDeepLinking();
 
   return (
     <I18nextProvider i18n={i18next}>
       <SafeAreaProvider>
-        {loading ? (
+        {initialValuesLoading ? (
           <AppLoading />
         ) : (
           <SettingsProvider
@@ -49,38 +57,15 @@ export default function App() {
                 persistedMagicToken={magicToken}
                 blockchainNetwork={blockchainNetwork}
               >
-                <Web3Context.Consumer>
-                  {({loading, magic}) =>
-                    loading ? (
-                      <AppLoading />
-                    ) : (
-                      <ApolloProvider>
-                        <CurrentUserProvider>
-                          <SettingsContext.Consumer>
-                            {value => {
-                              const app =
-                                !value.locale || !value.onboardingDone ? (
-                                  <Onboarding />
-                                ) : (
-                                  <NavigationContainer linking={linking}>
-                                    <MainTabs />
-                                  </NavigationContainer>
-                                );
-                              return (
-                                <>
-                                  {magic ? <magic.Relayer /> : null}
-                                  <NetInfo />
-                                  <SwitchNetwork />
-                                  {app}
-                                </>
-                              );
-                            }}
-                          </SettingsContext.Consumer>
-                        </CurrentUserProvider>
-                      </ApolloProvider>
-                    )
-                  }
-                </Web3Context.Consumer>
+                <ApolloProvider>
+                  <CurrentUserProvider>
+                    <NetInfo />
+                    <SwitchNetwork />
+                    <NavigationContainer linking={linking}>
+                      <RootNavigation />
+                    </NavigationContainer>
+                  </CurrentUserProvider>
+                </ApolloProvider>
               </Web3Provider>
             </OfflineTreeProvider>
           </SettingsProvider>

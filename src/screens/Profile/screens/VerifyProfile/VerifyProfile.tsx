@@ -255,12 +255,13 @@ function VerifyProfile(props: Props) {
         height: 300,
       });
 
-      if (result.path) {
+      if (result?.path) {
         if (/file:\//.test(result.path)) {
           setIdCardImageUri(result.path);
         } else {
-          urlToBlob(result.path).then((blob: Blob) => {
-            const fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
+          urlToBlob(result.path).then(blob => {
+            // eslint-disable-next-line no-undef
+            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
             setIdCardImageUri(fileOfBlob);
             return blob;
           });

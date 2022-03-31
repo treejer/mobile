@@ -16,6 +16,7 @@ import {TreeFilter} from 'components/TreeList/TreeList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
+import {Routes} from 'navigation';
 
 interface IMapMarkingProps {
   journey?: TreeJourney;
@@ -31,9 +32,9 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
   const {dispatchAddOfflineTree, dispatchAddOfflineTrees} = useOfflineTrees();
   const {t} = useTranslation();
 
-  const camera = useRef(null);
+  const camera = useRef<MapboxGL.Camera>(null);
   const map = useRef(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
 
@@ -41,14 +42,129 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
 
   useEffect(() => {
-    checkPermission();
-  }, []);
-
-  useEffect(() => {
     if (!!camera.current && !isCameraRefVisible) {
       setIsCameraRefVisible(true);
     }
   }, [camera, isCameraRefVisible]);
+
+  // recenter the marker to the current coordinates
+  const onPressMyLocationIcon = useCallback(
+    (position: any) => {
+      if (isInitial) {
+        setIsInitial(false);
+        return;
+      }
+      if (isCameraRefVisible && camera?.current?.setCamera) {
+        setIsInitial(false);
+        camera.current.setCamera({
+          centerCoordinate: [position.coords.longitude, position.coords.latitude],
+          zoomLevel: 18,
+          animationDuration: 1000,
+        });
+      }
+    },
+    [isCameraRefVisible, isInitial],
+  );
+
+  useEffect(() => {
+    if (isInitial && location) {
+      onPressMyLocationIcon(location);
+    }
+  }, [isCameraRefVisible, isInitial, location, onPressMyLocationIcon]);
+
+  // // generates the alphabets
+  // const generateAlphabets = () => {
+  //   let alphabetsArray: string[] = [];
+  //   for (var x = 1, y; x <= 130; x++) {
+  //     y = toLetters(x);
+  //     alphabetsArray.push(y);
+  //   }
+  //   setAlphabets(alphabetsArray);
+  // };
+
+  // only the first time marker will follow the user's current location by default
+  const onUpdateUserLocation = useCallback(
+    (userLocation: any) => {
+      if (isInitial && userLocation) {
+        onPressMyLocationIcon(userLocation);
+      }
+    },
+    [isInitial, onPressMyLocationIcon],
+  );
+
+  const handleDismiss = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const handleSubmit = useCallback(() => {
+    if (journey && location) {
+      const newJourney = {
+        ...journey,
+        location: {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+        },
+      };
+      if (isConnected) {
+        navigation.navigate(Routes.SubmitTree, {
+          journey: newJourney,
+        });
+      } else {
+        console.log(newJourney, 'newJourney offline tree');
+        if (newJourney.isSingle === true) {
+          dispatchAddOfflineTree(newJourney);
+          Alert.alert(t('myProfile.attention'), t('myProfile.offlineTreeAdd'));
+        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
+          const offlineTrees: TreeJourney[] = [];
+          for (let i = 0; i < newJourney.nurseryCount; i++) {
+            offlineTrees.push({
+              ...newJourney,
+              offlineId: (Date.now() + i * 1000).toString(),
+            });
+          }
+          dispatchAddOfflineTrees(offlineTrees);
+          Alert.alert(t('myProfile.attention'), t('myProfile.offlineNurseryAdd'));
+        } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
+          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          return;
+        }
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Profile'}],
+          }),
+        );
+        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
+      }
+    } else {
+      if (location) {
+        onSubmit?.(location);
+      }
+    }
+  }, [
+    journey,
+    location,
+    isConnected,
+    navigation,
+    dispatchAddOfflineTree,
+    t,
+    dispatchAddOfflineTrees,
+    persistedPlantedTrees,
+    dispatchAddOfflineUpdateTree,
+    onSubmit,
+  ]);
 
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
@@ -74,67 +190,10 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
     return () => {
       Geolocation.clearWatch(watchId);
     };
-  }, []);
-
-  useEffect(() => {
-    if (isInitial && location) {
-      onPressMyLocationIcon(location);
-    }
-  }, [isCameraRefVisible, isInitial, location]);
-
-  const checkPermission = async () => {
-    try {
-      await locationPermission();
-      MapboxGL.setTelemetryEnabled(false);
-      await updateCurrentPosition();
-      return true;
-    } catch (err) {
-      if (err?.message == 'blocked') {
-        console.log('blocked');
-      } else if (err?.message == 'denied') {
-        console.log('denied');
-      } else {
-        console.log(err, 'err inside checkPermission');
-      }
-      return false;
-    }
-  };
-
-  // // generates the alphabets
-  // const generateAlphabets = () => {
-  //   let alphabetsArray: string[] = [];
-  //   for (var x = 1, y; x <= 130; x++) {
-  //     y = toLetters(x);
-  //     alphabetsArray.push(y);
-  //   }
-  //   setAlphabets(alphabetsArray);
-  // };
-
-  // only the first time marker will follow the user's current location by default
-  const onUpdateUserLocation = (userLocation: any) => {
-    if (isInitial && userLocation) {
-      onPressMyLocationIcon(userLocation);
-    }
-  };
-
-  // recenter the marker to the current coordinates
-  const onPressMyLocationIcon = (position: any) => {
-    if (isInitial) {
-      setIsInitial(false);
-      return;
-    }
-    if (isCameraRefVisible && camera?.current?.setCamera) {
-      setIsInitial(false);
-      camera.current.setCamera({
-        centerCoordinate: [position.coords.longitude, position.coords.latitude],
-        zoomLevel: 18,
-        animationDuration: 1000,
-      });
-    }
-  };
+  }, [onUpdateUserLocation]);
 
   // getting current position of the user with high accuracy
-  const updateCurrentPosition = async () => {
+  const updateCurrentPosition = useCallback(async () => {
     return new Promise(resolve => {
       Geolocation.getCurrentPosition(
         position => {
@@ -156,88 +215,31 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         },
       );
     });
-  };
+  }, [onUpdateUserLocation]);
 
-  const handleDismiss = useCallback(() => {
-    if (journey) {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: 'TreeSubmission'}],
-        }),
-      );
-    } else {
-      navigation.goBack();
-    }
-  }, [journey, navigation]);
-
-  const handleSubmit = useCallback(() => {
-    if (journey) {
-      const newJourney = {
-        ...journey,
-        location: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        },
-      };
-      if (isConnected) {
-        navigation.navigate('SubmitTree', {
-          journey: newJourney,
-        });
+  const checkPermission = useCallback(async () => {
+    try {
+      await locationPermission();
+      MapboxGL.setTelemetryEnabled(false);
+      await updateCurrentPosition();
+      return true;
+    } catch (err: any) {
+      if (err?.message == 'blocked') {
+        console.log('blocked');
+      } else if (err?.message == 'denied') {
+        console.log('denied');
       } else {
-        console.log(newJourney, 'newJourney offline tree');
-        if (newJourney.isSingle === true) {
-          dispatchAddOfflineTree(newJourney);
-          Alert.alert(t('myProfile.attention'), t('myProfile.offlineTreeAdd'));
-        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-          const offlineTrees = [];
-          for (let i = 0; i < newJourney.nurseryCount; i++) {
-            offlineTrees.push({
-              ...newJourney,
-              offlineId: Date.now() + i * 1000,
-            });
-          }
-          dispatchAddOfflineTrees(offlineTrees);
-          Alert.alert(t('myProfile.attention'), t('myProfile.offlineNurseryAdd'));
-        } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'Profile'}],
-            }),
-          );
-          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-          return;
-        }
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: 'Profile'}],
-          }),
-        );
-        navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineCreate});
+        console.log(err, 'err inside checkPermission');
       }
-    } else {
-      onSubmit?.(location);
+      return false;
     }
-  }, [
-    journey,
-    location,
-    isConnected,
-    navigation,
-    dispatchAddOfflineTree,
-    t,
-    dispatchAddOfflineTrees,
-    persistedPlantedTrees,
-    dispatchAddOfflineUpdateTree,
-    onSubmit,
-  ]);
+  }, [updateCurrentPosition]);
+
+  useEffect(() => {
+    (async function () {
+      await checkPermission();
+    })();
+  }, [checkPermission]);
 
   const initialMapCamera = () => {
     locationPermission()
@@ -262,9 +264,6 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
               android: 'high',
               ios: 'bestForNavigation',
             },
-            useSignificantChanges: true,
-            interval: 1000,
-            fastestInterval: 1000,
           },
         );
       })

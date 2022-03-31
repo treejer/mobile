@@ -35,26 +35,24 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
 
-  // const {openCameraHook} = useCamera();
+  const getMinBalance = useCallback(() => {
+    // @here
+    planterFundContract.methods
+      .minWithdrawable()
+      .call()
+      .then(balance => {
+        setMinBalance(balance);
+      })
+      .catch(e => {
+        console.log(e, 'e inside get minWithdrawable');
+        setMinBalance(requiredBalance);
+      });
+  }, [planterFundContract.methods, requiredBalance]);
+
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
-    // openCameraHook()
-  }, []);
-
-  const getMinBalance = useCallback(() => {
-    // @here
-    // planterFundContract.methods
-    //   .minWithdrawable()
-    //   .call()
-    //   .then(balance => {
-    //     setMinBalance(balance);
-    //   })
-    //   .catch(e => {
-    //     console.log(e, 'e inside get minWithdrawable');
-    //     setMinBalance(requiredBalance);
-    //   });
-  }, [planterFundContract.methods, requiredBalance]);
+  }, [getMinBalance]);
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
@@ -128,7 +126,7 @@ function MyProfile(props: MyProfileProps) {
     sendEvent('withdraw');
     try {
       // balance
-      const balance = parseBalance(planterData?.balance);
+      const balance = parseBalance(planterData?.balance?.toString() || '0');
       const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
       if (balance > bnMinBalance) {
         try {
@@ -178,7 +176,8 @@ function MyProfile(props: MyProfileProps) {
     await refetchUser();
   };
 
-  const planterWithdrawableBalance = planterData?.balance > 0 ? parseBalance(planterData?.balance.toString()) : 0;
+  const planterWithdrawableBalance =
+    Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
   const profileLoading = loading || !data?.user;

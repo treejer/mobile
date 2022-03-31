@@ -40,8 +40,6 @@ function BackgroundEntropy() {
         viewBox="0 0 380 383"
         style={{
           position: 'absolute',
-          left: -10,
-          top: -50,
           ...styles.down,
         }}
       >

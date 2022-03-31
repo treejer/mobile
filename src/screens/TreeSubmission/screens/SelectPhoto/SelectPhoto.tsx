@@ -16,6 +16,7 @@ import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
+import {Routes} from 'navigation';
 
 interface Props {}
 
@@ -56,7 +57,7 @@ function SelectPhoto(_: Props) {
 
         if (isConnected) {
           if (isUpdate && isNursery && !canUpdate) {
-            navigation.navigate('SubmitTree', {
+            navigation.navigate(Routes.SubmitTree, {
               journey: {
                 ...newJourney,
                 nurseryContinuedUpdatingLocation: true,
@@ -65,23 +66,17 @@ function SelectPhoto(_: Props) {
           } else if (isUpdate && isNursery) {
             setPhoto(selectedPhoto);
           } else if (isUpdate && !isNursery) {
-            navigation.navigate('SubmitTree', {
+            navigation.navigate(Routes.SubmitTree, {
               journey: newJourney,
             });
           } else if (!isUpdate) {
-            navigation.navigate('Profile', {
-              screen: 'MainProfile',
-              params: {
-                screen: 'SelectOnMap',
-                params: {
-                  journey: newJourney,
-                },
-              },
+            navigation.navigate(Routes.SelectOnMap, {
+              journey: newJourney,
             });
           }
         } else {
+          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
           if (isUpdate && isNursery && !canUpdate) {
-            const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -93,11 +88,10 @@ function SelectPhoto(_: Props) {
                 routes: [{name: 'Profile'}],
               }),
             );
-            navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
           } else if (isUpdate && isNursery) {
             setPhoto(selectedPhoto);
           } else if (isUpdate && !isNursery) {
-            const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -109,7 +103,7 @@ function SelectPhoto(_: Props) {
                 routes: [{name: 'Profile'}],
               }),
             );
-            navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
           } else if (!isUpdate) {
             navigation.navigate('Profile', {
               screen: 'MainProfile',
@@ -140,7 +134,7 @@ function SelectPhoto(_: Props) {
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
-      navigation.navigate('SubmitTree', {
+      navigation.navigate(Routes.SubmitTree, {
         journey: {
           ...journey,
           photo,
@@ -148,7 +142,7 @@ function SelectPhoto(_: Props) {
         },
       });
     } else {
-      const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
+      const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
       dispatchAddOfflineUpdateTree({
         ...journey,
         photo,
@@ -162,27 +156,21 @@ function SelectPhoto(_: Props) {
           routes: [{name: 'Profile'}],
         }),
       );
-      navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
+      navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
     }
   }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
 
   const handleUpdateLocation = useCallback(() => {
-    const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate('Profile', {
-      screen: 'MainProfile',
-      params: {
-        screen: 'SelectOnMap',
-        params: {
-          journey: {
-            ...journey,
-            photo,
-            ...updatedTree,
-            tree: updatedTree,
-          },
-        },
+    const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+    navigation.navigate(Routes.SelectOnMap, {
+      journey: {
+        ...journey,
+        photo,
+        ...updatedTree,
+        tree: updatedTree,
       },
     });
-  }, [journey, navigation, photo]);
+  }, [journey, navigation, persistedPlantedTrees, photo]);
 
   if (canPlant === false) {
     return (
@@ -205,7 +193,7 @@ function SelectPhoto(_: Props) {
         >
           <Spacer times={4} />
           {/* @here */}
-          {!!(canUpdate && photo) ? (
+          {canUpdate && photo ? (
             <View style={{flexDirection: 'row'}}>
               <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
               <Button

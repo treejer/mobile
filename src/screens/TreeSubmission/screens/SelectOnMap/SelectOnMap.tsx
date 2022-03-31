@@ -3,16 +3,16 @@ import globalStyles from 'constants/styles';
 
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {TreeSubmissionRouteParamList} from 'types';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
+import {RootNavigationProp, Routes} from 'navigation';
 
-interface Props {}
+interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
 
-function SelectOnMap(_: Props) {
+function SelectOnMap(props: Props) {
+  const {route} = props;
   const {
     params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  } = route;
 
   return (
     <View style={globalStyles.fill}>

@@ -12,6 +12,7 @@ type OwnProps = {
   success?: boolean;
   error?: FieldError;
   disabled?: boolean;
+  name: string;
 } & (
   | {
       control: Control<any>;

@@ -14,6 +14,7 @@ import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
+import {TreeJourney} from 'screens/TreeSubmission/types';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -27,7 +28,9 @@ export type RootNavigationParamList = {
   [Routes.OfflineMap]: undefined;
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
-  [Routes.SelectOnMap]: undefined;
+  [Routes.SelectOnMap]: {
+    journey: TreeJourney;
+  };
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -55,6 +58,9 @@ export enum Routes {
   TreeSubmission = 'TreeSubmission',
   GreenBlock = 'GreenBlock',
   Test = 'Test',
+  SelectPhoto = 'SelectPhoto',
+  SelectPlantType = 'SelectPlantType',
+  SubmitTree = 'SubmitTree',
 }
 
 export function RootNavigation() {

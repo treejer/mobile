@@ -3,7 +3,7 @@ import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, ScrollView, Text, View} from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
@@ -25,13 +25,15 @@ import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import {useSettings} from 'services/settings';
 import {assignedTreeJSON, canUpdateTreeLocation, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {Routes} from 'navigation';
+import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 
 interface Props {
-  navigation: any;
+  navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
 }
 
-function SubmitTree(_: Props) {
-  const navigation = useNavigation();
+function SubmitTree(props: Props) {
+  const {navigation} = props;
 
   const {
     params: {journey},
@@ -60,19 +62,13 @@ function SubmitTree(_: Props) {
 
   const updatedTreeQuery = useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
     skip: !isUpdate,
-    variables: {
-      // todo fix it
-      id: journey?.treeIdToUpdate,
-    },
+    variables: journey?.treeIdToUpdate ? {id: journey.treeIdToUpdate} : undefined,
   });
   const updateTreeData = updatedTreeQuery?.data?.tree;
 
   const assignedTreeQuery = useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
     skip: !isAssignedTreeToPlant,
-    variables: {
-      // todo fix it
-      id: journey?.treeIdToPlant,
-    },
+    variables: journey?.treeIdToPlant ? {id: journey?.treeIdToPlant} : undefined,
   });
   const assignedTreeData = assignedTreeQuery?.data?.tree;
 
@@ -96,6 +92,10 @@ function SubmitTree(_: Props) {
       return;
     }
 
+    if (!journey.photo) {
+      return;
+    }
+
     try {
       const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
       setPhotoHash(photoUploadResult.Hash);
@@ -106,7 +106,7 @@ function SubmitTree(_: Props) {
       if (isUpdate) {
         jsonData = updateTreeJSON(config.ipfsGetURL, {
           journey,
-          tree: updateTreeData,
+          tree: updateTreeData as TreeDetailQueryQueryData.Tree,
           photoUploadHash: photoUploadResult.Hash,
         });
       } else {
@@ -135,10 +135,19 @@ function SubmitTree(_: Props) {
       // }
 
       setIsReadyToSubmit(true);
-    } catch (e) {
+    } catch (e: any) {
       Alert.alert(e?.message || t('tryAgain'));
     }
-  }, [journey, isUpdate, updateTreeData, isAssignedTreeToPlant, assignedTreeData, t]);
+  }, [
+    journey,
+    isUpdate,
+    updateTreeData,
+    isAssignedTreeToPlant,
+    assignedTreeData,
+    t,
+    config.ipfsPostURL,
+    config.ipfsGetURL,
+  ]);
 
   const handleSendUpdateTransaction = useCallback(
     async (treeId: number) => {
@@ -159,7 +168,7 @@ function SubmitTree(_: Props) {
 
       return receipt;
     },
-    [metaDataHash, web3, wallet, useGSN],
+    [metaDataHash, config, web3, wallet, useGSN],
   );
   const handleSendCreateTransaction = useCallback(async () => {
     let receipt;
@@ -193,7 +202,7 @@ function SubmitTree(_: Props) {
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;
-  }, [journey.treeIdToPlant, web3, wallet, metaDataHash, birthDay, useGSN]);
+  }, [journey.treeIdToPlant, config, web3, wallet, metaDataHash, birthDay, useGSN]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
@@ -215,7 +224,7 @@ function SubmitTree(_: Props) {
         Alert.alert(t('success'), t('submitTree.updated'));
         navigation.reset({
           index: 0,
-          routes: [{name: 'GreenBlock', params: {filter: TreeFilter.Temp}}],
+          routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
         });
       } else {
         sendEvent('add_tree_confirm');
@@ -230,7 +239,7 @@ function SubmitTree(_: Props) {
         Alert.alert(t('success'), t('submitTree.submitted'));
         navigation.reset({
           index: 0,
-          routes: [{name: 'GreenBlock', params: {filter: TreeFilter.Temp}}],
+          routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
         });
       }
 
@@ -254,14 +263,16 @@ function SubmitTree(_: Props) {
   ]);
 
   useEffect(() => {
-    if (
-      ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
-        !isReadyToSubmit) ||
-      !journey.photo ||
-      (!journey.location && !isUpdate)
-    ) {
-      handleUploadToIpfs();
-    }
+    (async function () {
+      if (
+        ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
+          !isReadyToSubmit) ||
+        !journey.photo ||
+        (!journey.location && !isUpdate)
+      ) {
+        await handleUploadToIpfs();
+      }
+    })();
   }, []);
 
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';

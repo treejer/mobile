@@ -1,20 +1,20 @@
 import {ImageSourcePropType} from 'react-native';
 import {Tree} from 'types';
 
-import treeImage from '../../../assets/icons/tree.png';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {colors} from 'constants/values';
 import {currentTimestamp} from 'utilities/helpers/date';
 import humanize from 'humanize-duration';
+import {TreeImage} from '../../../assets/icons';
 
 export function treeImageSrc(tree: Tree): ImageSourcePropType {
   const imageFs = tree?.treeSpecsEntity?.imageFs;
-  return imageFs ? {uri: imageFs} : treeImage;
+  return imageFs ? {uri: imageFs} : TreeImage;
 }
 
-export function treeColor(tree: Tree, treeUpdateInterval: number): string {
-  let color: string;
-  const id = Number(Hex2Dec(tree?.id));
+export function treeColor(tree: Tree, treeUpdateInterval: number): string | undefined {
+  let color: string | undefined;
+  const id = Number(Hex2Dec(tree?.id || ''));
   // if (id >= 0 && id <= 10) {
   //   color = colors.claimable;
   // } else if (id >= 11 && id <= 100) {
@@ -32,7 +32,7 @@ export function treeColor(tree: Tree, treeUpdateInterval: number): string {
     color = colors.gray;
   } else {
     if (id <= 10000) {
-      color = null;
+      color = undefined;
     } else {
       color = colors.green;
     }
@@ -46,7 +46,8 @@ export function isUpdatePended(tree: Tree): boolean {
 }
 
 export function diffUpdateTime(tree: Tree, treeUpdateInterval: number | string): number {
-  const differUpdateTime = Number(tree?.plantDate) + Number(tree?.treeStatus * 3600 + Number(treeUpdateInterval));
+  const differUpdateTime =
+    Number(tree?.plantDate) + Number((tree?.treeStatus || 0) * 3600 + Number(treeUpdateInterval));
   return currentTimestamp() - differUpdateTime;
   // if (return < 0) {Last update is pending} else {can update}
 }

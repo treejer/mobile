@@ -1,8 +1,12 @@
-import React, {ForwardedRef, forwardRef, LegacyRef, useEffect, useState} from 'react';
+import React, {forwardRef, LegacyRef, useEffect, useState} from 'react';
 import MapboxGL, {MapViewProps} from '@react-native-mapbox-gl/maps';
 import {useConfig} from 'services/web3';
 
-const Map: ForwardedRef<MapViewProps> = forwardRef((props: MapViewProps, ref: LegacyRef<any>) => {
+export interface MapProps extends MapViewProps {
+  // children?: ReactNode | Element;
+}
+
+const Map = forwardRef((props: MapProps, ref: LegacyRef<any>) => {
   const [loading, setLoading] = useState<boolean>(true);
   const config = useConfig();
 

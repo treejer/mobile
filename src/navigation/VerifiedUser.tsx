@@ -4,7 +4,7 @@ import TabBar from 'components/TabBar/TabBar';
 import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile/MyProfile';
 import TreeSubmission from 'screens/TreeSubmission';
-import GreenBlock from 'screens/GreenBlock';
+import GreenBlock from 'screens/GreenBlock/GreenBlock';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
