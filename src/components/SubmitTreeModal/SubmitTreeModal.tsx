@@ -40,18 +40,6 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
 
   const [requests, setRequests] = useState<TreeRequests>();
 
-  useEffect(() => {
-    const array: TreeRequests = [];
-    for (let i = 0; i < (journey?.nurseryCount || 0); i++) {
-      array.push({
-        loading: false,
-        hash: null,
-        error: null,
-      });
-    }
-    setRequests(array);
-  }, [journey.nurseryCount]);
-
   const alertNoInternet = useCallback(() => {
     Alert.alert(t('noInternet'), t('submitWhenOnline'));
   }, [t]);
@@ -93,46 +81,59 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
     [config, t, useGSN, wallet, web3],
   );
 
-  const handleSubmitAll = useCallback(async () => {
-    if (!isConnected) {
-      alertNoInternet();
-    } else {
-      const array = requests?.filter(request => !request.hash);
-      for (let i = 0; i < (array?.length || 0); i++) {
-        setRequests(prevRequests =>
-          prevRequests?.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
-        );
-        try {
-          const hash = await handleSubmitTree(journey);
-          console.log(hash, 'hash <============');
+  const handleSubmitAll = useCallback(
+    async _requests => {
+      if (!isConnected) {
+        alertNoInternet();
+      } else {
+        const array = _requests?.filter(request => !request.hash);
+        for (let i = 0; i < (array?.length || 0); i++) {
           setRequests(prevRequests =>
-            prevRequests?.map((item, index) => (index === i && hash ? {...item, loading: false, hash} : item)),
+            prevRequests?.map((item, index) => (index === i ? {...item, loading: true, error: null} : item)),
           );
-        } catch (e: any) {
-          setRequests(prevRequests =>
-            prevRequests?.map((item, index) => (index === i ? {...item, loading: false, error: e} : item)),
-          );
-          return Promise.reject(e);
+          try {
+            const hash = await handleSubmitTree(journey);
+            console.log(hash, 'hash <============');
+            setRequests(prevRequests =>
+              prevRequests?.map((item, index) => (index === i && hash ? {...item, loading: false, hash} : item)),
+            );
+          } catch (e: any) {
+            setRequests(prevRequests =>
+              prevRequests?.map((item, index) => (index === i ? {...item, loading: false, error: e} : item)),
+            );
+            return Promise.reject(e);
+          }
         }
+        Alert.alert(t('success'), t('submitTree.nurserySubmitted'));
+        navigate(Routes.GreenBlock);
+        setVisible(false);
       }
-      Alert.alert(t('success'), t('submitTree.nurserySubmitted'));
-      navigate(Routes.GreenBlock);
-      setVisible(false);
-    }
-  }, [alertNoInternet, handleSubmitTree, isConnected, journey, navigate, requests, t]);
+    },
+    [alertNoInternet, handleSubmitTree, isConnected, journey, navigate, t],
+  );
+
+  useEffect(() => {
+    (async function () {
+      if (isConnected) {
+        const array: TreeRequests = [];
+        for (let i = 0; i < (journey.nurseryCount || 0); i++) {
+          array.push({
+            loading: false,
+            hash: null,
+            error: null,
+          });
+        }
+        setRequests(array);
+        await handleSubmitAll(array);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
 
   const handleCancel = () => {
     setVisible(false);
     navigate(Routes.GreenBlock);
   };
-
-  useEffect(() => {
-    (async function () {
-      if (journey.isSingle === false && journey.nurseryCount && isConnected) {
-        await handleSubmitAll();
-      }
-    })();
-  }, [journey.isSingle, journey.nurseryCount, isConnected, handleSubmitAll]);
 
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);
   const tryAgain = !hasLoading && Boolean(requests?.find(request => request.error));
@@ -182,7 +183,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                 <>
                   <Button
                     caption={t('tryAgain')}
-                    onPress={handleSubmitAll}
+                    onPress={() => handleSubmitAll(requests)}
                     style={{alignItems: 'center', justifyContent: 'center'}}
                   />
                   <Spacer times={4} />
