@@ -7,7 +7,6 @@ import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyP
 import VerifyPending from 'screens/Profile/screens/VerifyPending';
 import {PlanterJoinJourney} from 'types';
 import {GetMeQueryPartialData} from 'services/graphql/GetMeQuery.graphql';
-import {TestScreen} from 'screens/TestScreen';
 
 export type UnVerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -36,7 +35,6 @@ export const UnVerifiedUserStack = createNativeStackNavigator<UnVerifiedUserNavi
 export function UnVerifiedUserNavigation() {
   return (
     <UnVerifiedUserStack.Navigator screenOptions={{headerShown: false}}>
-      {/*<UnVerifiedUserStack.Screen name={Routes.Test} component={TestScreen} />*/}
       <UnVerifiedUserStack.Screen name={Routes.MyProfile} component={MyProfile} />
       <UnVerifiedUserStack.Screen name={Routes.VerifyProfile} component={VerifyProfile} />
       <UnVerifiedUserStack.Screen name={Routes.SelectOnMapVerifyProfile} component={SelectOnMapVerifyProfile} />

@@ -1,7 +1,11 @@
 import globalStyles from 'constants/styles';
 
 import React, {useEffect, useState} from 'react';
-import {createNativeStackNavigator, NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {Route} from '@react-navigation/native';
 import {Tree, TreeSubmissionRouteParamList} from 'types';
 import {useQuery} from '@apollo/client';
@@ -14,6 +18,11 @@ import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
+  TreeSubmissionRouteParamList,
+  T
+>;
+
+export type TreeSubmissionStackScreenProps<T extends keyof TreeSubmissionRouteParamList> = NativeStackScreenProps<
   TreeSubmissionRouteParamList,
   T
 >;

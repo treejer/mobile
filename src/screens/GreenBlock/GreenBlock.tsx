@@ -32,8 +32,8 @@ function GreenBlock({navigation, route}: Props) {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="TreeList">{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
-      <Stack.Screen name="TreeDetails" component={TreeDetails} />
+      <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
+      {/*<Stack.Screen name={Routes.TreeDetails} component={TreeDetails} />*/}
       <Stack.Screen
         name="AcceptInvitation"
         component={AcceptInvitation}

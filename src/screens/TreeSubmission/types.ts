@@ -3,7 +3,7 @@ import {Tree} from 'types';
 
 export interface TreeJourney {
   treeIdToUpdate?: string;
-  photo?: Image;
+  photo?: Image | File;
   location: {
     latitude: number;
     longitude: number;

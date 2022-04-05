@@ -35,6 +35,8 @@ import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {useConfig} from 'services/web3';
+import {Routes} from 'navigation';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props {}
 
@@ -45,7 +47,7 @@ function TreeDetails(_: Props) {
   const sliderRef = useRef<Carousel<any>>(null);
   const {
     params: {tree},
-  } = useRoute<RouteProp<GreenBlockRouteParamList, 'TreeDetails'>>();
+  } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
 
   const config = useConfig();
   const {sendEvent} = useAnalytics();
@@ -125,7 +127,6 @@ function TreeDetails(_: Props) {
     const diff = diffUpdateTime(treeDetails, treeUpdateInterval);
 
     if (diff < 0) {
-      // @here convert to HH:MM:SS
       Alert.alert(
         t('treeDetails.cannotUpdate.details'),
         t('treeDetails.cannotUpdate.wait', {seconds: treeDiffUpdateHumanized(Math.abs(diff))}),
@@ -294,47 +295,53 @@ function TreeDetails(_: Props) {
                 <View style={styles.titleLine} />
               </View>
               <Spacer times={8} />
-              <View
-                style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack, globalStyles.alignItemsCenter]}
-              >
-                {updatesCount > 1 && (
-                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToPrev()}>
-                    <ChevronLeft />
-                  </TouchableOpacity>
-                )}
-                <Carousel
-                  ref={sliderRef}
-                  data={updates}
-                  renderItem={({item: update}) => {
-                    return (
-                      <Image
-                        style={{
-                          width: (imageWidth || 0) + (updatesCount > 1 ? 20 : 0),
-                          height: cardWidth,
-                          borderRadius: 20,
-                        }}
-                        resizeMode="cover"
-                        key={update.createdAt}
-                        source={{uri: update.image}}
-                      />
-                    );
-                  }}
-                  sliderWidth={imageWidth}
-                  itemWidth={imageWidth}
-                  inactiveSlideScale={0.95}
-                  inactiveSlideOpacity={0}
-                  activeSlideAlignment="start"
-                  activeAnimationType="spring"
-                  layout="default"
-                  loop
-                  onSnapToItem={index => setActiveSlide(index)}
-                />
-                {updatesCount > 1 && (
-                  <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToNext()}>
-                    <ChevronRight />
-                  </TouchableOpacity>
-                )}
-              </View>
+              {isWeb() ? null : (
+                <View
+                  style={[
+                    globalStyles.justifyContentCenter,
+                    globalStyles.horizontalStack,
+                    globalStyles.alignItemsCenter,
+                  ]}
+                >
+                  {updatesCount > 1 && (
+                    <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToPrev()}>
+                      <ChevronLeft />
+                    </TouchableOpacity>
+                  )}
+                  <Carousel
+                    ref={sliderRef}
+                    data={updates}
+                    renderItem={({item: update}) => {
+                      return (
+                        <Image
+                          style={{
+                            width: (imageWidth || 0) + (updatesCount > 1 ? 20 : 0),
+                            height: cardWidth,
+                            borderRadius: 20,
+                          }}
+                          resizeMode="cover"
+                          key={update.createdAt}
+                          source={{uri: update.image}}
+                        />
+                      );
+                    }}
+                    sliderWidth={imageWidth}
+                    itemWidth={imageWidth}
+                    inactiveSlideScale={0.95}
+                    inactiveSlideOpacity={0}
+                    activeSlideAlignment="start"
+                    activeAnimationType="spring"
+                    layout="default"
+                    loop
+                    onSnapToItem={index => setActiveSlide(index)}
+                  />
+                  {updatesCount > 1 && (
+                    <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToNext()}>
+                      <ChevronRight />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
 
               {updatesCount > 1 && (
                 <Pagination

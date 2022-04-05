@@ -2,6 +2,16 @@ import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import {Routes} from 'navigation';
+import {Alert} from 'react-native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import {TreeFilter} from 'components/TreeList/TreeList';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
+import {Image} from 'react-native-image-crop-picker';
+import {useTranslation} from 'react-i18next';
+import {useCallback} from 'react';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -254,4 +264,100 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
     };
   }
   return extraJson;
+}
+
+export type AfterSelectPhotoHandler = {
+  journey: TreeJourney;
+  selectedPhoto: File | Image;
+  isUpdate: boolean;
+  isNursery: boolean;
+  canUpdate: boolean;
+  setPhoto?: (photo: File | Image) => void;
+};
+
+export function useAfterSelectPhotoHandler() {
+  const navigation = useNavigation<any>();
+
+  const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
+  const [persistedPlantedTrees] = usePersistedPlantedTrees();
+
+  const {t} = useTranslation();
+
+  const isConnected = useNetInfo();
+
+  return useCallback(
+    (options: AfterSelectPhotoHandler) => {
+      const {journey, selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+
+      const newJourney = {
+        ...(journey ?? {}),
+        photo: selectedPhoto,
+      };
+
+      if (isConnected) {
+        if (isUpdate && isNursery && !canUpdate) {
+          navigation.navigate(Routes.SubmitTree, {
+            journey: {
+              ...newJourney,
+              nurseryContinuedUpdatingLocation: true,
+            },
+          });
+        } else if (isUpdate && isNursery) {
+          // @here
+          setPhoto?.(selectedPhoto);
+        } else if (isUpdate && !isNursery) {
+          navigation.navigate(Routes.SubmitTree, {
+            journey: newJourney,
+          });
+        } else if (!isUpdate) {
+          navigation.navigate(Routes.SelectOnMap, {
+            journey: newJourney,
+          });
+        }
+      } else {
+        const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+        if (isUpdate && isNursery && !canUpdate) {
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+        } else if (isUpdate && isNursery) {
+          // @here
+          setPhoto?.(selectedPhoto);
+        } else if (isUpdate && !isNursery) {
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Profile'}],
+            }),
+          );
+          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+        } else if (!isUpdate) {
+          navigation.navigate('Profile', {
+            screen: 'MainProfile',
+            params: {
+              screen: 'SelectOnMap',
+              params: {
+                journey: newJourney,
+              },
+            },
+          });
+        }
+      }
+    },
+    [dispatchAddOfflineUpdateTree, navigation, persistedPlantedTrees, t],
+  );
 }

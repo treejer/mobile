@@ -34,6 +34,7 @@ import {useSettings} from 'services/settings';
 import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {ContractType} from 'services/config';
+import {Routes} from 'navigation';
 
 export enum TreeFilter {
   All = 'All',
@@ -48,7 +49,7 @@ export interface TreeFilterItem {
 }
 
 interface Props {
-  route?: RouteProp<GreenBlockRouteParamList, 'TreeList'>;
+  route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
   navigation: NavigationProp<GreenBlockRouteParamList>;
   filter?: TreeFilter;
 }
@@ -137,7 +138,7 @@ function Trees({route, navigation, filter}: Props) {
     } else if (tree.item?.treeStatus == 3) {
       Alert.alert(t('warning'), t('notVerifiedTree'));
     } else {
-      navigation.navigate('TreeDetails', {tree: tree.item});
+      navigation.navigate(Routes.TreeDetails, {tree: tree.item});
     }
   };
 

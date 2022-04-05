@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {View, Text, Alert, ScrollView} from 'react-native';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {TreeSubmissionRouteParamList} from 'types';
+import {GreenBlockRouteParamList, TreeSubmissionRouteParamList} from 'types';
 import {useCamera} from 'utilities/hooks';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
@@ -15,16 +15,19 @@ import {useWalletAccount} from 'services/web3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import {TreeFilter} from 'components/TreeList/TreeList';
-import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
+import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
+import {isWeb} from 'utilities/helpers/web';
+import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 
-interface Props {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
-function SelectPhoto(_: Props) {
-  const navigation = useNavigation<NavigationProp<TreeSubmissionRouteParamList>>();
+function SelectPhoto(props: Props) {
+  const {route, navigation} = props;
+
   const {
     params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  } = route;
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -33,6 +36,8 @@ function SelectPhoto(_: Props) {
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
 
   const [photo, setPhoto] = useState<any>();
+
+  const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
 
   const address = useWalletAccount();
 
@@ -46,90 +51,26 @@ function SelectPhoto(_: Props) {
   console.log(journey?.tree?.treeSpecsEntity?.locations, 'journey?.tree?.treeSpecsEntity?.locations', isNursery);
 
   const handleSelectPhoto = useCallback(async () => {
-    const selectedPhoto = await openCameraHook();
-    console.log(selectedPhoto);
-    if (selectedPhoto) {
-      if (selectedPhoto.path) {
-        const newJourney = {
-          ...(journey ?? {}),
-          photo: selectedPhoto,
-        };
-
-        if (isConnected) {
-          if (isUpdate && isNursery && !canUpdate) {
-            navigation.navigate(Routes.SubmitTree, {
-              journey: {
-                ...newJourney,
-                nurseryContinuedUpdatingLocation: true,
-              },
-            });
-          } else if (isUpdate && isNursery) {
-            setPhoto(selectedPhoto);
-          } else if (isUpdate && !isNursery) {
-            navigation.navigate(Routes.SubmitTree, {
-              journey: newJourney,
-            });
-          } else if (!isUpdate) {
-            navigation.navigate(Routes.SelectOnMap, {
-              journey: newJourney,
-            });
-          }
-        } else {
-          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-          if (isUpdate && isNursery && !canUpdate) {
-            dispatchAddOfflineUpdateTree({
-              ...newJourney,
-              tree: updatedTree,
-            });
-            Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: 'Profile'}],
-              }),
-            );
-            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          } else if (isUpdate && isNursery) {
-            setPhoto(selectedPhoto);
-          } else if (isUpdate && !isNursery) {
-            dispatchAddOfflineUpdateTree({
-              ...newJourney,
-              tree: updatedTree,
-            });
-            Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: 'Profile'}],
-              }),
-            );
-            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          } else if (!isUpdate) {
-            navigation.navigate('Profile', {
-              screen: 'MainProfile',
-              params: {
-                screen: 'SelectOnMap',
-                params: {
-                  journey: newJourney,
-                },
-              },
-            });
-          }
+    if (isWeb()) {
+      navigation.navigate(Routes.WebCamera, {journey});
+    } else {
+      const selectedPhoto = await openCameraHook();
+      console.log(selectedPhoto);
+      if (selectedPhoto) {
+        if (selectedPhoto.path) {
+          // @here
+          handleAfterSelectPhoto({
+            selectedPhoto,
+            journey,
+            setPhoto,
+            isUpdate,
+            isNursery,
+            canUpdate,
+          });
         }
       }
     }
-  }, [
-    openCameraHook,
-    journey,
-    isConnected,
-    isUpdate,
-    isNursery,
-    canUpdate,
-    navigation,
-    persistedPlantedTrees,
-    dispatchAddOfflineUpdateTree,
-    t,
-  ]);
+  }, [navigation, journey, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
 
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');

@@ -6,10 +6,16 @@ interface IPFSUploadResponse {
 
 // const gatewayEndpoint = 'https://ipfs.infura.io:5001/api/v0/add';
 // const gatewayEndpoint = 'https://api.thegraph.com/ipfs/';
-export async function upload(url: string, uri: string, type = 'image/jpg'): Promise<IPFSUploadResponse> {
+export async function upload(url: string, uri: string | File, type = 'image/jpg'): Promise<IPFSUploadResponse> {
   const formData = new FormData();
 
-  if (typeof uri === 'string') {
+  // eslint-disable-next-line no-undef
+  if (uri instanceof File) {
+    formData.append('file', uri);
+    const response = await callUploadEndpoint(url, formData, false);
+
+    return response.json();
+  } else if (typeof uri === 'string') {
     const fileNameMatch = uri.match(/[^\\/]+$/);
     let fileName = 'file.jpg';
     if (fileNameMatch) {
