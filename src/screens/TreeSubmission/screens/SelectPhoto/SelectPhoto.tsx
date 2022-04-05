@@ -1,12 +1,11 @@
 import globalStyles from 'constants/styles';
 
 import React, {useCallback, useState} from 'react';
-import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {View, Text, Alert, ScrollView} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {GreenBlockRouteParamList, TreeSubmissionRouteParamList} from 'types';
 import {useCamera} from 'utilities/hooks';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
@@ -19,6 +18,7 @@ import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpe
 import {Routes} from 'navigation';
 import {isWeb} from 'utilities/helpers/web';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -90,7 +90,11 @@ function SelectPhoto(props: Props) {
         nurseryContinuedUpdatingLocation: true,
         tree: updatedTree,
       });
-      Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+      showAlert({
+        title: t('treeInventory.updateTitle'),
+        message: t('submitWhenOnline'),
+        mode: AlertMode.Info,
+      });
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

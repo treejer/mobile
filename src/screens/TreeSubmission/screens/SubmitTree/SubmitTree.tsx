@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, ScrollView, Text, View} from 'react-native';
+import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
@@ -27,6 +27,7 @@ import {useSettings} from 'services/settings';
 import {assignedTreeJSON, canUpdateTreeLocation, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -83,12 +84,18 @@ function SubmitTree(props: Props) {
       isUpdate &&
       (updateTreeData?.treeSpecsEntity == null || typeof updateTreeData?.treeSpecsEntity === 'undefined')
     ) {
-      Alert.alert(t('submitTree.treeSpecEmpty'));
+      showAlert({
+        message: t('submitTree.treeSpecEmpty'),
+        mode: AlertMode.Error,
+      });
       return;
     }
 
     if (isAssignedTreeToPlant && (assignedTreeData == null || typeof assignedTreeData === 'undefined')) {
-      Alert.alert(t('submitTree.treeDataNotLoaded'));
+      showAlert({
+        message: t('submitTree.treeDataNotLoaded'),
+        mode: AlertMode.Error,
+      });
       return;
     }
 
@@ -136,7 +143,10 @@ function SubmitTree(props: Props) {
 
       setIsReadyToSubmit(true);
     } catch (e: any) {
-      Alert.alert(e?.message || t('tryAgain'));
+      showAlert({
+        message: e?.message || t('tryAgain'),
+        mode: AlertMode.Error,
+      });
     }
   }, [
     journey,
@@ -206,7 +216,11 @@ function SubmitTree(props: Props) {
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
-      Alert.alert(t('submitTree.noWallet.title'), t('submitTree.noWallet.details'));
+      showAlert({
+        title: t('submitTree.noWallet.title'),
+        message: t('submitTree.noWallet.details'),
+        mode: AlertMode.Error,
+      });
 
       return;
     }
@@ -221,7 +235,11 @@ function SubmitTree(props: Props) {
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
         // await treeListQuery.refetch();
         // await updatedTreeQuery.refetch();
-        Alert.alert(t('success'), t('submitTree.updated'));
+        showAlert({
+          title: t('success'),
+          message: t('submitTree.updated'),
+          mode: AlertMode.Success,
+        });
         navigation.reset({
           index: 0,
           routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
@@ -236,7 +254,11 @@ function SubmitTree(props: Props) {
         //     onPress: () => _.navigation.navigate('GreenBlock', {shouldNavigateToTreeDetails: true}),
         //   },
 
-        Alert.alert(t('success'), t('submitTree.submitted'));
+        showAlert({
+          title: t('success'),
+          message: t('submitTree.submitted'),
+          mode: AlertMode.Success,
+        });
         navigation.reset({
           index: 0,
           routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
@@ -247,7 +269,11 @@ function SubmitTree(props: Props) {
 
       console.log('Transaction: ', transaction);
     } catch (error) {
-      Alert.alert(t('submitTree.error'), t('submitTree.transactionFailed'));
+      showAlert({
+        title: t('submitTree.error'),
+        message: t('submitTree.transactionFailed'),
+        mode: AlertMode.Error,
+      });
       console.warn('Error', error);
     }
     setSubmitting(false);

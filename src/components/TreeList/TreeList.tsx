@@ -1,9 +1,8 @@
 import globalStyles from 'constants/styles';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
   RefreshControl,
@@ -35,6 +34,7 @@ import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/s
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {ContractType} from 'services/config';
 import {Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export enum TreeFilter {
   All = 'All',
@@ -118,7 +118,11 @@ function Trees({route, navigation, filter}: Props) {
     if (tree.item?.treeStatus == 2) {
       const isTreePlantedOffline = offlineTrees?.planted?.find(item => item.treeIdToPlant === tree.item?.id);
       if (isTreePlantedOffline) {
-        Alert.alert(t('warning'), t('notVerifiedTree'));
+        showAlert({
+          title: t('warning'),
+          message: t('notVerifiedTree'),
+          mode: AlertMode.Warning,
+        });
       } else {
         navigation.reset({
           index: 0,
@@ -136,14 +140,22 @@ function Trees({route, navigation, filter}: Props) {
         });
       }
     } else if (tree.item?.treeStatus == 3) {
-      Alert.alert(t('warning'), t('notVerifiedTree'));
+      showAlert({
+        title: t('warning'),
+        message: t('notVerifiedTree'),
+        mode: AlertMode.Warning,
+      });
     } else {
       navigation.navigate(Routes.TreeDetails, {tree: tree.item});
     }
   };
 
   const handleRegSelectTree = () => {
-    Alert.alert(t('warning'), t('notVerifiedTree'));
+    showAlert({
+      title: t('warning'),
+      message: t('notVerifiedTree'),
+      mode: AlertMode.Warning,
+    });
 
     return;
   };
@@ -156,7 +168,10 @@ function Trees({route, navigation, filter}: Props) {
       !treeJourney.tree ||
       !treeJourney.photo?.path
     ) {
-      Alert.alert(t('cannotUpdateTree'));
+      showAlert({
+        message: t('cannotUpdateTree'),
+        mode: AlertMode.Info,
+      });
       return;
     }
     setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
@@ -187,18 +202,29 @@ function Trees({route, navigation, filter}: Props) {
       console.log(receipt, 'receipt');
     } catch (e: any) {
       setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-      Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
+      showAlert({
+        title: t('transactionFailed.title'),
+        message: e?.message || e.error?.message || t('transactionFailed.tryAgain'),
+        mode: AlertMode.Error,
+      });
     }
     setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
   };
 
   const handleSubmitOfflineAssignedTree = async (journey: TreeJourney) => {
     if (!isConnected) {
-      Alert.alert(t('noInternet'), t('submitWhenOnline'));
+      showAlert({
+        title: t('noInternet'),
+        message: t('submitWhenOnline'),
+        mode: AlertMode.Error,
+      });
       return;
     }
     if (!journey.offlineId || !journey?.tree || !journey.treeIdToPlant || !journey.photo?.path) {
-      Alert.alert(t('cannotSubmitTree'));
+      showAlert({
+        message: t('cannotSubmitTree'),
+        mode: AlertMode.Info,
+      });
       return;
     }
 
@@ -231,14 +257,22 @@ function Trees({route, navigation, filter}: Props) {
       dispatchRemoveOfflineTree(journey.offlineId);
     } catch (e: any) {
       console.log(e, 'e inside handleSubmitOfflineAssignedTree');
-      Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
+      showAlert({
+        title: t('transactionFailed.title'),
+        message: e?.message || e.error?.message || t('transactionFailed.tryAgain'),
+        mode: AlertMode.Error,
+      });
       setOfflineLoadings(offlineLoadings.filter(id => id !== journey.treeIdToPlant));
     }
     setOfflineLoadings(offlineLoadings.filter(id => id !== journey.treeIdToPlant));
   };
 
   const alertNoInternet = () => {
-    Alert.alert(t('noInternet'), t('submitWhenOnline'));
+    showAlert({
+      title: t('noInternet'),
+      message: t('submitWhenOnline'),
+      mode: AlertMode.Error,
+    });
   };
 
   const handleSubmitOfflineTree = async (treeJourney: TreeJourney) => {
@@ -246,7 +280,10 @@ function Trees({route, navigation, filter}: Props) {
       alertNoInternet();
     } else {
       if (!treeJourney.offlineId || !treeJourney?.photo?.path) {
-        Alert.alert(t('cannotSubmitTree'));
+        showAlert({
+          message: t('cannotSubmitTree'),
+          mode: AlertMode.Info,
+        });
         return;
       }
       setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
@@ -276,7 +313,11 @@ function Trees({route, navigation, filter}: Props) {
         setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
         dispatchRemoveOfflineTree(treeJourney.offlineId);
       } catch (e: any) {
-        Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
+        showAlert({
+          title: t('transactionFailed.title'),
+          message: e?.message || e.error?.message || t('transactionFailed.tryAgain'),
+          mode: AlertMode.Error,
+        });
         setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
       }
       setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
@@ -299,9 +340,16 @@ function Trees({route, navigation, filter}: Props) {
             await handleUpdateOfflineTree(tree as Tree & TreeJourney);
           }
         }
-        Alert.alert(t('offlineTreesSubmitted'));
+        showAlert({
+          message: t('offlineTreesSubmitted'),
+          mode: AlertMode.Success,
+        });
       } catch (e: any) {
-        Alert.alert(t('error'), e.message || t('tryAgain'));
+        showAlert({
+          title: t('error'),
+          message: e.message || t('tryAgain'),
+          mode: AlertMode.Error,
+        });
       }
     }
   };

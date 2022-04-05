@@ -242,4 +242,6 @@ export const en = {
     mainTitle: 'Main Networks',
     restartApp: 'The application will be restart and automatically log you out',
   },
+  comingSoon: 'Coming Soon',
+  tempLangEnglish: 'Temporary setting language to English',
 };

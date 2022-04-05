@@ -3,7 +3,6 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {Routes} from 'navigation';
-import {Alert} from 'react-native';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
@@ -12,6 +11,7 @@ import {Image} from 'react-native-image-crop-picker';
 import {useTranslation} from 'react-i18next';
 import {useCallback} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -321,7 +321,11 @@ export function useAfterSelectPhotoHandler() {
             ...newJourney,
             tree: updatedTree,
           });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          showAlert({
+            title: t('treeInventory.updateTitle'),
+            message: t('submitWhenOnline'),
+            mode: AlertMode.Success,
+          });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
@@ -337,7 +341,10 @@ export function useAfterSelectPhotoHandler() {
             ...newJourney,
             tree: updatedTree,
           });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          showAlert({
+            title: t('treeInventory.updateTitle'),
+            message: t('submitWhenOnline'),
+          });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,

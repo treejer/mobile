@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer/Spacer';
@@ -18,6 +18,7 @@ import {useSettings} from 'services/settings';
 import {newTreeJSON} from 'utilities/helpers/submitTree';
 import {ContractType} from 'services/config';
 import {Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export interface SubmitTreeModalProps {
   journey: TreeJourney;
@@ -41,7 +42,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const [requests, setRequests] = useState<TreeRequests>();
 
   const alertNoInternet = useCallback(() => {
-    Alert.alert(t('noInternet'), t('submitWhenOnline'));
+    showAlert({
+      title: t('noInternet'),
+      message: t('submitWhenOnline'),
+      mode: AlertMode.Error,
+    });
   }, [t]);
 
   const handleSubmitTree = useCallback(
@@ -104,7 +109,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
             return Promise.reject(e);
           }
         }
-        Alert.alert(t('success'), t('submitTree.nurserySubmitted'));
+        showAlert({
+          title: t('success'),
+          message: t('submitTree.nurserySubmitted'),
+          mode: AlertMode.Success,
+        });
         navigate(Routes.GreenBlock);
         setVisible(false);
       }
@@ -141,8 +150,20 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const handlePressHash = (hash: string | null) => {
     if (hash) {
       Clipboard.setString(hash);
-      Alert.alert(t('submitTree.hashCopied'), hash);
+      showAlert({
+        title: t('submitTree.hashCopied'),
+        message: hash,
+        mode: AlertMode.Success,
+      });
     }
+  };
+
+  const handlePressError = (error?: string | null) => {
+    showAlert({
+      title: t('error'),
+      message: error || t('unknownError'),
+      mode: AlertMode.Error,
+    });
   };
 
   return (
@@ -171,7 +192,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
                       </Text>
                     )}
                     {request.error && (
-                      <Text onPress={() => Alert.alert('Error', request.error || '')} style={style}>
+                      <Text onPress={() => handlePressError(request.error)} style={style}>
                         {request.error.slice(0, 8)}...
                       </Text>
                     )}

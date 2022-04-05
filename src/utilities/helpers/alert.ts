@@ -1,4 +1,6 @@
-import {Alert, AlertButton} from 'react-native';
+import {Alert, AlertButton, AlertOptions} from 'react-native';
+import {toast} from 'react-toastify';
+import {isWeb} from './web';
 
 export function asyncAlert(
   title: string,
@@ -25,4 +27,32 @@ export function asyncAlert(
     }
     Alert.alert(title, message, buttons);
   });
+}
+
+export type ShowAlertOptions = {
+  message: string;
+  title?: string;
+  mode?: AlertMode;
+  buttons?: AlertButton[];
+  alertOptions?: AlertOptions;
+};
+
+export enum AlertMode {
+  Success = 'success',
+  Info = 'info',
+  Warning = 'Warning',
+  Error = 'error',
+}
+
+export function showAlert(options: ShowAlertOptions) {
+  const {message, title = 'Alert', mode = AlertMode.Info, buttons, alertOptions} = options;
+  if (isWeb()) {
+    if (mode) {
+      toast[mode](message);
+    } else {
+      toast(message);
+    }
+  } else {
+    Alert.alert(title, message, buttons, alertOptions);
+  }
 }

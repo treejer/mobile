@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 
 import React, {useMemo} from 'react';
-import {View, Text, Image, Alert} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -10,6 +10,8 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import AppVersion from 'components/AppVersion';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useTranslation} from 'react-i18next';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;
 
@@ -19,9 +21,15 @@ function SelectLanguage(props: SelectLanguageProps) {
 
   const {sendEvent} = useAnalytics();
 
+  const {t} = useTranslation();
+
   const handleChangeLanguage = (locale: string) => {
     if (locale !== 'en') {
-      Alert.alert('Coming Soon', 'Temporary setting language to English');
+      showAlert({
+        title: t('comingSoon'),
+        message: t('tempLangEnglish'),
+        mode: AlertMode.Info,
+      });
     }
     settings.updateLocale('en');
     sendEvent('choose_language');

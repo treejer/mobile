@@ -1,12 +1,11 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {locationPermission} from 'utilities/helpers/permissions';
 import Map from './Map';
 import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -17,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 interface IMapMarkingProps {
   journey?: TreeJourney;
@@ -113,7 +113,11 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
           dispatchAddOfflineTree(newJourney);
-          Alert.alert(t('myProfile.attention'), t('myProfile.offlineTreeAdd'));
+          showAlert({
+            title: t('myProfile.attention'),
+            message: t('myProfile.offlineTreeAdd'),
+            mode: AlertMode.Info,
+          });
         } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
           const offlineTrees: TreeJourney[] = [];
           for (let i = 0; i < newJourney.nurseryCount; i++) {
@@ -123,14 +127,22 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
             });
           }
           dispatchAddOfflineTrees(offlineTrees);
-          Alert.alert(t('myProfile.attention'), t('myProfile.offlineNurseryAdd'));
+          showAlert({
+            title: t('myProfile.attention'),
+            message: t('myProfile.offlineNurseryAdd'),
+            mode: AlertMode.Info,
+          });
         } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
           const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
           dispatchAddOfflineUpdateTree({
             ...newJourney,
             tree: updatedTree,
           });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+          showAlert({
+            title: t('treeInventory.updateTitle'),
+            message: t('submitWhenOnline'),
+            mode: AlertMode.Info,
+          });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
@@ -255,7 +267,10 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
             }
           },
           err => {
-            Alert.alert(err.message);
+            showAlert({
+              message: err.message,
+              mode: AlertMode.Error,
+            });
           },
           {
             enableHighAccuracy: true,

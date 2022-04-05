@@ -1,13 +1,13 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import Web3, {magicGenerator, Magic} from 'services/Magic';
+import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
-import {Alert} from 'react-native';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
 import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig, storageKeys} from './config';
 import {useTranslation} from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export interface Web3ContextState {
   web3: Web3;
@@ -129,7 +129,11 @@ function Web3Provider(props: Props) {
         message = error.message;
       }
       setLoading(false);
-      Alert.alert(t('loginFailed.title'), message);
+      showAlert({
+        title: t('loginFailed.title'),
+        message,
+        mode: AlertMode.Error,
+      });
     }
   }, [config.treejerApiUrl, t, web3]);
 

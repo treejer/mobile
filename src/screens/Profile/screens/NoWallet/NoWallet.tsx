@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Image, Text, View, ScrollView, TouchableOpacity, Linking, Alert, Keyboard} from 'react-native';
+import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
@@ -19,6 +19,7 @@ import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -91,10 +92,18 @@ function NoWallet(props: NoWalletProps) {
         await refetchUser();
         console.log(result, 'result is here');
       } else {
-        Alert.alert(t('createWallet.failed.title'), 'tryAgain');
+        showAlert({
+          title: t('createWallet.failed.title'),
+          message: t('tryAgain'),
+          mode: AlertMode.Error,
+        });
       }
     } catch (e: any) {
-      Alert.alert(t('createWallet.failed.title'), e?.message || 'tryAgain');
+      showAlert({
+        title: t('createWallet.failed.title'),
+        message: e?.message || t('tryAgain'),
+        mode: AlertMode.Error,
+      });
     } finally {
       setLoading(false);
     }
@@ -112,10 +121,18 @@ function NoWallet(props: NoWalletProps) {
         await refetchUser();
         console.log(result, 'result is here');
       } else {
-        Alert.alert(t('createWallet.failed.title'), 'tryAgain');
+        showAlert({
+          title: t('createWallet.failed.title'),
+          message: t('tryAgain'),
+          mode: AlertMode.Error,
+        });
       }
     } catch (e: any) {
-      Alert.alert(t('createWallet.failed.title'), e?.message || 'tryAgain');
+      showAlert({
+        title: t('createWallet.failed.title'),
+        message: e?.message || t('tryAgain'),
+        mode: AlertMode.Error,
+      });
     } finally {
       setLoading(false);
     }

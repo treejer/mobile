@@ -14,6 +14,7 @@ import {SwitchNetwork} from './src/components/SwitchNetwork/SwitchNetwork';
 import NetInfo from './src/components/NetInfo/NetInfo';
 import ApolloProvider from './src/services/apollo';
 import {CurrentUserProvider} from './src/services/currentUser';
+import {ToastContainer} from 'react-toastify';
 
 const linking = {
   prefixes: ['https://treejer-ranger.com'],
@@ -61,6 +62,7 @@ export default function App() {
                   <CurrentUserProvider>
                     <NetInfo />
                     <SwitchNetwork />
+                    {isWeb() ? <ToastContainer /> : null}
                     <NavigationContainer linking={linking}>
                       <RootNavigation />
                     </NavigationContainer>

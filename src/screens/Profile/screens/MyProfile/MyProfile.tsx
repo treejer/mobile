@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Linking, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
@@ -11,7 +11,6 @@ import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-// import SimpleToast from 'react-native-simple-toast';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
@@ -20,7 +19,7 @@ import {useSettings} from 'services/settings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
-// import { useCamera } from "utilities/hooks";
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -119,7 +118,11 @@ function MyProfile(props: MyProfileProps) {
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
     if (!isConnected) {
-      Alert.alert(t('netInfo.error'), t('netInfo.details'));
+      showAlert({
+        title: t('netInfo.error'),
+        message: t('netInfo.details'),
+        mode: AlertMode.Error,
+      });
       return;
     }
     setSubmitting(true);
@@ -141,18 +144,31 @@ function MyProfile(props: MyProfileProps) {
           );
 
           console.log('transaction', transaction);
-          Alert.alert(t('success'), t('myProfile.withdraw.success'));
+          showAlert({
+            title: t('success'),
+            message: t('myProfile.withdraw.success'),
+            mode: AlertMode.Success,
+          });
         } catch (e: any) {
-          Alert.alert(t('failure'), e?.message || t('sthWrong'));
+          showAlert({
+            title: t('failure'),
+            message: e?.message || t('sthWrong'),
+            mode: AlertMode.Error,
+          });
         }
       } else {
-        Alert.alert(
-          t('myProfile.attention'),
-          t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
-        );
+        showAlert({
+          title: t('myProfile.attention'),
+          message: t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
+          mode: AlertMode.Info,
+        });
       }
     } catch (error: any) {
-      Alert.alert('Error', error?.message);
+      showAlert({
+        title: t('error'),
+        message: error?.message,
+        mode: AlertMode.Error,
+      });
       console.warn('Error', error);
     } finally {
       setSubmitting(false);
@@ -217,8 +233,10 @@ function MyProfile(props: MyProfileProps) {
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {
       Clipboard.setString(wallet);
-      // SimpleToast.show(t('myProfile.copied'), SimpleToast.LONG);
-      Alert.alert(t('myProfile.copied'));
+      showAlert({
+        message: t('myProfile.copied'),
+        mode: AlertMode.Success,
+      });
     }
   }, [t, wallet]);
 

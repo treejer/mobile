@@ -3,20 +3,19 @@ import {colors} from 'constants/values';
 
 import React, {useMemo, useRef, useState} from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
+  ActivityIndicator,
+  Dimensions,
   Image,
   Linking,
-  ActivityIndicator,
-  ScrollView,
   RefreshControl,
-  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Dimensions,
+  View,
 } from 'react-native';
-import {useNavigation, useRoute, RouteProp, NavigationProp} from '@react-navigation/native';
-import {useQuery, NetworkStatus} from '@apollo/client';
+import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {NetworkStatus, useQuery} from '@apollo/client';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Spacer from 'components/Spacer';
 import {ChevronLeft, ChevronRight} from 'components/Icons';
@@ -37,6 +36,7 @@ import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {useConfig} from 'services/web3';
 import {Routes} from 'navigation';
 import {isWeb} from 'utilities/helpers/web';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 interface Props {}
 
@@ -116,21 +116,29 @@ function TreeDetails(_: Props) {
 
   const handleUpdate = () => {
     if (!treeDetails) {
-      Alert.alert(t('cannotUpdateTree'));
+      showAlert({
+        message: t('cannotUpdateTree'),
+        mode: AlertMode.Error,
+      });
       return;
     }
     if (isUpdatePended(treeDetails)) {
-      Alert.alert(t('treeDetails.cannotUpdate.title'), t('treeDetails.cannotUpdate.details'));
+      showAlert({
+        title: t('treeDetails.cannotUpdate.title'),
+        message: t('treeDetails.cannotUpdate.details'),
+        mode: AlertMode.Info,
+      });
       return;
     }
 
     const diff = diffUpdateTime(treeDetails, treeUpdateInterval);
 
     if (diff < 0) {
-      Alert.alert(
-        t('treeDetails.cannotUpdate.details'),
-        t('treeDetails.cannotUpdate.wait', {seconds: treeDiffUpdateHumanized(Math.abs(diff))}),
-      );
+      showAlert({
+        title: t('treeDetails.cannotUpdate.details'),
+        message: t('treeDetails.cannotUpdate.wait', {seconds: treeDiffUpdateHumanized(Math.abs(diff))}),
+        mode: AlertMode.Warning,
+      });
       return;
     }
     sendEvent('update_tree');

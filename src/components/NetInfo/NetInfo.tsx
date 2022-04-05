@@ -1,11 +1,12 @@
 import {colors} from 'constants/values';
 
 import React, {useEffect} from 'react';
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Card from 'components/Card';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
+import {showAlert} from 'utilities/helpers/alert';
 
 export default function NetInfo() {
   const isConnected = useNetInfoConnected();
@@ -16,7 +17,10 @@ export default function NetInfo() {
 
   useEffect(() => {
     if (isConnected === false) {
-      Alert.alert(t('netInfo.error'), t('netInfo.details'));
+      showAlert({
+        title: t('netInfo.error'),
+        message: t('netInfo.details'),
+      });
     }
   }, [isConnected, t]);
 

@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useMemo, useRef, useState} from 'react';
-import {View, Text, Platform, Alert, TouchableOpacity} from 'react-native';
+import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useForm} from 'react-hook-form';
@@ -29,7 +29,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
-import {UnVerifiedUserNavigationProp, Routes} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -184,7 +185,11 @@ function VerifyProfile(props: Props) {
 
   const handleMutationAlert = (error: any) => {
     const message = error?.networkError?.result?.error?.message || t('unknownError');
-    Alert.alert(t('error'), message);
+    showAlert({
+      title: t('error'),
+      message,
+      mode: AlertMode.Error,
+    });
   };
 
   const verifyPhone = phoneNumberForm.handleSubmit(async ({verificationCode}) => {
