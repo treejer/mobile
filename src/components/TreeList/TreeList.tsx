@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -55,6 +55,7 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
+  const [loadingMinimized, setLoadingMinimized] = useState<boolean>(false);
   const [initialFilter, setInitialFilter] = useState(filter);
   const {t} = useTranslation();
   const {useGSN} = useSettings();
@@ -70,7 +71,7 @@ function Trees({route, navigation, filter}: Props) {
   const [currentFilter, setCurrentFilter] = useState<TreeFilterItem>(null);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       if (initialFilter) {
         setCurrentFilter({caption: initialFilter});
         setInitialFilter(null);
@@ -530,16 +531,20 @@ function Trees({route, navigation, filter}: Props) {
             style={{
               width: '75%',
               paddingHorizontal: 16,
-              paddingVertical: 8,
+              paddingVertical: 24,
               backgroundColor: colors.khaki,
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 4,
+              borderRadius: 8,
               marginVertical: 8,
             }}
           >
             <ActivityIndicator color={colors.green} size="large" />
             <Text style={{marginVertical: 8, textAlign: 'center'}}>{t('submitTree.offlineLoading')}</Text>
+            <Text style={{marginVertical: 8, textAlign: 'center', fontWeight: 'bold', fontSize: 14}}>
+              {t('submitTree.offlineSubmittingNotCloseApp')}
+            </Text>
+            <Button variant="primary" caption={t('submitTree.minimize')} />
           </View>
         </View>
       </Modal>
