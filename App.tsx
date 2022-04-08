@@ -42,20 +42,20 @@ export default function App() {
             onboardingDoneInitialState={onboardingDone}
             localeInitialState={locale}
           >
-            <OfflineTreeProvider>
-              <Web3Provider
-                persistedWallet={wallet}
-                persistedAccessToken={accessToken}
-                persistedUserId={userId}
-                persistedMagicToken={magicToken}
-                blockchainNetwork={blockchainNetwork}
-              >
-                <Web3Context.Consumer>
-                  {({waiting, loading, magic}) =>
-                    waiting && loading ? (
-                      <AppLoading />
-                    ) : (
-                      <ApolloProvider>
+            <Web3Provider
+              persistedWallet={wallet}
+              persistedAccessToken={accessToken}
+              persistedUserId={userId}
+              persistedMagicToken={magicToken}
+              blockchainNetwork={blockchainNetwork}
+            >
+              <Web3Context.Consumer>
+                {({waiting, loading, magic}) =>
+                  waiting && loading ? (
+                    <AppLoading />
+                  ) : (
+                    <ApolloProvider>
+                      <OfflineTreeProvider>
                         <CurrentUserProvider>
                           <SettingsContext.Consumer>
                             {value => {
@@ -78,12 +78,12 @@ export default function App() {
                             }}
                           </SettingsContext.Consumer>
                         </CurrentUserProvider>
-                      </ApolloProvider>
-                    )
-                  }
-                </Web3Context.Consumer>
-              </Web3Provider>
-            </OfflineTreeProvider>
+                      </OfflineTreeProvider>
+                    </ApolloProvider>
+                  )
+                }
+              </Web3Context.Consumer>
+            </Web3Provider>
           </SettingsProvider>
         )}
       </SafeAreaProvider>
