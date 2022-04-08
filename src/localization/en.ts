@@ -31,6 +31,7 @@ export const en = {
     title: 'Tree Inventory',
     updateTitle: 'Updated Offline',
     submitAll: 'Submit All',
+    showProgress: 'Show Progress',
   },
   treeDetails: {
     cannotUpdate: {

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import {useWalletAccount} from 'services/web3';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
 import Button from '../Button';
@@ -26,14 +26,9 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import useTempTrees from 'utilities/hooks/useTempTrees';
-import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
-import {useSettings} from 'services/settings';
-import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {TreeImage} from 'components/TreeList/TreeImage';
-import {ContractType} from 'services/config';
 
 export enum TreeFilter {
   All = 'All',
@@ -55,10 +50,8 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
-  const [loadingMinimized, setLoadingMinimized] = useState<boolean>(false);
   const [initialFilter, setInitialFilter] = useState(filter);
   const {t} = useTranslation();
-  const {useGSN} = useSettings();
   const filters = useMemo<TreeFilterItem[]>(() => {
     return [
       {caption: TreeFilter.Submitted},
@@ -81,10 +74,6 @@ function Trees({route, navigation, filter}: Props) {
     }, [initialFilter, filters]),
   );
 
-  const config = useConfig();
-  const [offlineLoadings, setOfflineLoadings] = useState([]);
-  const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
-
   const address = useWalletAccount();
 
   const isConnected = useNetInfoConnected();
@@ -105,14 +94,23 @@ function Trees({route, navigation, filter}: Props) {
     loadMore: plantedLoadMore,
   } = usePlantedTrees(address);
 
-  const {offlineTrees, dispatchRemoveOfflineTree, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
+  const {
+    offlineTrees,
+    offlineLoadings,
+    offlineUpdateLoadings,
+    handleSubmitOfflineAssignedTree,
+    handleSubmitOfflineTree,
+    handleUpdateOfflineTree,
+    handleSendAllOffline,
+    loadingMinimized,
+    setLoadingMinimized,
+  } = useOfflineTrees();
 
   const dim = useWindowDimensions();
 
-  const web3 = useWeb3();
-
   const allLoading = plantedTreesQuery.loading || tempTreesQuery.loading;
   const offlineLoading = Boolean(offlineLoadings?.length || offlineUpdateLoadings?.length);
+  const showLoadingModal = offlineLoading && !loadingMinimized;
 
   const handleSelectTree = tree => {
     if (tree.item?.treeStatus == 2) {
@@ -148,153 +146,8 @@ function Trees({route, navigation, filter}: Props) {
     }
   }, [plantedRefetching, route.params, refetchPlantedTrees]);
 
-  const handleRegSelectTree = tree => {
+  const handleRegSelectTree = () => {
     Alert.alert(t('warning'), t('notVerifiedTree'));
-
-    return;
-  };
-
-  const handleUpdateOfflineTree = async (treeJourney: Tree & TreeJourney) => {
-    if (treeJourney?.treeSpecsEntity == null || typeof treeJourney?.treeSpecsEntity === 'undefined') {
-      Alert.alert(t('cannotUpdateTree'));
-      return;
-    }
-    setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
-    try {
-      const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
-
-      const jsonData = updateTreeJSON(config.ipfsGetURL, {
-        tree: treeJourney.tree,
-        journey: treeJourney,
-        photoUploadHash: photoUploadResult.Hash,
-      });
-
-      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
-
-      console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
-
-      const receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.TreeFactory,
-        web3,
-        address,
-        'updateTree',
-        [treeJourney.treeIdToUpdate, metaDataUploadResult.Hash],
-        useGSN,
-      );
-      dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
-      setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-      console.log(receipt, 'receipt');
-    } catch (e) {
-      setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-      Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
-    }
-    setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-  };
-
-  const handleSubmitOfflineAssignedTree = async (journey: TreeJourney) => {
-    if (!isConnected) {
-      Alert.alert(t('noInternet'), t('submitWhenOnline'));
-      return;
-    }
-    try {
-      setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
-
-      const jsonData = assignedTreeJSON(config.ipfsGetURL, {
-        journey,
-        tree: journey?.tree,
-        photoUploadHash: photoUploadResult.Hash,
-      });
-
-      const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
-
-      const receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.TreeFactory,
-        web3,
-        address,
-        'plantAssignedTree',
-        [Hex2Dec(journey.treeIdToPlant), metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
-        useGSN,
-      );
-
-      console.log(receipt, 'receipt');
-      console.log(receipt.transactionHash, 'receipt.transactionHash');
-
-      setOfflineLoadings(offlineLoadings.filter(id => id !== journey.offlineId));
-      dispatchRemoveOfflineTree(journey.offlineId);
-    } catch (e) {
-      console.log(e, 'e inside handleSubmitOfflineAssignedTree');
-      Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
-      setOfflineLoadings(offlineLoadings.filter(id => id !== journey.treeIdToPlant));
-    }
-    setOfflineLoadings(offlineLoadings.filter(id => id !== journey.treeIdToPlant));
-  };
-
-  const alertNoInternet = () => {
-    Alert.alert(t('noInternet'), t('submitWhenOnline'));
-  };
-
-  const handleSubmitOfflineTree = async (treeJourney: TreeJourney) => {
-    if (!isConnected) {
-      alertNoInternet();
-    } else {
-      setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
-      try {
-        const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo.path);
-        const jsonData = newTreeJSON(config.ipfsGetURL, {
-          journey: treeJourney,
-          photoUploadHash: photoUploadResult.Hash,
-        });
-
-        const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
-        console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
-
-        const receipt = await sendTransactionWithGSN(
-          config,
-          ContractType.TreeFactory,
-          web3,
-          address,
-          'plantTree',
-          [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
-          useGSN,
-        );
-
-        console.log(receipt, 'receipt');
-        console.log(receipt.transactionHash, 'receipt.transactionHash');
-
-        setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
-        dispatchRemoveOfflineTree(treeJourney.offlineId);
-      } catch (e) {
-        Alert.alert(t('transactionFailed.title'), e?.message || e.error?.message || t('transactionFailed.tryAgain'));
-        setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
-      }
-      setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
-    }
-  };
-
-  const handleSendAllOffline = async (trees: TreeJourney[] | Tree[], isPlanted: boolean) => {
-    if (!isConnected) {
-      alertNoInternet();
-    } else {
-      try {
-        for (const tree of trees) {
-          if (isPlanted) {
-            if ((tree as TreeJourney).treeIdToPlant) {
-              await handleSubmitOfflineAssignedTree(tree as TreeJourney);
-            } else {
-              await handleSubmitOfflineTree(tree as TreeJourney);
-            }
-          } else {
-            await handleUpdateOfflineTree(tree as Tree);
-          }
-        }
-        Alert.alert(t('offlineTreesSubmitted'));
-      } catch (e) {
-        Alert.alert(t('error'), e.message || t('tryAgain'));
-      }
-    }
   };
 
   const renderFilters = () =>
@@ -473,7 +326,7 @@ function Trees({route, navigation, filter}: Props) {
           : handleUpdateOfflineTree(item as Tree & TreeJourney);
 
       return (
-        <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree}>
+        <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree} disabled={disabled}>
           <TreeImage tree={item.tree} tint size={60} isNursery={item.isSingle === false} color={colors.yellow} />
           <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{id}</Text>
           <Button
@@ -510,13 +363,23 @@ function Trees({route, navigation, filter}: Props) {
           numColumns={calcTreeColumnNumber()}
           contentContainerStyle={styles.listScrollWrapper}
         />
-        {data?.length > 1 && (
+        {loadingMinimized && offlineLoading && (
+          <>
+            <Spacer times={2} />
+            <Button
+              caption={t('treeInventory.showProgress')}
+              variant="tertiary"
+              onPress={() => setLoadingMinimized(false)}
+              loading={offlineLoading}
+            />
+            <Spacer times={2} />
+          </>
+        )}
+        {data?.length > 1 && !offlineLoading && (
           <Button
             caption={t('treeInventory.submitAll')}
             variant="tertiary"
             onPress={() => handleSendAllOffline(data, isPlanted)}
-            disabled={offlineLoading}
-            loading={offlineLoading}
           />
         )}
       </View>
@@ -525,7 +388,7 @@ function Trees({route, navigation, filter}: Props) {
 
   const renderLoadingModal = () => {
     return (
-      <Modal style={{flex: 1}} visible={offlineLoading} onRequestClose={null} transparent>
+      <Modal style={{flex: 1}} visible={showLoadingModal} onRequestClose={() => setLoadingMinimized(true)} transparent>
         <View style={{backgroundColor: colors.grayOpacity, flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <View
             style={{
@@ -544,7 +407,7 @@ function Trees({route, navigation, filter}: Props) {
             <Text style={{marginVertical: 8, textAlign: 'center', fontWeight: 'bold', fontSize: 14}}>
               {t('submitTree.offlineSubmittingNotCloseApp')}
             </Text>
-            <Button variant="primary" caption={t('submitTree.minimize')} />
+            <Button variant="primary" caption={t('submitTree.minimize')} onPress={() => setLoadingMinimized(true)} />
           </View>
         </View>
       </Modal>
