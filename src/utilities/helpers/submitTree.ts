@@ -329,7 +329,7 @@ export function useAfterSelectPhotoHandler() {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{name: 'Profile'}],
+              routes: [{name: Routes.MyProfile}],
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
@@ -348,19 +348,13 @@ export function useAfterSelectPhotoHandler() {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{name: 'Profile'}],
+              routes: [{name: Routes.MyProfile}],
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
         } else if (!isUpdate) {
-          navigation.navigate('Profile', {
-            screen: 'MainProfile',
-            params: {
-              screen: 'SelectOnMap',
-              params: {
-                journey: newJourney,
-              },
-            },
+          navigation.navigate(Routes.SelectOnMap, {
+            journey: newJourney,
           });
         }
       }

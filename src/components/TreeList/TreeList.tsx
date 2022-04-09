@@ -127,12 +127,12 @@ function Trees({route, navigation, filter}: Props) {
           index: 0,
           routes: [
             {
-              name: 'TreeSubmission',
+              name: Routes.SelectOnMap,
               params: {
                 treeIdToPlant: tree.item.id,
                 tree: tree.item,
                 isSingle: true,
-                initialRouteName: 'SelectPhoto',
+                initialRouteName: Routes.SelectPhoto,
               },
             },
           ],
@@ -233,7 +233,7 @@ function Trees({route, navigation, filter}: Props) {
           caption={t('plantFirstTree')}
           variant="cta"
           onPress={() => {
-            navigation.navigate('TreeSubmission');
+            navigation.navigate(Routes.TreeSubmission);
           }}
         />
       </View>

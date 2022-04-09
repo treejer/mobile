@@ -146,7 +146,7 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{name: 'Profile'}],
+              routes: [{name: Routes.MyProfile}],
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
@@ -155,7 +155,7 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{name: 'Profile'}],
+            routes: [{name: Routes.MyProfile}],
           }),
         );
         navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});

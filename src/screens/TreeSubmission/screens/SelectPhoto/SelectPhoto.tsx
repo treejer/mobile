@@ -98,7 +98,7 @@ function SelectPhoto(props: Props) {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'Profile'}],
+          routes: [{name: Routes.MyProfile}],
         }),
       );
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});

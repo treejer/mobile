@@ -147,9 +147,9 @@ function TreeDetails(_: Props) {
       index: 0,
       routes: [
         {
-          name: 'TreeSubmission',
+          name: Routes.TreeSubmission,
           params: {
-            initialRouteName: 'SelectPhoto',
+            initialRouteName: Routes.SelectPhoto,
             treeIdToUpdate: tree?.id,
             tree: treeDetails,
             location: {

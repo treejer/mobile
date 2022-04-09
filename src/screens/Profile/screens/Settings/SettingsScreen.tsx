@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
 import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {isMatic} from 'services/Magic';
+import {Routes} from 'navigation';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -35,7 +36,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   const {t} = useTranslation();
 
   const handleSelectLanguage = () => {
-    navigation.navigate('SelectLanguage', {back: true});
+    navigation.navigate(Routes.SelectLanguage, {back: true});
   };
 
   const handleChangeUseGSN = value => {

@@ -9,6 +9,7 @@ import globalStyles, {fontBold, fontMedium} from 'constants/styles';
 import {ChevronLeft} from 'components/Icons';
 import Spacer from 'components/Spacer';
 import {useTranslation} from 'react-i18next';
+import { Routes } from "navigation";
 
 const SavedAreas = ({navigation}) => {
   const [areas, setAreas] = useState<any>(null);
@@ -33,7 +34,7 @@ const SavedAreas = ({navigation}) => {
   };
 
   const onPressAddArea = () => {
-    navigation.navigate('OfflineMap');
+    navigation.navigate(Routes.OfflineMap);
   };
 
   const renderSavedAreaItem = ({item}) => {
