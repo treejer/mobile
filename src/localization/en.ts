@@ -33,6 +33,7 @@ export const en = {
     title: 'Tree Inventory',
     updateTitle: 'Updated Offline',
     submitAll: 'Submit All',
+    showProgress: 'Show Progress',
   },
   treeDetails: {
     cannotUpdate: {
@@ -139,7 +140,9 @@ export const en = {
     nurserySubmitted: 'Nursery successfully submitted',
     nurserySubmitting: 'We are submitting your nursery',
     offlineLoading: 'We are submitting your offline planted trees. This is going to take a while!\nPlease be patient',
+    offlineSubmittingNotCloseApp: "PLEASE DON'T CLOSE THE APPLICATION",
     hashCopied: 'Hash copied to clipboard',
+    minimize: 'Minimize',
   },
   success: 'Success',
   failure: 'Failure',

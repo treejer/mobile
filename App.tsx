@@ -50,15 +50,15 @@ export default function App() {
             onboardingDoneInitialState={onboardingDone}
             localeInitialState={locale}
           >
-            <OfflineTreeProvider>
-              <Web3Provider
-                persistedWallet={wallet}
-                persistedAccessToken={accessToken}
-                persistedUserId={userId}
-                persistedMagicToken={magicToken}
-                blockchainNetwork={blockchainNetwork}
-              >
-                <ApolloProvider>
+            <Web3Provider
+              persistedWallet={wallet}
+              persistedAccessToken={accessToken}
+              persistedUserId={userId}
+              persistedMagicToken={magicToken}
+              blockchainNetwork={blockchainNetwork}
+            >
+              <ApolloProvider>
+                <OfflineTreeProvider>
                   <CurrentUserProvider>
                     <NetInfo />
                     <SwitchNetwork />
@@ -67,9 +67,9 @@ export default function App() {
                       <RootNavigation />
                     </NavigationContainer>
                   </CurrentUserProvider>
-                </ApolloProvider>
-              </Web3Provider>
-            </OfflineTreeProvider>
+                </OfflineTreeProvider>
+              </ApolloProvider>
+            </Web3Provider>
           </SettingsProvider>
         )}
       </SafeAreaProvider>
