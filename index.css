@@ -22,3 +22,16 @@ video {
   bottom: 48px;
   left: 0;
 }
+
+#tree-photos .slick-prev:before,
+#tree-photos .slick-next:before {
+  color: black;
+}
+
+#tree-photos .slick-next {
+  right: 0;
+}
+
+#tree-photos .slick-prev {
+  left: 0;
+}

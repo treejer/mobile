@@ -1,7 +1,7 @@
-import globalStyles from 'constants/styles';
+import globalStyles, {space} from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useMemo} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -16,9 +16,8 @@ import {
 } from 'react-native';
 import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Spacer from 'components/Spacer';
-import {ChevronLeft, ChevronRight} from 'components/Icons';
+import {ChevronLeft} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
@@ -35,8 +34,9 @@ import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {useConfig} from 'services/web3';
 import {Routes} from 'navigation';
-import {isWeb} from 'utilities/helpers/web';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props {}
 
@@ -44,7 +44,6 @@ const {width} = Dimensions.get('window');
 
 function TreeDetails(_: Props) {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
-  const sliderRef = useRef<Carousel<any>>(null);
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
@@ -80,39 +79,38 @@ function TreeDetails(_: Props) {
     [config.mapboxToken, treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
   );
 
-  const updates = useMemo(
-    () =>
-      typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' &&
-      treeDetails?.treeSpecsEntity?.updates != '' &&
-      treeDetails?.treeSpecsEntity?.updates != null
-        ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
-        : [],
-    [treeDetails?.treeSpecsEntity?.updates],
-  );
+  const updates = [
+    {
+      created_at: '1649424240',
+      image: 'https://ipfs.treejer.com/ipfs/QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
+      image_hash: 'QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
+    },
+    {
+      created_at: '1649424240',
+      image: 'https://ipfs.treejer.com/ipfs/QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
+      image_hash: 'QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
+    },
+  ];
+
+  // const updates = useMemo(
+  //   () =>
+  //     typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' &&
+  //     treeDetails?.treeSpecsEntity?.updates != '' &&
+  //     treeDetails?.treeSpecsEntity?.updates != null
+  //       ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
+  //       : [],
+  //   [treeDetails?.treeSpecsEntity?.updates],
+  // );
+
   const updatesCount = updates?.length;
 
-  const [activeSlide, setActiveSlide] = useState(0);
-  const cardWidth = useMemo(() => width - globalStyles.p2.padding - globalStyles.p3.padding, []);
-  const imageWidth = useMemo(() => {
-    if (!cardWidth) {
-      return undefined;
+  const cardWidth = useMemo(() => {
+    if (isWeb()) {
+      return width - space[2] - space[3];
+    } else {
+      return width - globalStyles.p2.padding - globalStyles.p3.padding;
     }
-
-    if (updatesCount > 1) {
-      return cardWidth - 120;
-    }
-
-    return cardWidth;
-  }, [cardWidth, updatesCount]);
-
-  // useEffect(() => {
-  //   console.log(cardRef.current, '<=====');
-  //   if (cardRef.current) {
-  //     cardRef.current.measureInWindow((_x, _y, width) => {
-  //       setCardWidth(width);
-  //     });
-  //   }
-  // }, [cardRef]);
+  }, []);
 
   const handleUpdate = () => {
     if (!treeDetails) {
@@ -303,73 +301,20 @@ function TreeDetails(_: Props) {
                 <View style={styles.titleLine} />
               </View>
               <Spacer times={8} />
-              {isWeb() ? null : (
-                <View
-                  style={[
-                    globalStyles.justifyContentCenter,
-                    globalStyles.horizontalStack,
-                    globalStyles.alignItemsCenter,
-                  ]}
-                >
-                  {updatesCount > 1 && (
-                    <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToPrev()}>
-                      <ChevronLeft />
-                    </TouchableOpacity>
-                  )}
-                  <Carousel
-                    ref={sliderRef}
-                    data={updates}
-                    renderItem={({item: update}) => {
-                      return (
-                        <Image
-                          style={{
-                            width: (imageWidth || 0) + (updatesCount > 1 ? 20 : 0),
-                            height: cardWidth,
-                            borderRadius: 20,
-                          }}
-                          resizeMode="cover"
-                          key={update.createdAt}
-                          source={{uri: update.image}}
-                        />
-                      );
-                    }}
-                    sliderWidth={imageWidth}
-                    itemWidth={imageWidth}
-                    inactiveSlideScale={0.95}
-                    inactiveSlideOpacity={0}
-                    activeSlideAlignment="start"
-                    activeAnimationType="spring"
-                    layout="default"
-                    loop
-                    onSnapToItem={index => setActiveSlide(index)}
-                  />
-                  {updatesCount > 1 && (
-                    <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToNext()}>
-                      <ChevronRight />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              )}
-
-              {updatesCount > 1 && (
-                <Pagination
-                  dotsLength={updates.length}
-                  activeDotIndex={activeSlide}
-                  containerStyle={{}}
-                  dotColor={colors.grayDarker}
-                  dotStyle={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    marginHorizontal: 8,
-                  }}
-                  inactiveDotColor={colors.gray}
-                  inactiveDotOpacity={0.4}
-                  inactiveDotScale={0.6}
-                  carouselRef={sliderRef.current || undefined}
-                  tappableDots={Boolean(sliderRef.current)}
-                />
-              )}
+              <TreePhotos
+                updatesCount={updatesCount}
+                cardWidth={cardWidth}
+                updates={[
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                  ...updates,
+                ]}
+              />
             </View>
           )}
         </View>

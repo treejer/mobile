@@ -10,9 +10,6 @@ import {useSettings} from 'services/settings';
 import {useTranslation} from 'react-i18next';
 import Slider from 'react-slick';
 
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
 interface OnboardingData {
