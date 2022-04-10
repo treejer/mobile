@@ -11,7 +11,7 @@ const useCamera = () => {
       const photo = await ImagePicker.openPicker({
         includeExif: true,
         mediaType: 'photo',
-        compressImageQuality: 0.8,
+        compressImageQuality: 0.5,
         cropping: true,
       });
 
@@ -27,7 +27,7 @@ const useCamera = () => {
       const photo = await ImagePicker.openCamera({
         includeExif: true,
         mediaType: 'photo',
-        compressImageQuality: 0.8,
+        compressImageQuality: 0.5,
         cropping: true,
         ...options,
       });
