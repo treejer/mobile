@@ -23,22 +23,32 @@ video {
   left: 0;
 }
 
-#tree-photos .slick-prev:before,
-#tree-photos .slick-next:before {
-  color: black;
+.mapboxgl-ctrl-top-right {
+  position: absolute;
+  right: 1.1rem !important;
+  top: 70vh !important;
 }
 
-#tree-photos .slick-next {
-  right: 0;
-  z-index: 9;
+.mapboxgl-ctrl-geolocate {
+  width: 45px !important;
+  height: 45px !important;
+  padding: 4px !important;
 }
 
-#tree-photos .slick-prev {
-  left: 0;
-  z-index: 9;
+.mapboxgl-ctrl-icon {
+  background-size: cover;
 }
 
-#tree-photos .slick-dots {
-  bottom: unset;
-  padding-bottom: 56px;
+.mapboxgl-ctrl,
+.mapboxgl-ctrl-group {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
 }
