@@ -2,7 +2,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import Logger from '@react-native-mapbox-gl/maps/javascript/utils/Logger';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import MapKit from 'components/Map';
+import MapKit from 'components/Map/Map';
 import {colors} from 'constants/values';
 import globalStyles, {fontBold} from 'constants/styles';
 import {locationPermission} from 'utilities/helpers/permissions';
@@ -24,6 +24,7 @@ interface IMapProps {
   map?: any;
   camera?: any;
   setLocation?: any;
+  setAccuracyInMeters?: any;
 }
 
 export default function Map({map, camera, setLocation}: IMapProps) {

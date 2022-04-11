@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Geolocation from 'react-native-geolocation-service';
 import {createOfflineMap, getAllOfflineMaps, getAreaName} from 'utilities/helpers/maps';
 import {locationPermission} from 'utilities/helpers/permissions';
-import Map from 'components/Map';
+import Map from 'components/Map/Map';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';

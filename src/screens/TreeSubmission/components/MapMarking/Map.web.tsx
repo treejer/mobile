@@ -1,10 +1,17 @@
 import React from 'react';
 import {Text, View} from 'react-native';
+import MapBox from '../../../../components/Map/Map';
+import {locationType} from './MapMarking.web';
 
-export default function Map() {
+interface MapProps {
+  setLocation: React.Dispatch<React.SetStateAction<locationType>>;
+  setAccuracyInMeters?: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export default function Map({setLocation, setAccuracyInMeters}: MapProps) {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Welcome to Web Map</Text>
+    <View>
+      <MapBox setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} />
     </View>
   );
 }

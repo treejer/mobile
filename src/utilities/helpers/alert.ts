@@ -40,7 +40,7 @@ export type ShowAlertOptions = {
 export enum AlertMode {
   Success = 'success',
   Info = 'info',
-  Warning = 'warning',
+  Warning = 'Warning',
   Error = 'error',
 }
 

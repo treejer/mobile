@@ -79,28 +79,15 @@ function TreeDetails(_: Props) {
     [config.mapboxToken, treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
   );
 
-  const updates = [
-    {
-      created_at: '1649424240',
-      image: 'https://ipfs.treejer.com/ipfs/QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
-      image_hash: 'QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
-    },
-    {
-      created_at: '1649424240',
-      image: 'https://ipfs.treejer.com/ipfs/QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
-      image_hash: 'QmS48WcUpSh2HDcyhcEsLWdENrxBDcy5NRJs8fddUTAkmW',
-    },
-  ];
-
-  // const updates = useMemo(
-  //   () =>
-  //     typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' &&
-  //     treeDetails?.treeSpecsEntity?.updates != '' &&
-  //     treeDetails?.treeSpecsEntity?.updates != null
-  //       ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
-  //       : [],
-  //   [treeDetails?.treeSpecsEntity?.updates],
-  // );
+  const updates = useMemo(
+    () =>
+      typeof treeDetails?.treeSpecsEntity?.updates != 'undefined' &&
+      treeDetails?.treeSpecsEntity?.updates != '' &&
+      treeDetails?.treeSpecsEntity?.updates != null
+        ? JSON.parse(treeDetails?.treeSpecsEntity?.updates)
+        : [],
+    [treeDetails?.treeSpecsEntity?.updates],
+  );
 
   const updatesCount = updates?.length;
 

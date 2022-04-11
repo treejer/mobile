@@ -209,6 +209,8 @@ export const storageKeys: StorageKeys = {
 export const rangerUrl = 'https://ranger.treejer.com';
 export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
+export const mapboxPublicToken =
+  'pk.eyJ1IjoiaGl0cmVlamVyIiwiYSI6ImNsMHRnMHdnNjBscG0zaW5tczFrdnF4YWwifQ.AqbxyvJkWNxg_Qyl1k4sFA';
 
 export interface NetworkInfo {
   title: string;

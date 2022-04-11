@@ -127,7 +127,7 @@ function Trees({route, navigation, filter}: Props) {
           index: 0,
           routes: [
             {
-              name: Routes.SelectOnMap,
+              name: Routes.TreeSubmission,
               params: {
                 treeIdToPlant: tree.item.id,
                 tree: tree.item,
