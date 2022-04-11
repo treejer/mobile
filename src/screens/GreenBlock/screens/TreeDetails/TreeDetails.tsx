@@ -301,20 +301,7 @@ function TreeDetails(_: Props) {
                 <View style={styles.titleLine} />
               </View>
               <Spacer times={8} />
-              <TreePhotos
-                updatesCount={updatesCount}
-                cardWidth={cardWidth}
-                updates={[
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                  ...updates,
-                ]}
-              />
+              <TreePhotos updatesCount={updatesCount} cardWidth={cardWidth} updates={updates} />
             </View>
           )}
         </View>

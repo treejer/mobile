@@ -76,13 +76,15 @@ export function TreePhotos(props: TreePhotosProps) {
         <Pagination
           dotsLength={updates.length}
           activeDotIndex={activeSlide}
-          containerStyle={{}}
+          containerStyle={{
+            flexWrap: 'wrap',
+          }}
           dotColor={colors.grayDarker}
           dotStyle={{
             width: 8,
             height: 8,
             borderRadius: 4,
-            marginHorizontal: 8,
+            marginVertical: 8,
           }}
           inactiveDotColor={colors.gray}
           inactiveDotOpacity={0.4}

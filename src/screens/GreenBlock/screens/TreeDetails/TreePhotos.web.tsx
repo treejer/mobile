@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef} from 'react';
 import Slider from 'react-slick';
 import {Image} from 'react-native';
 
@@ -12,16 +12,14 @@ export function TreePhotos(props: TreePhotosProps) {
   const {updatesCount, cardWidth, updates} = props;
 
   const carouselRef = useRef<Slider>(null);
-  const [currentStep, setCurrentStep] = useState(0);
   const settings = useMemo(
     () => ({
       dots: true,
-      infinite: false,
+      infinite: true,
       arrows: true,
       speed: 500,
       slidesToShow: 1,
       slidesToScroll: 1,
-      afterChange: value => setCurrentStep(value),
     }),
     [],
   );
@@ -41,8 +39,8 @@ export function TreePhotos(props: TreePhotosProps) {
   return (
     <div id="tree-photos">
       <Slider {...settings} ref={carouselRef}>
-        {updates?.map(item => (
-          <div key={item.createdAt} className="m-auto">
+        {updates?.map((item, i) => (
+          <div key={i} className="m-auto">
             <Image
               style={{
                 width: (imageWidth || 0) + (updatesCount > 1 ? 20 : 0),

@@ -30,8 +30,15 @@ video {
 
 #tree-photos .slick-next {
   right: 0;
+  z-index: 9;
 }
 
 #tree-photos .slick-prev {
   left: 0;
+  z-index: 9;
+}
+
+#tree-photos .slick-dots {
+  bottom: unset;
+  padding-bottom: 56px;
 }
