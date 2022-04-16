@@ -16,6 +16,7 @@ import TreeDetailQuery, {
 import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
+import {Routes} from 'navigation';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -69,7 +70,7 @@ function TreeSubmission({route}: Props) {
       initialRouteName={initialRouteName}
     >
       <Stack.Screen
-        name="SelectPlantType"
+        name={Routes.SelectPlantType}
         component={SelectPlantType}
         initialParams={{
           journey: {
@@ -81,7 +82,7 @@ function TreeSubmission({route}: Props) {
         }}
       />
       <Stack.Screen
-        name="SelectPhoto"
+        name={Routes.SelectPhoto}
         component={SelectPhoto}
         initialParams={{
           journey: {
@@ -93,7 +94,7 @@ function TreeSubmission({route}: Props) {
           },
         }}
       />
-      <Stack.Screen name="SubmitTree" component={SubmitTree} />
+      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} />
     </Stack.Navigator>
   );
 }

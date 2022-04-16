@@ -15,7 +15,6 @@ import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {WebCameraScreen} from 'screens/WebCam/WebCamScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -30,9 +29,6 @@ export type RootNavigationParamList = {
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
   [Routes.SelectOnMap]: {
-    journey: TreeJourney;
-  };
-  [Routes.WebCamera]: {
     journey: TreeJourney;
   };
 };
@@ -105,7 +101,6 @@ export function RootNavigation() {
             <RootStack.Screen name={Routes.SelectOnMap} component={SelectOnMap} />
             <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
             <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
-            <RootStack.Screen name={Routes.WebCamera} component={WebCameraScreen} />
           </>
         ) : null}
       </RootStack.Navigator>

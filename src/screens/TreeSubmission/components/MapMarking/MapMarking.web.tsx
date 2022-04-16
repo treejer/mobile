@@ -6,6 +6,7 @@ import Map from './Map';
 import Button from 'components/Button';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {colors} from 'constants/values';
+import {GeoPosition} from 'react-native-geolocation-service';
 import {useTranslation} from 'react-i18next';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {TreeJourney} from 'screens/TreeSubmission/types';
@@ -17,13 +18,17 @@ export type locationType = {
 };
 interface MapMarkingProps {
   journey?: TreeJourney;
-  onSubmit?: (location: locationType) => void;
+  onSubmit?: (location: GeoPosition) => void;
 }
-export default function MapMarking({journey}: MapMarkingProps) {
+export default function MapMarking({journey, onSubmit}: MapMarkingProps) {
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [location, setLocation] = useState<locationType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const {t} = useTranslation();
+  // const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
   const navigation = useNavigation<any>();
+  // const [persistedPlantedTrees] = usePersistedPlantedTrees();
+  // const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const isConnected = useNetInfoConnected();
 
   const handleDismiss = useCallback(() => {
@@ -45,6 +50,22 @@ export default function MapMarking({journey}: MapMarkingProps) {
         });
       } else {
         showAlert({message: `${t('offlineMap.notSupported')}`, mode: AlertMode.Error});
+      }
+    } else {
+      if (location) {
+        const coords = {
+          latitude: location.lat,
+          longitude: location.lng,
+          accuracy: accuracyInMeters,
+          heading: 0,
+          altitude: 0,
+          speed: 0,
+          altitudeAccuracy: 0,
+        };
+        onSubmit?.({
+          coords,
+          timestamp: Date.now(),
+        });
       }
     }
   }, [isConnected, journey, location, navigation]);

@@ -9,7 +9,7 @@ import globalStyles, {fontBold, fontMedium} from 'constants/styles';
 import {ChevronLeft} from 'components/Icons';
 import Spacer from 'components/Spacer';
 import {useTranslation} from 'react-i18next';
-import { Routes } from "navigation";
+import {Routes} from 'navigation';
 
 const SavedAreas = ({navigation}) => {
   const [areas, setAreas] = useState<any>(null);
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
   areaListContainer: {
     marginHorizontal: -25,
     flex: 1,
-
   },
   subHeadingText: {
     ...fontBold,

@@ -31,6 +31,8 @@ import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import WebCam from 'components/WebCam/WebCam';
+import getCroppedImg from 'utilities/hooks/cropImage';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -65,6 +67,7 @@ function VerifyProfile(props: Props) {
   const {journey} = params || {};
 
   const [organizationKey, setOrganizationKey] = useState<string>(radioItems[1].key);
+  const [isCameraVisible, setIsCameraVisible] = useState<boolean>(false);
 
   const {t} = useTranslation();
 
@@ -272,7 +275,15 @@ function VerifyProfile(props: Props) {
           });
         }
       }
+    } else {
+      setIsCameraVisible(true);
     }
+  };
+
+  const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
+    const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);
+    setIdCardImageUri(selectedPhoto);
+    setIsCameraVisible(false);
   };
 
   const submitButtonMarkup = idCardImageUri ? (
@@ -286,6 +297,10 @@ function VerifyProfile(props: Props) {
       />
     </View>
   ) : null;
+
+  if (isCameraVisible) {
+    return <WebCam handleDone={handleDonePicture} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
