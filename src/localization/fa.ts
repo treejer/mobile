@@ -1,6 +1,6 @@
 export const en = {
   language: 'Language',
-  balance: 'Balance (DAI)',
+  balance: "موجودی (DAI)",
   plantedTrees: 'Planted Trees',
   withdraw: 'Withdraw',
   offlineMap: {
