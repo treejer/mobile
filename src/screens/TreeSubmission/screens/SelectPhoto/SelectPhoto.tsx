@@ -4,7 +4,7 @@ import React, {useCallback, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {ScrollView, Text, View} from 'react-native';
+import {ScrollView, Text, View, Modal} from 'react-native';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import {useCamera} from 'utilities/hooks';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -19,6 +19,8 @@ import {Routes} from 'navigation';
 import {isWeb} from 'utilities/helpers/web';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import WebCam from 'components/WebCam/WebCam';
+import getCroppedImg from 'utilities/hooks/cropImage';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -36,6 +38,7 @@ function SelectPhoto(props: Props) {
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
 
   const [photo, setPhoto] = useState<any>();
+  const [showWebCam, setShowWebCam] = useState<boolean>(false);
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
 
@@ -52,7 +55,7 @@ function SelectPhoto(props: Props) {
 
   const handleSelectPhoto = useCallback(async () => {
     if (isWeb()) {
-      navigation.navigate(Routes.WebCamera, {journey});
+      setShowWebCam(true);
     } else {
       const selectedPhoto = await openCameraHook();
       console.log(selectedPhoto);
@@ -70,7 +73,23 @@ function SelectPhoto(props: Props) {
         }
       }
     }
-  }, [navigation, journey, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
+  }, [journey, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
+
+  const handleSelectPhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const file = await getCroppedImg(image, 'file.jpeg', croppedAreaPixels, rotation);
+
+      handleAfterSelectPhoto({
+        selectedPhoto: file,
+        journey,
+        setPhoto,
+        isUpdate,
+        isNursery,
+        canUpdate,
+      });
+    },
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, journey],
+  );
 
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
@@ -122,6 +141,14 @@ function SelectPhoto(props: Props) {
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30}}>
         <Text style={{textAlign: 'center', fontSize: 18}}>{t('supplyCapReached')}</Text>
       </View>
+    );
+  }
+
+  if (showWebCam) {
+    return (
+      <Modal visible>
+        <WebCam handleDone={handleSelectPhotoWeb} />
+      </Modal>
     );
   }
 

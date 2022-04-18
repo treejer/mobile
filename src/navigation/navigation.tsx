@@ -63,7 +63,6 @@ export enum Routes {
   SubmitTree = 'SubmitTree',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
-  WebCamera = 'WebCamera',
 }
 
 export function RootNavigation() {

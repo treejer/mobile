@@ -3,9 +3,6 @@ import Cropper from 'react-easy-crop';
 import {useTranslation} from 'react-i18next';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Webcam from 'react-webcam';
-import {TreeJourney} from 'screens/TreeSubmission/types';
-import {AfterSelectPhotoHandler, canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
-import getCroppedImg from 'utilities/hooks/cropImage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useWindowSize} from 'utilities/hooks/useWindowSize';
 import {colors} from 'constants/values';
@@ -13,16 +10,12 @@ import {colors} from 'constants/values';
 const bottomSheetSpace = 80;
 
 interface WebCamProps {
-  journey?: TreeJourney;
-  handleDone: (
-    image: string,
-    croppedAreaPixels: number | null,
-    rotation: number,
-    handleAfterSelectPhoto: (options: AfterSelectPhotoHandler) => void,
-  ) => void;
+  handleDone: (image: string, croppedAreaPixels: number | null, rotation: number) => void;
 }
 
-function WebCam({journey, handleDone}: WebCamProps) {
+function WebCam(props: WebCamProps) {
+  const {handleDone} = props;
+
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [crop, setCrop] = useState({x: 0, y: 0});
@@ -45,8 +38,6 @@ function WebCam({journey, handleDone}: WebCamProps) {
     [videoHeight, width],
   );
 
-  const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
-
   const handleCapture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot({width, height: videoHeight});
     console.log(imageSrc, 'imageSrc');
@@ -62,8 +53,8 @@ function WebCam({journey, handleDone}: WebCamProps) {
   }, []);
 
   const doneHandler = useCallback(
-    () => handleDone(image, croppedAreaPixels, rotation, handleAfterSelectPhoto),
-    [croppedAreaPixels, handleAfterSelectPhoto, image, journey, rotation],
+    () => handleDone(image, croppedAreaPixels, rotation),
+    [croppedAreaPixels, handleDone, image, rotation],
   );
 
   return (
@@ -83,13 +74,13 @@ function WebCam({journey, handleDone}: WebCamProps) {
             style={{
               containerStyle: {height: `calc(100% - ${bottomSheetSpace}px)`},
               mediaStyle: {
-                height: `calc(100% - ${bottomSheetSpace}px`,
+                height: '100%',
                 width: '100%',
               },
             }}
           />
         ) : (
-          <Webcam ref={webcamRef} screenshotFormat="image/png" videoConstraints={videoConstraints} />
+          <Webcam ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints} />
         )}
       </View>
       <View>

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {ActivityIndicator, Dimensions, Switch, Text, View} from 'react-native';
+import {ActivityIndicator, Dimensions, Switch, Text, TouchableOpacity, View} from 'react-native';
 import Button from 'components/Button';
 import {useTranslation} from 'react-i18next';
 import {ProfileRouteParamList} from 'types';
@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
 import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {isMatic} from 'services/Magic';
-import {Routes} from 'navigation';
+import {ChevronLeft} from 'components/Icons';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -36,7 +36,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   const {t} = useTranslation();
 
   const handleSelectLanguage = () => {
-    navigation.navigate(Routes.SelectLanguage, {back: true});
+    navigation.navigate('SelectLanguage', {back: true});
   };
 
   const handleChangeUseGSN = value => {
@@ -57,7 +57,12 @@ export default function SettingsScreen(props: SettingsScreenProps) {
 
   return (
     <SafeAreaView style={{flex: 1, ...globalStyles.screenView, ...globalStyles.p1}}>
-      <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('settings.title')}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>
+          <ChevronLeft />
+        </TouchableOpacity>
+        <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>
+      </View>
       <Spacer times={4} />
       <View style={{flex: 1, alignItems: 'center'}}>
         <Button style={{width: fullWidth}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
