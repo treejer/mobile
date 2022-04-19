@@ -5,15 +5,13 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreejerIcon} from '../../../assets/images';
+import {useBrowserPlatform} from '../../utilities/hooks/useBrowserPlatform';
 
 function PwaModal() {
-  const [isShow, setIsShow] = useState(false);
+  const [isShow, setIsShow] = useState(!window.matchMedia('(display-mode: standalone)').matches);
+  const browserPlatform = useBrowserPlatform();
 
-  useEffect(() => {
-    setIsShow(true);
-  }, []);
-
-  return isShow ? (
+  return isShow && browserPlatform ? (
     <SafeAreaView style={styles.modalContainer}>
       <View style={[styles.modal, globalStyles.normal]}>
         <View>
