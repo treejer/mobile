@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -30,6 +30,7 @@ import {colors} from 'constants/values';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 export enum TreeFilter {
   All = 'All',
@@ -78,6 +79,8 @@ function Trees({route, navigation, filter}: Props) {
   const address = useWalletAccount();
 
   const isConnected = useNetInfoConnected();
+
+  const treeUpdateInterval = useTreeUpdateInterval();
 
   const {
     tempTreesQuery,
@@ -205,7 +208,7 @@ function Trees({route, navigation, filter}: Props) {
 
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <TreeImage tree={tree.item} tint size={size} style={style} />
+        <TreeImage tree={tree.item} tint size={size} style={style} treeUpdateInterval={treeUpdateInterval} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -214,7 +217,7 @@ function Trees({route, navigation, filter}: Props) {
   const tempRenderItem = tree => {
     return (
       <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={handleRegSelectTree}>
-        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} />
+        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} treeUpdateInterval={treeUpdateInterval} />
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
       </TouchableOpacity>
     );
@@ -343,7 +346,14 @@ function Trees({route, navigation, filter}: Props) {
 
       return (
         <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree} disabled={disabled}>
-          <TreeImage tree={item.tree} tint size={60} isNursery={item.isSingle === false} color={colors.yellow} />
+          <TreeImage
+            tree={item.tree}
+            tint
+            size={60}
+            isNursery={item.isSingle === false}
+            color={colors.yellow}
+            treeUpdateInterval={treeUpdateInterval}
+          />
           <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{id}</Text>
           <Button
             variant="secondary"

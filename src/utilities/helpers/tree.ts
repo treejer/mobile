@@ -14,6 +14,9 @@ export function treeImageSrc(tree: Tree): ImageSourcePropType {
 
 export function treeColor(tree: Tree, treeUpdateInterval: number): string | undefined {
   let color: string | undefined;
+  if (!treeUpdateInterval) {
+    return;
+  }
   const id = Number(Hex2Dec(tree?.id || ''));
   // if (id >= 0 && id <= 10) {
   //   color = colors.claimable;

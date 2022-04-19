@@ -172,7 +172,13 @@ function TreeDetails(_: Props) {
         </View>
 
         {treeDetails ? (
-          <TreeImage color={colors.green} tree={treeDetails} size={120} style={{alignSelf: 'center'}} />
+          <TreeImage
+            color={colors.green}
+            tree={treeDetails}
+            size={120}
+            style={{alignSelf: 'center'}}
+            treeUpdateInterval={treeUpdateInterval}
+          />
         ) : null}
 
         {treeDetails?.id ? (
