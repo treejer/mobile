@@ -15,7 +15,7 @@ import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useSettings} from 'services/settings';
-import {newTreeJSON} from 'utilities/helpers/submitTree';
+import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {ContractType} from 'services/config';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -51,12 +51,12 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
 
   const handleSubmitTree = useCallback(
     async (treeJourney: TreeJourney) => {
-      if (!treeJourney.photo?.path) {
+      if (!treeJourney.photo) {
         return;
       }
       const birthDay = currentTimestamp();
       try {
-        const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
+        const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(treeJourney.photo));
         const jsonData = newTreeJSON(config.ipfsGetURL, {
           journey: treeJourney,
           photoUploadHash: photoUploadResult.Hash,

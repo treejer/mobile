@@ -78,6 +78,8 @@ function SelectPhoto(props: Props) {
   const handleSelectPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
       const file = await getCroppedImg(image, 'file.jpeg', croppedAreaPixels, rotation);
+      setPhoto(file);
+      setShowWebCam(false);
 
       handleAfterSelectPhoto({
         selectedPhoto: file,

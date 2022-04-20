@@ -359,6 +359,15 @@ export function useAfterSelectPhotoHandler() {
         }
       }
     },
-    [dispatchAddOfflineUpdateTree, navigation, persistedPlantedTrees, t],
+    [dispatchAddOfflineUpdateTree, isConnected, navigation, persistedPlantedTrees, t],
   );
+}
+
+export function photoToUpload(photo: Image | File): File | string {
+  // eslint-disable-next-line no-undef
+  if (photo instanceof File) {
+    return photo;
+  } else {
+    return photo.path;
+  }
 }

@@ -24,7 +24,13 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeList';
 import {useSettings} from 'services/settings';
-import {assignedTreeJSON, canUpdateTreeLocation, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {
+  assignedTreeJSON,
+  canUpdateTreeLocation,
+  newTreeJSON,
+  photoToUpload,
+  updateTreeJSON,
+} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -104,7 +110,7 @@ function SubmitTree(props: Props) {
     }
 
     try {
-      const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
+      const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(journey.photo));
       setPhotoHash(photoUploadResult.Hash);
 
       console.log(journey, '====> journey <====');
