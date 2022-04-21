@@ -31,6 +31,7 @@ import {TreeImage} from 'components/TreeList/TreeImage';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {isWeb} from 'utilities/helpers/web';
 
 export enum TreeFilter {
   All = 'All',
@@ -172,7 +173,8 @@ function Trees({route, navigation, filter}: Props) {
           key={caption}
           caption={t(caption)}
           variant={variant}
-          style={{marginHorizontal: 8, marginBottom: 8}}
+          style={{marginHorizontal: 4, marginBottom: 8}}
+          textStyle={{fontSize: 12}}
           onPress={() => setCurrentFilter(item)}
         />
       );
@@ -261,10 +263,14 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const calcTreeColumnNumber = () => {
-    if (dim?.width >= 414) {
-      return 6;
+    if (isWeb()) {
+      return 5;
+    } else {
+      if (dim?.width >= 414) {
+        return 6;
+      }
+      return 5;
     }
-    return 5;
   };
 
   const renderSubmittedTrees = () => {
@@ -277,7 +283,7 @@ function Trees({route, navigation, filter}: Props) {
           initialNumToRender={20}
           onEndReachedThreshold={0.1}
           renderItem={RenderItem}
-          keyExtractor={(_, i) => i.toString()}
+          keyExtractor={(_, i) => _.id.toString()}
           ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
           style={{flex: 1}}
           refreshing
@@ -491,7 +497,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   tree: {
-    width: 60,
+    width: 52,
     height: 80,
     marginHorizontal: 5,
     marginBottom: 15,
@@ -499,7 +505,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   offlineTree: {
-    width: 60,
+    width: 52,
     height: 100,
     marginHorizontal: 5,
     marginBottom: 15,
