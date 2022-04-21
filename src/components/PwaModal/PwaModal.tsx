@@ -1,15 +1,24 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import React, {useEffect, useState} from 'react';
-import Icon from 'react-native-vector-icons/Entypo';
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import Share from 'react-native-vector-icons/Entypo';
+import GooglePlay from 'react-native-vector-icons/Ionicons';
+import {StyleSheet, Text, TouchableOpacity, View, Image, Linking} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreejerIcon} from '../../../assets/images';
 import {useBrowserPlatform} from '../../utilities/hooks/useBrowserPlatform';
+import {useTranslation} from 'react-i18next';
 
 function PwaModal() {
   const [isShow, setIsShow] = useState(!window.matchMedia('(display-mode: standalone)').matches);
   const browserPlatform = useBrowserPlatform();
+  const {t} = useTranslation();
+
+  const GOOGLEPLAYAPPURL = useMemo(() => 'https://play.google.com/store/apps/details?id=com.treejer.ranger', []);
+
+  const handlePress = useCallback(() => {
+    Linking.openURL(GOOGLEPLAYAPPURL);
+  }, []);
 
   return isShow && browserPlatform ? (
     <SafeAreaView style={styles.modalContainer}>
@@ -17,14 +26,22 @@ function PwaModal() {
         <View>
           <Image source={TreejerIcon} style={{width: 70, height: 70, borderRadius: 27, marginBottom: 20}} />
         </View>
-        <Text style={[globalStyles.h3, globalStyles.mb1]}>Install App</Text>
+        <Text style={[globalStyles.h3, globalStyles.mb1]}>{t('Install App')}</Text>
         <Text style={globalStyles.h6}>
-          Tap <Icon name="share-alternative" size={15} /> then "Add to Home screen"
+          {t(`addToHomeScreen.tap`)} <Share name="share-alternative" size={15} /> {t(`addToHomeScreen.homeScreen`)}
         </Text>
+        {browserPlatform === 'Android' && <Text style={styles.downloadMessage}>{t('canDownload')}</Text>}
         <View style={[styles.btnContainer, globalStyles.mt3]}>
-          <TouchableOpacity style={styles.btn} onPress={() => setIsShow(false)}>
-            <Text>close</Text>
+          <TouchableOpacity style={[styles.btn, styles.cancelBtn]} onPress={() => setIsShow(false)}>
+            <Text>{t('close')}</Text>
           </TouchableOpacity>
+          {browserPlatform === 'Android' && (
+            <TouchableOpacity style={[styles.btn, styles.downloadBtn]} onPress={handlePress}>
+              <Text style={styles.whiteColor}>
+                <GooglePlay name="logo-google-playstore" size={15} /> {t('Google Play')}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -47,7 +64,6 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: 250,
-    height: 250,
     padding: 15,
     borderRadius: 8,
     justifyContent: 'center',
@@ -60,7 +76,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 40,
     shadowColor: 'black',
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
   },
   btnContainer: {
     flexDirection: 'row',
@@ -69,7 +85,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 5,
+    flexDirection: 'row',
+  },
+  cancelBtn: {
     backgroundColor: colors.khakiDark,
+  },
+  downloadBtn: {
+    backgroundColor: colors.green,
+    marginLeft: 5,
   },
   logo: {
     width: 54,
@@ -78,5 +101,13 @@ const styles = StyleSheet.create({
     borderRadius: 27,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  whiteColor: {
+    color: '#fff',
+  },
+  downloadMessage: {
+    margin: 5,
+    color: colors.grayDarker,
+    fontSize: 12,
   },
 });
