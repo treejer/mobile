@@ -125,8 +125,9 @@ function renderCirclePath(flip = false) {
       viewBox="0 0 25 56"
       fill="none"
       style={{
-        [flip ? 'marginLeft' : 'marginRight']: -4,
+        [flip ? 'marginLeft' : 'marginRight']: -5,
         transform: flip ? [{scaleX: -1}] : [],
+        marginBottom: -2,
       }}
     >
       <Path
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
   middleTabWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: -56,
     width: 96,
   },
@@ -168,6 +170,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 50,
   },
 });
 

@@ -8,7 +8,8 @@
 }
 
 #ranger-web {
-  height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: -moz-fill-available;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -51,4 +52,8 @@ video {
 
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
+}
+
+input {
+  outline: none;
 }
