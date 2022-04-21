@@ -246,6 +246,4 @@ export const networks: Networks = {
   },
 };
 
-console.log(config, 'config is here');
-
 export default config;

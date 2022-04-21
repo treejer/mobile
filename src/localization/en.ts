@@ -248,4 +248,12 @@ export const en = {
   },
   comingSoon: 'Coming Soon',
   tempLangEnglish: 'Temporary setting language to English',
+  installApp: 'Install App',
+  canDownload: 'you can also download the app',
+  close: 'close',
+  googlePlay: 'Google Play',
+  addToHomeScreen: {
+    tap: 'Tap',
+    homeScreen: 'then "Add to Home screen"',
+  },
 };
