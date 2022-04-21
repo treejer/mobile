@@ -15,6 +15,7 @@ import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import PwaModal from 'components/PwaModal/PwaModal';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -78,6 +79,7 @@ export function RootNavigation() {
   return (
     <>
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
+      {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false}}>
         {loading ? <RootStack.Screen name={Routes.Init} component={AppLoading} /> : null}
         {!locale ? <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} /> : null}
