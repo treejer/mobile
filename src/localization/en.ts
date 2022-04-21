@@ -28,6 +28,7 @@ export const en = {
     title: 'Invite',
     org: 'Organization',
     friend: 'Friend',
+    copied: 'Invite link copied to your clipboard',
   },
   treeInventory: {
     title: 'Tree Inventory',

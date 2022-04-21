@@ -4,8 +4,10 @@ import {useTranslation} from 'react-i18next';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {useConfig} from 'services/web3';
 import {rangerUrl} from 'services/config';
+import {isWeb} from 'utilities/helpers/web';
+import {showAlert} from 'utilities/helpers/alert';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 export interface InviteProps {
   planterType: number;
@@ -28,7 +30,6 @@ export function InviteOrgAndFriends(props: InviteProps) {
   const {t} = useTranslation();
 
   const {sendEvent} = useAnalytics();
-  const config = useConfig();
 
   const isOrg = planterType === 2;
   const text = `${t('invite.title')}`;
@@ -36,9 +37,18 @@ export function InviteOrgAndFriends(props: InviteProps) {
   const handleInvite = () => {
     sendEvent('invite');
     const key = isOrg ? 'organization' : 'referrer';
-    Share.share({
-      message: `${rangerUrl}/${key}/${address}`,
-    });
+    const message = `${rangerUrl}/${key}/${address}`;
+
+    if (isWeb()) {
+      Clipboard.setString(message);
+      showAlert({
+        message: t('invite.copied'),
+      });
+    } else {
+      Share.share({
+        message,
+      });
+    }
   };
 
   return (
