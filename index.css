@@ -16,18 +16,13 @@
   background-color: #faf8f0;
 }
 
-video {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 48px;
-  left: 0;
-}
-
 .mapboxgl-ctrl-top-right {
-  position: absolute;
+  position: fixed !important;
+  top: auto !important;
   right: 1.1rem !important;
-  top: 70vh !important;
+  bottom: 10vh !important;
+  width: 100px !important;
+  height: 100px !important;
 }
 
 .mapboxgl-ctrl-geolocate {
