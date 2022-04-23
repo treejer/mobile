@@ -21,6 +21,7 @@ import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmiss
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -155,34 +156,36 @@ function SelectPhoto(props: Props) {
   }
 
   return (
-    <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-      <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-        <Spacer times={10} />
-        <TreeSubmissionStepper
-          isUpdate={isUpdate}
-          currentStep={canUpdate && photo ? 2 : 1}
-          isSingle={journey?.isSingle}
-          count={journey?.nurseryCount}
-          canUpdateLocation={canUpdate}
-        >
-          <Spacer times={4} />
-          {/* @here */}
-          {canUpdate && photo ? (
-            <View style={{flexDirection: 'row'}}>
-              <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
-              <Button
-                variant="primary"
-                style={{justifyContent: 'center', marginHorizontal: 8}}
-                onPress={handleContinue}
-                caption={t('submitTree.continue')}
-              />
-            </View>
-          ) : (
-            <Button variant="secondary" onPress={handleSelectPhoto} caption={t('openCamera')} />
-          )}
-        </TreeSubmissionStepper>
-      </View>
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+        <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
+          <Spacer times={10} />
+          <TreeSubmissionStepper
+            isUpdate={isUpdate}
+            currentStep={canUpdate && photo ? 2 : 1}
+            isSingle={journey?.isSingle}
+            count={journey?.nurseryCount}
+            canUpdateLocation={canUpdate}
+          >
+            <Spacer times={4} />
+            {/* @here */}
+            {canUpdate && photo ? (
+              <View style={{flexDirection: 'row'}}>
+                <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
+                <Button
+                  variant="primary"
+                  style={{justifyContent: 'center', marginHorizontal: 8}}
+                  onPress={handleContinue}
+                  caption={t('submitTree.continue')}
+                />
+              </View>
+            ) : (
+              <Button variant="secondary" onPress={handleSelectPhoto} caption={t('openCamera')} />
+            )}
+          </TreeSubmissionStepper>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

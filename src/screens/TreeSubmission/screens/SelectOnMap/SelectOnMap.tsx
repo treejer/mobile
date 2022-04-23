@@ -5,6 +5,7 @@ import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {RootNavigationProp, Routes} from 'navigation';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
 
@@ -15,12 +16,14 @@ function SelectOnMap(props: Props) {
   } = route;
 
   return (
-    <View style={globalStyles.fill}>
-      <MapMarking journey={journey} />
-      <View pointerEvents="none" style={styles.mapMarkerWrapper}>
-        <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
+    <SafeAreaView>
+      <View style={globalStyles.fill}>
+        <MapMarking journey={journey} />
+        <View pointerEvents="none" style={styles.mapMarkerWrapper}>
+          <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

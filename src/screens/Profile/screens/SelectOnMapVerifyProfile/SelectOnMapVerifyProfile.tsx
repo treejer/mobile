@@ -6,6 +6,7 @@ import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {GeoPosition} from 'react-native-geolocation-service';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyProfile> {}
 
@@ -31,14 +32,16 @@ function SelectOnMapVerifyProfile(props: Props) {
   );
 
   return (
-    <View style={globalStyles.fill}>
-      <View style={styles.container}>
-        <MapMarking onSubmit={handleSubmit} />
+    <SafeAreaView>
+      <View style={globalStyles.fill}>
+        <View style={styles.container}>
+          <MapMarking onSubmit={handleSubmit} />
+        </View>
+        <View pointerEvents="none" style={styles.mapMarkerWrapper}>
+          <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
+        </View>
       </View>
-      <View pointerEvents="none" style={styles.mapMarkerWrapper}>
-        <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

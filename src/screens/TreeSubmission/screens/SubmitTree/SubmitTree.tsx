@@ -34,6 +34,7 @@ import {
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -353,13 +354,15 @@ function SubmitTree(props: Props) {
   );
 
   return (
-    <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-      {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
-      <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-        <Spacer times={10} />
-        {contentMarkup}
-      </View>
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+        {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
+        <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
+          <Spacer times={10} />
+          {contentMarkup}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
