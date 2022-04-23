@@ -2,10 +2,10 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import Cropper from 'react-easy-crop';
 import {useTranslation} from 'react-i18next';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import Webcam from 'react-webcam';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useWindowSize} from 'utilities/hooks/useWindowSize';
 import {colors} from 'constants/values';
+import {Camera, CameraType} from 'react-camera-pro';
 
 const bottomSheetSpace = 80;
 
@@ -24,27 +24,15 @@ function WebCam(props: WebCamProps) {
   const {t} = useTranslation();
 
   const [image, setImage] = useState<string>('');
-  const webcamRef = useRef<Webcam>(null);
-  const {
-    screenSize: {width, height},
-  } = useWindowSize();
-  const videoHeight = useMemo(() => height - bottomSheetSpace, [height]);
-  const videoConstraints = useMemo(
-    () => ({
-      width,
-      height: videoHeight,
-      facingMode: 'environment',
-    }),
-    [videoHeight, width],
-  );
+  const webcamRef = useRef<CameraType>(null);
 
   const handleCapture = useCallback(() => {
-    const imageSrc = webcamRef.current?.getScreenshot({width, height: videoHeight});
+    const imageSrc = webcamRef.current?.takePhoto();
     console.log(imageSrc, 'imageSrc');
     if (imageSrc) {
       setImage(imageSrc);
     }
-  }, [videoHeight, width, webcamRef]);
+  }, [webcamRef]);
   const handleRetry = useCallback(() => {
     setImage('');
   }, []);
@@ -80,7 +68,17 @@ function WebCam(props: WebCamProps) {
             }}
           />
         ) : (
-          <Webcam ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints} />
+          <Camera
+            ref={webcamRef}
+            errorMessages={{
+              noCameraAccessible: t('webcam.noCameraAccessible'),
+              permissionDenied: t('webcam.permissionDenied'),
+              switchCamera: t('switchCamera'),
+              canvas: t('canvas'),
+            }}
+            facingMode="environment"
+            aspectRatio="cover"
+          />
         )}
       </View>
       <View>

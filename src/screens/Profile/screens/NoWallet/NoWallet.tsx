@@ -231,7 +231,7 @@ function NoWallet(props: NoWalletProps) {
                 </View>
               </View>
               <Spacer times={4} />
-              <View style={{width: 304, alignSelf: 'center', paddingVertical: 16}}>
+              <View style={{width: 304, alignSelf: 'center', paddingVertical: 16, marginBottom: 22}}>
                 <Card style={[globalStyles.alignItemsCenter, {width: '100%'}]}>
                   <Text style={globalStyles.h5}>{t('createWallet.why.title')}</Text>
                   <Spacer times={5} />

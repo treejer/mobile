@@ -12,9 +12,11 @@ const options = {
   maximumAge: 0,
 };
 
+const RTLAPI = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
+
 mapboxgl.accessToken = mapboxPublicToken;
 mapboxgl.setRTLTextPlugin(
-  'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
+  RTLAPI,
   null,
   true, // Lazy load the plugin
 );
