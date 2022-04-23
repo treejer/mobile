@@ -283,7 +283,7 @@ function Trees({route, navigation, filter}: Props) {
           initialNumToRender={20}
           onEndReachedThreshold={0.1}
           renderItem={RenderItem}
-          keyExtractor={(_, i) => _.id.toString()}
+          keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
           style={{flex: 1}}
           refreshing

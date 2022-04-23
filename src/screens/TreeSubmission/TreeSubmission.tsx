@@ -1,12 +1,12 @@
 import globalStyles from 'constants/styles';
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {Route} from '@react-navigation/native';
+import {Route, NavigationProp} from '@react-navigation/native';
 import {Tree, TreeSubmissionRouteParamList} from 'types';
 import {useQuery} from '@apollo/client';
 import TreeDetailQuery, {
@@ -31,14 +31,13 @@ export type TreeSubmissionStackScreenProps<T extends keyof TreeSubmissionRoutePa
 const Stack = createNativeStackNavigator<TreeSubmissionRouteParamList>();
 
 interface Props {
-  route: Route<'TreeUpdate'>;
+  route: Route<any>;
+  navigation: NavigationProp<any>;
 }
 
-function TreeSubmission({route}: Props) {
+function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
-
-  const [initialRouteName, setInitialRouteName] = useState(initRouteName);
 
   const treeIdToUpdate =
     route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
@@ -58,8 +57,10 @@ function TreeSubmission({route}: Props) {
   }
 
   useEffect(() => {
-    setInitialRouteName(initRouteName);
-  }, [initRouteName]);
+    if (initRouteName && initRouteName !== Routes.SelectPlantType) {
+      navigation.navigate(initRouteName, route.params);
+    }
+  }, [initRouteName, navigation, route.params]);
 
   return (
     <Stack.Navigator
@@ -67,7 +68,6 @@ function TreeSubmission({route}: Props) {
         contentStyle: globalStyles.screenView,
         headerShown: false,
       }}
-      initialRouteName={initialRouteName}
     >
       <Stack.Screen
         name={Routes.SelectPlantType}

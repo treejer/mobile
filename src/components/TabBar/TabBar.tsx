@@ -8,7 +8,7 @@ import Svg, {Path} from 'react-native-svg';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {analyticsTabEvents} from 'navigation';
+import {analyticsTabEvents, Routes} from 'navigation';
 
 interface Props extends BottomTabBarProps {}
 
@@ -38,7 +38,8 @@ function TabBar({state, descriptors, navigation}: Props) {
 
           if (!isFocused && !event.defaultPrevented) {
             sendEvent(analyticsTabEvents[route.name]);
-            navigation.navigate(route.name);
+            console.log(route.name, '<===', Routes.TreeSubmission);
+            navigation.navigate(route.name, {initialRouteName: Routes.SelectPlantType});
           }
         };
 
