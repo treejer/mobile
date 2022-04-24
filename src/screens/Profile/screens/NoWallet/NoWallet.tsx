@@ -153,7 +153,7 @@ function NoWallet(props: NoWalletProps) {
   // }, [unlocked, navigation]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.screenView, {flex: 1}]}>
       <View style={[globalStyles.screenView, globalStyles.fill, {height: '100%'}]}>
         <ScrollView keyboardShouldPersistTaps="always" style={[{height: '100%', flex: 1}, globalStyles.screenView]}>
           <KeyboardAwareScrollView

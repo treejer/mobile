@@ -24,7 +24,7 @@ function VerifyPending(props: Props) {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <View
         style={[
           globalStyles.screenView,

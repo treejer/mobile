@@ -449,14 +449,14 @@ function Trees({route, navigation, filter}: Props) {
 
   if (allLoading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <View style={[{flex: 1, alignItems: 'center', justifyContent: 'center'}, globalStyles.screenView]}>
         <ActivityIndicator />
       </View>
     );
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <View
         style={[
           globalStyles.screenView,

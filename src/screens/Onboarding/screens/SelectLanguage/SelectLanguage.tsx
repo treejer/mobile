@@ -44,7 +44,7 @@ function SelectLanguage(props: SelectLanguageProps) {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <View style={globalStyles.fill}>
         <BackgroundEntropy />
         <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>

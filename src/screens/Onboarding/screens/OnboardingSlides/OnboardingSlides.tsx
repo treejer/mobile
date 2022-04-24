@@ -76,7 +76,7 @@ function OnboardingScreen() {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <View style={globalStyles.fill}>
         <BackgroundEntropy />
         <View style={globalStyles.fill}>

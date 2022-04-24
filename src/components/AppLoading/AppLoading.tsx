@@ -11,7 +11,7 @@ export function AppLoading() {
   const {t} = useTranslation();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.khaki}}>
         <Image source={TreejerIcon} style={{width: 240, height: 240}} />
         <Text style={[globalStyles.h1, {paddingVertical: 16, fontWeight: 'bold'}]}>{t('loading.ranger')}</Text>

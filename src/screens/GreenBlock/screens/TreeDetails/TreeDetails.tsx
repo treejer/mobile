@@ -157,7 +157,7 @@ function TreeDetails(_: Props) {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScrollView
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={

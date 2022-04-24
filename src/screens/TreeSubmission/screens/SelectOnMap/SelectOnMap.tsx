@@ -16,7 +16,7 @@ function SelectOnMap(props: Props) {
   } = route;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={globalStyles.fill}>
       <View style={globalStyles.fill}>
         <MapMarking journey={journey} />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>

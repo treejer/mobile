@@ -32,7 +32,7 @@ function SelectOnMapVerifyProfile(props: Props) {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={globalStyles.fill}>
       <View style={globalStyles.fill}>
         <View style={styles.container}>
           <MapMarking onSubmit={handleSubmit} />

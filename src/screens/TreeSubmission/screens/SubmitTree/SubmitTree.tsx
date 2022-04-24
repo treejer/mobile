@@ -354,7 +354,7 @@ function SubmitTree(props: Props) {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>

@@ -242,7 +242,7 @@ function MyProfile(props: MyProfileProps) {
   }, [t, wallet]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <ScrollView
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={<RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />}

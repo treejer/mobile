@@ -156,7 +156,7 @@ function SelectPhoto(props: Props) {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
