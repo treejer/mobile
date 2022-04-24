@@ -37,6 +37,7 @@ import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props {}
 
@@ -156,151 +157,155 @@ function TreeDetails(_: Props) {
   }
 
   return (
-    <ScrollView
-      style={[globalStyles.screenView, globalStyles.fill]}
-      refreshControl={
-        <RefreshControl refreshing={networkStatus === NetworkStatus.refetch} onRefresh={() => refetch()} />
-      }
-    >
-      <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
-        <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
-          <TouchableOpacity style={{paddingHorizontal: 16, paddingVertical: 8}} onPress={() => navigation.goBack()}>
-            <ChevronLeft />
-          </TouchableOpacity>
-          <View style={globalStyles.fill} />
-          <Avatar size={40} type="active" />
-        </View>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      <ScrollView
+        style={[globalStyles.screenView, globalStyles.fill]}
+        refreshControl={
+          <RefreshControl refreshing={networkStatus === NetworkStatus.refetch} onRefresh={() => refetch()} />
+        }
+      >
+        <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
+          <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
+            <TouchableOpacity style={{paddingHorizontal: 16, paddingVertical: 8}} onPress={() => navigation.goBack()}>
+              <ChevronLeft />
+            </TouchableOpacity>
+            <View style={globalStyles.fill} />
+            <Avatar size={40} type="active" />
+          </View>
 
-        {treeDetails ? (
-          <TreeImage
-            color={colors.green}
-            tree={treeDetails}
-            size={120}
-            style={{alignSelf: 'center'}}
-            treeUpdateInterval={treeUpdateInterval}
-          />
-        ) : null}
+          {treeDetails ? (
+            <TreeImage
+              color={colors.green}
+              tree={treeDetails}
+              size={120}
+              style={{alignSelf: 'center'}}
+              treeUpdateInterval={treeUpdateInterval}
+            />
+          ) : null}
 
-        {treeDetails?.id ? (
-          <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails.id)}</Text>
-        ) : null}
-        {/* Tree id */}
-        <Spacer times={8} />
+          {treeDetails?.id ? (
+            <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails.id)}</Text>
+          ) : null}
+          {/* Tree id */}
+          <Spacer times={8} />
 
-        <View style={globalStyles.p2}>
-          <Card>
-            <View style={styles.updateButton}>
-              {treeDetails && (
-                <Button
-                  variant="success"
-                  caption={t('treeDetails.update')}
-                  textStyle={globalStyles.textCenter}
-                  onPress={handleUpdate}
-                  style={{backgroundColor: treeColor(treeDetails, treeUpdateInterval)}}
-                />
-              )}
-            </View>
-            <Spacer times={4} />
+          <View style={globalStyles.p2}>
+            <Card>
+              <View style={styles.updateButton}>
+                {treeDetails && (
+                  <Button
+                    variant="success"
+                    caption={t('treeDetails.update')}
+                    textStyle={globalStyles.textCenter}
+                    onPress={handleUpdate}
+                    style={{backgroundColor: treeColor(treeDetails, treeUpdateInterval)}}
+                  />
+                )}
+              </View>
+              <Spacer times={4} />
 
-            {/*
+              {/*
             <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Location</Text>
             <Text style={[globalStyles.h5, globalStyles.textCenter]}>Lordegan, Iran</Text>
             <Spacer times={6} />
             */}
 
-            {treeDetails?.treeSpecsEntity ? (
-              <>
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
-                  {t('treeDetails.gpsCoords')}
-                </Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-                  lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
-                  {'\n '}
-                  long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
-                </Text>
-                <Spacer times={6} />
-              </>
-            ) : (
-              <></>
-            )}
-            {/*<Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Height</Text>*/}
-            {/*<Text style={[globalStyles.h5, globalStyles.textCenter]}>{tree.height} cm</Text>*/}
-            {/*/!* TBD *!/*/}
-            {/*<Spacer times={6} />*/}
+              {treeDetails?.treeSpecsEntity ? (
+                <>
+                  <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                    {t('treeDetails.gpsCoords')}
+                  </Text>
+                  <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                    lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
+                    {'\n '}
+                    long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
+                  </Text>
+                  <Spacer times={6} />
+                </>
+              ) : (
+                <></>
+              )}
+              {/*<Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>Height</Text>*/}
+              {/*<Text style={[globalStyles.h5, globalStyles.textCenter]}>{tree.height} cm</Text>*/}
+              {/*/!* TBD *!/*/}
+              {/*<Spacer times={6} />*/}
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.funder')}</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {treeDetails?.funder == null ? t('treeDetails.notFounded') : treeDetails?.funder?.id}
-            </Text>
-            <Spacer times={6} />
+              <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.funder')}</Text>
+              <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                {treeDetails?.funder == null ? t('treeDetails.notFounded') : treeDetails?.funder?.id}
+              </Text>
+              <Spacer times={6} />
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.lastUpdate')}</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {treeDetails?.lastUpdate != null
-                ? new Date(Number(treeDetails?.lastUpdate?.createdAt) * 1000).toLocaleDateString()
-                : new Date(Number(treeDetails?.plantDate) * 1000).toLocaleDateString()}
-            </Text>
-            <Spacer times={6} />
+              <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                {t('treeDetails.lastUpdate')}
+              </Text>
+              <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                {treeDetails?.lastUpdate != null
+                  ? new Date(Number(treeDetails?.lastUpdate?.createdAt) * 1000).toLocaleDateString()
+                  : new Date(Number(treeDetails?.plantDate) * 1000).toLocaleDateString()}
+              </Text>
+              <Spacer times={6} />
 
-            <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.born')}</Text>
-            <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-              {new Date(Number(treeDetails?.plantDate) * 1000).getFullYear()}
-            </Text>
-            <Spacer times={6} />
+              <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.born')}</Text>
+              <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                {new Date(Number(treeDetails?.plantDate) * 1000).getFullYear()}
+              </Text>
+              <Spacer times={6} />
 
-            <TouchableOpacity
-              style={{
-                marginHorizontal: -20,
-                marginBottom: -23,
-              }}
-              onPress={() => {
-                const uri = `https://maps.google.com/?q=${
-                  Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)
-                },${Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}`;
-                Linking.openURL(uri);
-              }}
-            >
-              <Image
-                resizeMode="cover"
+              <TouchableOpacity
                 style={{
-                  alignSelf: 'center',
-                  width: '99%',
-                  height: 200,
-                  borderBottomLeftRadius: 15,
-                  borderBottomRightRadius: 15,
+                  marginHorizontal: -20,
+                  marginBottom: -23,
                 }}
-                source={{
-                  uri: staticMapUrl,
+                onPress={() => {
+                  const uri = `https://maps.google.com/?q=${
+                    Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)
+                  },${Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}`;
+                  Linking.openURL(uri);
                 }}
-              />
-            </TouchableOpacity>
-          </Card>
-          <Spacer times={8} />
-
-          {Boolean(cardWidth) && updates && updatesCount > 0 && (
-            <View>
-              <View
-                style={[
-                  globalStyles.horizontalStack,
-                  globalStyles.alignItemsCenter,
-                  styles.titleContainer,
-                  {width: cardWidth},
-                ]}
               >
-                <View style={styles.titleLine} />
-                <Text style={[globalStyles.ph1, globalStyles.h5]}>
-                  {t(`treeDetails.${updatesCount > 1 ? 'photos' : 'photo'}`)}
-                </Text>
-                <View style={styles.titleLine} />
+                <Image
+                  resizeMode="cover"
+                  style={{
+                    alignSelf: 'center',
+                    width: '99%',
+                    height: 200,
+                    borderBottomLeftRadius: 15,
+                    borderBottomRightRadius: 15,
+                  }}
+                  source={{
+                    uri: staticMapUrl,
+                  }}
+                />
+              </TouchableOpacity>
+            </Card>
+            <Spacer times={8} />
+
+            {Boolean(cardWidth) && updates && updatesCount > 0 && (
+              <View>
+                <View
+                  style={[
+                    globalStyles.horizontalStack,
+                    globalStyles.alignItemsCenter,
+                    styles.titleContainer,
+                    {width: cardWidth},
+                  ]}
+                >
+                  <View style={styles.titleLine} />
+                  <Text style={[globalStyles.ph1, globalStyles.h5]}>
+                    {t(`treeDetails.${updatesCount > 1 ? 'photos' : 'photo'}`)}
+                  </Text>
+                  <View style={styles.titleLine} />
+                </View>
+                <Spacer times={8} />
+                <TreePhotos updatesCount={updatesCount} cardWidth={cardWidth} updates={updates} />
               </View>
-              <Spacer times={8} />
-              <TreePhotos updatesCount={updatesCount} cardWidth={cardWidth} updates={updates} />
-            </View>
-          )}
+            )}
+          </View>
+          <Spacer times={8} />
         </View>
-        <Spacer times={8} />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

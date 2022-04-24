@@ -32,6 +32,7 @@ import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 export enum TreeFilter {
   All = 'All',
@@ -448,42 +449,44 @@ function Trees({route, navigation, filter}: Props) {
 
   if (allLoading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <View style={[{flex: 1, alignItems: 'center', justifyContent: 'center'}, globalStyles.screenView]}>
         <ActivityIndicator />
       </View>
     );
   }
 
   return (
-    <View
-      style={[
-        globalStyles.screenView,
-        globalStyles.safeArea,
-        {
-          paddingBottom: 40,
-          paddingHorizontal: 12,
-          flex: 1,
-        },
-      ]}
-    >
-      {renderLoadingModal()}
-      <Spacer times={6} />
-      <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('treeInventory.title')}</Text>
-      <Spacer times={4} />
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <View
         style={[
-          globalStyles.horizontalStack,
+          globalStyles.screenView,
+          globalStyles.safeArea,
           {
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
+            paddingBottom: 40,
+            paddingHorizontal: 12,
+            flex: 1,
           },
         ]}
       >
-        {currentFilter && renderFilters()}
+        {renderLoadingModal()}
+        <Spacer times={6} />
+        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('treeInventory.title')}</Text>
+        <Spacer times={4} />
+        <View
+          style={[
+            globalStyles.horizontalStack,
+            {
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          ]}
+        >
+          {currentFilter && renderFilters()}
+        </View>
+        {renderFilterComponent()}
       </View>
-      {renderFilterComponent()}
-    </View>
+    </SafeAreaView>
   );
 }
 

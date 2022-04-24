@@ -56,7 +56,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, ...globalStyles.screenView, ...globalStyles.p1}}>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView, globalStyles.p1]}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>
           <ChevronLeft />

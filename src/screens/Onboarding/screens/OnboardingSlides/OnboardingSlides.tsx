@@ -9,6 +9,7 @@ import {Tree} from 'components/Icons';
 import ProgressCircles from 'components/ProgressCircles';
 import {useSettings} from 'services/settings';
 import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
@@ -75,31 +76,33 @@ function OnboardingScreen() {
   }, []);
 
   return (
-    <View style={globalStyles.fill}>
-      <BackgroundEntropy />
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <View style={globalStyles.fill}>
-        <Carousel
-          ref={carouselRef}
-          data={onboardingData}
-          renderItem={renderItem}
-          sliderWidth={viewportWidth}
-          itemWidth={viewportWidth}
-          onSnapToItem={onSnapToItem}
-          importantForAccessibility="no"
-          accessible={false}
-          initialNumToRender={1}
-        />
-      </View>
-      <View style={[styles.bottomWrapper, globalStyles.alignItemsCenter]}>
-        <View style={globalStyles.pt3}>
-          <Button variant="cta" caption={t('next')} icon={Tree} onPress={nextItem} />
+        <BackgroundEntropy />
+        <View style={globalStyles.fill}>
+          <Carousel
+            ref={carouselRef}
+            data={onboardingData}
+            renderItem={renderItem}
+            sliderWidth={viewportWidth}
+            itemWidth={viewportWidth}
+            onSnapToItem={onSnapToItem}
+            importantForAccessibility="no"
+            accessible={false}
+            initialNumToRender={1}
+          />
         </View>
+        <View style={[styles.bottomWrapper, globalStyles.alignItemsCenter]}>
+          <View style={globalStyles.pt3}>
+            <Button variant="cta" caption={t('next')} icon={Tree} onPress={nextItem} />
+          </View>
 
-        <View style={globalStyles.pt3}>
-          <ProgressCircles numberOfSteps={onboardingData.length} activeStep={currentStep + 1} />
+          <View style={globalStyles.pt3}>
+            <ProgressCircles numberOfSteps={onboardingData.length} activeStep={currentStep + 1} />
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

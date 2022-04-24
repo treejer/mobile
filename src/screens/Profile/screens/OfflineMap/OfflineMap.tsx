@@ -175,7 +175,7 @@ const OfflineMap = ({navigation}) => {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom]}>
+    <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom, {flex: 1}]}>
       <View style={styles.container}>
         <Spacer times={2} />
         <View style={{flexDirection: 'row', alignItems: 'center'}}>

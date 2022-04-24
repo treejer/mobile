@@ -10,6 +10,7 @@ import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {GreenBlockRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface Props {}
 
@@ -50,30 +51,32 @@ function AcceptInvitation(_: Props) {
   }, [greenBlockId, web3, wallet, navigation]);
 
   return (
-    <View
-      style={[
-        globalStyles.fill,
-        globalStyles.safeArea,
-        globalStyles.p1,
-        globalStyles.pt3,
-        globalStyles.alignItemsCenter,
-        globalStyles.justifyContentCenter,
-      ]}
-    >
-      <Spacer times={8} />
-      <Text>You've been invited to this green block</Text>
-      <Spacer times={8} />
-      <Button
-        variant="success"
-        onPress={() => {
-          handleJoinGreenBlock();
-        }}
-        icon={Tree}
-        caption="Join"
-        disabled={submiting}
-        loading={submiting}
-      />
-    </View>
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
+      <View
+        style={[
+          globalStyles.fill,
+          globalStyles.safeArea,
+          globalStyles.p1,
+          globalStyles.pt3,
+          globalStyles.alignItemsCenter,
+          globalStyles.justifyContentCenter,
+        ]}
+      >
+        <Spacer times={8} />
+        <Text>You've been invited to this green block</Text>
+        <Spacer times={8} />
+        <Button
+          variant="success"
+          onPress={() => {
+            handleJoinGreenBlock();
+          }}
+          icon={Tree}
+          caption="Join"
+          disabled={submiting}
+          loading={submiting}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
