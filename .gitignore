@@ -5,6 +5,7 @@
 # Xcode
 #
 web-build/
+web-build-*.tar.gz
 build/
 *.pbxuser
 !default.pbxuser
