@@ -5,13 +5,14 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
-  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
+  ScrollView,
 } from 'react-native';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
 import {useWalletAccount} from 'services/web3';
@@ -33,6 +34,8 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {patchFlatListProps} from 'react-native-web-refresh-control';
+// patchFlatListProps();
 
 export enum TreeFilter {
   All = 'All',
@@ -54,6 +57,8 @@ interface Props {
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
+  const [submittedRefreshing, setSubmittedRefreshing] = useState<boolean>(false);
+  const [tempRefreshing, setTempRefreshing] = useState<boolean>(false);
   const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
   const {t} = useTranslation();
   const filters = useMemo<TreeFilterItem[]>(() => {
@@ -204,6 +209,18 @@ function Trees({route, navigation, filter}: Props) {
     return null;
   };
 
+  const refreshSubmittedHandler = async () => {
+    setSubmittedRefreshing(true);
+    await refetchPlantedTrees();
+    setSubmittedRefreshing(false);
+  };
+
+  const refreshTempHandler = async () => {
+    setTempRefreshing(true);
+    await refetchTempTrees();
+    setTempRefreshing(false);
+  };
+
   const RenderItem = tree => {
     const imageFs = tree.item?.treeSpecsEntity?.imageFs;
     const size = imageFs ? 60 : 48;
@@ -287,12 +304,18 @@ function Trees({route, navigation, filter}: Props) {
           keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
           style={{flex: 1}}
-          refreshing
+          refreshing={submittedRefreshing}
           onEndReached={plantedLoadMore}
-          onRefresh={refetchPlantedTrees}
+          onRefresh={refreshSubmittedHandler}
           numColumns={calcTreeColumnNumber()}
           contentContainerStyle={styles.listScrollWrapper}
-          refreshControl={<RefreshControl refreshing={plantedRefetching} onRefresh={refetchPlantedTrees} />}
+          renderScrollComponent={props => (
+            <ScrollView
+              {...props}
+              //eslint-disable-next-line react/prop-types
+              refreshControl={<RefreshControl refreshing={submittedRefreshing} onRefresh={refreshSubmittedHandler} />}
+            />
+          )}
         />
       </View>
     );
@@ -312,11 +335,17 @@ function Trees({route, navigation, filter}: Props) {
           keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
           style={{flex: 1}}
-          refreshing
-          onRefresh={refetchTempTrees}
+          refreshing={tempRefreshing}
+          onRefresh={refreshTempHandler}
           numColumns={calcTreeColumnNumber()}
           contentContainerStyle={styles.listScrollWrapper}
-          refreshControl={<RefreshControl refreshing={tempTreesRefetching} onRefresh={refetchTempTrees} />}
+          renderScrollComponent={props => (
+            <ScrollView
+              {...props}
+              //eslint-disable-next-line react/prop-types
+              refreshControl={<RefreshControl refreshing={tempRefreshing} onRefresh={refreshTempHandler} />}
+            />
+          )}
         />
       </View>
     );
