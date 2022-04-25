@@ -9,4 +9,5 @@ jobs:
     steps:
       - run: echo "Deploying started"
       - run: yarn
-
+      - run: yarn web:prod
+      - run: ./deploy-staging.sh
