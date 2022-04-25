@@ -1,0 +1,12 @@
+name: Deploy Staging
+on:
+  push:
+    branches:
+      - expo-web
+jobs:
+  Deploy-Staging:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying started"
+      - run: yarn
+
