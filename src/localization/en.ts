@@ -263,7 +263,7 @@ export const en = {
       'It is not possible to switch camera to different one because there is only one video device accessible.',
     canvas: 'Canvas is not supported.',
   },
-  offlineTreeSubmittingNotSupported: 'Offline tree submitting is not supported on web',
+  offlineTreeSubmittingNotSupported: 'Offline tree submission is not supported on web',
   checkNetwork: 'please check your network',
   backToProfile: 'back to profile',
 };
