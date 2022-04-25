@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploying started"
-      - run: |
-        cd mobile/mobile |
-        yarn |
-        yarn web:prod-github |
-        ./deploy-staging.sh
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: yarn
+      - run: yarn web:prod-github
+      - run: ./deploy-staging.sh
