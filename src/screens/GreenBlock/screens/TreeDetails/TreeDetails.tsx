@@ -7,13 +7,13 @@ import {
   Dimensions,
   Image,
   Linking,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
 import Spacer from 'components/Spacer';
