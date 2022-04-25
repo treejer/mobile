@@ -69,7 +69,9 @@ export function usePlanterStatusQueryPersisted(): [Planter | null, Dispatch<Plan
 
         if (planter) {
           const _planter = JSON.parse(planter);
-          setPlanter(_planter?.planter || null);
+          console.log(_planter);
+
+          setPlanter(_planter || null);
         }
       } catch (e) {
         console.log(e, 'Error inside ===> usePlanterStatusQuery get');

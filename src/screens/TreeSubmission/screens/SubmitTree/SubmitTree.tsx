@@ -35,6 +35,8 @@ import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -57,6 +59,7 @@ function SubmitTree(props: Props) {
   const [txHash, setTxHash] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
+  const isConnected = useNetInfoConnected();
 
   const birthDay = currentTimestamp();
 
@@ -355,6 +358,7 @@ function SubmitTree(props: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
