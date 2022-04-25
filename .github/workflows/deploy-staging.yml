@@ -9,7 +9,7 @@ jobs:
     steps:
       - run: echo "Deploying started"
       - run: |
-        cd mobile/mobile
-        yarn
-        yarn web:prod-github
+        cd mobile/mobile |
+        yarn |
+        yarn web:prod-github |
         ./deploy-staging.sh
