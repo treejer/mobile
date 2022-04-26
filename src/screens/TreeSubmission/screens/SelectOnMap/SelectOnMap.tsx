@@ -6,6 +6,8 @@ import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {RootNavigationProp, Routes} from 'navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 
 interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
 
@@ -15,8 +17,11 @@ function SelectOnMap(props: Props) {
     params: {journey},
   } = route;
 
+  const isConnected = useNetInfoConnected();
+
   return (
     <SafeAreaView style={globalStyles.fill}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
         <MapMarking journey={journey} />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>

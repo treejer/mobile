@@ -22,6 +22,7 @@ import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {isWeb} from 'utilities/helpers/web';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -337,7 +338,7 @@ function MyProfile(props: MyProfileProps) {
                   </>
                 )}
 
-                {!route.params?.unVerified ? (
+                {!route.params?.unVerified && !isWeb() ? (
                   <>
                     <Button
                       style={styles.button}

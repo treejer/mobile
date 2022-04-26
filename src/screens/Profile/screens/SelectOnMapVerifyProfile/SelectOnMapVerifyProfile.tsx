@@ -7,6 +7,8 @@ import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking'
 import {GeoPosition} from 'react-native-geolocation-service';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyProfile> {}
 
@@ -14,6 +16,7 @@ function SelectOnMapVerifyProfile(props: Props) {
   const {navigation, route} = props;
   const {params} = route;
   const {journey} = params || {};
+  const isConnected = useNetInfoConnected();
 
   const handleSubmit = useCallback(
     (location: GeoPosition) => {
@@ -33,6 +36,7 @@ function SelectOnMapVerifyProfile(props: Props) {
 
   return (
     <SafeAreaView style={globalStyles.fill}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
         <View style={styles.container}>
           <MapMarking onSubmit={handleSubmit} />

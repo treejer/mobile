@@ -249,8 +249,8 @@ export const en = {
   comingSoon: 'Coming Soon',
   tempLangEnglish: 'Temporary setting language to English',
   installApp: 'Install App',
-  canDownload: 'you can also download the app',
-  close: 'close',
+  canDownload: 'You can also download the app',
+  close: 'Close',
   googlePlay: 'Google Play',
   addToHomeScreen: {
     tap: 'Tap',
@@ -263,4 +263,7 @@ export const en = {
       'It is not possible to switch camera to different one because there is only one video device accessible.',
     canvas: 'Canvas is not supported.',
   },
+  offlineTreeSubmittingNotSupported: 'Offline tree submission is not supported on web',
+  checkNetwork: 'Please check your network',
+  backToProfile: 'Back to profile',
 };

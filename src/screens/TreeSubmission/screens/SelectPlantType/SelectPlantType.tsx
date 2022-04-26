@@ -11,6 +11,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
 import {TreeImage} from '../../../../../assets/icons';
 import {Routes} from 'navigation';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -29,6 +31,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const [isSingle, setIsSingle] = useState<boolean | null>(null);
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const isConnected = useNetInfoConnected();
 
   const handleStart = useCallback(
     (single: boolean | null, nurseryCount: string) => {
@@ -84,6 +87,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectSingle}>
         <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
         <View style={{flex: 1, paddingHorizontal: 16}}>

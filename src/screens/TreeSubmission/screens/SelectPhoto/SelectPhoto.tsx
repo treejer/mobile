@@ -22,6 +22,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -157,6 +158,7 @@ function SelectPhoto(props: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
