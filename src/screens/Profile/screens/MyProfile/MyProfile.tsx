@@ -190,9 +190,6 @@ function MyProfile(props: MyProfileProps) {
     useGSN,
   ]);
 
-  console.log('====================================');
-  console.log(planterData?.planterType);
-  console.log('====================================');
   const onRefetch = async () => {
     await getPlanter();
     await refetchUser();

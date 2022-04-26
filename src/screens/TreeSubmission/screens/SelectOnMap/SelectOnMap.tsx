@@ -12,11 +12,12 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
 
 function SelectOnMap(props: Props) {
-  const isConnected = useNetInfoConnected();
   const {route} = props;
   const {
     params: {journey},
   } = route;
+
+  const isConnected = useNetInfoConnected();
 
   return (
     <SafeAreaView style={globalStyles.fill}>

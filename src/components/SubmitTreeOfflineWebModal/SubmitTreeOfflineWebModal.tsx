@@ -35,16 +35,7 @@ function SubmitTreeOfflineWebModal() {
                 )
               }
             >
-              <Text
-                style={{
-                  color: colors.green,
-                  textDecorationLine: 'underline',
-                  textDecorationStyle: 'solid',
-                  textDecorationColor: colors.green,
-                }}
-              >
-                {t('backToProfile')}
-              </Text>
+              <Text style={styles.btnText}>{t('backToProfile')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -91,5 +82,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 5,
     flexDirection: 'row',
+  },
+  btnText: {
+    color: colors.green,
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    textDecorationColor: colors.green,
   },
 });

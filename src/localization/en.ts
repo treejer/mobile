@@ -249,8 +249,8 @@ export const en = {
   comingSoon: 'Coming Soon',
   tempLangEnglish: 'Temporary setting language to English',
   installApp: 'Install App',
-  canDownload: 'you can also download the app',
-  close: 'close',
+  canDownload: 'You can also download the app',
+  close: 'Close',
   googlePlay: 'Google Play',
   addToHomeScreen: {
     tap: 'Tap',
@@ -264,6 +264,6 @@ export const en = {
     canvas: 'Canvas is not supported.',
   },
   offlineTreeSubmittingNotSupported: 'Offline tree submission is not supported on web',
-  checkNetwork: 'please check your network',
-  backToProfile: 'back to profile',
+  checkNetwork: 'Please check your network',
+  backToProfile: 'Back to profile',
 };
