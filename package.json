@@ -14,8 +14,7 @@
     "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'",
     "web": "yarn add expo && REACT_APP_WEB=true expo web",
     "web:prod": "yarn add expo && rm -rf web-build && REACT_APP_WEB=true expo build:web",
-    "web:prod-github": "REACT_APP_WEB=true expo build:web",
-    "web:tar": "tar -zcvf web-build-$(date +'%m-%d-%Y-%H%M').tar.gz web-build"
+    "web:prod-github": "REACT_APP_WEB=true expo build:web"
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
