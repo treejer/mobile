@@ -14,7 +14,7 @@ module.exports = async function (env, argv) {
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the webpack build.
       new WorkboxWebpackPlugin.InjectManifest({
-        swSrc: path.resolve(__dirname, 'src/service-worker.js'),
+        swSrc: path.resolve(__dirname, './src/service-worker.js'),
         dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
         exclude: [
           /\.map$/,
