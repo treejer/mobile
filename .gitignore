@@ -73,3 +73,5 @@ buck-out/
 .env
 
 .expo
+
+.nginx-config
