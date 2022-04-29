@@ -1,7 +1,7 @@
 const createExpoWebpackConfigAsync = require('@expo/webpack-config');
 const path = require('path');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+// const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 module.exports = async function (env, argv) {
   // Set by expo-cli during `expo build:web`
@@ -47,11 +47,11 @@ module.exports = async function (env, argv) {
       }),
     );
 
-    config.plugins.push(
+    /*config.plugins.push(
       new BundleAnalyzerPlugin({
         path: 'web-report',
       }),
-    );
+    );*/
   }
 
   return config;
