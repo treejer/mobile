@@ -3,6 +3,7 @@
  */
 
 import {registerRootComponent} from 'expo';
+import {version} from './package.json';
 import App from './App';
 import 'react-toastify/dist/ReactToastify.css';
 import 'slick-carousel/slick/slick.css';
@@ -11,7 +12,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import {register} from './src/serviceWorkerRegistration';
 import './index.css';
 
-console.log('running index.web');
+console.log('running web v', version);
 
 registerRootComponent(App);
 register();
