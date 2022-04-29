@@ -28,7 +28,7 @@ function SubmitTreeOfflineWebModal() {
                     index: 0,
                     routes: [
                       {
-                        name: Routes.MyProfile,
+                        name: Routes.VerifiedProfileTab,
                       },
                     ],
                   }),
