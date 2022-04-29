@@ -1,6 +1,7 @@
 const createExpoWebpackConfigAsync = require('@expo/webpack-config');
 const path = require('path');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 module.exports = async function (env, argv) {
   // Set by expo-cli during `expo build:web`
@@ -10,6 +11,21 @@ module.exports = async function (env, argv) {
   const config = await createExpoWebpackConfigAsync(env, argv);
 
   if (isEnvProduction) {
+    config.optimization.splitChunks = false;
+    config.optimization.runtimeChunk = false;
+    config.optimization.namedChunks = false;
+    config.optimization.minimize = true;
+    config.optimization.removeEmptyChunks = true;
+    config.resolve.alias = {
+      react: path.resolve('./node_modules/react'),
+    };
+    config.resolve.modules = [
+      path.resolve(__dirname, 'node_modules'),
+      path.resolve(__dirname, 'node_modules/bn.js/lib'),
+      path.resolve(__dirname, 'node_modules/ethereumjs-util'),
+      path.resolve(__dirname, 'node_modules/web3-utils'),
+    ];
+
     config.plugins.push(
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the webpack build.
@@ -27,7 +43,13 @@ module.exports = async function (env, argv) {
         // Bump up the default maximum size (2mb) that's precached,
         // to make lazy-loading failure scenarios less likely.
         // See https://github.com/cra-template/pwa/issues/13#issuecomment-722667270
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 1024 * 1024,
+      }),
+    );
+
+    config.plugins.push(
+      new BundleAnalyzerPlugin({
+        path: 'web-report',
       }),
     );
   }
