@@ -1,7 +1,7 @@
 {
   "name": "treejer-ranger",
   "main": "index",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

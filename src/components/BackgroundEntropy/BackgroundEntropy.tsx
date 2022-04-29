@@ -1,18 +1,16 @@
 import React, {useMemo} from 'react';
 import Svg, {Path} from 'react-native-svg';
-import {isWeb} from 'utilities/helpers/web';
 
 function BackgroundEntropy() {
   const styles = useMemo(() => {
-    const web = isWeb();
     return {
       up: {
-        bottom: web ? 0 : -30,
-        right: web ? 0 : -100,
+        bottom: -30,
+        right: -100,
       },
       down: {
-        left: web ? 0 : -10,
-        top: web ? 0 : -50,
+        left: -10,
+        top: -50,
       },
     };
   }, []);

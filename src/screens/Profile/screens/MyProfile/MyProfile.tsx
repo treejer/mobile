@@ -249,9 +249,7 @@ function MyProfile(props: MyProfileProps) {
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={<RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />}
       >
-        <View
-          style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.safeArea]}
-        >
+        <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
           <Spacer times={8} />
           {avatarMarkup}
           <Spacer times={4} />

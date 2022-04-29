@@ -15,9 +15,10 @@ import NetInfo from './src/components/NetInfo/NetInfo';
 import ApolloProvider from './src/services/apollo';
 import {CurrentUserProvider} from './src/services/currentUser';
 import {ToastContainer} from 'react-toastify';
+import {isProd, rangerDevUrl, rangerUrl} from './src/services/config';
 
 const linking = {
-  prefixes: ['https://treejer-ranger.com'],
+  prefixes: [isProd ? rangerUrl : rangerDevUrl],
 };
 
 export default function App() {

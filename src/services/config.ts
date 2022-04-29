@@ -206,7 +206,9 @@ export const storageKeys: StorageKeys = {
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
 };
 
+export const isProd = process.env.NODE_ENV === 'Production';
 export const rangerUrl = 'https://ranger.treejer.com';
+export const rangerDevUrl = 'https://ranger-dev.treejer.com';
 export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
 // @here
