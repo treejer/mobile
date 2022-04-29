@@ -1,8 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import React, {useEffect, useRef, useState} from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {Text, View} from 'react-native';
-import {useConfig} from 'services/web3';
+import {View} from 'react-native';
 import {mapboxPublicToken} from 'services/config';
 import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
 
@@ -15,6 +14,7 @@ const options = {
 const RTLAPI = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
 
 mapboxgl.accessToken = mapboxPublicToken;
+console.log(mapboxPublicToken, '<=== inaahaa');
 mapboxgl.setRTLTextPlugin(
   RTLAPI,
   null,

@@ -27,10 +27,14 @@ function WebCam(props: WebCamProps) {
   const webcamRef = useRef<CameraType>(null);
 
   const handleCapture = useCallback(() => {
-    const imageSrc = webcamRef.current?.takePhoto();
-    console.log(imageSrc, 'imageSrc');
-    if (imageSrc) {
-      setImage(imageSrc);
+    try {
+      const imageSrc = webcamRef.current?.takePhoto();
+      console.log(imageSrc, 'imageSrc');
+      if (imageSrc) {
+        setImage(imageSrc);
+      }
+    } catch (e) {
+      console.log(e, 'e is here');
     }
   }, [webcamRef]);
   const handleRetry = useCallback(() => {

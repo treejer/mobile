@@ -14,8 +14,8 @@ import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
-import {useConfig} from 'services/web3';
 import {Routes} from 'navigation';
+import {mapboxPrivateToken} from 'services/config';
 
 const OfflineMap = ({navigation}) => {
   const [isLoaderShow, setIsLoaderShow] = useState(false);
@@ -25,7 +25,6 @@ const OfflineMap = ({navigation}) => {
   const [isPermissionBlockedAlertShow, setIsPermissionBlockedAlertShow] = useState(false);
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
-  const {mapboxToken} = useConfig();
 
   const MapBoxGLRef = useRef<MapboxGL.MapView>(null);
   const camera = useRef<MapboxGL.Camera>(null);
@@ -97,7 +96,7 @@ const OfflineMap = ({navigation}) => {
       setIsLoaderShow(true);
       const coords = await MapBoxGLRef.current?.getCenter();
       const bounds = await MapBoxGLRef.current?.getVisibleBounds();
-      getAreaName({coords}, mapboxToken)
+      getAreaName({coords}, mapboxPrivateToken)
         .then(async areaName => {
           setAreaName(areaName);
           const progressListener = (offlineRegion, status) => {

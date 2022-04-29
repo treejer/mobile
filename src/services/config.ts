@@ -51,8 +51,6 @@ export interface NetworkConfig {
   thegraphUrl: string;
   ipfsPostURL: string;
   ipfsGetURL: string;
-  mapboxToken: string;
-  mapboxPublicToken: string;
   preferredRelays: string;
   relayLookupWindowBlocks: string;
   relayRegistrationLookupBlocks: string;
@@ -101,8 +99,6 @@ const config: Config = {
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX || '',
-    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_MAIN_MAPBOX_PUBLIC_TOKEN || '',
     preferredRelays: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PREFERREDRELAYS || '',
     relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
     relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
@@ -139,8 +135,6 @@ const config: Config = {
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX || '',
-    mapboxPublicToken: process.env.REACT_NATIVE_MATIC_TEST_MAPBOX_PUBLIC_TOKEN || '',
     preferredRelays: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PREFERREDRELAYS || '',
     relayLookupWindowBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
     relayRegistrationLookupBlocks: process.env.REACT_NATIVE_MATIC_TEST_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
@@ -177,8 +171,6 @@ const config: Config = {
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),
-    mapboxToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX || '',
-    mapboxPublicToken: process.env.REACT_NATIVE_RINKEBY_MAPBOX_PUBLIC_TOKEN || '',
     preferredRelays: process.env.REACT_NATIVE_RINKEBY_WEB3_PREFERREDRELAYS || '',
     relayLookupWindowBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
     relayRegistrationLookupBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
@@ -211,8 +203,9 @@ export const rangerUrl = 'https://ranger.treejer.com';
 export const rangerDevUrl = 'https://ranger-dev.treejer.com';
 export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
-// @here
-export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN;
+
+export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN || '';
+export const mapboxPrivateToken = process.env.REACT_NATIVE_PRIVATE_MAPBOX_TOKEN || '';
 
 export interface NetworkInfo {
   title: string;

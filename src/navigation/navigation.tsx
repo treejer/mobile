@@ -79,7 +79,7 @@ export function RootNavigation() {
   return (
     <>
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
-      {isWeb() ? <PwaModal /> : null}
+      {/*{isWeb() ? <PwaModal /> : null}*/}
       <RootStack.Navigator screenOptions={{headerShown: false}}>
         {loading ? <RootStack.Screen name={Routes.Init} component={AppLoading} /> : null}
         {!locale ? <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} /> : null}

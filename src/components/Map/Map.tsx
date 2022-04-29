@@ -1,7 +1,9 @@
-import React, {forwardRef, LegacyRef, useEffect, useState} from 'react';
+import React, {forwardRef, LegacyRef} from 'react';
 import MapboxGL, {MapViewProps} from '@react-native-mapbox-gl/maps';
-import {useConfig} from 'services/web3';
 import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
+import {mapboxPrivateToken} from 'services/config';
+
+MapboxGL.setAccessToken(mapboxPrivateToken);
 
 export interface MapProps extends MapViewProps {
   // children?: ReactNode | Element;
@@ -10,18 +12,6 @@ export interface MapProps extends MapViewProps {
 }
 
 const Map = forwardRef((props: MapProps, ref: LegacyRef<any>) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const config = useConfig();
-
-  useEffect(() => {
-    MapboxGL.setAccessToken(config.mapboxToken);
-    setLoading(false);
-  }, [config.mapboxToken]);
-
-  if (loading) {
-    return null;
-  }
-
   return <MapboxGL.MapView logoEnabled={false} {...props} ref={ref} />;
 });
 

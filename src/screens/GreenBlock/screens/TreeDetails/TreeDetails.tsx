@@ -32,12 +32,12 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
-import {useConfig} from 'services/web3';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {mapboxPrivateToken} from 'services/config';
 
 interface Props {}
 
@@ -49,7 +49,6 @@ function TreeDetails(_: Props) {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
 
-  const config = useConfig();
   const {sendEvent} = useAnalytics();
 
   const {t} = useTranslation();
@@ -71,13 +70,13 @@ function TreeDetails(_: Props) {
   const staticMapUrl = useMemo(
     () =>
       getStaticMapboxUrl(
-        config.mapboxToken,
+        mapboxPrivateToken,
         Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
         Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
         600,
         300,
       ),
-    [config.mapboxToken, treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
+    [treeDetails?.treeSpecsEntity?.latitude, treeDetails?.treeSpecsEntity?.longitude],
   );
 
   const updates = useMemo(
