@@ -19,5 +19,7 @@ scp "$TAR_FOLDER" "$SERVER_SSH:/home/deploy/projects/mobiledev-build/$TAR_FOLDER
 
 echo "tar.gz successfully copied to server."
 
+rm -rf "$TAR_FOLDER"
+
 SSH_COMMAND="ssh $SERVER_SSH 'cd projects/mobiledev-build; tar -xvf $TAR_FOLDER; pm2 delete dev; pm2 serve web-build 4000 --name \"dev\"'"
 eval "${SSH_COMMAND}"
