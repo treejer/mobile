@@ -10,6 +10,6 @@ jobs:
       - run: echo "Deploying started"
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: yarn
-      - run: yarn web:prod-github
-      - run: ./deploy-staging.sh
+#      - run: yarn
+#      - run: yarn web:prod-github
+#      - run: ./deploy-staging.sh
