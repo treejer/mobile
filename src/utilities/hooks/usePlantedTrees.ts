@@ -4,7 +4,7 @@ import planterTreeQuery, {
   PlanterTreesQueryQueryData,
 } from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {Tree} from 'types';
 
 export default function usePlantedTrees(address) {

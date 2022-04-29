@@ -13,7 +13,7 @@ import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {useWalletAccount} from 'services/web3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {isWeb} from 'utilities/helpers/web';

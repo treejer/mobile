@@ -14,12 +14,7 @@ const options = {
 const RTLAPI = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
 
 mapboxgl.accessToken = mapboxPublicToken;
-console.log(mapboxPublicToken, '<=== inaahaa');
-mapboxgl.setRTLTextPlugin(
-  RTLAPI,
-  null,
-  true, // Lazy load the plugin
-);
+mapboxgl.setRTLTextPlugin(RTLAPI, null, true);
 
 interface MapProps {
   setLocation?: React.Dispatch<React.SetStateAction<locationType>>;

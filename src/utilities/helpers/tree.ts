@@ -7,15 +7,18 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import humanize from 'humanize-duration';
 import {TreeImage} from '../../../assets/icons';
 
-export function treeImageSrc(tree: Tree): ImageSourcePropType {
+export function treeImageSrc(tree?: Tree): ImageSourcePropType {
   const imageFs = tree?.treeSpecsEntity?.imageFs;
   return imageFs ? {uri: imageFs} : TreeImage;
 }
 
-export function treeColor(tree: Tree, treeUpdateInterval: number): string | undefined {
+export function treeColor(tree?: Tree, treeUpdateInterval?: number): string | undefined {
   let color: string | undefined;
   if (!treeUpdateInterval) {
     return;
+  }
+  if (!tree) {
+    return colors.green;
   }
   const id = Number(Hex2Dec(tree?.id || ''));
   // if (id >= 0 && id <= 10) {

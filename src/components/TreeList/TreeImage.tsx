@@ -7,7 +7,7 @@ import TreeSvg from 'components/Icons/Tree';
 
 export interface TreeImageProps extends Omit<ImageProps, 'source'> {
   size?: number;
-  tree: Tree;
+  tree?: Tree;
   tint?: boolean;
   color?: string;
   isNursery?: boolean;

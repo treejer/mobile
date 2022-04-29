@@ -11,7 +11,7 @@ import {Check, Times} from 'components/Icons';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';

@@ -49,12 +49,12 @@ function MyProfile(props: MyProfileProps) {
         console.log(e, 'e inside get minWithdrawable');
         setMinBalance(requiredBalance);
       });
-  }, [planterFundContract.methods, requiredBalance]);
+  }, []);
 
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
-  }, [getMinBalance]);
+  }, []);
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();

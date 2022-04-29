@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
 import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
@@ -128,23 +128,25 @@ function TreeDetails(_: Props) {
     }
     sendEvent('update_tree');
 
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: Routes.TreeSubmission,
-          params: {
-            initialRouteName: Routes.SelectPhoto,
-            treeIdToUpdate: tree?.id,
-            tree: treeDetails,
-            location: {
-              latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-              longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.TreeSubmission,
+            params: {
+              initialRouteName: Routes.SelectPhoto,
+              treeIdToUpdate: tree?.id,
+              tree: treeDetails,
+              location: {
+                latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+                longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+              },
             },
           },
-        },
-      ],
-    });
+        ],
+      }),
+    );
   };
 
   if (loading) {

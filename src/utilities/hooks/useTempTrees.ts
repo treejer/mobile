@@ -1,7 +1,7 @@
 import {useQuery, NetworkStatus} from '@apollo/client';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import TempTreeQuery, {
   TempTreesQueryQueryData,
   TempTreesQueryQueryPartialData,

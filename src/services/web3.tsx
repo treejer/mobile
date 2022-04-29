@@ -178,7 +178,6 @@ function Web3Provider(props: Props) {
       } catch (error) {
         console.log(error, 'error');
       }
-      console.log(persistedMagicToken, 'persistedMagicToken');
       if (persistedMagicToken) {
         await storeMagicToken(persistedMagicToken);
       } else {

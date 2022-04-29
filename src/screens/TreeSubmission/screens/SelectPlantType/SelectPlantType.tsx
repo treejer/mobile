@@ -13,6 +13,7 @@ import {TreeImage} from '../../../../../assets/icons';
 import {Routes} from 'navigation';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {isNumber} from 'utilities/helpers/number';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -75,6 +76,13 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     setIsFocused(false);
   };
 
+  const handleChangeNurseryCount = value => {
+    console.log(value, isNumber(value))
+    if (isNumber(value)) {
+      setCount(value);
+    }
+  };
+
   const singleColor = useMemo(() => (isSingle ? colors.green : colors.grayLight), [isSingle]);
   const nurseryColor = useMemo(
     () => (isSingle === null ? colors.grayLight : isSingle === false ? colors.green : colors.grayLight),
@@ -112,7 +120,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
             ref={inputRef}
             keyboardType="number-pad"
             value={count?.toString()}
-            onChangeText={value => setCount(value)}
+            onChangeText={handleChangeNurseryCount}
             returnKeyType="done"
           />
         </View>

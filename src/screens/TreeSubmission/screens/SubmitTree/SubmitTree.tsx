@@ -3,7 +3,7 @@ import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {CommonActions, RouteProp, useRoute} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
@@ -22,7 +22,7 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useSettings} from 'services/settings';
 import {
   assignedTreeJSON,
@@ -243,36 +243,33 @@ function SubmitTree(props: Props) {
         sendEvent('update_tree_confirm');
         console.log(metaDataHash, '====> metaDataHash <====');
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
-        // await treeListQuery.refetch();
-        // await updatedTreeQuery.refetch();
+
         showAlert({
           title: t('success'),
           message: t('submitTree.updated'),
           mode: AlertMode.Success,
         });
-        navigation.reset({
-          index: 0,
-          routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
-        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{name: Routes.VerifiedProfileTab}, {name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
+          }),
+        );
       } else {
         sendEvent('add_tree_confirm');
         transaction = await handleSendCreateTransaction();
-        // await treeListQuery.refetch();
-        // Alert.alert('Success', 'Your tree has been successfully submitted', [
-        //   {
-        //     text: 'OK',
-        //     onPress: () => _.navigation.navigate('GreenBlock', {shouldNavigateToTreeDetails: true}),
-        //   },
 
         showAlert({
           title: t('success'),
           message: t('submitTree.submitted'),
           mode: AlertMode.Success,
         });
-        navigation.reset({
-          index: 0,
-          routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
-        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.GreenBlock}],
+          }),
+        );
       }
 
       setTxHash(transaction.transactionHash);

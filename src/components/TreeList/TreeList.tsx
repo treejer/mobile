@@ -13,7 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import {NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
+import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
 import {useWalletAccount} from 'services/web3';
 import {Hex2Dec} from 'utilities/helpers/hex';
@@ -34,20 +34,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {patchFlatListProps} from 'react-native-web-refresh-control';
-// patchFlatListProps();
-
-export enum TreeFilter {
-  All = 'All',
-  Submitted = 'Submitted',
-  Temp = 'Not Verified',
-  OfflineCreate = 'Planted Offline',
-  OfflineUpdate = 'Updated Offline',
-}
-
-export interface TreeFilterItem {
-  caption: TreeFilter;
-}
+import {TreeFilter, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -55,19 +42,17 @@ interface Props {
   filter?: TreeFilter;
 }
 
-function Trees({route, navigation, filter}: Props) {
-  // const navigation = useNavigation();
+function Trees({navigation, filter}: Props) {
   const [submittedRefreshing, setSubmittedRefreshing] = useState<boolean>(false);
   const [tempRefreshing, setTempRefreshing] = useState<boolean>(false);
   const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
   const {t} = useTranslation();
   const filters = useMemo<TreeFilterItem[]>(() => {
-    return [
-      {caption: TreeFilter.Submitted},
-      {caption: TreeFilter.Temp},
-      {caption: TreeFilter.OfflineCreate},
-      {caption: TreeFilter.OfflineUpdate},
+    const offlineFilters = [
+      {caption: TreeFilter.OfflineCreate, offline: true},
+      {caption: TreeFilter.OfflineUpdate, offline: true},
     ];
+    return [{caption: TreeFilter.Submitted}, {caption: TreeFilter.Temp}, ...(isWeb() ? [] : offlineFilters)];
   }, []);
 
   const [currentFilter, setCurrentFilter] = useState<TreeFilterItem | null>(null);
@@ -89,21 +74,9 @@ function Trees({route, navigation, filter}: Props) {
 
   const treeUpdateInterval = useTreeUpdateInterval();
 
-  const {
-    tempTreesQuery,
-    tempTrees,
-    refetchTempTrees,
-    refetching: tempTreesRefetching,
-    loadMore: tempLoadMore,
-  } = useTempTrees(address);
+  const {tempTreesQuery, tempTrees, refetchTempTrees, loadMore: tempLoadMore} = useTempTrees(address);
 
-  const {
-    plantedTrees,
-    plantedTreesQuery,
-    refetchPlantedTrees,
-    refetching: plantedRefetching,
-    loadMore: plantedLoadMore,
-  } = usePlantedTrees(address);
+  const {plantedTrees, plantedTreesQuery, refetchPlantedTrees, loadMore: plantedLoadMore} = usePlantedTrees(address);
 
   const {
     offlineTrees,
@@ -133,20 +106,22 @@ function Trees({route, navigation, filter}: Props) {
           mode: AlertMode.Warning,
         });
       } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: Routes.TreeSubmission,
-              params: {
-                treeIdToPlant: tree.item.id,
-                tree: tree.item,
-                isSingle: true,
-                initialRouteName: Routes.SelectPhoto,
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: Routes.TreeSubmission,
+                params: {
+                  treeIdToPlant: tree.item.id,
+                  tree: tree.item,
+                  isSingle: true,
+                  initialRouteName: Routes.SelectPhoto,
+                },
               },
-            },
-          ],
-        });
+            ],
+          }),
+        );
       }
     } else if (tree.item?.treeStatus == 3) {
       showAlert({
@@ -169,22 +144,25 @@ function Trees({route, navigation, filter}: Props) {
     return;
   };
 
-  const renderFilters = () =>
-    filters.map(item => {
-      const {caption} = item;
-      const variant = currentFilter?.caption === caption ? 'secondary' : 'primary';
+  const renderFilters = () => {
+    const offlineFilters = filters.filter(item => item.offline);
+    const onlineFilters = filters.filter(item => !item.offline);
 
-      return (
-        <Button
-          key={caption}
-          caption={t(caption)}
-          variant={variant}
-          style={{marginHorizontal: 4, marginBottom: 8}}
-          textStyle={{fontSize: 12}}
-          onPress={() => setCurrentFilter(item)}
-        />
-      );
-    });
+    return (
+      <View style={styles.filterContainer}>
+        <View style={styles.filterWrapper}>
+          {onlineFilters.map(item => (
+            <TreeFilterItem item={item} currentFilter={currentFilter} onPress={() => setCurrentFilter(item)} />
+          ))}
+        </View>
+        <View style={styles.filterWrapper}>
+          {offlineFilters.map(item => (
+            <TreeFilterItem item={item} currentFilter={currentFilter} onPress={() => setCurrentFilter(item)} />
+          ))}
+        </View>
+      </View>
+    );
+  };
 
   const renderFilterComponent = () => {
     switch (currentFilter?.caption) {
@@ -355,9 +333,8 @@ function Trees({route, navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
-      if (!item.tree) {
-        return null;
-      }
+      console.log(item, '<===')
+
       const isAssignedTree = item.treeIdToPlant;
       const id = isPlanted
         ? isAssignedTree
@@ -489,7 +466,6 @@ function Trees({route, navigation, filter}: Props) {
       <View
         style={[
           globalStyles.screenView,
-          globalStyles.safeArea,
           {
             paddingBottom: 40,
             paddingHorizontal: 12,
@@ -553,6 +529,12 @@ const styles = StyleSheet.create({
   },
   inactiveTree: {
     opacity: 0.3,
+  },
+  filterContainer: {
+    alignItems: 'center',
+  },
+  filterWrapper: {
+    flexDirection: 'row',
   },
 });
 

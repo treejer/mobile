@@ -10,7 +10,7 @@ import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTranslation} from 'react-i18next';
 import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -33,7 +33,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
   const {t} = useTranslation();
-  const {navigate} = useNavigation<any>();
+  const navigation = useNavigation<any>();
   const {useGSN} = useSettings();
   const config = useConfig();
 
@@ -114,11 +114,16 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
           message: t('submitTree.nurserySubmitted'),
           mode: AlertMode.Success,
         });
-        navigate(Routes.GreenBlock);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.GreenBlock}],
+          }),
+        );
         setVisible(false);
       }
     },
-    [alertNoInternet, handleSubmitTree, isConnected, journey, navigate, t],
+    [alertNoInternet, handleSubmitTree, isConnected, journey, navigation, t],
   );
 
   useEffect(() => {
@@ -141,7 +146,12 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
 
   const handleCancel = () => {
     setVisible(false);
-    navigate(Routes.GreenBlock);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: Routes.GreenBlock}],
+      }),
+    );
   };
 
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);

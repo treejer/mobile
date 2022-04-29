@@ -4,7 +4,7 @@ import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/g
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {Routes} from 'navigation';
 import {CommonActions, useNavigation} from '@react-navigation/native';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Image} from 'react-native-image-crop-picker';
