@@ -1,4 +1,4 @@
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import {Routes} from 'navigation';
@@ -10,6 +10,10 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 function SubmitTreeOfflineWebModal() {
   const navigation = useNavigation();
+  const route = useRoute();
+  console.log('====================================');
+  console.log(route, '<===== route');
+  console.log('====================================');
   const {t} = useTranslation();
   return isWeb() ? (
     <Modal visible transparent>
@@ -28,7 +32,7 @@ function SubmitTreeOfflineWebModal() {
                     index: 0,
                     routes: [
                       {
-                        name: Routes.MyProfile,
+                        name: Routes.VerifiedProfileTab,
                       },
                     ],
                   }),
