@@ -1,8 +1,8 @@
-import {fontNormal} from 'constants/styles';
+import globalStyles, {fontNormal} from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React from 'react';
-import {StyleSheet, TextInput, TextInputProps} from 'react-native';
+import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 import {Controller, Control, ValidationRule, FieldError} from 'react-hook-form';
 import PhoneInput, {PhoneInputProps} from 'react-native-phone-number-input';
 
@@ -37,20 +37,23 @@ const TextField = React.forwardRef<TextInput, TextFieldProps>(
 
     if (control) {
       return (
-        <Controller
-          control={control}
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              {...inputProps}
-              onBlur={onBlur}
-              onChangeText={inputValue => onChange(inputValue)}
-              value={value}
-            />
-          )}
-          name={name}
-          rules={rules}
-          defaultValue={defaultValue}
-        />
+        <View style={styles.inputWrapper}>
+          <Controller
+            control={control}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                {...inputProps}
+                onBlur={onBlur}
+                onChangeText={inputValue => onChange(inputValue)}
+                value={value}
+              />
+            )}
+            name={name}
+            rules={rules}
+            defaultValue={defaultValue}
+          />
+          {error?.message ? <Text style={[globalStyles.small, styles.errorText]}>{error.message}</Text> : null}
+        </View>
       );
     }
 
@@ -76,14 +79,8 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
               {...inputProps}
               textInputProps={{onBlur}}
               flagButtonStyle={styles.flagButton}
-              containerStyle={[styles.phoneContainer, containerStyle]}
-              textContainerStyle={[
-                styles.wrapper,
-                styles.phoneInputContainer,
-                success && styles.success,
-                error && styles.error,
-                {width: '100%'},
-              ]}
+              containerStyle={[styles.phoneContainer, success && styles.success, error && styles.error, containerStyle]}
+              textContainerStyle={[styles.wrapper, styles.phoneInputContainer, {width: '100%', paddingVertical: 0}]}
               codeTextStyle={{height: 25, padding: 0, textAlign: 'right'}}
               onChangeText={inputValue => onChange(inputValue)}
               value={value}
@@ -119,6 +116,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.red,
   },
+  errorText: {
+    color: colors.red,
+    marginTop: 8,
+  },
   // Phone styles
   flagButton: {
     backgroundColor: colors.khakiDark,
@@ -137,6 +138,12 @@ const styles = StyleSheet.create({
   phoneContainer: {
     minWidth: 100,
     width: 240,
+    borderRadius: 6,
+    backgroundColor: colors.khakiDark,
+    alignItems: 'center',
+  },
+  inputWrapper: {
+    alignSelf: 'stretch',
   },
 });
 

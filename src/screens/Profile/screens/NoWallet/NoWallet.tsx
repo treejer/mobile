@@ -21,13 +21,14 @@ import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {validateEmail} from 'utilities/helpers/validators';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
 function NoWallet(props: NoWalletProps) {
   const {navigation} = props;
 
-  const {unlocked, storeMagicToken} = usePrivateKeyStorage();
+  const {storeMagicToken} = usePrivateKeyStorage();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
 
@@ -111,6 +112,10 @@ function NoWallet(props: NoWalletProps) {
   });
 
   const handleConnectWithEmail = emailForm.handleSubmit(async ({email}) => {
+    if (!validateEmail(email)) {
+      emailForm.setError('email', {type: 'manual', message: t('invalidEmail')});
+      return;
+    }
     Keyboard.dismiss();
     sendEvent('connect_wallet');
     setLoading(true);
@@ -181,10 +186,11 @@ function NoWallet(props: NoWalletProps) {
                         placeholder={t('email')}
                         success={emailForm.formState?.dirtyFields?.email && !emailForm.formState?.errors?.email}
                         rules={{required: true}}
-                        style={{width: '100%'}}
+                        style={{width: '100%', height: 46}}
                         keyboardType="email-address"
                         onSubmitEditing={handleConnectWithEmail}
                         disabled={loading}
+                        error={emailForm.formState.errors.email}
                       />
                     ) : (
                       <PhoneField
@@ -194,10 +200,10 @@ function NoWallet(props: NoWalletProps) {
                           phoneNumberForm.formState.isDirty ? phoneNumberForm.formState.errors.phoneNumber : undefined
                         }
                         ref={phoneRef}
-                        textInputStyle={{height: 64, paddingLeft: 0}}
+                        textInputStyle={{height: 40, paddingLeft: 0}}
                         defaultCode="CA"
                         placeholder="Phone #"
-                        containerStyle={{width: '100%'}}
+                        containerStyle={{width: '100%', height: 46}}
                         disabled={loading}
                       />
                     )}

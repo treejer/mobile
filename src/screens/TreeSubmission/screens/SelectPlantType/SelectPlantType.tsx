@@ -13,7 +13,7 @@ import {TreeImage} from '../../../../../assets/icons';
 import {Routes} from 'navigation';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {isNumber} from 'utilities/helpers/number';
+import {isNumber} from 'utilities/helpers/validators';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -77,7 +77,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   };
 
   const handleChangeNurseryCount = value => {
-    console.log(value, isNumber(value))
     if (isNumber(value)) {
       setCount(value);
     }

@@ -227,6 +227,7 @@ export const en = {
     by: 'by Treejer',
   },
   email: 'Email',
+  invalidEmail: 'Your Email address is wrong',
   phoneNumber: 'Phone Number',
   settings: {
     title: 'Settings',
