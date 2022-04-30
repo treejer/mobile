@@ -16,6 +16,7 @@ module.exports = async function (env, argv) {
     config.optimization.namedChunks = false;
     config.optimization.minimize = true;
     config.optimization.removeEmptyChunks = true;
+    config.devtool = false;
     config.resolve.alias = {
       react: path.resolve('./node_modules/react'),
     };
