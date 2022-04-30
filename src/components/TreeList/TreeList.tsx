@@ -152,12 +152,22 @@ function Trees({navigation, filter}: Props) {
       <View style={styles.filterContainer}>
         <View style={styles.filterWrapper}>
           {onlineFilters.map(item => (
-            <TreeFilterItem item={item} currentFilter={currentFilter} onPress={() => setCurrentFilter(item)} />
+            <TreeFilterItem
+              key={item.caption}
+              item={item}
+              currentFilter={currentFilter}
+              onPress={() => setCurrentFilter(item)}
+            />
           ))}
         </View>
         <View style={styles.filterWrapper}>
           {offlineFilters.map(item => (
-            <TreeFilterItem item={item} currentFilter={currentFilter} onPress={() => setCurrentFilter(item)} />
+            <TreeFilterItem
+              key={item.caption}
+              item={item}
+              currentFilter={currentFilter}
+              onPress={() => setCurrentFilter(item)}
+            />
           ))}
         </View>
       </View>
@@ -333,7 +343,7 @@ function Trees({navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
-      console.log(item, '<===')
+      console.log(item, '<===');
 
       const isAssignedTree = item.treeIdToPlant;
       const id = isPlanted

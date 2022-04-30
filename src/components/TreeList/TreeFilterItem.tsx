@@ -31,7 +31,6 @@ export function TreeFilterItem(props: TreeFilterProps) {
 
   return (
     <Button
-      key={caption}
       caption={t(caption)}
       variant={variant}
       style={{marginHorizontal: 4, marginBottom: 8}}
