@@ -15,4 +15,7 @@ $ yarn android
 $ yarn android:play
 ```
 
-[Spanish version](./translations/README-es.md)
+### Translations :earth_americas:
+
+- [Spanish version](./translations/README-es.md)
+- [Portuguese version](./translations/README-pt.md)
