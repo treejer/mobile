@@ -14,3 +14,5 @@ $ yarn android
 # Android Production
 $ yarn android:play
 ```
+
+[Spanish version](./translations/README-es.md)
