@@ -272,9 +272,9 @@ function SubmitTree(props: Props) {
         );
       }
 
-      setTxHash(transaction.transactionHash);
+      // setTxHash(transaction.transactionHash);
 
-      console.log('Transaction: ', transaction);
+      // console.log('Transaction: ', transaction);
     } catch (error) {
       showAlert({
         title: t('submitTree.error'),
