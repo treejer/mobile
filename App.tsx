@@ -16,6 +16,7 @@ import ApolloProvider from './src/services/apollo';
 import {CurrentUserProvider} from './src/services/currentUser';
 import {ToastContainer} from 'react-toastify';
 import {isProd, rangerDevUrl, rangerUrl} from './src/services/config';
+import Orientation from 'react-native-orientation';
 
 const linking = {
   prefixes: [isProd ? rangerUrl : rangerDevUrl],
@@ -35,6 +36,7 @@ export default function App() {
   } = useAppInitialValue();
 
   useEffect(() => {
+    Orientation.lockToPortrait();
     if (!isWeb()) {
       SplashScreen.hide();
     }
