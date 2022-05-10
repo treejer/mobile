@@ -267,4 +267,5 @@ export const en = {
   offlineTreeSubmittingNotSupported: 'Offline tree submission is not supported on web',
   checkNetwork: 'Please check your network',
   backToProfile: 'Back to profile',
+  rotate: 'Please rotate your phone',
 };
