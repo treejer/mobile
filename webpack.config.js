@@ -20,12 +20,12 @@ module.exports = async function (env, argv) {
     config.resolve.alias = {
       react: path.resolve('./node_modules/react'),
     };
-    config.resolve.modules = [
-      path.resolve(__dirname, 'node_modules'),
-      path.resolve(__dirname, 'node_modules/bn.js/lib'),
-      path.resolve(__dirname, 'node_modules/ethereumjs-util'),
-      path.resolve(__dirname, 'node_modules/web3-utils'),
-    ];
+    // config.resolve.modules = [
+    //   path.resolve(__dirname, 'node_modules'),
+    //   path.resolve(__dirname, 'node_modules/bn.js/lib'),
+    //   path.resolve(__dirname, 'node_modules/ethereumjs-util'),
+    //   path.resolve(__dirname, 'node_modules/web3-utils'),
+    // ];
 
     config.plugins.push(
       // Generate a service worker script that will precache, and keep up to date,
