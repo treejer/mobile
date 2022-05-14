@@ -17,6 +17,7 @@ import {CurrentUserProvider} from './src/services/currentUser';
 import {ToastContainer} from 'react-toastify';
 import {isProd, rangerDevUrl, rangerUrl} from './src/services/config';
 import Orientation from 'react-native-orientation';
+import LandScapeModal from './src/components/LandScapeModal/LandScapeModal';
 
 const linking = {
   prefixes: [isProd ? rangerUrl : rangerDevUrl],
@@ -36,8 +37,8 @@ export default function App() {
   } = useAppInitialValue();
 
   useEffect(() => {
-    Orientation.lockToPortrait();
     if (!isWeb()) {
+      Orientation.lockToPortrait();
       SplashScreen.hide();
     }
   }, []);
@@ -66,6 +67,7 @@ export default function App() {
                     <NetInfo />
                     <SwitchNetwork />
                     {isWeb() ? <ToastContainer /> : null}
+                    {isWeb() ? <LandScapeModal /> : null}
                     <NavigationContainer linking={linking}>
                       <RootNavigation />
                     </NavigationContainer>

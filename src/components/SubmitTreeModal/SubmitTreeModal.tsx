@@ -75,7 +75,6 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
           useGSN,
         );
 
-        console.log(receipt, 'receipt');
         console.log(receipt.transactionHash, 'receipt.transactionHash');
         return Promise.resolve(receipt.transactionHash);
       } catch (e: any) {

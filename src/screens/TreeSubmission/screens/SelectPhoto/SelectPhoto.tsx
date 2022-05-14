@@ -53,7 +53,6 @@ function SelectPhoto(props: Props) {
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   // @here
   const canUpdate = canUpdateTreeLocation(journey, isNursery);
-  console.log(journey?.tree?.treeSpecsEntity?.locations, 'journey?.tree?.treeSpecsEntity?.locations', isNursery);
 
   const handleSelectPhoto = useCallback(async () => {
     if (isWeb()) {

@@ -193,7 +193,6 @@ export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions)
 }
 
 export function canUpdateTreeLocation(journey: TreeJourney, isNursery: boolean) {
-  console.log(journey?.tree?.treeSpecsEntity?.locations, 'ourney?.tree?.treeSpecsEntity?.locations');
   return journey?.tree?.treeSpecsEntity?.locations?.length === 0 && isNursery;
 }
 

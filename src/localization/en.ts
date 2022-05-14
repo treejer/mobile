@@ -207,6 +207,7 @@ export const en = {
   netInfo: {
     error: 'Network Error!',
     details: 'You have no internet connection! \nYou can continue planting trees when you are offline',
+    detailsWeb: 'You have no internet connection! \nYou can continue planting trees when you are online',
   },
   loginFailed: {
     title: 'Login Failed',

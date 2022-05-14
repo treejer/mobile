@@ -7,6 +7,7 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {showAlert} from 'utilities/helpers/alert';
+import {isWeb} from 'utilities/helpers/web';
 
 export default function NetInfo() {
   const isConnected = useNetInfoConnected();
@@ -19,7 +20,7 @@ export default function NetInfo() {
     if (isConnected === false) {
       showAlert({
         title: t('netInfo.error'),
-        message: t('netInfo.details'),
+        message: t(`netInfo.details${isWeb() ? 'Web' : ''}`),
       });
     }
   }, [isConnected, t]);

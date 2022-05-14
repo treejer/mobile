@@ -89,7 +89,6 @@ function SubmitTree(props: Props) {
   //   },
   // });
   const handleUploadToIpfs = useCallback(async () => {
-    console.log(journey.photo, '<====');
     if (
       isUpdate &&
       (updateTreeData?.treeSpecsEntity == null || typeof updateTreeData?.treeSpecsEntity === 'undefined')
@@ -117,8 +116,6 @@ function SubmitTree(props: Props) {
       const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(journey.photo));
       setPhotoHash(photoUploadResult.Hash);
 
-      console.log(journey, '====> journey <====');
-
       let jsonData;
       if (isUpdate) {
         jsonData = updateTreeJSON(config.ipfsGetURL, {
@@ -127,9 +124,6 @@ function SubmitTree(props: Props) {
           photoUploadHash: photoUploadResult.Hash,
         });
       } else {
-        console.log(isAssignedTreeToPlant, 'isAssignedTreeToPlant');
-        console.log(assignedTreeData?.treeSpecsEntity, 'assignedTreeData?.treeSpecsEntity');
-
         if (isAssignedTreeToPlant && assignedTreeData?.treeSpecsEntity != null) {
           jsonData = assignedTreeJSON(config.ipfsGetURL, {
             journey,
@@ -184,8 +178,6 @@ function SubmitTree(props: Props) {
         useGSN,
       );
 
-      console.log(receipt, 'receipt');
-
       return receipt;
     },
     [metaDataHash, config, web3, wallet, useGSN],
@@ -218,7 +210,6 @@ function SubmitTree(props: Props) {
       );
     }
 
-    console.log(receipt, 'receipt');
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;

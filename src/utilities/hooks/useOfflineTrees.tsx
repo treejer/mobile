@@ -298,7 +298,6 @@ export function OfflineTreeProvider({children}) {
         );
         dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
         setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-        console.log(receipt, 'receipt');
       } catch (error: any) {
         setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
         Alert.alert(
@@ -342,7 +341,6 @@ export function OfflineTreeProvider({children}) {
           useGSN,
         );
 
-        console.log(receipt, 'receipt');
         console.log(receipt.transactionHash, 'receipt.transactionHash');
 
         setOfflineLoadings(offlineLoadings.filter(id => id !== journey.offlineId));
@@ -395,7 +393,6 @@ export function OfflineTreeProvider({children}) {
             useGSN,
           );
 
-          console.log(receipt, 'receipt');
           console.log(receipt.transactionHash, 'receipt.transactionHash');
 
           setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));

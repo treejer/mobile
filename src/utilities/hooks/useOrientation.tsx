@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 
-const landscapeTypes = ['landscape-primary', 'landscape-secondary'];
+const landscapeAngles = [90, 270];
 
 const useOrientation = () => {
   const [isLandscape, setIsLandscape] = useState(false);
@@ -14,12 +14,15 @@ const useOrientation = () => {
   }, []);
 
   const checkLandscapeScreen = useCallback(() => {
-    if (landscapeTypes.includes(screen.orientation.type)) {
-      setIsLandscape(true);
-    } else {
-      setIsLandscape(false);
-    }
-  }, [isLandscape]);
+    const angle =
+      (window.screen.orientation || {}).angle ||
+      window.orientation ||
+      // @ts-ignore
+      window.screen.mozOrientation ||
+      // @ts-ignore
+      window.screen.msOrientation;
+    setIsLandscape(landscapeAngles.includes(Math.abs(angle)));
+  }, []);
 
   return isLandscape;
 };

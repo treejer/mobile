@@ -27,8 +27,6 @@ function TreeSubmissionStepper(props: Props) {
     ? 'submitTree.updateTree'
     : 'submitTree.submitTree';
 
-  console.log(canUpdateLocation, 'canUpdateLocation inside TreeSubmisionStepper');
-
   return (
     <>
       <Text style={[globalStyles.h5, globalStyles.textCenter]}>{t(title, {count})}</Text>

@@ -17,9 +17,10 @@ module.exports = async function (env, argv) {
     config.optimization.minimize = true;
     config.optimization.removeEmptyChunks = true;
     config.devtool = false;
-    config.resolve.alias = {
-      react: path.resolve('./node_modules/react'),
-    };
+    // config.resolve.alias = {
+    // react: path.resolve('./node_modules/react'),
+    // };
+
     // config.resolve.modules = [
     //   path.resolve(__dirname, 'node_modules'),
     //   path.resolve(__dirname, 'node_modules/bn.js/lib'),

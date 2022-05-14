@@ -29,7 +29,6 @@ function WebCam(props: WebCamProps) {
   const handleCapture = useCallback(() => {
     try {
       const imageSrc = webcamRef.current?.takePhoto();
-      console.log(imageSrc, 'imageSrc');
       if (imageSrc) {
         setImage(imageSrc);
       }
