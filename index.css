@@ -19,7 +19,7 @@ body {
 #ranger-web {
   min-height: -webkit-fill-available;
   min-height: -moz-fill-available;
-  width: 100%;
+  min-width: -webkit-fill-available;
   overflow: hidden;
   display: flex;
   background-color: #faf8f0;
