@@ -57,6 +57,7 @@
     "react-easy-crop": "4.1.4",
     "react-hook-form": "7.27.0",
     "react-i18next": "11.15.4",
+    "react-js-pull-to-refresh": "^1.2.3",
     "react-loading-skeleton": "3.1.0",
     "react-mapbox-gl": "5.1.1",
     "react-native": "0.67.3",
