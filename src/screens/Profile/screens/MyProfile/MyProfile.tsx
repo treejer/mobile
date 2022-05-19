@@ -253,8 +253,13 @@ function MyProfile(props: MyProfileProps) {
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
-      <PullToRefresh profileLoading={profileLoading} refreshing={refetching} onRefresh={onRefetch}>
-        <>
+      <PullToRefresh refreshing={refetching || profileLoading} onRefresh={onRefetch}>
+        <ScrollView
+          style={[globalStyles.screenView, globalStyles.fill]}
+          refreshControl={
+            isWeb() ? undefined : <RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />
+          }
+        >
           <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
             <Spacer times={8} />
             {avatarMarkup}
@@ -398,7 +403,7 @@ function MyProfile(props: MyProfileProps) {
             )}
           </View>
           <Spacer times={4} />
-        </>
+        </ScrollView>
       </PullToRefresh>
     </SafeAreaView>
   );

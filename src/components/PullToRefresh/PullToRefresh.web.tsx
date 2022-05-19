@@ -7,14 +7,14 @@ import {
 } from 'react-js-pull-to-refresh';
 
 interface PullToRefreshProps {
-  children: React.ReactChild;
-  profileLoading?: boolean;
+  children: JSX.Element | JSX.Element[];
   refreshing: boolean;
   onRefresh: () => Promise<any>;
 }
 
 export default function PullToRefresh(props: PullToRefreshProps) {
   const {children, onRefresh} = props;
+
   return (
     <PullToRefreshContainer
       pullDownContent={<PullDownContent />}
@@ -23,7 +23,7 @@ export default function PullToRefresh(props: PullToRefreshProps) {
       onRefresh={onRefresh}
       pullDownThreshold={200}
       triggerHeight="auto"
-      containerStyle={{overflowY: 'auto'}}
+      containerStyle={{height: '100%'}}
     >
       {children}
     </PullToRefreshContainer>
