@@ -197,8 +197,8 @@ function MyProfile(props: MyProfileProps) {
         (async function () {
           await getPlanter();
           await refetchUser();
-          resolve();
         })();
+        resolve();
       }, 700);
     });
 

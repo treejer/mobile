@@ -291,13 +291,15 @@ function Trees({route, navigation, filter}: Props) {
             renderItem={RenderItem}
             keyExtractor={(_, i) => i.toString()}
             ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
-            style={{flex: 1}}
+            style={{flex: 1, backgroundColor: colors.khaki}}
             refreshing
             onEndReached={plantedLoadMore}
             onRefresh={refetchPlantedTrees}
             numColumns={calcTreeColumnNumber()}
             contentContainerStyle={styles.listScrollWrapper}
-            refreshControl={<RefreshControl refreshing={plantedRefetching} onRefresh={refetchPlantedTrees} />}
+            refreshControl={
+              isWeb() ? undefined : <RefreshControl refreshing={plantedRefetching} onRefresh={refetchPlantedTrees} />
+            }
           />
         </PullToRefresh>
       </View>
@@ -308,22 +310,26 @@ function Trees({route, navigation, filter}: Props) {
     return (
       <View style={{flex: 1}}>
         <Text style={styles.treeLabel}>{t('notSubmittedTrees')}</Text>
-        <FlatList
-          // @ts-ignore
-          data={tempTrees}
-          renderItem={tempRenderItem}
-          initialNumToRender={20}
-          onEndReachedThreshold={0.1}
-          onEndReached={tempLoadMore}
-          keyExtractor={(_, i) => i.toString()}
-          ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
-          style={{flex: 1}}
-          refreshing
-          onRefresh={refetchTempTrees}
-          numColumns={calcTreeColumnNumber()}
-          contentContainerStyle={styles.listScrollWrapper}
-          refreshControl={<RefreshControl refreshing={tempTreesRefetching} onRefresh={refetchTempTrees} />}
-        />
+        <PullToRefresh onRefresh={refetchTempTrees}>
+          <FlatList
+            // @ts-ignore
+            data={tempTrees}
+            renderItem={tempRenderItem}
+            initialNumToRender={20}
+            onEndReachedThreshold={0.1}
+            onEndReached={tempLoadMore}
+            keyExtractor={(_, i) => i.toString()}
+            ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
+            style={{flex: 1, backgroundColor: colors.khaki}}
+            refreshing
+            onRefresh={refetchTempTrees}
+            numColumns={calcTreeColumnNumber()}
+            contentContainerStyle={styles.listScrollWrapper}
+            refreshControl={
+              isWeb() ? undefined : <RefreshControl refreshing={tempTreesRefetching} onRefresh={refetchTempTrees} />
+            }
+          />
+        </PullToRefresh>
       </View>
     );
   };

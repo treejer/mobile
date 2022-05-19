@@ -17,7 +17,7 @@ export default function PullToRefresh(props: PullToRefreshProps) {
   return (
     <PullToRefreshContainer
       pullDownContent={<PullDownContent />}
-      releaseContent={<ReleaseContent />}
+      releaseContent={<></>}
       refreshContent={<RefreshContent />}
       onRefresh={onRefresh}
       pullDownThreshold={200}
