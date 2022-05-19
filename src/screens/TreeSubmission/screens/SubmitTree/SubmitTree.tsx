@@ -242,8 +242,8 @@ function SubmitTree(props: Props) {
         });
         navigation.dispatch(
           CommonActions.reset({
-            index: 1,
-            routes: [{name: Routes.VerifiedProfileTab}, {name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
+            index: 0,
+            routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
           }),
         );
       } else {
