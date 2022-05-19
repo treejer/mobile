@@ -8,7 +8,6 @@ import {
 
 interface PullToRefreshProps {
   children: JSX.Element | JSX.Element[];
-  refreshing: boolean;
   onRefresh: () => Promise<any>;
 }
 

@@ -191,17 +191,16 @@ function MyProfile(props: MyProfileProps) {
     useGSN,
   ]);
 
-  const onRefetch = async () => {
-    return new Promise((resolve: any, reject: any) => {
+  const onRefetch = () =>
+    new Promise((resolve: any, reject: any) => {
       setTimeout(() => {
         (async function () {
           await getPlanter();
           await refetchUser();
+          resolve();
         })();
-        resolve();
       }, 700);
     });
-  };
 
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
@@ -253,7 +252,7 @@ function MyProfile(props: MyProfileProps) {
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
-      <PullToRefresh refreshing={refetching || profileLoading} onRefresh={onRefetch}>
+      <PullToRefresh onRefresh={onRefetch}>
         <ScrollView
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={
