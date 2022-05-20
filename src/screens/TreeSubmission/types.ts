@@ -2,7 +2,7 @@ import {Image} from 'react-native-image-crop-picker';
 import {Tree} from 'types';
 
 export interface TreeJourney {
-  treeIdToUpdate?: string;
+  treeIdToUpdate?: string | null;
   photo?: Image | File;
   location: {
     latitude: number;

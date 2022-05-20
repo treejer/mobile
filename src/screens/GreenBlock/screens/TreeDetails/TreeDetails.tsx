@@ -39,6 +39,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props {}
 
@@ -49,6 +50,8 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
+
+  const {setNewJourney} = useCurrentJourney();
 
   const {sendEvent} = useAnalytics();
 
@@ -137,17 +140,19 @@ function TreeDetails(_: Props) {
             name: Routes.TreeSubmission,
             params: {
               initialRouteName: Routes.SelectPhoto,
-              treeIdToUpdate: tree?.id,
-              tree: treeDetails,
-              location: {
-                latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-                longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-              },
             },
           },
         ],
       }),
     );
+    setNewJourney({
+      treeIdToUpdate: tree?.id,
+      tree: treeDetails,
+      location: {
+        latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+      },
+    });
   };
 
   if (loading) {

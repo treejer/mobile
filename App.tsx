@@ -5,6 +5,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {i18next} from './src/localization';
 import {I18nextProvider} from 'react-i18next';
 import SettingsProvider, {useAppInitialValue} from './src/services/settings';
+import CurrentJourneyProvider from './src/services/currentJourney';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
 import Web3Provider from './src/services/web3';
@@ -64,13 +65,15 @@ export default function App() {
               <ApolloProvider>
                 <OfflineTreeProvider>
                   <CurrentUserProvider>
-                    <NetInfo />
-                    <SwitchNetwork />
-                    {isWeb() ? <ToastContainer /> : null}
-                    {isWeb() ? <LandScapeModal /> : null}
-                    <NavigationContainer linking={linking}>
-                      <RootNavigation />
-                    </NavigationContainer>
+                    <CurrentJourneyProvider>
+                      <NetInfo />
+                      <SwitchNetwork />
+                      {isWeb() ? <ToastContainer /> : null}
+                      {isWeb() ? <LandScapeModal /> : null}
+                      <NavigationContainer linking={linking}>
+                        <RootNavigation />
+                      </NavigationContainer>
+                    </CurrentJourneyProvider>
                   </CurrentUserProvider>
                 </OfflineTreeProvider>
               </ApolloProvider>

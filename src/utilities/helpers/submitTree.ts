@@ -12,6 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {useCallback} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useCurrentJourney} from 'services/currentJourney';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -276,6 +277,7 @@ export type AfterSelectPhotoHandler = {
 
 export function useAfterSelectPhotoHandler() {
   const navigation = useNavigation<any>();
+  const {setNewJourney, clearJourney} = useCurrentJourney();
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
@@ -295,23 +297,20 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: {
-              ...newJourney,
-              nurseryContinuedUpdatingLocation: true,
-            },
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney({
+            ...newJourney,
+            nurseryContinuedUpdatingLocation: true,
           });
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney(newJourney);
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SelectOnMap);
+          setNewJourney(newJourney);
         }
       } else {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -332,6 +331,7 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          clearJourney();
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
@@ -351,10 +351,10 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          clearJourney();
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SelectOnMap);
+          setNewJourney(newJourney);
         }
       }
     },

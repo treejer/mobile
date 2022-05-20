@@ -39,18 +39,10 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
 }
 
 export interface TreeSubmissionRouteParamList extends Record<string, any> {
-  SelectPlantType: {
-    journey: TreeJourney;
-  };
-  SelectPhoto: {
-    journey: TreeJourney;
-  };
-  SelectOnMap: {
-    journey: TreeJourney;
-  };
-  SubmitTree: {
-    journey: TreeJourney;
-  };
+  SelectPlantType: undefined;
+  SelectPhoto: undefined;
+  SelectOnMap: undefined;
+  SubmitTree: undefined;
 }
 
 export interface ProfileRouteParamList extends Record<string, any> {

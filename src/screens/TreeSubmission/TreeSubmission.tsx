@@ -17,6 +17,7 @@ import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
 import {Routes} from 'navigation';
+import {useCurrentJourney} from 'services/currentJourney';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -38,6 +39,7 @@ interface Props {
 function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
+  const {setNewJourney} = useCurrentJourney();
 
   const treeIdToUpdate =
     route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
@@ -46,6 +48,18 @@ function TreeSubmission({route, navigation}: Props) {
     route.params && 'treeIdToPlant' in route.params ? ((route.params as any).treeIdToPlant as string) : undefined;
   const tree = route.params && 'tree' in route.params ? ((route.params as any).tree as Tree) : undefined;
   const isSingle = route.params && 'isSingle' in route.params ? ((route.params as any).isSingle as boolean) : undefined;
+
+  const newJourney = {
+    treeIdToUpdate,
+    location,
+    treeIdToPlant,
+    tree,
+    isSingle,
+  };
+
+  useEffect(() => {
+    setNewJourney(newJourney);
+  }, []);
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
@@ -69,31 +83,8 @@ function TreeSubmission({route, navigation}: Props) {
         headerShown: false,
       }}
     >
-      <Stack.Screen
-        name={Routes.SelectPlantType}
-        component={SelectPlantType}
-        initialParams={{
-          journey: {
-            treeIdToUpdate,
-            location,
-            treeIdToPlant,
-            tree,
-          },
-        }}
-      />
-      <Stack.Screen
-        name={Routes.SelectPhoto}
-        component={SelectPhoto}
-        initialParams={{
-          journey: {
-            treeIdToUpdate,
-            location,
-            treeIdToPlant,
-            tree,
-            isSingle,
-          },
-        }}
-      />
+      <Stack.Screen name={Routes.SelectPlantType} component={SelectPlantType} />
+      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} />
       <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} />
     </Stack.Navigator>
   );

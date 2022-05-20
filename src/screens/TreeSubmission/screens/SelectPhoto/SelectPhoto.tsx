@@ -23,15 +23,13 @@ import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
 function SelectPhoto(props: Props) {
-  const {route, navigation} = props;
-
-  const {
-    params: {journey},
-  } = route;
+  const {navigation} = props;
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -97,12 +95,11 @@ function SelectPhoto(props: Props) {
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
-      navigation.navigate(Routes.SubmitTree, {
-        journey: {
-          ...journey,
-          photo,
-          nurseryContinuedUpdatingLocation: true,
-        },
+      navigation.navigate(Routes.SubmitTree);
+      setNewJourney({
+        ...journey,
+        photo,
+        nurseryContinuedUpdatingLocation: true,
       });
     } else {
       const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -124,18 +121,18 @@ function SelectPhoto(props: Props) {
         }),
       );
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+      clearJourney();
     }
   }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate(Routes.SelectOnMap, {
-      journey: {
-        ...journey,
-        photo,
-        ...updatedTree,
-        tree: updatedTree,
-      },
+    navigation.navigate(Routes.SelectOnMap);
+    setNewJourney({
+      ...journey,
+      photo,
+      ...updatedTree,
+      tree: updatedTree,
     });
   }, [journey, navigation, persistedPlantedTrees, photo]);
 
@@ -161,13 +158,7 @@ function SelectPhoto(props: Props) {
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
-          <TreeSubmissionStepper
-            isUpdate={isUpdate}
-            currentStep={canUpdate && photo ? 2 : 1}
-            isSingle={journey?.isSingle}
-            count={journey?.nurseryCount}
-            canUpdateLocation={canUpdate}
-          >
+          <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>
             <Spacer times={4} />
             {/* @here */}
             {canUpdate && photo ? (
