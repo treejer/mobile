@@ -336,7 +336,7 @@ function SubmitTree(props: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-        {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
+        {journey.isSingle === false && <SubmitTreeModal />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
           {contentMarkup}

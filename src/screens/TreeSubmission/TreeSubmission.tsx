@@ -39,26 +39,23 @@ interface Props {
 function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
-  const {setNewJourney} = useCurrentJourney();
+  const {setNewJourney, journey} = useCurrentJourney();
 
   const treeIdToUpdate =
-    route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
-  const location = route.params && 'location' in route.params ? ((route.params as any).location as any) : undefined;
-  const treeIdToPlant =
-    route.params && 'treeIdToPlant' in route.params ? ((route.params as any).treeIdToPlant as string) : undefined;
-  const tree = route.params && 'tree' in route.params ? ((route.params as any).tree as Tree) : undefined;
-  const isSingle = route.params && 'isSingle' in route.params ? ((route.params as any).isSingle as boolean) : undefined;
-
-  const newJourney = {
-    treeIdToUpdate,
-    location,
-    treeIdToPlant,
-    tree,
-    isSingle,
-  };
+    journey && 'treeIdToUpdate' in journey ? ((journey as any).treeIdToUpdate as string) : undefined;
+  const location = journey && 'location' in journey ? ((journey as any).location as any) : undefined;
+  const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
+  const tree = journey && 'tree' in journey ? ((journey as any).tree as Tree) : undefined;
+  const isSingle = journey && 'isSingle' in journey ? ((journey as any).isSingle as boolean) : undefined;
 
   useEffect(() => {
-    setNewJourney(newJourney);
+    setNewJourney({
+      treeIdToUpdate,
+      location,
+      treeIdToPlant,
+      tree,
+      isSingle,
+    });
   }, []);
 
   // this if added to get query to assignedTree works well on submit tree
@@ -72,7 +69,7 @@ function TreeSubmission({route, navigation}: Props) {
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType) {
-      navigation.navigate(initRouteName, route.params);
+      navigation.navigate(initRouteName);
     }
   }, [initRouteName, navigation, route.params]);
 

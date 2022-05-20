@@ -114,10 +114,10 @@ function MyProfile(props: MyProfileProps) {
   );
 
   useEffect(() => {
-    if (wallet && isConnected) {
-      getPlanter().then(() => {});
-    }
-  }, [wallet, getPlanter, isConnected]);
+    // if (wallet && isConnected) {
+    getPlanter().then(() => {});
+    // }
+  }, []);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {

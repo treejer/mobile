@@ -19,16 +19,11 @@ import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {ContractType} from 'services/config';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-
-export interface SubmitTreeModalProps {
-  journey: TreeJourney;
-}
+import {useCurrentJourney} from 'services/currentJourney';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 
-export default function SubmitTreeModal(props: SubmitTreeModalProps) {
-  const {journey} = props;
-
+export default function SubmitTreeModal() {
   const isConnected = useNetInfoConnected();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
@@ -36,6 +31,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
   const navigation = useNavigation<any>();
   const {useGSN} = useSettings();
   const config = useConfig();
+  const {journey, clearJourney} = useCurrentJourney();
 
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -119,10 +115,11 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
             routes: [{name: Routes.GreenBlock}],
           }),
         );
+        clearJourney();
         setVisible(false);
       }
     },
-    [alertNoInternet, handleSubmitTree, isConnected, journey, navigation, t],
+    [alertNoInternet, handleSubmitTree, isConnected, journey, navigation, t, clearJourney],
   );
 
   useEffect(() => {
@@ -151,6 +148,7 @@ export default function SubmitTreeModal(props: SubmitTreeModalProps) {
         routes: [{name: Routes.GreenBlock}],
       }),
     );
+    clearJourney();
   };
 
   const hasLoading = Boolean(requests?.filter(request => request.loading)?.length);

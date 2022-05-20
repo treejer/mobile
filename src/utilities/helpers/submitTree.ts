@@ -150,8 +150,8 @@ export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
 
   let jsonData: SubmitTreeData.JSONData = {
     location: {
-      latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-      longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
+      latitude: Math.trunc((journey.location?.latitude || 0) * Math.pow(10, 6))?.toString(),
+      longitude: Math.trunc((journey.location?.longitude || 0) * Math.pow(10, 6))?.toString(),
     },
     updates,
   };
@@ -173,8 +173,8 @@ export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions)
 
   const jsonData: SubmitTreeData.JSONData = {
     location: {
-      latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-      longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
+      latitude: Math.trunc((journey.location?.latitude || 0) * Math.pow(10, 6))?.toString(),
+      longitude: Math.trunc((journey.location?.longitude || 0) * Math.pow(10, 6))?.toString(),
     },
     updates: [
       {

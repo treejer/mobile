@@ -15,6 +15,7 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -26,7 +27,7 @@ export interface SelectPlantTypeProps {
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
-  const {journey, setNewJourney} = useCurrentJourney();
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -34,6 +35,8 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const isConnected = useNetInfoConnected();
+
+  useRefocusEffect(clearJourney);
 
   const handleStart = useCallback(
     (single: boolean | null, nurseryCount: string) => {

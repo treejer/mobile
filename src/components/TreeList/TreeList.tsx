@@ -35,6 +35,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -55,6 +56,7 @@ function Trees({route, navigation, filter}: Props) {
   }, []);
 
   const [currentFilter, setCurrentFilter] = useState<TreeFilterItem | null>(null);
+  const {setNewJourney} = useCurrentJourney();
 
   useFocusEffect(
     useCallback(() => {
@@ -124,15 +126,17 @@ function Trees({route, navigation, filter}: Props) {
               {
                 name: Routes.TreeSubmission,
                 params: {
-                  treeIdToPlant: tree.item.id,
-                  tree: tree.item,
-                  isSingle: true,
                   initialRouteName: Routes.SelectPhoto,
                 },
               },
             ],
           }),
         );
+        setNewJourney({
+          treeIdToPlant: tree.item.id,
+          tree: tree.item,
+          isSingle: true,
+        });
       }
     } else if (tree.item?.treeStatus == 3) {
       showAlert({

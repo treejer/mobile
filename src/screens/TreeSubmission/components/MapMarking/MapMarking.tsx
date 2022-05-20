@@ -113,6 +113,7 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
           dispatchAddOfflineTree(newJourney);
+          clearJourney();
           showAlert({
             title: t('myProfile.attention'),
             message: t('myProfile.offlineTreeAdd'),
@@ -127,6 +128,7 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
             });
           }
           dispatchAddOfflineTrees(offlineTrees);
+          clearJourney();
           showAlert({
             title: t('myProfile.attention'),
             message: t('myProfile.offlineNurseryAdd'),
@@ -172,6 +174,8 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
     location,
     isConnected,
     navigation,
+    setNewJourney,
+    clearJourney,
     dispatchAddOfflineTree,
     t,
     dispatchAddOfflineTrees,

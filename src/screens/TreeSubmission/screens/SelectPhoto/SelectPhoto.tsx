@@ -123,7 +123,17 @@ function SelectPhoto(props: Props) {
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
       clearJourney();
     }
-  }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
+  }, [
+    clearJourney,
+    dispatchAddOfflineUpdateTree,
+    isConnected,
+    journey,
+    navigation,
+    persistedPlantedTrees,
+    photo,
+    setNewJourney,
+    t,
+  ]);
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -131,10 +141,9 @@ function SelectPhoto(props: Props) {
     setNewJourney({
       ...journey,
       photo,
-      ...updatedTree,
       tree: updatedTree,
     });
-  }, [journey, navigation, persistedPlantedTrees, photo]);
+  }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
   if (canPlant === false) {
     return (
