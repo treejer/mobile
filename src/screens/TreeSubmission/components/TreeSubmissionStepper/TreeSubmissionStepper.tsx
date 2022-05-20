@@ -5,19 +5,24 @@ import {Text, View} from 'react-native';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import {useTranslation} from 'react-i18next';
+import {useCurrentJourney} from 'services/currentJourney';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {
   currentStep: number;
   children: React.ReactNode;
-  isUpdate?: boolean;
-  isSingle?: boolean | null;
-  count?: number;
-  canUpdateLocation?: boolean;
 }
 
 function TreeSubmissionStepper(props: Props) {
-  const {isUpdate, currentStep, children, isSingle, count, canUpdateLocation = true} = props;
+  const {currentStep, children} = props;
   const {t} = useTranslation();
+  const journey = useCurrentJourney();
+
+  const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
+  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
 
   const title = isSingle
     ? 'submitTree.submitTree'

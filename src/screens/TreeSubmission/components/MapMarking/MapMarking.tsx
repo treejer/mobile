@@ -17,13 +17,15 @@ import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
 
 interface IMapMarkingProps {
-  journey?: TreeJourney;
   onSubmit?: (location: GeoPosition) => void;
 }
 
-export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
+export default function MapMarking({onSubmit}: IMapMarkingProps) {
+  const journey = useCurrentJourney();
+  const dispatch = useCurrentJourneyAction();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isInitial, setIsInitial] = useState(true);
@@ -106,9 +108,8 @@ export default function MapMarking({journey, onSubmit}: IMapMarkingProps) {
         },
       };
       if (isConnected) {
-        navigation.navigate(Routes.SubmitTree, {
-          journey: newJourney,
-        });
+        navigation.navigate(Routes.SubmitTree);
+        dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
       } else {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {

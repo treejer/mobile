@@ -1,4 +1,4 @@
-import React, {useContext, useReducer} from 'react';
+import React, {useContext, useEffect, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 
 const CurrentJourneyContext = React.createContext<TreeJourney>({
@@ -7,7 +7,12 @@ const CurrentJourneyContext = React.createContext<TreeJourney>({
     longitude: 0,
   },
 });
-const CurrentJourneyDispatcherContext = React.createContext<React.Dispatch<TreeJourney> | null>(null);
+const CurrentJourneyDispatcherContext = React.createContext<React.Dispatch<currentJourneyActionType>>(null!);
+
+interface currentJourneyActionType {
+  type: 'SET-NEW-JOURNEY' | 'CLEAR-JOURNEY';
+  payload?: any;
+}
 
 const initialValue = {
   location: {
@@ -16,13 +21,13 @@ const initialValue = {
   },
 };
 
-const reducer = (state: TreeJourney, action) => {
+const reducer = (state: TreeJourney, action: currentJourneyActionType) => {
   switch (action.type) {
     case 'SET-NEW-JOURNEY': {
-      return state;
+      return action.payload;
     }
     case 'CLEAR-JOURNEY': {
-      return state;
+      return initialValue;
     }
     default:
       return state;
@@ -36,6 +41,13 @@ interface currentJourneyProps {
 export default function CurrentJourneyProvider(props: currentJourneyProps) {
   const {children} = props;
   const [journey, dispatch] = useReducer(reducer, initialValue);
+
+  useEffect(() => {
+    console.log('====================================');
+    console.log(journey, '<==== journey is here');
+    console.log('====================================');
+  }, [journey]);
+
   return (
     <CurrentJourneyContext.Provider value={journey}>
       <CurrentJourneyDispatcherContext.Provider value={dispatch}>{children}</CurrentJourneyDispatcherContext.Provider>

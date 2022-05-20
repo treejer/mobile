@@ -11,19 +11,14 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 
 interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
 
-function SelectOnMap(props: Props) {
-  const {route} = props;
-  const {
-    params: {journey},
-  } = route;
-
+function SelectOnMap(_: Props) {
   const isConnected = useNetInfoConnected();
 
   return (
     <SafeAreaView style={globalStyles.fill}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
-        <MapMarking journey={journey} />
+        <MapMarking />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
         </View>

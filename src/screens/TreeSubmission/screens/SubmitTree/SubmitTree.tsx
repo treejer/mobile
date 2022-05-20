@@ -37,6 +37,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -44,10 +45,11 @@ interface Props {
 
 function SubmitTree(props: Props) {
   const {navigation} = props;
-
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  const journey = useCurrentJourney();
+  const dispatch = useCurrentJourneyAction();
+  // const {
+  //   params: {journey},
+  // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
 
   const {t} = useTranslation();
 
@@ -246,6 +248,7 @@ function SubmitTree(props: Props) {
             routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
           }),
         );
+        dispatch({type: 'CLEAR-JOURNEY'});
       } else {
         sendEvent('add_tree_confirm');
         transaction = await handleSendCreateTransaction();
@@ -261,6 +264,7 @@ function SubmitTree(props: Props) {
             routes: [{name: Routes.GreenBlock}],
           }),
         );
+        dispatch({type: 'CLEAR-JOURNEY'});
       }
 
       // setTxHash(transaction.transactionHash);
@@ -299,17 +303,8 @@ function SubmitTree(props: Props) {
     })();
   }, []);
 
-  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
-  const canUpdate = canUpdateTreeLocation(journey, isNursery);
-
   const contentMarkup = isReadyToSubmit ? (
-    <TreeSubmissionStepper
-      isUpdate={isUpdate}
-      currentStep={4}
-      isSingle={journey?.isSingle}
-      count={journey?.nurseryCount}
-      canUpdateLocation={canUpdate}
-    >
+    <TreeSubmissionStepper currentStep={4}>
       <Spacer times={1} />
 
       {/* {txHash && <Text>Your transaction hash: {txHash}</Text>}*/}
@@ -328,13 +323,7 @@ function SubmitTree(props: Props) {
       )}
     </TreeSubmissionStepper>
   ) : (
-    <TreeSubmissionStepper
-      isUpdate={isUpdate}
-      currentStep={3}
-      isSingle={journey?.isSingle}
-      count={journey?.nurseryCount}
-      canUpdateLocation={canUpdate}
-    >
+    <TreeSubmissionStepper currentStep={3}>
       <Spacer times={1} />
       <Text>{t('submitTree.photoUpdated')}</Text>
 

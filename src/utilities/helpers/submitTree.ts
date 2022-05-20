@@ -12,6 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {useCallback} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useCurrentJourneyAction} from 'services/currentJourney';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -276,6 +277,7 @@ export type AfterSelectPhotoHandler = {
 
 export function useAfterSelectPhotoHandler() {
   const navigation = useNavigation<any>();
+  const dispatch = useCurrentJourneyAction();
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
@@ -295,8 +297,10 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: {
+          navigation.navigate(Routes.SubmitTree);
+          dispatch({
+            type: 'SET-NEW-JOURNEY',
+            payload: {
               ...newJourney,
               nurseryContinuedUpdatingLocation: true,
             },
@@ -305,12 +309,16 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: newJourney,
+          navigation.navigate(Routes.SubmitTree);
+          dispatch({
+            type: 'SET-NEW-JOURNEY',
+            payload: newJourney,
           });
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
+          navigation.navigate(Routes.SelectOnMap);
+          dispatch({
+            type: 'SET-NEW-JOURNEY',
+            payload: newJourney,
           });
         }
       } else {
@@ -332,6 +340,9 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          dispatch({
+            type: 'CLEAR-JOURNEY',
+          });
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
@@ -351,9 +362,14 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          dispatch({
+            type: 'CLEAR-JOURNEY',
+          });
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
+          navigation.navigate(Routes.SelectOnMap);
+          dispatch({
+            type: 'SET-NEW-JOURNEY',
+            payload: newJourney,
           });
         }
       }

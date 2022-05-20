@@ -14,6 +14,7 @@ import {Routes} from 'navigation';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {isNumber} from 'utilities/helpers/validators';
+import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -24,8 +25,9 @@ export interface SelectPlantTypeProps {
 }
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
-  const {navigation, route} = props;
-
+  const {navigation} = props;
+  const journey = useCurrentJourney();
+  const dispatch = useCurrentJourneyAction();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -39,21 +41,20 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       let newJourney;
       if (Number(nurseryCount) <= 1) {
         newJourney = {
-          ...route.params.journey,
+          ...journey,
           isSingle: true,
         };
       } else {
         newJourney = {
-          ...route.params.journey,
+          ...journey,
           isSingle: single,
           nurseryCount: Number(nurseryCount),
         };
       }
-      navigation.navigate(Routes.SelectPhoto, {
-        journey: newJourney,
-      });
+      navigation.navigate(Routes.SelectPhoto);
+      dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
     },
-    [navigation, route.params.journey],
+    [navigation, journey],
   );
 
   const handleSelectNursery = useCallback(() => {

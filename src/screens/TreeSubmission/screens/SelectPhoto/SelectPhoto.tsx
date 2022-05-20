@@ -23,15 +23,14 @@ import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
 function SelectPhoto(props: Props) {
-  const {route, navigation} = props;
-
-  const {
-    params: {journey},
-  } = route;
+  const {navigation} = props;
+  const journey = useCurrentJourney();
+  const dispatch = useCurrentJourneyAction();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -97,8 +96,10 @@ function SelectPhoto(props: Props) {
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
-      navigation.navigate(Routes.SubmitTree, {
-        journey: {
+      navigation.navigate(Routes.SubmitTree);
+      dispatch({
+        type: 'SET-NEW-JOURNEY',
+        payload: {
           ...journey,
           photo,
           nurseryContinuedUpdatingLocation: true,
@@ -124,13 +125,16 @@ function SelectPhoto(props: Props) {
         }),
       );
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+      dispatch({type: 'CLEAR-JOURNEY'});
     }
   }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate(Routes.SelectOnMap, {
-      journey: {
+    navigation.navigate(Routes.SelectOnMap);
+    dispatch({
+      type: 'SET-NEW-JOURNEY',
+      payload: {
         ...journey,
         photo,
         ...updatedTree,
@@ -161,13 +165,7 @@ function SelectPhoto(props: Props) {
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
-          <TreeSubmissionStepper
-            isUpdate={isUpdate}
-            currentStep={canUpdate && photo ? 2 : 1}
-            isSingle={journey?.isSingle}
-            count={journey?.nurseryCount}
-            canUpdateLocation={canUpdate}
-          >
+          <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>
             <Spacer times={4} />
             {/* @here */}
             {canUpdate && photo ? (
