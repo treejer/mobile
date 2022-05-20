@@ -16,7 +16,7 @@ interface Props {
 function TreeSubmissionStepper(props: Props) {
   const {currentStep, children} = props;
   const {t} = useTranslation();
-  const journey = useCurrentJourney();
+  const {journey} = useCurrentJourney();
 
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';

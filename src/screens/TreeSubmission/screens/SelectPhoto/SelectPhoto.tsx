@@ -23,14 +23,13 @@ import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
 function SelectPhoto(props: Props) {
   const {navigation} = props;
-  const journey = useCurrentJourney();
-  const dispatch = useCurrentJourneyAction();
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -97,13 +96,10 @@ function SelectPhoto(props: Props) {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
       navigation.navigate(Routes.SubmitTree);
-      dispatch({
-        type: 'SET-NEW-JOURNEY',
-        payload: {
-          ...journey,
-          photo,
-          nurseryContinuedUpdatingLocation: true,
-        },
+      setNewJourney({
+        ...journey,
+        photo,
+        nurseryContinuedUpdatingLocation: true,
       });
     } else {
       const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -125,21 +121,18 @@ function SelectPhoto(props: Props) {
         }),
       );
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-      dispatch({type: 'CLEAR-JOURNEY'});
+      clearJourney();
     }
   }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
     navigation.navigate(Routes.SelectOnMap);
-    dispatch({
-      type: 'SET-NEW-JOURNEY',
-      payload: {
-        ...journey,
-        photo,
-        ...updatedTree,
-        tree: updatedTree,
-      },
+    setNewJourney({
+      ...journey,
+      photo,
+      ...updatedTree,
+      tree: updatedTree,
     });
   }, [journey, navigation, persistedPlantedTrees, photo]);
 

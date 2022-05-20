@@ -14,7 +14,7 @@ import {Routes} from 'navigation';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {isNumber} from 'utilities/helpers/validators';
-import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -26,8 +26,7 @@ export interface SelectPlantTypeProps {
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
-  const journey = useCurrentJourney();
-  const dispatch = useCurrentJourneyAction();
+  const {journey, setNewJourney} = useCurrentJourney();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -52,7 +51,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
         };
       }
       navigation.navigate(Routes.SelectPhoto);
-      dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
+      setNewJourney(newJourney);
     },
     [navigation, journey],
   );

@@ -17,15 +17,14 @@ import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
 }
 
 export default function MapMarking({onSubmit}: IMapMarkingProps) {
-  const journey = useCurrentJourney();
-  const dispatch = useCurrentJourneyAction();
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isInitial, setIsInitial] = useState(true);
@@ -109,7 +108,7 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
       };
       if (isConnected) {
         navigation.navigate(Routes.SubmitTree);
-        dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
+        setNewJourney(newJourney);
       } else {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
@@ -151,6 +150,7 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          clearJourney();
           return;
         }
         navigation.dispatch(
@@ -160,6 +160,7 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
           }),
         );
         navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
+        clearJourney();
       }
     } else {
       if (location) {

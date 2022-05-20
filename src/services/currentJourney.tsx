@@ -1,17 +1,31 @@
-import React, {useContext, useEffect, useReducer} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 
-const CurrentJourneyContext = React.createContext<TreeJourney>({
-  location: {
-    latitude: 0,
-    longitude: 0,
-  },
-});
-const CurrentJourneyDispatcherContext = React.createContext<React.Dispatch<currentJourneyActionType>>(null!);
+export const SET_NEW_JOURNEY = 'SET_NEW_JOURNEY';
+export const CLEAR_JOURNEY = 'CLEAR_JOURNEY';
 
-interface currentJourneyActionType {
-  type: 'SET-NEW-JOURNEY' | 'CLEAR-JOURNEY';
-  payload?: any;
+const currentJourneyContextInitialValue: CurrentJourneyContextType = {
+  journey: {
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+  },
+  setNewJourney(newJourney) {},
+  clearJourney() {},
+};
+
+interface CurrentJourneyContextType {
+  journey: TreeJourney;
+  setNewJourney: (newJourney: TreeJourney) => void;
+  clearJourney: () => void;
+}
+
+const CurrentJourneyContext = React.createContext<CurrentJourneyContextType>(currentJourneyContextInitialValue);
+
+interface CurrentJourneyActionType {
+  type: string;
+  payload?: TreeJourney;
 }
 
 const initialValue = {
@@ -21,12 +35,12 @@ const initialValue = {
   },
 };
 
-const reducer = (state: TreeJourney, action: currentJourneyActionType) => {
+const reducer = (state: TreeJourney = initialValue, action: CurrentJourneyActionType): TreeJourney => {
   switch (action.type) {
-    case 'SET-NEW-JOURNEY': {
-      return action.payload;
+    case SET_NEW_JOURNEY: {
+      return action.payload as TreeJourney;
     }
-    case 'CLEAR-JOURNEY': {
+    case CLEAR_JOURNEY: {
       return initialValue;
     }
     default:
@@ -48,12 +62,23 @@ export default function CurrentJourneyProvider(props: currentJourneyProps) {
     console.log('====================================');
   }, [journey]);
 
-  return (
-    <CurrentJourneyContext.Provider value={journey}>
-      <CurrentJourneyDispatcherContext.Provider value={dispatch}>{children}</CurrentJourneyDispatcherContext.Provider>
-    </CurrentJourneyContext.Provider>
+  const handleSetNewJourney = useCallback(
+    (newJourney: TreeJourney) => {
+      dispatch({type: SET_NEW_JOURNEY, payload: newJourney});
+    },
+    [journey],
   );
+
+  const handleClearJourney = useCallback(() => {
+    dispatch({type: CLEAR_JOURNEY});
+  }, []);
+
+  const journeyValue = useMemo(
+    () => ({journey, setNewJourney: handleSetNewJourney, clearJourney: handleClearJourney}),
+    [journey],
+  );
+
+  return <CurrentJourneyContext.Provider value={journeyValue}>{children}</CurrentJourneyContext.Provider>;
 }
 
 export const useCurrentJourney = () => useContext(CurrentJourneyContext);
-export const useCurrentJourneyAction = () => useContext(CurrentJourneyDispatcherContext);

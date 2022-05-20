@@ -11,7 +11,7 @@ import {useTranslation} from 'react-i18next';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {Routes} from 'navigation';
-import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 export type locationType = {
   lng: number;
@@ -21,8 +21,7 @@ interface MapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
 }
 export default function MapMarking({onSubmit}: MapMarkingProps) {
-  const journey = useCurrentJourney();
-  const dispatch = useCurrentJourneyAction();
+  const {journey, setNewJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [location, setLocation] = useState<locationType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,7 +47,7 @@ export default function MapMarking({onSubmit}: MapMarkingProps) {
       };
       if (isConnected) {
         navigation.navigate(Routes.SubmitTree);
-        dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
+        setNewJourney(newJourney);
       } else {
         showAlert({message: `${t('offlineMap.notSupported')}`, mode: AlertMode.Error});
       }

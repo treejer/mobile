@@ -37,7 +37,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {useCurrentJourney, useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -45,8 +45,7 @@ interface Props {
 
 function SubmitTree(props: Props) {
   const {navigation} = props;
-  const journey = useCurrentJourney();
-  const dispatch = useCurrentJourneyAction();
+  const {journey, clearJourney} = useCurrentJourney();
   // const {
   //   params: {journey},
   // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
@@ -248,7 +247,7 @@ function SubmitTree(props: Props) {
             routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
           }),
         );
-        dispatch({type: 'CLEAR-JOURNEY'});
+        clearJourney();
       } else {
         sendEvent('add_tree_confirm');
         transaction = await handleSendCreateTransaction();
@@ -264,7 +263,7 @@ function SubmitTree(props: Props) {
             routes: [{name: Routes.GreenBlock}],
           }),
         );
-        dispatch({type: 'CLEAR-JOURNEY'});
+        clearJourney();
       }
 
       // setTxHash(transaction.transactionHash);

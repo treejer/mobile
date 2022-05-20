@@ -17,7 +17,7 @@ import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
 import {Routes} from 'navigation';
-import {useCurrentJourneyAction} from 'services/currentJourney';
+import {useCurrentJourney} from 'services/currentJourney';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -39,7 +39,7 @@ interface Props {
 function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
-  const dispatch = useCurrentJourneyAction();
+  const {setNewJourney} = useCurrentJourney();
 
   const treeIdToUpdate =
     route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
@@ -58,7 +58,7 @@ function TreeSubmission({route, navigation}: Props) {
   };
 
   useEffect(() => {
-    dispatch({type: 'SET-NEW-JOURNEY', payload: newJourney});
+    setNewJourney(newJourney);
   }, []);
 
   // this if added to get query to assignedTree works well on submit tree
