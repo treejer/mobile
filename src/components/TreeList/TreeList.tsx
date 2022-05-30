@@ -241,13 +241,16 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const TempEmptyContent = () => {
+    const hasTree = plantedTrees?.length || tempTrees?.length;
+    const plantText = hasTree ? 'plantTree' : 'plantFirstTree';
+
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
         <Spacer times={20} />
-        <Text>{t('noPlantedTrees')}</Text>
+        {hasTree && <Text>{t('noPlantedTrees')}</Text>}
         <Spacer times={5} />
         <Button
-          caption={t('plantFirstTree')}
+          caption={t(plantText)}
           variant="cta"
           onPress={() => {
             navigation.navigate(Routes.TreeSubmission);
@@ -266,13 +269,16 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const EmptyContent = () => {
+    const hasTree = plantedTrees?.length || tempTrees?.length;
+    const plantText = hasTree ? 'plantTree' : 'plantFirstTree';
+
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
         <Spacer times={20} />
         <Text>{t('noAssignedOrVerified')}</Text>
         <Spacer times={5} />
         <Button
-          caption={t('plantTree')}
+          caption={t(plantText)}
           variant="cta"
           onPress={() => {
             navigation.navigate(Routes.TreeSubmission);
@@ -305,7 +311,7 @@ function Trees({route, navigation, filter}: Props) {
             onEndReachedThreshold={0.1}
             renderItem={RenderItem}
             keyExtractor={(_, i) => i.toString()}
-            ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
+            ListEmptyComponent={EmptyContent}
             style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
             refreshing
             onEndReached={plantedLoadMore}
@@ -334,7 +340,7 @@ function Trees({route, navigation, filter}: Props) {
             onEndReachedThreshold={0.1}
             onEndReached={tempLoadMore}
             keyExtractor={(_, i) => i.toString()}
-            ListEmptyComponent={isConnected ? TempEmptyContent : NoInternetTrees}
+            ListEmptyComponent={TempEmptyContent}
             style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
             refreshing
             onRefresh={refetchTempTrees}
