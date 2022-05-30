@@ -16,6 +16,14 @@ body {
   background-color: #faf8f0;
 }
 
+#root {
+  max-width: 768px;
+  margin: auto;
+  box-shadow: 0 0 40px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 #ranger-web {
   min-height: -webkit-fill-available;
   min-height: -moz-fill-available;
