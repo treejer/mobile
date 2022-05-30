@@ -240,10 +240,7 @@ function Trees({route, navigation, filter}: Props) {
     );
   };
 
-  const tempEmptyContent = () => {
-    if (tempTrees?.length === 0 && (plantedTrees?.length || 0) > 0) {
-      return null;
-    }
+  const TempEmptyContent = () => {
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
         <Spacer times={20} />
@@ -272,7 +269,15 @@ function Trees({route, navigation, filter}: Props) {
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
         <Spacer times={20} />
-        <Text>{t('noAssigned')}</Text>
+        <Text>{t('noAssignedOrVerified')}</Text>
+        <Spacer times={5} />
+        <Button
+          caption={t('plantTree')}
+          variant="cta"
+          onPress={() => {
+            navigation.navigate(Routes.TreeSubmission);
+          }}
+        />
       </View>
     );
   };
@@ -301,7 +306,7 @@ function Trees({route, navigation, filter}: Props) {
             renderItem={RenderItem}
             keyExtractor={(_, i) => i.toString()}
             ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
-            style={{flex: 1, backgroundColor: colors.khaki}}
+            style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
             refreshing
             onEndReached={plantedLoadMore}
             onRefresh={refetchPlantedTrees}
@@ -329,8 +334,8 @@ function Trees({route, navigation, filter}: Props) {
             onEndReachedThreshold={0.1}
             onEndReached={tempLoadMore}
             keyExtractor={(_, i) => i.toString()}
-            ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
-            style={{flex: 1, backgroundColor: colors.khaki}}
+            ListEmptyComponent={isConnected ? TempEmptyContent : NoInternetTrees}
+            style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
             refreshing
             onRefresh={refetchTempTrees}
             numColumns={calcTreeColumnNumber()}
