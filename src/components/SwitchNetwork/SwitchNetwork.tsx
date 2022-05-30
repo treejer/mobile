@@ -80,7 +80,7 @@ export function SwitchNetwork() {
       <TouchableOpacity
         activeOpacity={0.7}
         hitSlop={{top: 8, right: 32, bottom: 8, left: 32}}
-        style={[styles.container, {top: insets.top + 4, right: insets.right + 40}]}
+        style={[styles.container, {top: insets.top + 4, right: insets.right + 44}]}
         onPress={handleOpenModal}
       >
         <Card style={[styles.card]}>

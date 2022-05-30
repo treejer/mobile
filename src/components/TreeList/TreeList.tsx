@@ -246,14 +246,23 @@ function Trees({route, navigation, filter}: Props) {
 
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
-        <Spacer times={20} />
-        {hasTree && <Text>{t('noPlantedTrees')}</Text>}
+        {!hasTree && (
+          <>
+            <Spacer times={20} />
+            <Text>{t('noPlantedTrees')}</Text>
+          </>
+        )}
         <Spacer times={5} />
         <Button
           caption={t(plantText)}
           variant="cta"
           onPress={() => {
-            navigation.navigate(Routes.TreeSubmission);
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.TreeSubmission}],
+              }),
+            );
           }}
         />
       </View>
@@ -281,7 +290,12 @@ function Trees({route, navigation, filter}: Props) {
           caption={t(plantText)}
           variant="cta"
           onPress={() => {
-            navigation.navigate(Routes.TreeSubmission);
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.TreeSubmission}],
+              }),
+            );
           }}
         />
       </View>

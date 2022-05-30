@@ -24,6 +24,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -37,6 +38,7 @@ function MyProfile(props: MyProfileProps) {
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const config = useConfig();
+  useTreeUpdateInterval();
 
   const getMinBalance = useCallback(() => {
     // @here

@@ -31,6 +31,7 @@ export interface StorageKeys {
   accessToken: string;
   useGSN: string;
   blockchainNetwork: string;
+  treeUpdateInterval: string;
 }
 
 export enum BlockchainNetwork {
@@ -198,6 +199,7 @@ export const storageKeys: StorageKeys = {
   accessToken: '__TREEJER_ACCESS_TOKEN',
   useGSN: '__TREEJER_USE_GSN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
+  treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
 };
 
 export const isProd = process.env.NODE_ENV === 'Production';
