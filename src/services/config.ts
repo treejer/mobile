@@ -4,6 +4,8 @@ import {ImageURISource} from 'react-native';
 
 import {RinkebyLogo, MaticLogo} from '../../assets/images';
 
+console.log(process.env);
+
 export enum ContractType {
   TreeFactory = 'TreeFactory',
   Paymaster = 'Paymaster',
@@ -204,7 +206,6 @@ export const rangerDevUrl = 'https://ranger-dev.treejer.com';
 export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
 
-console.log(process.env);
 export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN || '';
 export const mapboxPrivateToken = process.env.REACT_NATIVE_PRIVATE_MAPBOX_TOKEN || '';
 

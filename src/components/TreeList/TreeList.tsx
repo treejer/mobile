@@ -36,6 +36,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
+import TreeSymbol from './TreeSymbol';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -218,19 +219,24 @@ function Trees({route, navigation, filter}: Props) {
     const style = !imageFs ? {marginTop: 8} : {};
 
     return (
-      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <TreeImage tree={tree.item} tint size={size} style={style} treeUpdateInterval={treeUpdateInterval} />
-        <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
-      </TouchableOpacity>
+      <TreeSymbol
+        tree={tree.item}
+        size={size}
+        style={style}
+        treeUpdateInterval={treeUpdateInterval}
+        handlePress={() => handleSelectTree(tree)}
+      />
     );
   };
 
   const tempRenderItem = tree => {
     return (
-      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={handleRegSelectTree}>
-        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} treeUpdateInterval={treeUpdateInterval} />
-        <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
-      </TouchableOpacity>
+      <TreeSymbol
+        tree={tree.item}
+        treeUpdateInterval={treeUpdateInterval}
+        handlePress={handleRegSelectTree}
+        color={colors.yellow}
+      />
     );
   };
 
@@ -512,14 +518,6 @@ const styles = StyleSheet.create({
   treeLabel: {
     marginVertical: 20,
     alignSelf: 'center',
-  },
-  tree: {
-    width: 52,
-    height: 80,
-    marginHorizontal: 5,
-    marginBottom: 15,
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
   offlineTree: {
     width: 52,
