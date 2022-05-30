@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -51,6 +51,21 @@ function SelectPhoto(props: Props) {
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   // @here
   const canUpdate = canUpdateTreeLocation(journey, isNursery);
+
+  useEffect(() => {
+    if (typeof journey.isSingle === 'undefined' && !isUpdate) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: Routes.SelectPlantType}],
+        }),
+      );
+    }
+    return () => {
+      setShowWebCam(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSelectPhoto = useCallback(async () => {
     if (isWeb()) {
@@ -137,12 +152,13 @@ function SelectPhoto(props: Props) {
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate(Routes.SelectOnMap);
-    setNewJourney({
+    const newJourney = {
       ...journey,
       photo,
       tree: updatedTree,
-    });
+    };
+    navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
+    setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
   if (canPlant === false) {

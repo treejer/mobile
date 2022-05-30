@@ -56,7 +56,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       navigation.navigate(Routes.SelectPhoto);
       setNewJourney(newJourney);
     },
-    [navigation, journey],
+    [navigation, setNewJourney, journey],
   );
 
   const handleSelectNursery = useCallback(() => {

@@ -29,9 +29,6 @@ export type RootNavigationParamList = {
   [Routes.OfflineMap]: undefined;
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
-  [Routes.SelectOnMap]: {
-    journey: TreeJourney;
-  };
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -99,7 +96,6 @@ export function RootNavigation() {
           <>
             <RootStack.Screen name={Routes.OfflineMap} component={OfflineMap} />
             <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
-            <RootStack.Screen name={Routes.SelectOnMap} component={SelectOnMap} />
             <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
             <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
           </>

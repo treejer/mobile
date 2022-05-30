@@ -16,8 +16,9 @@ import TreeDetailQuery, {
 import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
-import {Routes} from 'navigation';
+import {RootStack, Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
+import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -39,24 +40,9 @@ interface Props {
 function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
-  const {setNewJourney, journey} = useCurrentJourney();
+  const {journey} = useCurrentJourney();
 
-  const treeIdToUpdate =
-    journey && 'treeIdToUpdate' in journey ? ((journey as any).treeIdToUpdate as string) : undefined;
-  const location = journey && 'location' in journey ? ((journey as any).location as any) : undefined;
   const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
-  const tree = journey && 'tree' in journey ? ((journey as any).tree as Tree) : undefined;
-  const isSingle = journey && 'isSingle' in journey ? ((journey as any).isSingle as boolean) : undefined;
-
-  useEffect(() => {
-    setNewJourney({
-      treeIdToUpdate,
-      location,
-      treeIdToPlant,
-      tree,
-      isSingle,
-    });
-  }, []);
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
@@ -82,6 +68,7 @@ function TreeSubmission({route, navigation}: Props) {
     >
       <Stack.Screen name={Routes.SelectPlantType} component={SelectPlantType} />
       <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} />
+      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} />
       <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} />
     </Stack.Navigator>
   );

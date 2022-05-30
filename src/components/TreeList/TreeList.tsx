@@ -145,7 +145,7 @@ function Trees({route, navigation, filter}: Props) {
         mode: AlertMode.Warning,
       });
     } else {
-      navigation.navigate(Routes.TreeDetails, {tree: tree.item});
+      navigation.navigate(Routes.TreeDetails, {tree: tree.item, tree_id: Hex2Dec(tree.item.id).toString()});
     }
   };
 
