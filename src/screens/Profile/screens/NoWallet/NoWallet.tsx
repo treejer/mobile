@@ -22,6 +22,7 @@ import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
+import AppVersion from 'components/AppVersion';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -251,6 +252,7 @@ function NoWallet(props: NoWalletProps) {
                     </TouchableOpacity>
                   </Card>
                 </View>
+                <AppVersion />
               </View>
             </KeyboardDismiss>
           </KeyboardAwareScrollView>
