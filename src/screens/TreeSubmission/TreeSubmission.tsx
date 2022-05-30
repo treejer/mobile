@@ -19,6 +19,7 @@ import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/Sele
 import {RootStack, Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
+import {screenTitle} from 'utilities/helpers/documentTitle';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -66,10 +67,14 @@ function TreeSubmission({route, navigation}: Props) {
         headerShown: false,
       }}
     >
-      <Stack.Screen name={Routes.SelectPlantType} component={SelectPlantType} />
-      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} />
-      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} />
-      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} />
+      <Stack.Screen
+        name={Routes.SelectPlantType}
+        component={SelectPlantType}
+        options={{title: screenTitle('Plant Type')}}
+      />
+      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} options={{title: screenTitle('Photo')}} />
+      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} options={{title: screenTitle('Location')}} />
+      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} options={{title: screenTitle('Submit Tree')}} />
     </Stack.Navigator>
   );
 }

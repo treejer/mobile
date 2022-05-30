@@ -64,13 +64,12 @@ export default function SettingsScreen(props: SettingsScreenProps) {
         <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>
       </View>
       <Spacer times={4} />
-      <View style={{flex: 1, alignItems: 'center'}}>
-        <Button style={{width: fullWidth}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+      <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 16}}>
+        <Button style={{width: '100%'}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
         <Spacer times={4} />
         <View
           style={{
             backgroundColor: 'white',
-            width: fullWidth,
             paddingVertical: 12,
             paddingHorizontal: 20,
             borderRadius: 10,

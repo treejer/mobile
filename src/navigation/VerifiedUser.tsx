@@ -5,6 +5,7 @@ import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile/MyProfile';
 import TreeSubmission from 'screens/TreeSubmission';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
+import {screenTitle} from 'utilities/helpers/documentTitle';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -25,7 +26,11 @@ const VerifiedUserStack = createBottomTabNavigator<VerifiedUserNavigationParamLi
 export function VerifiedUserNavigation() {
   return (
     <VerifiedUserStack.Navigator tabBar={props => <TabBar {...props} />} screenOptions={{headerShown: false}}>
-      <VerifiedUserStack.Screen name={Routes.MyProfile} component={MyProfile} />
+      <VerifiedUserStack.Screen
+        name={Routes.MyProfile}
+        component={MyProfile}
+        options={{title: screenTitle('Profile')}}
+      />
       <VerifiedUserStack.Screen name={Routes.TreeSubmission} component={TreeSubmission} />
       <VerifiedUserStack.Screen name={Routes.GreenBlock} component={GreenBlock} />
     </VerifiedUserStack.Navigator>

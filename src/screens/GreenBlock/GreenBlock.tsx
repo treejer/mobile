@@ -3,9 +3,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {GreenBlockRouteParamList, MainTabsParamList} from 'types';
 import TreeDetails from './screens/TreeDetails';
-import AcceptInvitation from './screens/AcceptInvitation';
 import TreeList from 'components/TreeList';
 import {Routes} from 'navigation';
+import {screenTitle} from 'utilities/helpers/documentTitle';
 
 interface Props {
   navigation: NavigationProp<GreenBlockRouteParamList>;
@@ -32,14 +32,13 @@ function GreenBlock({navigation, route}: Props) {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
-      <Stack.Screen name={Routes.TreeDetails} component={TreeDetails} />
+      <Stack.Screen name={Routes.TreeList} options={{title: screenTitle('Tree Inventory')}}>
+        {props => <TreeList {...props} filter={filter} />}
+      </Stack.Screen>
       <Stack.Screen
-        name="AcceptInvitation"
-        component={AcceptInvitation}
-        initialParams={{
-          greenBlockId: route.params?.greenBlockIdToJoin,
-        }}
+        name={Routes.TreeDetails}
+        component={TreeDetails}
+        options={({route}) => ({title: screenTitle(`Tree ${route.params?.tree_id}`)})}
       />
     </Stack.Navigator>
   );

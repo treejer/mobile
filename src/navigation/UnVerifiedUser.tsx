@@ -7,6 +7,7 @@ import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyP
 import VerifyPending from 'screens/Profile/screens/VerifyPending';
 import {PlanterJoinJourney} from 'types';
 import {GetMeQueryPartialData} from 'services/graphql/GetMeQuery.graphql';
+import {screenTitle} from 'utilities/helpers/documentTitle';
 
 export type UnVerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -35,10 +36,26 @@ export const UnVerifiedUserStack = createNativeStackNavigator<UnVerifiedUserNavi
 export function UnVerifiedUserNavigation() {
   return (
     <UnVerifiedUserStack.Navigator screenOptions={{headerShown: false}}>
-      <UnVerifiedUserStack.Screen name={Routes.MyProfile} component={MyProfile} />
-      <UnVerifiedUserStack.Screen name={Routes.VerifyProfile} component={VerifyProfile} />
-      <UnVerifiedUserStack.Screen name={Routes.SelectOnMapVerifyProfile} component={SelectOnMapVerifyProfile} />
-      <UnVerifiedUserStack.Screen name={Routes.VerifyPending} component={VerifyPending} />
+      <UnVerifiedUserStack.Screen
+        name={Routes.MyProfile}
+        component={MyProfile}
+        options={{title: screenTitle('Profile')}}
+      />
+      <UnVerifiedUserStack.Screen
+        name={Routes.VerifyProfile}
+        component={VerifyProfile}
+        options={{title: screenTitle('Verify Profile')}}
+      />
+      <UnVerifiedUserStack.Screen
+        name={Routes.SelectOnMapVerifyProfile}
+        component={SelectOnMapVerifyProfile}
+        options={{title: screenTitle('Your Location')}}
+      />
+      <UnVerifiedUserStack.Screen
+        name={Routes.VerifyPending}
+        component={VerifyPending}
+        options={{title: screenTitle('Verify Pending')}}
+      />
     </UnVerifiedUserStack.Navigator>
   );
 }
