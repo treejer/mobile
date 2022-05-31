@@ -25,6 +25,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import useRefer from 'utilities/hooks/useDeepLinking';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -39,6 +40,8 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
+
+  const {referrer, organization, hasRefer} = useRefer();
 
   const getMinBalance = useCallback(() => {
     // @here
@@ -285,7 +288,7 @@ function MyProfile(props: MyProfileProps) {
                     </Text>
                   </TouchableOpacity>
                 ) : null}
-                <Spacer times={8} />
+                <Spacer times={4} />
 
                 {planterData && (
                   <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
@@ -310,7 +313,7 @@ function MyProfile(props: MyProfileProps) {
                   </View>
                 )}
 
-                <View style={globalStyles.p3}>
+                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
                   {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
                     <>
                       <Button
@@ -330,7 +333,7 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
 
-                  {!route.params?.hideVerification && status === UserStatus.Unverified && (
+                  {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
                     <>
                       <Button
                         style={styles.button}
@@ -348,6 +351,31 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
 
+                  {!route.params?.hideVerification && status === UserStatus.Unverified && hasRefer && (
+                    <>
+                      <TouchableOpacity
+                        style={styles.getVerifiedRefer}
+                        onPress={() => {
+                          sendEvent('get_verified');
+                          if (data?.user) {
+                            // @ts-ignore
+                            navigation.navigate(Routes.VerifyProfile);
+                          }
+                        }}
+                      >
+                        <Spacer times={2} />
+                        <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
+                        <Text style={globalStyles.tiny}>{referrer || organization}</Text>
+                        <Spacer times={4} />
+                        <Text style={[globalStyles.h5, {color: colors.green, fontWeight: 'bold'}]}>
+                          {t(referrer ? 'getVerified' : 'joinAndGetVerified')}
+                        </Text>
+                        <Spacer times={2} />
+                      </TouchableOpacity>
+                      <Spacer times={10} />
+                    </>
+                  )}
+
                   {!route.params?.unVerified && !isWeb() ? (
                     <>
                       <Button
@@ -361,7 +389,7 @@ function MyProfile(props: MyProfileProps) {
                   ) : null}
 
                   {planterData?.planterType && !!wallet ? (
-                    <Invite address={wallet} planterType={Number(planterData?.planterType)} />
+                    <Invite style={styles.button} address={wallet} planterType={Number(planterData?.planterType)} />
                   ) : null}
 
                   {/* {!wallet && (
@@ -448,6 +476,22 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
+  },
+  getVerifiedRefer: {
+    width: 280,
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowOffset: {
+      width: 2,
+      height: 6,
+    },
+    shadowRadius: 20,
+    shadowColor: 'black',
+    shadowOpacity: 0.15,
+    elevation: 6,
+    alignItems: 'center',
   },
 });
 
