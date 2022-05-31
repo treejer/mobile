@@ -19,6 +19,7 @@ import {ToastContainer} from 'react-toastify';
 import {isProd, rangerDevUrl, rangerUrl} from './src/services/config';
 import Orientation from 'react-native-orientation';
 import LandScapeModal from './src/components/LandScapeModal/LandScapeModal';
+import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 
 const config = {
   screens: {
@@ -81,6 +82,7 @@ export default function App() {
     magicToken,
     blockchainNetwork,
   } = useAppInitialValue();
+  useInitialDeepLinking();
 
   useEffect(() => {
     if (!isWeb()) {

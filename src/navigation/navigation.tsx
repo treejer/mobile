@@ -12,12 +12,9 @@ import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
-import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
-import {TreeJourney} from 'screens/TreeSubmission/types';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import OrganizationScreen from 'screens/Organization/OrganizationScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -82,7 +79,6 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false}}>
-        {isWeb() && user ? <RootStack.Screen name={Routes.Organization} component={OrganizationScreen} /> : null}
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

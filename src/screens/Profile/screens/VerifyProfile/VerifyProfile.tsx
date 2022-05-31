@@ -74,7 +74,7 @@ function VerifyProfile(props: Props) {
   const {sendEvent} = useAnalytics();
 
   const refer = useRefer();
-  const {referrer, organization} = refer;
+  const {referrer, organization, hasRefer} = refer;
 
   const handleChangeRadioButton = (key: string) => {
     setOrganizationKey(key);
@@ -396,20 +396,22 @@ function VerifyProfile(props: Props) {
             </>
           )}
         </View>
-        {(referrer || organization) && (
+        {hasRefer && (
           <View
             style={{
               padding: 10,
-              backgroundColor: colors.grayLighter,
+              backgroundColor: 'white',
               borderColor: colors.gray,
               borderWidth: 1,
               borderStyle: 'solid',
               borderRadius: 10,
               marginHorizontal: 20,
+              width: 300,
+              alignSelf: 'center',
             }}
           >
-            <Text>{referrer ? 'referrer' : 'organization'}</Text>
-            <Text>{referrer || organization}</Text>
+            <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
+            <Text style={globalStyles.tiny}>{referrer || organization}</Text>
           </View>
         )}
       </KeyboardAwareScrollView>
