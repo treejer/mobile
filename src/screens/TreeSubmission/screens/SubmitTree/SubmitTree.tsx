@@ -286,21 +286,24 @@ function SubmitTree(props: Props) {
     metaDataHash,
     handleSendUpdateTransaction,
     navigation,
+    clearJourney,
     handleSendCreateTransaction,
   ]);
 
   useEffect(() => {
     (async function () {
-      if (
-        ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
-          !isReadyToSubmit) ||
-        !journey.photo ||
-        (!journey.location && !isUpdate)
-      ) {
-        await handleUploadToIpfs();
+      if (journey.photo) {
+        if (
+          ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
+            !isReadyToSubmit) ||
+          !journey.photo ||
+          (!journey.location && !isUpdate)
+        ) {
+          await handleUploadToIpfs();
+        }
       }
     })();
-  }, []);
+  }, [journey.photo]);
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper currentStep={4}>

@@ -267,7 +267,6 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
 }
 
 export type AfterSelectPhotoHandler = {
-  journey: TreeJourney;
   selectedPhoto: File | Image;
   isUpdate: boolean;
   isNursery: boolean;
@@ -277,7 +276,7 @@ export type AfterSelectPhotoHandler = {
 
 export function useAfterSelectPhotoHandler() {
   const navigation = useNavigation<any>();
-  const {setNewJourney, clearJourney} = useCurrentJourney();
+  const {setNewJourney, clearJourney, journey} = useCurrentJourney();
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
@@ -288,7 +287,7 @@ export function useAfterSelectPhotoHandler() {
 
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
-      const {journey, selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
 
       const newJourney = {
         ...(journey ?? {}),
@@ -358,7 +357,16 @@ export function useAfterSelectPhotoHandler() {
         }
       }
     },
-    [dispatchAddOfflineUpdateTree, isConnected, navigation, persistedPlantedTrees, t],
+    [
+      clearJourney,
+      dispatchAddOfflineUpdateTree,
+      isConnected,
+      journey,
+      navigation,
+      persistedPlantedTrees,
+      setNewJourney,
+      t,
+    ],
   );
 }
 

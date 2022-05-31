@@ -62,12 +62,9 @@ export default function CurrentJourneyProvider(props: currentJourneyProps) {
     console.log('====================================');
   }, [journey]);
 
-  const handleSetNewJourney = useCallback(
-    (newJourney: TreeJourney) => {
-      dispatch({type: SET_NEW_JOURNEY, payload: newJourney});
-    },
-    [journey],
-  );
+  const handleSetNewJourney = useCallback((newJourney: TreeJourney) => {
+    dispatch({type: SET_NEW_JOURNEY, payload: newJourney});
+  }, []);
 
   const handleClearJourney = useCallback(() => {
     dispatch({type: CLEAR_JOURNEY});
@@ -75,7 +72,7 @@ export default function CurrentJourneyProvider(props: currentJourneyProps) {
 
   const journeyValue = useMemo(
     () => ({journey, setNewJourney: handleSetNewJourney, clearJourney: handleClearJourney}),
-    [journey],
+    [handleClearJourney, handleSetNewJourney, journey],
   );
 
   return <CurrentJourneyContext.Provider value={journeyValue}>{children}</CurrentJourneyContext.Provider>;

@@ -78,7 +78,6 @@ function SelectPhoto(props: Props) {
           // @here
           handleAfterSelectPhoto({
             selectedPhoto,
-            journey,
             setPhoto,
             isUpdate,
             isNursery,
@@ -87,7 +86,7 @@ function SelectPhoto(props: Props) {
         }
       }
     }
-  }, [journey, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
+  }, [openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
 
   const handleSelectPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
@@ -97,14 +96,13 @@ function SelectPhoto(props: Props) {
 
       handleAfterSelectPhoto({
         selectedPhoto: file,
-        journey,
         setPhoto,
         isUpdate,
         isNursery,
         canUpdate,
       });
     },
-    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, journey],
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate],
   );
 
   const handleContinue = useCallback(() => {
