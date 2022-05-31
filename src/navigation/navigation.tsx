@@ -17,6 +17,7 @@ import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
+import OrganizationScreen from 'screens/Organization/OrganizationScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -30,6 +31,7 @@ export type RootNavigationParamList = {
   [Routes.OfflineMap]: undefined;
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
+  [Routes.Organization]: undefined;
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -62,6 +64,7 @@ export enum Routes {
   SubmitTree = 'SubmitTree',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
+  Organization = 'Organization',
 }
 
 export function RootNavigation() {
@@ -79,6 +82,7 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false}}>
+        {isWeb() && user ? <RootStack.Screen name={Routes.Organization} component={OrganizationScreen} /> : null}
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

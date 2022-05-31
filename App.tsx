@@ -60,6 +60,7 @@ const config = {
     [Routes.SelectLanguage]: 'settings/select-language',
     [Routes.Login]: 'login',
     [Routes.Onboarding]: 'on-boarding',
+    [Routes.Organization]: 'organization',
   },
 };
 
