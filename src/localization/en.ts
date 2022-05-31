@@ -24,6 +24,8 @@ export const en = {
   logout: 'Log Out',
   verified: 'Verified',
   notVerified: 'Not Verified',
+  pending: 'Pending',
+  update: 'Update',
   invite: {
     title: 'Invite',
     org: 'Organization',

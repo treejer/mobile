@@ -12,6 +12,34 @@ export function treeImageSrc(tree?: Tree): ImageSourcePropType {
   return imageFs ? {uri: imageFs} : TreeImage;
 }
 
+export enum TreeColorStatus {
+  NOT_VERIFIED = 'NOT_VERIFIED',
+  PENDING = 'PENDING',
+  UPDATE = 'UPDATE',
+}
+
+export type TreeColorType = {
+  [key in TreeColorStatus]: {
+    title: string;
+    color: string;
+  };
+};
+
+export const treeColorTypes: TreeColorType = {
+  [TreeColorStatus.NOT_VERIFIED]: {
+    title: 'notVerified',
+    color: colors.yellow,
+  },
+  [TreeColorStatus.PENDING]: {
+    title: 'pending',
+    color: colors.pink,
+  },
+  [TreeColorStatus.UPDATE]: {
+    title: 'update',
+    color: colors.gray,
+  },
+};
+
 export function treeColor(tree?: Tree, treeUpdateInterval?: number): string | undefined {
   let color: string | undefined;
   if (!treeUpdateInterval) {
@@ -29,13 +57,13 @@ export function treeColor(tree?: Tree, treeUpdateInterval?: number): string | un
   //   color = colors.claimed;
   // }
   if (tree?.treeStatus?.toString() === '3') {
-    color = colors.yellow;
+    color = treeColorTypes.NOT_VERIFIED.color;
     return color;
   } else if (isUpdatePended(tree)) {
-    color = colors.pink;
+    color = treeColorTypes.PENDING.color;
     return color;
   } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-    color = colors.gray;
+    color = treeColorTypes.UPDATE.color;
   } else {
     if (id <= 10000) {
       color = undefined;

@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
+  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -37,6 +38,8 @@ import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -47,6 +50,7 @@ interface Props {
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
   const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
+  const [treeColorsModalVisible, setTreeColorModalVisible] = useState<boolean>(false);
   const {t} = useTranslation();
   const filters = useMemo<TreeFilterItem[]>(() => {
     const offlineFilters = [
@@ -236,6 +240,8 @@ function Trees({route, navigation, filter}: Props) {
         treeUpdateInterval={treeUpdateInterval}
         handlePress={handleRegSelectTree}
         color={colors.yellow}
+        size={48}
+        style={{marginTop: 8}}
       />
     );
   };
@@ -316,7 +322,12 @@ function Trees({route, navigation, filter}: Props) {
   const renderSubmittedTrees = () => {
     return (
       <View style={{flex: 1}}>
-        <Text style={styles.treeLabel}>{t('submittedTrees')}</Text>
+        <Pressable onPress={() => setTreeColorModalVisible(true)}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
+            <Text style={styles.treeLabel}>{t('submittedTrees')}</Text>
+            <Icon name="info-circle" size={20} color={colors.grayLight} style={{marginHorizontal: 8}} />
+          </View>
+        </Pressable>
         <PullToRefresh onRefresh={refetchPlantedTrees}>
           <FlatList
             // @ts-ignore
@@ -337,6 +348,7 @@ function Trees({route, navigation, filter}: Props) {
             }
           />
         </PullToRefresh>
+        <TreeColorsInfoModal visible={treeColorsModalVisible} onClose={() => setTreeColorModalVisible(false)} />
       </View>
     );
   };
@@ -344,7 +356,7 @@ function Trees({route, navigation, filter}: Props) {
   const renderNotVerifiedTrees = () => {
     return (
       <View style={{flex: 1}}>
-        <Text style={styles.treeLabel}>{t('notSubmittedTrees')}</Text>
+        <Text style={[styles.treeLabel, {marginVertical: 20}]}>{t('notSubmittedTrees')}</Text>
         <PullToRefresh onRefresh={refetchTempTrees}>
           <FlatList
             // @ts-ignore
@@ -541,7 +553,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   treeLabel: {
-    marginVertical: 20,
     alignSelf: 'center',
   },
   offlineTree: {
