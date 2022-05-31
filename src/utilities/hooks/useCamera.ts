@@ -16,7 +16,7 @@ const useCamera = () => {
       });
 
       console.log(photo, 'a<====');
-      return photo;
+      return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
     }

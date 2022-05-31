@@ -24,6 +24,9 @@ import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
+import WebImagePickerCropper from 'components/WebImagePickerCropper/WebImagePickerCropper';
+import SelectPhotoButton from './SelectPhotoButton';
+import {PickImageButton} from './PickImageButton';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -39,6 +42,7 @@ function SelectPhoto(props: Props) {
 
   const [photo, setPhoto] = useState<any>();
   const [showWebCam, setShowWebCam] = useState<boolean>(false);
+  const [pickedImage, setPickedImage] = useState<File | null>(null);
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
 
@@ -46,7 +50,7 @@ function SelectPhoto(props: Props) {
 
   const {canPlant} = usePlanterStatusQuery(address);
 
-  const {openCameraHook} = useCamera();
+  const {openCameraHook, openLibraryHook} = useCamera();
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   // @here
@@ -67,26 +71,37 @@ function SelectPhoto(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSelectPhoto = useCallback(async () => {
-    if (isWeb()) {
-      setShowWebCam(true);
-    } else {
-      const selectedPhoto = await openCameraHook();
-      console.log(selectedPhoto);
-      if (selectedPhoto) {
-        if (selectedPhoto.path) {
-          // @here
-          handleAfterSelectPhoto({
-            selectedPhoto,
-            setPhoto,
-            isUpdate,
-            isNursery,
-            canUpdate,
-          });
+  const handleSelectPhoto = useCallback(
+    async (fromGallery: boolean = false) => {
+      if (isWeb()) {
+        setShowWebCam(true);
+      } else {
+        let selectedPhoto;
+        if (fromGallery) {
+          selectedPhoto = await openLibraryHook();
+        } else {
+          selectedPhoto = await openCameraHook();
+        }
+        if (selectedPhoto) {
+          if (selectedPhoto.path) {
+            // @here
+            handleAfterSelectPhoto({
+              selectedPhoto,
+              setPhoto,
+              isUpdate,
+              isNursery,
+              canUpdate,
+            });
+          }
         }
       }
-    }
-  }, [openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
+    },
+    [openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
+  );
+
+  const handlePickPhotoWeb = e => {
+    setPickedImage(e.target.files[0]);
+  };
 
   const handleSelectPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
@@ -103,6 +118,23 @@ function SelectPhoto(props: Props) {
       });
     },
     [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate],
+  );
+
+  const handleSelectLibraryPhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const file = await getCroppedImg(image, pickedImage?.name, croppedAreaPixels, rotation);
+      setPhoto(file);
+      setPickedImage(null);
+
+      handleAfterSelectPhoto({
+        selectedPhoto: file,
+        setPhoto,
+        isUpdate,
+        isNursery,
+        canUpdate,
+      });
+    },
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage],
   );
 
   const handleContinue = useCallback(() => {
@@ -175,6 +207,14 @@ function SelectPhoto(props: Props) {
     );
   }
 
+  if (pickedImage) {
+    return (
+      <Modal visible>
+        <WebImagePickerCropper imageData={pickedImage} handleDone={handleSelectLibraryPhotoWeb} />
+      </Modal>
+    );
+  }
+
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
@@ -195,7 +235,10 @@ function SelectPhoto(props: Props) {
                 />
               </View>
             ) : (
-              <Button variant="secondary" onPress={handleSelectPhoto} caption={t('openCamera')} />
+              <View style={{flexDirection: 'row'}}>
+                <SelectPhotoButton onPress={() => handleSelectPhoto()} icon="camera" caption={t('openCamera')} />
+                <PickImageButton icon="images" onPress={handlePickPhotoWeb} caption={t('openGallery')} />
+              </View>
             )}
           </TreeSubmissionStepper>
         </View>
