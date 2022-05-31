@@ -111,7 +111,8 @@ export const en = {
     },
   },
   supplyCapReached: 'You reached your supply cap limit. Please contact customer support to plant more trees!',
-  openCamera: 'Open Camera',
+  openCamera: 'Camera',
+  openGallery: 'Gallery',
   submitTree: {
     journeyIssue: 'Photo, Location',
     treeSpecEmpty: "TreeSpec is empty, You can't update tree, please contact support.",
