@@ -8,16 +8,15 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreejerIcon} from '../../../assets/images';
 import {useBrowserPlatform} from '../../utilities/hooks/useBrowserPlatform';
 import {useTranslation} from 'react-i18next';
+import {googlePlayUrl} from 'services/config';
 
 function PwaModal() {
   const [isShow, setIsShow] = useState(!window.matchMedia('(display-mode: standalone)').matches);
   const browserPlatform = useBrowserPlatform();
   const {t} = useTranslation();
 
-  const GOOGLEPLAYAPPURL = useMemo(() => 'https://play.google.com/store/apps/details?id=com.treejer.ranger', []);
-
   const handlePress = useCallback(() => {
-    Linking.openURL(GOOGLEPLAYAPPURL);
+    Linking.openURL(googlePlayUrl);
   }, []);
 
   return isShow && browserPlatform ? (
@@ -39,7 +38,7 @@ function PwaModal() {
             {browserPlatform === 'Android' && (
               <TouchableOpacity style={[styles.btn, styles.downloadBtn]} onPress={handlePress}>
                 <Text style={styles.whiteColor}>
-                  <GooglePlay name="logo-google-playstore" size={15} /> {t('Google Play')}
+                  <GooglePlay name="logo-google-playstore" size={15} /> {t('googlePlay')}
                 </Text>
               </TouchableOpacity>
             )}

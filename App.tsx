@@ -19,6 +19,7 @@ import {ToastContainer} from 'react-toastify';
 import {isProd, rangerDevUrl, rangerUrl} from './src/services/config';
 import Orientation from 'react-native-orientation';
 import LandScapeModal from './src/components/LandScapeModal/LandScapeModal';
+import UpdateModal from './src/components/UpdateModal/UpdateModal';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 
 const config = {
@@ -117,6 +118,7 @@ export default function App() {
                       <SwitchNetwork />
                       {isWeb() ? <ToastContainer /> : <></>}
                       {isWeb() ? <LandScapeModal /> : <></>}
+                      {!isWeb() ? <UpdateModal /> : null}
                       <NavigationContainer linking={linking}>
                         <RootNavigation />
                       </NavigationContainer>
