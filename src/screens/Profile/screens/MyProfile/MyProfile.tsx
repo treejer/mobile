@@ -23,6 +23,9 @@ import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from '
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {isWeb} from 'utilities/helpers/web';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import useRefer from 'utilities/hooks/useDeepLinking';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -36,6 +39,9 @@ function MyProfile(props: MyProfileProps) {
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const config = useConfig();
+  useTreeUpdateInterval();
+
+  const {referrer, organization, hasRefer} = useRefer();
 
   const getMinBalance = useCallback(() => {
     // @here
@@ -113,10 +119,10 @@ function MyProfile(props: MyProfileProps) {
   );
 
   useEffect(() => {
-    if (wallet && isConnected) {
-      getPlanter().then(() => {});
-    }
-  }, [wallet, getPlanter, isConnected]);
+    // if (wallet && isConnected) {
+    getPlanter().then(() => {});
+    // }
+  }, []);
 
   const [submiting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
@@ -190,10 +196,16 @@ function MyProfile(props: MyProfileProps) {
     useGSN,
   ]);
 
-  const onRefetch = async () => {
-    await getPlanter();
-    await refetchUser();
-  };
+  const onRefetch = () =>
+    new Promise((resolve: any, reject: any) => {
+      setTimeout(() => {
+        (async function () {
+          await getPlanter();
+          await refetchUser();
+        })();
+        resolve();
+      }, 700);
+    });
 
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
@@ -245,114 +257,142 @@ function MyProfile(props: MyProfileProps) {
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
-      <ScrollView
-        style={[globalStyles.screenView, globalStyles.fill]}
-        refreshControl={<RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />}
-      >
-        <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
-          <Spacer times={8} />
-          {avatarMarkup}
-          <Spacer times={4} />
+      <PullToRefresh onRefresh={onRefetch}>
+        <ScrollView
+          style={[globalStyles.screenView, globalStyles.fill]}
+          refreshControl={
+            isWeb() ? undefined : <RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />
+          }
+        >
+          <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
+            <Spacer times={8} />
+            {avatarMarkup}
+            <Spacer times={4} />
 
-          {profileLoading ? (
-            <View style={globalStyles.horizontalStack}>
-              <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
-              <Spacer times={4} />
-              <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
-            </View>
-          ) : null}
-          {!profileLoading && (
-            <>
-              {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
+            {profileLoading ? (
+              <View style={globalStyles.horizontalStack}>
+                <ShimmerPlaceholder style={{width: 90, height: 30, borderRadius: 20}} />
+                <Spacer times={4} />
+                <ShimmerPlaceholder style={{width: 70, height: 30, borderRadius: 20}} />
+              </View>
+            ) : null}
+            {!profileLoading && (
+              <>
+                {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
 
-              {data?.user?.firstName ? <Spacer times={4} /> : null}
-              {wallet ? (
-                <TouchableOpacity onPress={handleCopyWalletAddress}>
-                  <Text numberOfLines={1} style={styles.addressBox}>
-                    {wallet.slice(0, 15)}...
-                  </Text>
-                </TouchableOpacity>
-              ) : null}
-              <Spacer times={8} />
+                {data?.user?.firstName ? <Spacer times={4} /> : null}
+                {wallet ? (
+                  <TouchableOpacity onPress={handleCopyWalletAddress}>
+                    <Text numberOfLines={1} style={styles.addressBox}>
+                      {wallet.slice(0, 15)}...
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+                <Spacer times={4} />
 
-              {planterData && (
-                <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
-                  <View style={styles.statContainer}>
-                    <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
-                    <Text style={styles.statLabel}>{t('balance')}</Text>
-                  </View>
+                {planterData && (
+                  <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                    <View style={styles.statContainer}>
+                      <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
+                      <Text style={styles.statLabel}>{t('balance')}</Text>
+                    </View>
 
-                  <Spacer times={6} />
-
-                  <View style={styles.statContainer}>
-                    <Text style={styles.statValue}>{planterData?.plantedCount}</Text>
-                    <Text style={styles.statLabel}>{t('plantedTrees')}</Text>
-                  </View>
-
-                  {/*<Spacer times={6} />*/}
-
-                  {/*<View style={styles.statContainer}>*/}
-                  {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
-                  {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
-                  {/*</View>*/}
-                </View>
-              )}
-
-              <View style={globalStyles.p3}>
-                {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
-                  <>
-                    <Button
-                      style={styles.button}
-                      caption={t('withdraw')}
-                      variant="tertiary"
-                      loading={submiting}
-                      onPress={handleWithdrawPlanterBalance}
-                    />
-                    <Spacer times={4} />
-                  </>
-                )}
-                {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
-                  <>
-                    <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                     <Spacer times={6} />
-                  </>
+
+                    <View style={styles.statContainer}>
+                      <Text style={styles.statValue}>{planterData?.plantedCount}</Text>
+                      <Text style={styles.statLabel}>{t('plantedTrees')}</Text>
+                    </View>
+
+                    {/*<Spacer times={6} />*/}
+
+                    {/*<View style={styles.statContainer}>*/}
+                    {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
+                    {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
+                    {/*</View>*/}
+                  </View>
                 )}
 
-                {!route.params?.hideVerification && status === UserStatus.Unverified && (
-                  <>
-                    <Button
-                      style={styles.button}
-                      caption={t('getVerified')}
-                      variant="tertiary"
-                      onPress={() => {
-                        sendEvent('get_verified');
-                        if (data?.user) {
-                          // @ts-ignore
-                          navigation.navigate(Routes.VerifyProfile);
-                        }
-                      }}
-                    />
-                    <Spacer times={4} />
-                  </>
-                )}
+                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
+                  {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
+                    <>
+                      <Button
+                        style={styles.button}
+                        caption={t('withdraw')}
+                        variant="tertiary"
+                        loading={submiting}
+                        onPress={handleWithdrawPlanterBalance}
+                      />
+                      <Spacer times={4} />
+                    </>
+                  )}
+                  {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
+                    <>
+                      <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
+                      <Spacer times={6} />
+                    </>
+                  )}
 
-                {!route.params?.unVerified && !isWeb() ? (
-                  <>
-                    <Button
-                      style={styles.button}
-                      caption={t('offlineMap.title')}
-                      variant="tertiary"
-                      onPress={handleNavigateOfflineMap}
-                    />
-                    <Spacer times={4} />
-                  </>
-                ) : null}
+                  {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
+                    <>
+                      <Button
+                        style={styles.button}
+                        caption={t('getVerified')}
+                        variant="tertiary"
+                        onPress={() => {
+                          sendEvent('get_verified');
+                          if (data?.user) {
+                            // @ts-ignore
+                            navigation.navigate(Routes.VerifyProfile);
+                          }
+                        }}
+                      />
+                      <Spacer times={4} />
+                    </>
+                  )}
 
-                {planterData?.planterType && !!wallet ? (
-                  <Invite address={wallet} planterType={Number(planterData?.planterType)} />
-                ) : null}
+                  {!route.params?.hideVerification && status === UserStatus.Unverified && hasRefer && (
+                    <>
+                      <TouchableOpacity
+                        style={styles.getVerifiedRefer}
+                        onPress={() => {
+                          sendEvent('get_verified');
+                          if (data?.user) {
+                            // @ts-ignore
+                            navigation.navigate(Routes.VerifyProfile);
+                          }
+                        }}
+                      >
+                        <Spacer times={2} />
+                        <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
+                        <Text style={globalStyles.tiny}>{referrer || organization}</Text>
+                        <Spacer times={4} />
+                        <Text style={[globalStyles.h5, {color: colors.green, fontWeight: 'bold'}]}>
+                          {t(referrer ? 'getVerified' : 'joinAndGetVerified')}
+                        </Text>
+                        <Spacer times={2} />
+                      </TouchableOpacity>
+                      <Spacer times={10} />
+                    </>
+                  )}
 
-                {/* {!wallet && (
+                  {!route.params?.unVerified && !isWeb() ? (
+                    <>
+                      <Button
+                        style={styles.button}
+                        caption={t('offlineMap.title')}
+                        variant="tertiary"
+                        onPress={handleNavigateOfflineMap}
+                      />
+                      <Spacer times={4} />
+                    </>
+                  ) : null}
+
+                  {planterData?.planterType && !!wallet ? (
+                    <Invite style={styles.button} address={wallet} planterType={Number(planterData?.planterType)} />
+                  ) : null}
+
+                  {/* {!wallet && (
                 <>
                   <Button
                     style={styles.button}
@@ -367,32 +407,33 @@ function MyProfile(props: MyProfileProps) {
                 </>
               )} */}
 
-                <Button
-                  style={styles.button}
-                  caption={t('settings.title')}
-                  variant="tertiary"
-                  onPress={handleNavigateSettings}
-                />
-                <Spacer times={4} />
-                <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
-                <Spacer times={4} />
-                <Button
-                  style={styles.button}
-                  caption={t('logout')}
-                  variant="tertiary"
-                  onPress={() => {
-                    sendEvent('logout');
-                    handleLogout(true);
-                  }}
-                />
-                <Spacer times={4} />
-                <AppVersion />
-              </View>
-            </>
-          )}
-        </View>
-        <Spacer times={4} />
-      </ScrollView>
+                  <Button
+                    style={styles.button}
+                    caption={t('settings.title')}
+                    variant="tertiary"
+                    onPress={handleNavigateSettings}
+                  />
+                  <Spacer times={4} />
+                  <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
+                  <Spacer times={4} />
+                  <Button
+                    style={styles.button}
+                    caption={t('logout')}
+                    variant="tertiary"
+                    onPress={() => {
+                      sendEvent('logout');
+                      handleLogout(true);
+                    }}
+                  />
+                  <Spacer times={4} />
+                  <AppVersion />
+                </View>
+              </>
+            )}
+          </View>
+          <Spacer times={4} />
+        </ScrollView>
+      </PullToRefresh>
     </SafeAreaView>
   );
 }
@@ -435,6 +476,22 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
+  },
+  getVerifiedRefer: {
+    width: 280,
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowOffset: {
+      width: 2,
+      height: 6,
+    },
+    shadowRadius: 20,
+    shadowColor: 'black',
+    shadowOpacity: 0.15,
+    elevation: 6,
+    alignItems: 'center',
   },
 });
 

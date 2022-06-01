@@ -12,6 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {useCallback} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useCurrentJourney} from 'services/currentJourney';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -149,8 +150,8 @@ export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
 
   let jsonData: SubmitTreeData.JSONData = {
     location: {
-      latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-      longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
+      latitude: Math.trunc((journey.location?.latitude || 0) * Math.pow(10, 6))?.toString(),
+      longitude: Math.trunc((journey.location?.longitude || 0) * Math.pow(10, 6))?.toString(),
     },
     updates,
   };
@@ -172,8 +173,8 @@ export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions)
 
   const jsonData: SubmitTreeData.JSONData = {
     location: {
-      latitude: Math.trunc(journey.location.latitude * Math.pow(10, 6))?.toString(),
-      longitude: Math.trunc(journey.location.longitude * Math.pow(10, 6))?.toString(),
+      latitude: Math.trunc((journey.location?.latitude || 0) * Math.pow(10, 6))?.toString(),
+      longitude: Math.trunc((journey.location?.longitude || 0) * Math.pow(10, 6))?.toString(),
     },
     updates: [
       {
@@ -266,7 +267,6 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
 }
 
 export type AfterSelectPhotoHandler = {
-  journey: TreeJourney;
   selectedPhoto: File | Image;
   isUpdate: boolean;
   isNursery: boolean;
@@ -276,6 +276,7 @@ export type AfterSelectPhotoHandler = {
 
 export function useAfterSelectPhotoHandler() {
   const navigation = useNavigation<any>();
+  const {setNewJourney, clearJourney, journey} = useCurrentJourney();
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
@@ -286,7 +287,7 @@ export function useAfterSelectPhotoHandler() {
 
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
-      const {journey, selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
 
       const newJourney = {
         ...(journey ?? {}),
@@ -295,23 +296,20 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: {
-              ...newJourney,
-              nurseryContinuedUpdatingLocation: true,
-            },
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney({
+            ...newJourney,
+            nurseryContinuedUpdatingLocation: true,
           });
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          navigation.navigate(Routes.SubmitTree, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney(newJourney);
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SelectOnMap);
+          setNewJourney(newJourney);
         }
       } else {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -332,6 +330,7 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          clearJourney();
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
@@ -351,14 +350,23 @@ export function useAfterSelectPhotoHandler() {
             }),
           );
           navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          clearJourney();
         } else if (!isUpdate) {
-          navigation.navigate(Routes.SelectOnMap, {
-            journey: newJourney,
-          });
+          navigation.navigate(Routes.SelectOnMap);
+          setNewJourney(newJourney);
         }
       }
     },
-    [dispatchAddOfflineUpdateTree, isConnected, navigation, persistedPlantedTrees, t],
+    [
+      clearJourney,
+      dispatchAddOfflineUpdateTree,
+      isConnected,
+      journey,
+      navigation,
+      persistedPlantedTrees,
+      setNewJourney,
+      t,
+    ],
   );
 }
 

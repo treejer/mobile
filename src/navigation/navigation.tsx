@@ -1,5 +1,4 @@
 import React from 'react';
-import {createNativeStackNavigator, NativeStackScreenProps as LibraryProp} from '@react-navigation/native-stack';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import {useWeb3Context} from 'services/web3';
 import {isWeb} from 'utilities/helpers/web';
@@ -12,10 +11,10 @@ import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
-import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
-import {TreeJourney} from 'screens/TreeSubmission/types';
 import PwaModal from 'components/PwaModal/PwaModal';
+import {screenTitle} from 'utilities/helpers/documentTitle';
+import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -29,9 +28,7 @@ export type RootNavigationParamList = {
   [Routes.OfflineMap]: undefined;
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
-  [Routes.SelectOnMap]: {
-    journey: TreeJourney;
-  };
+  [Routes.Organization]: undefined;
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -39,7 +36,7 @@ export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList>
   ScreenName
 >;
 
-export const RootStack = createNativeStackNavigator<RootNavigationParamList>();
+export const RootStack = createStackNavigator<RootNavigationParamList>();
 
 export enum Routes {
   Init = 'Init',
@@ -64,6 +61,7 @@ export enum Routes {
   SubmitTree = 'SubmitTree',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
+  Organization = 'Organization',
 }
 
 export function RootNavigation() {
@@ -80,10 +78,24 @@ export function RootNavigation() {
     <>
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
-      <RootStack.Navigator screenOptions={{headerShown: false}}>
-        {loading ? <RootStack.Screen name={Routes.Init} component={AppLoading} /> : null}
-        {!locale ? <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} /> : null}
-        {!onboardingDone ? <RootStack.Screen name={Routes.Onboarding} component={OnboardingSlides} /> : null}
+      <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
+        {loading ? (
+          <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
+        ) : null}
+        {!locale ? (
+          <RootStack.Screen
+            name={Routes.SelectLanguage}
+            options={{title: screenTitle('Select Language')}}
+            component={SelectLanguage}
+          />
+        ) : null}
+        {!onboardingDone ? (
+          <RootStack.Screen
+            name={Routes.Onboarding}
+            options={{title: screenTitle('on-boarding')}}
+            component={OnboardingSlides}
+          />
+        ) : null}
         {locale && onboardingDone && !user ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
         {locale && onboardingDone && user && !isVerified ? (
           <>
@@ -97,11 +109,22 @@ export function RootNavigation() {
         ) : null}
         {locale && onboardingDone && user ? (
           <>
-            <RootStack.Screen name={Routes.OfflineMap} component={OfflineMap} />
-            <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
-            <RootStack.Screen name={Routes.SelectOnMap} component={SelectOnMap} />
-            <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
-            <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
+            {isWeb() ? null : (
+              <>
+                <RootStack.Screen name={Routes.OfflineMap} component={OfflineMap} />
+                <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
+              </>
+            )}
+            <RootStack.Screen
+              name={Routes.SelectLanguage}
+              component={SelectLanguage}
+              options={{title: screenTitle('Select Language')}}
+            />
+            <RootStack.Screen
+              name={Routes.Settings}
+              component={SettingsScreen}
+              options={{title: screenTitle('Settings')}}
+            />
           </>
         ) : null}
       </RootStack.Navigator>

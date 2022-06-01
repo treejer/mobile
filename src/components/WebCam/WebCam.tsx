@@ -3,18 +3,19 @@ import Cropper from 'react-easy-crop';
 import {useTranslation} from 'react-i18next';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useWindowSize} from 'utilities/hooks/useWindowSize';
 import {colors} from 'constants/values';
 import {Camera, CameraType} from 'react-camera-pro';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 
 const bottomSheetSpace = 80;
 
 interface WebCamProps {
   handleDone: (image: string, croppedAreaPixels: number | null, rotation: number) => void;
+  handleDismiss: () => void;
 }
 
 function WebCam(props: WebCamProps) {
-  const {handleDone} = props;
+  const {handleDone, handleDismiss} = props;
 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -49,60 +50,59 @@ function WebCam(props: WebCamProps) {
   );
 
   return (
-    <>
-      <View style={{flex: 1, position: 'relative'}}>
+    <View style={{flex: 1, position: 'relative'}}>
+      {image ? (
+        <Cropper
+          image={image}
+          crop={crop}
+          rotation={rotation}
+          zoom={zoom}
+          aspect={3 / 4}
+          onCropChange={setCrop}
+          onRotationChange={setRotation}
+          onCropComplete={onCropComplete}
+          onZoomChange={setZoom}
+          style={{
+            containerStyle: {height: `calc(100% - ${bottomSheetSpace}px)`},
+            mediaStyle: {
+              height: '100%',
+              width: '100%',
+            },
+          }}
+        />
+      ) : (
+        <Camera
+          ref={webcamRef}
+          errorMessages={{
+            noCameraAccessible: t('webcam.noCameraAccessible'),
+            permissionDenied: t('webcam.permissionDenied'),
+            switchCamera: t('switchCamera'),
+            canvas: t('canvas'),
+          }}
+          facingMode="environment"
+          aspectRatio="cover"
+        />
+      )}
+      <View style={styles.cameraBottomSheet}>
         {image ? (
-          <Cropper
-            image={image}
-            crop={crop}
-            rotation={rotation}
-            zoom={zoom}
-            aspect={3 / 4}
-            onCropChange={setCrop}
-            onRotationChange={setRotation}
-            onCropComplete={onCropComplete}
-            onZoomChange={setZoom}
-            style={{
-              containerStyle: {height: `calc(100% - ${bottomSheetSpace}px)`},
-              mediaStyle: {
-                height: '100%',
-                width: '100%',
-              },
-            }}
-          />
+          <>
+            <TouchableOpacity style={styles.confirmationButton} onPress={handleRetry}>
+              <Text style={styles.text}>{t('retry')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.confirmationButton} onPress={doneHandler}>
+              <Text style={styles.text}>{t('done')}</Text>
+            </TouchableOpacity>
+          </>
         ) : (
-          <Camera
-            ref={webcamRef}
-            errorMessages={{
-              noCameraAccessible: t('webcam.noCameraAccessible'),
-              permissionDenied: t('webcam.permissionDenied'),
-              switchCamera: t('switchCamera'),
-              canvas: t('canvas'),
-            }}
-            facingMode="environment"
-            aspectRatio="cover"
-          />
+          <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
+            <Icon name="camera" size={24} color={colors.black} />
+          </TouchableOpacity>
         )}
       </View>
-      <View>
-        <View style={styles.cameraBottomSheet}>
-          {image ? (
-            <>
-              <TouchableOpacity style={styles.confirmationButton} onPress={handleRetry}>
-                <Text style={styles.text}>{t('retry')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.confirmationButton} onPress={doneHandler}>
-                <Text style={styles.text}>{t('done')}</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
-              <Icon name="camera" size={24} color={colors.black} />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-    </>
+      <TouchableOpacity style={styles.close} onPress={handleDismiss}>
+        <AntIcon name="closecircle" size={40} color={colors.red} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -136,5 +136,15 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.khaki,
+  },
+  close: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.khaki,
+    borderRadius: 100,
+    height: 40,
   },
 });

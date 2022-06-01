@@ -12,6 +12,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 export interface InviteProps {
   planterType: number;
   address: string;
+  style?: any;
 }
 
 export default function Invite(props: InviteProps) {
@@ -25,7 +26,7 @@ export default function Invite(props: InviteProps) {
 }
 
 export function InviteOrgAndFriends(props: InviteProps) {
-  const {planterType, address} = props;
+  const {planterType, address, style} = props;
 
   const {t} = useTranslation();
 
@@ -52,9 +53,9 @@ export function InviteOrgAndFriends(props: InviteProps) {
   };
 
   return (
-    <View>
-      <Button caption={text} variant="tertiary" onPress={handleInvite} />
+    <>
+      <Button caption={text} variant="tertiary" onPress={handleInvite} style={style} />
       <Spacer times={4} />
-    </View>
+    </>
   );
 }

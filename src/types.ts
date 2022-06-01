@@ -1,6 +1,7 @@
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {Routes} from 'navigation';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 
@@ -26,6 +27,7 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
     tree?: Tree;
     treeJourney?: TreeJourney;
     offline?: boolean;
+    tree_id: string;
   };
   TreeUpdate: {
     treeIdToUpdate: string;
@@ -39,16 +41,12 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
 }
 
 export interface TreeSubmissionRouteParamList extends Record<string, any> {
-  SelectPlantType: {
-    journey: TreeJourney;
+  [Routes.SelectPlantType]?: {
+    initialRouteName: string;
   };
-  SelectPhoto: {
-    journey: TreeJourney;
-  };
-  SelectOnMap: {
-    journey: TreeJourney;
-  };
-  SubmitTree: {
+  [Routes.SelectPhoto]: undefined;
+  [Routes.SubmitTree]: undefined;
+  [Routes.SelectOnMap]: {
     journey: TreeJourney;
   };
 }

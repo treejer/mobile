@@ -21,7 +21,7 @@ export type TreeFilterProps = {
   onPress: (item: TreeFilterItem) => void;
 };
 
-export function TreeFilterItem(props: TreeFilterProps) {
+export function TreeFilterButton(props: TreeFilterProps) {
   const {item, currentFilter, onPress} = props;
 
   const {caption} = item;
@@ -31,6 +31,7 @@ export function TreeFilterItem(props: TreeFilterProps) {
 
   return (
     <Button
+      key={caption}
       caption={t(caption)}
       variant={variant}
       style={{marginHorizontal: 4, marginBottom: 8}}

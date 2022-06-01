@@ -4,26 +4,22 @@ import globalStyles from 'constants/styles';
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
-import {RootNavigationProp, Routes} from 'navigation';
+import {Routes} from 'navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 
-interface Props extends RootNavigationProp<Routes.SelectOnMap> {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
 
-function SelectOnMap(props: Props) {
-  const {route} = props;
-  const {
-    params: {journey},
-  } = route;
-
+function SelectOnMap(_: Props) {
   const isConnected = useNetInfoConnected();
 
   return (
     <SafeAreaView style={globalStyles.fill}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
-        <MapMarking journey={journey} />
+        <MapMarking />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
         </View>

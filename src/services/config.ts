@@ -4,6 +4,8 @@ import {ImageURISource} from 'react-native';
 
 import {RinkebyLogo, MaticLogo} from '../../assets/images';
 
+console.log(process.env);
+
 export enum ContractType {
   TreeFactory = 'TreeFactory',
   Paymaster = 'Paymaster',
@@ -29,6 +31,7 @@ export interface StorageKeys {
   accessToken: string;
   useGSN: string;
   blockchainNetwork: string;
+  treeUpdateInterval: string;
 }
 
 export enum BlockchainNetwork {
@@ -196,6 +199,7 @@ export const storageKeys: StorageKeys = {
   accessToken: '__TREEJER_ACCESS_TOKEN',
   useGSN: '__TREEJER_USE_GSN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
+  treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
 };
 
 export const isProd = process.env.NODE_ENV === 'Production';
@@ -205,7 +209,6 @@ export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
 export const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.treejer.ranger';
 
-console.log(process.env);
 export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN || '';
 export const mapboxPrivateToken = process.env.REACT_NATIVE_PRIVATE_MAPBOX_TOKEN || '';
 

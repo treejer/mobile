@@ -37,6 +37,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney} from 'services/currentJourney';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -44,10 +45,10 @@ interface Props {
 
 function SubmitTree(props: Props) {
   const {navigation} = props;
-
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  const {journey, clearJourney} = useCurrentJourney();
+  // const {
+  //   params: {journey},
+  // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
 
   const {t} = useTranslation();
 
@@ -242,10 +243,11 @@ function SubmitTree(props: Props) {
         });
         navigation.dispatch(
           CommonActions.reset({
-            index: 1,
-            routes: [{name: Routes.VerifiedProfileTab}, {name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
+            index: 0,
+            routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
           }),
         );
+        clearJourney();
       } else {
         sendEvent('add_tree_confirm');
         transaction = await handleSendCreateTransaction();
@@ -261,6 +263,7 @@ function SubmitTree(props: Props) {
             routes: [{name: Routes.GreenBlock}],
           }),
         );
+        clearJourney();
       }
 
       // setTxHash(transaction.transactionHash);
@@ -283,33 +286,27 @@ function SubmitTree(props: Props) {
     metaDataHash,
     handleSendUpdateTransaction,
     navigation,
+    clearJourney,
     handleSendCreateTransaction,
   ]);
 
   useEffect(() => {
     (async function () {
-      if (
-        ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
-          !isReadyToSubmit) ||
-        !journey.photo ||
-        (!journey.location && !isUpdate)
-      ) {
-        await handleUploadToIpfs();
+      if (journey.photo) {
+        if (
+          ((typeof journey.isSingle == 'undefined' || journey.isSingle === true || isAssignedTreeToPlant) &&
+            !isReadyToSubmit) ||
+          !journey.photo ||
+          (!journey.location && !isUpdate)
+        ) {
+          await handleUploadToIpfs();
+        }
       }
     })();
-  }, []);
-
-  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
-  const canUpdate = canUpdateTreeLocation(journey, isNursery);
+  }, [journey.photo]);
 
   const contentMarkup = isReadyToSubmit ? (
-    <TreeSubmissionStepper
-      isUpdate={isUpdate}
-      currentStep={4}
-      isSingle={journey?.isSingle}
-      count={journey?.nurseryCount}
-      canUpdateLocation={canUpdate}
-    >
+    <TreeSubmissionStepper currentStep={4}>
       <Spacer times={1} />
 
       {/* {txHash && <Text>Your transaction hash: {txHash}</Text>}*/}
@@ -328,13 +325,7 @@ function SubmitTree(props: Props) {
       )}
     </TreeSubmissionStepper>
   ) : (
-    <TreeSubmissionStepper
-      isUpdate={isUpdate}
-      currentStep={3}
-      isSingle={journey?.isSingle}
-      count={journey?.nurseryCount}
-      canUpdateLocation={canUpdate}
-    >
+    <TreeSubmissionStepper currentStep={3}>
       <Spacer times={1} />
       <Text>{t('submitTree.photoUpdated')}</Text>
 
@@ -348,7 +339,7 @@ function SubmitTree(props: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-        {journey.isSingle === false && <SubmitTreeModal journey={journey} />}
+        {journey.isSingle === false && <SubmitTreeModal />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
           {contentMarkup}

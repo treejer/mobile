@@ -38,8 +38,9 @@ function TabBar({state, descriptors, navigation}: Props) {
 
           if (!isFocused && !event.defaultPrevented) {
             sendEvent(analyticsTabEvents[route.name]);
-            console.log(route.name, '<===', Routes.TreeSubmission);
-            navigation.navigate(route.name, {initialRouteName: Routes.SelectPlantType});
+            const params =
+              route.name === Routes.TreeSubmission ? {initialRouteName: Routes.SelectPlantType} : undefined;
+            navigation.navigate(route.name, params);
           }
         };
 

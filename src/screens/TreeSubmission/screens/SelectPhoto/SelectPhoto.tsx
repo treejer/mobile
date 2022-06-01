@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -23,15 +23,16 @@ import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney} from 'services/currentJourney';
+import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
+import SelectPhotoButton from './SelectPhotoButton';
+import {PickImageButton} from './PickImageButton';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
 function SelectPhoto(props: Props) {
-  const {route, navigation} = props;
-
-  const {
-    params: {journey},
-  } = route;
+  const {navigation} = props;
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -41,6 +42,7 @@ function SelectPhoto(props: Props) {
 
   const [photo, setPhoto] = useState<any>();
   const [showWebCam, setShowWebCam] = useState<boolean>(false);
+  const [pickedImage, setPickedImage] = useState<File | null>(null);
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
 
@@ -48,33 +50,58 @@ function SelectPhoto(props: Props) {
 
   const {canPlant} = usePlanterStatusQuery(address);
 
-  const {openCameraHook} = useCamera();
+  const {openCameraHook, openLibraryHook} = useCamera();
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   // @here
   const canUpdate = canUpdateTreeLocation(journey, isNursery);
 
-  const handleSelectPhoto = useCallback(async () => {
-    if (isWeb()) {
-      setShowWebCam(true);
-    } else {
-      const selectedPhoto = await openCameraHook();
-      console.log(selectedPhoto);
-      if (selectedPhoto) {
-        if (selectedPhoto.path) {
-          // @here
-          handleAfterSelectPhoto({
-            selectedPhoto,
-            journey,
-            setPhoto,
-            isUpdate,
-            isNursery,
-            canUpdate,
-          });
+  useEffect(() => {
+    if (typeof journey.isSingle === 'undefined' && !isUpdate) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: Routes.SelectPlantType}],
+        }),
+      );
+    }
+    return () => {
+      setShowWebCam(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSelectPhoto = useCallback(
+    async (fromGallery: boolean) => {
+      if (isWeb()) {
+        setShowWebCam(true);
+      } else {
+        let selectedPhoto;
+        if (fromGallery) {
+          selectedPhoto = await openLibraryHook();
+        } else {
+          selectedPhoto = await openCameraHook();
+        }
+        if (selectedPhoto) {
+          if (selectedPhoto.path) {
+            // @here
+            handleAfterSelectPhoto({
+              selectedPhoto,
+              setPhoto,
+              isUpdate,
+              isNursery,
+              canUpdate,
+            });
+          }
         }
       }
-    }
-  }, [journey, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate]);
+    },
+    [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
+  );
+
+  const handlePickPhotoWeb = e => {
+    setPickedImage(e.target.files[0]);
+  };
 
   const handleSelectPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
@@ -84,25 +111,40 @@ function SelectPhoto(props: Props) {
 
       handleAfterSelectPhoto({
         selectedPhoto: file,
-        journey,
         setPhoto,
         isUpdate,
         isNursery,
         canUpdate,
       });
     },
-    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, journey],
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate],
+  );
+
+  const handleSelectLibraryPhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const file = await getCroppedImg(image, pickedImage?.name, croppedAreaPixels, rotation);
+      setPhoto(file);
+      setPickedImage(null);
+
+      handleAfterSelectPhoto({
+        selectedPhoto: file,
+        setPhoto,
+        isUpdate,
+        isNursery,
+        canUpdate,
+      });
+    },
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage],
   );
 
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
-      navigation.navigate(Routes.SubmitTree, {
-        journey: {
-          ...journey,
-          photo,
-          nurseryContinuedUpdatingLocation: true,
-        },
+      navigation.navigate(Routes.SubmitTree);
+      setNewJourney({
+        ...journey,
+        photo,
+        nurseryContinuedUpdatingLocation: true,
       });
     } else {
       const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
@@ -124,20 +166,30 @@ function SelectPhoto(props: Props) {
         }),
       );
       navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+      clearJourney();
     }
-  }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
+  }, [
+    clearJourney,
+    dispatchAddOfflineUpdateTree,
+    isConnected,
+    journey,
+    navigation,
+    persistedPlantedTrees,
+    photo,
+    setNewJourney,
+    t,
+  ]);
 
   const handleUpdateLocation = useCallback(() => {
     const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate(Routes.SelectOnMap, {
-      journey: {
-        ...journey,
-        photo,
-        ...updatedTree,
-        tree: updatedTree,
-      },
-    });
-  }, [journey, navigation, persistedPlantedTrees, photo]);
+    const newJourney = {
+      ...journey,
+      photo,
+      tree: updatedTree,
+    };
+    navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
+    setNewJourney(newJourney);
+  }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
   if (canPlant === false) {
     return (
@@ -150,7 +202,19 @@ function SelectPhoto(props: Props) {
   if (showWebCam) {
     return (
       <Modal visible>
-        <WebCam handleDone={handleSelectPhotoWeb} />
+        <WebCam handleDone={handleSelectPhotoWeb} handleDismiss={() => setShowWebCam(false)} />
+      </Modal>
+    );
+  }
+
+  if (pickedImage) {
+    return (
+      <Modal visible transparent style={{flex: 1}}>
+        <WebImagePickerCropper
+          imageData={pickedImage}
+          handleDone={handleSelectLibraryPhotoWeb}
+          handleDismiss={() => setPickedImage(null)}
+        />
       </Modal>
     );
   }
@@ -161,13 +225,7 @@ function SelectPhoto(props: Props) {
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />
-          <TreeSubmissionStepper
-            isUpdate={isUpdate}
-            currentStep={canUpdate && photo ? 2 : 1}
-            isSingle={journey?.isSingle}
-            count={journey?.nurseryCount}
-            canUpdateLocation={canUpdate}
-          >
+          <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>
             <Spacer times={4} />
             {/* @here */}
             {canUpdate && photo ? (
@@ -181,7 +239,14 @@ function SelectPhoto(props: Props) {
                 />
               </View>
             ) : (
-              <Button variant="secondary" onPress={handleSelectPhoto} caption={t('openCamera')} />
+              <View style={{flexDirection: 'row'}}>
+                <SelectPhotoButton onPress={() => handleSelectPhoto(false)} icon="camera" caption={t('openCamera')} />
+                <PickImageButton
+                  icon="images"
+                  onPress={isWeb() ? handlePickPhotoWeb : () => handleSelectPhoto(true)}
+                  caption={t('openGallery')}
+                />
+              </View>
             )}
           </TreeSubmissionStepper>
         </View>

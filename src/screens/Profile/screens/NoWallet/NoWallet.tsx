@@ -22,6 +22,8 @@ import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
+import AppVersion from 'components/AppVersion';
+import {NoWalletImage} from '../../../../../assets/images';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -170,7 +172,7 @@ function NoWallet(props: NoWalletProps) {
               <View style={{height: '100%', flex: 1}}>
                 <Spacer times={8} />
                 <Image
-                  source={require('../../../../../assets/images/no-wallet.png')}
+                  source={NoWalletImage}
                   resizeMode="contain"
                   style={{width: 280, height: 180, alignSelf: 'center'}}
                 />
@@ -251,6 +253,7 @@ function NoWallet(props: NoWalletProps) {
                     </TouchableOpacity>
                   </Card>
                 </View>
+                <AppVersion />
               </View>
             </KeyboardDismiss>
           </KeyboardAwareScrollView>

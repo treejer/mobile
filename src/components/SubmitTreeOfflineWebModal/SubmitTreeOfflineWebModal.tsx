@@ -7,10 +7,28 @@ import {isWeb} from 'utilities/helpers/web';
 import {useTranslation} from 'react-i18next';
 import {StyleSheet, Text, TouchableOpacity, View, Modal} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useCurrentJourney} from 'services/currentJourney';
 
 function SubmitTreeOfflineWebModal() {
   const navigation = useNavigation();
   const {t} = useTranslation();
+
+  const {clearJourney} = useCurrentJourney();
+
+  const handleBack = () => {
+    navigation.dispatch(() =>
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.VerifiedProfileTab,
+          },
+        ],
+      }),
+    );
+    clearJourney();
+  };
+
   return isWeb() ? (
     <Modal visible transparent>
       <SafeAreaView style={styles.modalContainer}>
@@ -20,21 +38,7 @@ function SubmitTreeOfflineWebModal() {
           </Text>
           <Text style={globalStyles.h6}>{t('checkNetwork')}</Text>
           <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() =>
-                navigation.dispatch(() =>
-                  CommonActions.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: Routes.VerifiedProfileTab,
-                      },
-                    ],
-                  }),
-                )
-              }
-            >
+            <TouchableOpacity style={styles.btn} onPress={handleBack}>
               <Text style={styles.btnText}>{t('backToProfile')}</Text>
             </TouchableOpacity>
           </View>
