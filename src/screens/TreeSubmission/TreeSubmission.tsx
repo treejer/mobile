@@ -1,13 +1,8 @@
 import globalStyles from 'constants/styles';
 
 import React, {useEffect} from 'react';
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
 import {Route, NavigationProp} from '@react-navigation/native';
-import {Tree, TreeSubmissionRouteParamList} from 'types';
+import {TreeSubmissionRouteParamList} from 'types';
 import {useQuery} from '@apollo/client';
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
@@ -16,22 +11,23 @@ import TreeDetailQuery, {
 import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
-import {RootStack, Routes} from 'navigation';
+import {Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
+import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 
-export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
+export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
   T
 >;
 
-export type TreeSubmissionStackScreenProps<T extends keyof TreeSubmissionRouteParamList> = NativeStackScreenProps<
+export type TreeSubmissionStackScreenProps<T extends keyof TreeSubmissionRouteParamList> = StackScreenProps<
   TreeSubmissionRouteParamList,
   T
 >;
 
-const Stack = createNativeStackNavigator<TreeSubmissionRouteParamList>();
+const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 
 interface Props {
   route: Route<any>;
@@ -63,8 +59,8 @@ function TreeSubmission({route, navigation}: Props) {
   return (
     <Stack.Navigator
       screenOptions={{
-        contentStyle: globalStyles.screenView,
         headerShown: false,
+        animationEnabled: true,
       }}
     >
       <Stack.Screen

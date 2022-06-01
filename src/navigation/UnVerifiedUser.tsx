@@ -1,5 +1,4 @@
 import React from 'react';
-import {createNativeStackNavigator, NativeStackScreenProps as LibraryProp} from '@react-navigation/native-stack';
 import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile';
 import VerifyProfile from 'screens/Profile/screens/VerifyProfile';
@@ -8,6 +7,7 @@ import VerifyPending from 'screens/Profile/screens/VerifyPending';
 import {PlanterJoinJourney} from 'types';
 import {GetMeQueryPartialData} from 'services/graphql/GetMeQuery.graphql';
 import {screenTitle} from 'utilities/helpers/documentTitle';
+import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
 export type UnVerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -31,11 +31,11 @@ export type UnVerifiedUserNavigationProp<ScreenName extends keyof UnVerifiedUser
   ScreenName
 >;
 
-export const UnVerifiedUserStack = createNativeStackNavigator<UnVerifiedUserNavigationParamList>();
+export const UnVerifiedUserStack = createStackNavigator<UnVerifiedUserNavigationParamList>();
 
 export function UnVerifiedUserNavigation() {
   return (
-    <UnVerifiedUserStack.Navigator screenOptions={{headerShown: false}}>
+    <UnVerifiedUserStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
       <UnVerifiedUserStack.Screen
         name={Routes.MyProfile}
         component={MyProfile}
