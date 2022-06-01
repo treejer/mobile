@@ -118,7 +118,7 @@ export default function App() {
                       <SwitchNetwork />
                       {isWeb() ? <ToastContainer /> : <></>}
                       {isWeb() ? <LandScapeModal /> : <></>}
-                      {!isWeb() ? <UpdateModal /> : null}
+                      {!isWeb() ? <UpdateModal /> : <></>}
                       <NavigationContainer linking={linking}>
                         <RootNavigation />
                       </NavigationContainer>

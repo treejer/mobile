@@ -277,9 +277,10 @@ export const en = {
   checkNetwork: 'Please check your network',
   backToProfile: 'Back to profile',
   rotate: 'Please rotate your phone',
-  update: {
+  forceUpdate: {
     versionAvailable: 'New version is now available',
     updateContinue: 'Please update and then keep continue...',
+    download: 'Download New Version',
   },
   organization: {
     invited: 'You invited to this organization:',

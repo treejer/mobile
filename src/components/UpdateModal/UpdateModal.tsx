@@ -26,8 +26,8 @@ function UpdateModal() {
           </View>
           <Text style={[globalStyles.h2, styles.ranger]}>{t('loading.ranger')}</Text>
           <Text style={[globalStyles.h4, globalStyles.mb1, styles.treejer]}>{t('loading.by')}</Text>
-          <Text style={[styles.bold, globalStyles.h6]}>{t('update.versionAvailable')}</Text>
-          <Text>{t('update.updateContinue')}</Text>
+          <Text style={[styles.bold, globalStyles.h5]}>{t('forceUpdate.versionAvailable')}</Text>
+          <Text>{t('forceUpdate.updateContinue')}</Text>
           <View style={styles.btnContainer}>
             {!isForce && (
               <TouchableOpacity style={[styles.btn, styles.cancelBtn]} onPress={() => setIsShow(false)}>
@@ -36,7 +36,7 @@ function UpdateModal() {
             )}
             <TouchableOpacity style={[styles.btn, styles.downloadBtn]} onPress={handlePress}>
               <Text style={styles.whiteColor}>
-                <GooglePlay name="logo-google-playstore" size={15} /> {t('googlePlay')}
+                <GooglePlay name="logo-google-playstore" size={15} /> {t('forceUpdate.download')}
               </Text>
             </TouchableOpacity>
           </View>
