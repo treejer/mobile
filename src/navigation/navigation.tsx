@@ -1,5 +1,4 @@
 import React from 'react';
-import {createNativeStackNavigator, NativeStackScreenProps as LibraryProp} from '@react-navigation/native-stack';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import {useWeb3Context} from 'services/web3';
 import {isWeb} from 'utilities/helpers/web';
@@ -15,6 +14,7 @@ import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
+import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -36,7 +36,7 @@ export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList>
   ScreenName
 >;
 
-export const RootStack = createNativeStackNavigator<RootNavigationParamList>();
+export const RootStack = createStackNavigator<RootNavigationParamList>();
 
 export enum Routes {
   Init = 'Init',
@@ -78,7 +78,7 @@ export function RootNavigation() {
     <>
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
-      <RootStack.Navigator screenOptions={{headerShown: false}}>
+      <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}
