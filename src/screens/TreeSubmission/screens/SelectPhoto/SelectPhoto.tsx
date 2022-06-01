@@ -24,7 +24,7 @@ import getCroppedImg from 'utilities/hooks/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
-import WebImagePickerCropper from 'components/WebImagePickerCropper/WebImagePickerCropper';
+import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
 
@@ -72,7 +72,7 @@ function SelectPhoto(props: Props) {
   }, []);
 
   const handleSelectPhoto = useCallback(
-    async (fromGallery: boolean = false) => {
+    async (fromGallery: boolean) => {
       if (isWeb()) {
         setShowWebCam(true);
       } else {
@@ -96,7 +96,7 @@ function SelectPhoto(props: Props) {
         }
       }
     },
-    [openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
+    [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
   );
 
   const handlePickPhotoWeb = e => {
@@ -202,15 +202,19 @@ function SelectPhoto(props: Props) {
   if (showWebCam) {
     return (
       <Modal visible>
-        <WebCam handleDone={handleSelectPhotoWeb} />
+        <WebCam handleDone={handleSelectPhotoWeb} handleDismiss={() => setShowWebCam(false)} />
       </Modal>
     );
   }
 
   if (pickedImage) {
     return (
-      <Modal visible>
-        <WebImagePickerCropper imageData={pickedImage} handleDone={handleSelectLibraryPhotoWeb} />
+      <Modal visible transparent style={{flex: 1}}>
+        <WebImagePickerCropper
+          imageData={pickedImage}
+          handleDone={handleSelectLibraryPhotoWeb}
+          handleDismiss={() => setPickedImage(null)}
+        />
       </Modal>
     );
   }
@@ -236,8 +240,12 @@ function SelectPhoto(props: Props) {
               </View>
             ) : (
               <View style={{flexDirection: 'row'}}>
-                <SelectPhotoButton onPress={() => handleSelectPhoto()} icon="camera" caption={t('openCamera')} />
-                <PickImageButton icon="images" onPress={handlePickPhotoWeb} caption={t('openGallery')} />
+                <SelectPhotoButton onPress={() => handleSelectPhoto(false)} icon="camera" caption={t('openCamera')} />
+                <PickImageButton
+                  icon="images"
+                  onPress={isWeb() ? handlePickPhotoWeb : () => handleSelectPhoto(true)}
+                  caption={t('openGallery')}
+                />
               </View>
             )}
           </TreeSubmissionStepper>
