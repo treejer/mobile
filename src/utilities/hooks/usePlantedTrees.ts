@@ -6,6 +6,8 @@ import planterTreeQuery, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {Tree} from 'types';
+import {Image as NativeImage} from 'react-native';
+import {isWeb} from 'utilities/helpers/web';
 
 export default function usePlantedTrees(address) {
   const [plantedTrees, setPlantedTrees] = usePersistedPlantedTrees();
@@ -36,6 +38,11 @@ export default function usePlantedTrees(address) {
     (async function () {
       if (trees !== undefined) {
         setPlantedTrees(trees);
+        if (isWeb()) {
+          preFetchTreeImagesWeb();
+        } else {
+          preFetchTreeImages();
+        }
         try {
           await AsyncStorage.setItem(TreeFilter.Submitted, JSON.stringify(trees));
         } catch (e) {
@@ -44,6 +51,25 @@ export default function usePlantedTrees(address) {
       }
     })();
   }, [trees, setPlantedTrees]);
+
+  const preFetchTreeImages = useCallback(() => {
+    const treeImagesUrl = plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs);
+    treeImagesUrl?.forEach(async image => {
+      if (image) {
+        await NativeImage.prefetch(image);
+      }
+    });
+  }, [plantedTrees]);
+
+  const preFetchTreeImagesWeb = useCallback(() => {
+    const treeImagesUrl = plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs);
+    treeImagesUrl?.forEach(image => {
+      if (image) {
+        const img = new Image();
+        img.src = image;
+      }
+    });
+  }, [plantedTrees]);
 
   const refetchPlantedTrees = useCallback(async () => {
     setPage(0);
