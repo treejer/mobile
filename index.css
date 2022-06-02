@@ -36,10 +36,16 @@ body {
 .mapboxgl-ctrl-top-right {
   position: fixed !important;
   top: auto !important;
-  right: 1.1rem !important;
+  right: 1rem !important;
   bottom: 10vh !important;
   width: 100px !important;
   height: 100px !important;
+}
+
+@media all and (max-height: 677px) {
+  .mapboxgl-ctrl-top-right {
+    bottom: 13vh !important;
+  }
 }
 
 .mapboxgl-ctrl-geolocate {
@@ -74,7 +80,7 @@ input {
   top: env(safe-area-inset-top, 1em) !important;
 }
 
-@media screen and (min-width: 768px) {
+@media all and (min-width: 768px) {
   .Toastify__toast-container--top-right {
     right: calc(100vw - 768px - calc(50vw - 392px));
   }
