@@ -73,3 +73,9 @@ input {
 .Toastify__toast-container--top-right {
   top: env(safe-area-inset-top, 1em) !important;
 }
+
+@media screen and (min-width: 768px) {
+  .Toastify__toast-container--top-right {
+    right: calc(100vw - 768px - calc(50vw - 392px));
+  }
+}
