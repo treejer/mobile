@@ -3,7 +3,7 @@ import {colors} from 'constants/values';
 import GooglePlay from 'react-native-vector-icons/Ionicons';
 import {Image, Linking, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {TreejerIcon} from '../../../assets/images/index';
+import {TreejerIcon} from '../../../assets/images';
 import globalStyles from 'constants/styles';
 import {useTranslation} from 'react-i18next';
 import {googlePlayUrl} from 'services/config';

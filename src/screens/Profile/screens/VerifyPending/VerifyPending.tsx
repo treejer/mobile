@@ -8,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {useCurrentUser} from 'services/currentUser';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {EastWoodMessage} from '../../../../../assets/images/index';
+import {EastWoodMessage} from '../../../../../assets/images';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyPending> {}
 

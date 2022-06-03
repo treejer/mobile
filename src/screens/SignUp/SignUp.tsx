@@ -6,7 +6,7 @@ import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import Spacer from 'components/Spacer';
-import {SingUp} from '../../../assets/images/index';
+import {SingUp} from '../../../assets/images';
 
 function SignUp() {
   return (

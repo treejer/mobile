@@ -13,7 +13,7 @@ import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Welcome} from '../../../../../assets/images/index';
+import {Welcome} from '../../../../../assets/images';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;
 

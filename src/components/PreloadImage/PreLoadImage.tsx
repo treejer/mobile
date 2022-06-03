@@ -15,7 +15,7 @@ import {
   onBoardingOne,
   onBoardingThree,
   onBoardingTwo,
-} from '../../../assets/images/index';
+} from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
 
 const staticImages = [

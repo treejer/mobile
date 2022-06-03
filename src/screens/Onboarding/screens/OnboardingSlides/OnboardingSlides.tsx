@@ -10,7 +10,7 @@ import ProgressCircles from 'components/ProgressCircles';
 import {useSettings} from 'services/settings';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images/index';
+import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
