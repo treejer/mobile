@@ -49,10 +49,6 @@ function PreLoadImage() {
 
   const allImages = useMemo(() => [...images, ...icons, ...(treeImagesUrl || [])], [plantedTrees, treeImagesUrl]);
 
-  console.log('====================================');
-  console.log(allImages, '<==== all images');
-  console.log('====================================');
-
   const preFetchTreeImages = useCallback(() => {
     allImages?.forEach(async image => {
       if (image) {
