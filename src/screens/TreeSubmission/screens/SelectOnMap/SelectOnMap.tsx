@@ -9,6 +9,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
+import {MapMarker} from '../../../../../assets/icons/index';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
 
@@ -21,7 +22,7 @@ function SelectOnMap(_: Props) {
       <View style={globalStyles.fill}>
         <MapMarking />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
-          <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
+          <Image style={styles.mapMarker} source={MapMarker} />
         </View>
       </View>
     </SafeAreaView>

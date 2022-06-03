@@ -21,6 +21,7 @@ import Orientation from 'react-native-orientation';
 import LandScapeModal from './src/components/LandScapeModal/LandScapeModal';
 import UpdateModal from './src/components/UpdateModal/UpdateModal';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
+import PreLoadImage from './src/components/PreloadImage/PreLoadImage';
 
 const config = {
   screens: {
@@ -116,6 +117,7 @@ export default function App() {
                     <CurrentJourneyProvider>
                       <NetInfo />
                       <SwitchNetwork />
+                      <PreLoadImage />
                       {isWeb() ? <ToastContainer /> : <></>}
                       {isWeb() ? <LandScapeModal /> : <></>}
                       {!isWeb() ? <UpdateModal /> : <></>}

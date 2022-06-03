@@ -13,6 +13,7 @@ import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {Welcome} from '../../../../../assets/images/index';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;
 
@@ -50,7 +51,7 @@ function SelectLanguage(props: SelectLanguageProps) {
         <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
           <Text style={[globalStyles.h2, globalStyles.textCenter]}>TREEJER{'\n'}RANGER APP</Text>
           <AppVersion style={globalStyles.mb1} />
-          <Image source={require('../../../../../assets/images/welcome.png')} style={imageStyle} />
+          <Image source={Welcome} style={imageStyle} />
           <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
           <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
             <Button

@@ -8,6 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {useCurrentUser} from 'services/currentUser';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {EastWoodMessage} from '../../../../../assets/images/index';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyPending> {}
 
@@ -34,7 +35,7 @@ function VerifyPending(props: Props) {
           globalStyles.justifyContentCenter,
         ]}
       >
-        <Image source={require('../../../../../assets/images/eastwood-message-sent-1.png')} />
+        <Image source={EastWoodMessage} />
         <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('verifyPending.title')}</Text>
         <Spacer times={7} />
         <View style={{paddingHorizontal: 40, paddingVertical: 20, width: '100%'}}>
