@@ -9,6 +9,7 @@ import ProgressCircles from 'components/ProgressCircles';
 import {useSettings} from 'services/settings';
 import {useTranslation} from 'react-i18next';
 import Slider from 'react-slick';
+import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images/index';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
@@ -38,17 +39,17 @@ function OnboardingScreen() {
 
   const onboardingData: OnboardingData[] = [
     {
-      image: require('../../../../../assets/images/onboarding-1.png'),
+      image: onBoardingOne,
       heading: t('onBoarding.first.title'),
       content: t('onBoarding.first.details'),
     },
     {
-      image: require('../../../../../assets/images/onboarding-2.png'),
+      image: onBoardingTwo,
       heading: t('onBoarding.second.title'),
       content: t('onBoarding.second.details'),
     },
     {
-      image: require('../../../../../assets/images/onboarding-3.png'),
+      image: onBoardingThree,
       heading: t('onBoarding.third.title'),
       content: t('onBoarding.third.details'),
     },

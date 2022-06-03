@@ -1,19 +1,19 @@
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
-
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import Spacer from 'components/Spacer';
+import {SingUp} from '../../../assets/images/index';
 
 function SignUp() {
   return (
     <View style={[globalStyles.fill, globalStyles.screenView]}>
       <BackgroundEntropy />
       <View style={[globalStyles.alignItemsCenter, globalStyles.justifyContentCenter, globalStyles.fill]}>
-        <Image source={require('../../../assets/images/sign-up.png')} />
+        <Image source={SingUp} />
 
         <Spacer times={3} />
         <Text style={globalStyles.h4}>Welcome!</Text>

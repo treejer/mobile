@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import Share from 'react-native-vector-icons/Entypo';
 import GooglePlay from 'react-native-vector-icons/Ionicons';
 import {StyleSheet, Text, TouchableOpacity, View, Image, Linking, Modal} from 'react-native';
@@ -24,7 +24,7 @@ function PwaModal() {
       <SafeAreaView style={styles.modalContainer}>
         <View style={[styles.modal, globalStyles.normal]}>
           <View>
-            <Image source={TreejerIcon} style={{width: 70, height: 70, borderRadius: 27, marginBottom: 20}} />
+            <Image source={TreejerIcon} style={styles.image} />
           </View>
           <Text style={[globalStyles.h3, globalStyles.mb1]}>{t('Install App')}</Text>
           <Text style={globalStyles.h6}>
@@ -62,6 +62,12 @@ const styles = StyleSheet.create({
     height: '100vh',
     backgroundColor: colors.grayOpacity,
     padding: 5,
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 27,
+    marginBottom: 20,
   },
   modal: {
     width: 250,
