@@ -18,8 +18,9 @@ import {
 } from '../../../assets/images/index';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
 
-const icons = [MapMarker, TreeImage];
-const images = [
+const staticImages = [
+  MapMarker,
+  TreeImage,
   EastWoodMessage,
   MaticLogo,
   NoWalletImage,
@@ -45,40 +46,31 @@ function PreLoadImage() {
     }
   }, [plantedTrees]);
 
-  const treeImagesUrl = useMemo(() => plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs), [plantedTrees]);
+  const treeImagesUrl = useMemo(
+    () => plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs).filter(Boolean),
+    [plantedTrees],
+  );
 
-  const allImages = useMemo(() => [...images, ...icons, ...(treeImagesUrl || [])], [plantedTrees, treeImagesUrl]);
+  const allImages = useMemo(() => [...staticImages, ...(treeImagesUrl || [])], [plantedTrees, treeImagesUrl]);
 
   const preFetchTreeImages = useCallback(() => {
-    allImages?.forEach(async image => {
-      if (image) {
-        await NativeImage.prefetch(image);
-      }
+    treeImagesUrl?.forEach(image => {
+      NativeImage.prefetch(String(image));
     });
-  }, [plantedTrees]);
+  }, [plantedTrees, treeImagesUrl]);
 
   const preFetchTreeImagesWeb = useCallback(() => {
     allImages?.forEach(image => {
-      if (image) {
-        const img = new Image();
-        img.src = image;
-      }
+      const img = new Image();
+      img.src = image;
     });
-  }, [plantedTrees]);
+  }, [plantedTrees, allImages]);
 
-  return <></>;
+  if (isWeb()) {
+    return <></>;
+  } else {
+    return staticImages.map((img, index) => <NativeImage key={index} source={img} style={{width: 0, height: 0}} />);
+  }
 }
 
 export default PreLoadImage;
-
-// images.forEach(async image => {
-//   if (image) {
-//     await NativeImage.prefetch(image);
-//   }
-// });
-// icons.forEach(async icon => {
-//   if (icon) {
-//     await NativeImage.prefetch(icon);
-//   }
-// });
-// const treeImagesUrl = plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs);
