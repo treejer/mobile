@@ -120,7 +120,6 @@ export default function App() {
                       <PreLoadImage />
                       {isWeb() ? <ToastContainer /> : <></>}
                       {isWeb() ? <LandScapeModal /> : <></>}
-                      <UpdateModal />
                       {!isWeb() ? <UpdateModal /> : <></>}
                       <NavigationContainer linking={linking}>
                         <RootNavigation />

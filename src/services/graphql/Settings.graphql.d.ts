@@ -12,7 +12,7 @@ export namespace SettingsQueryPartialData {
   }
 }
 export interface SettingsQueryPartialData {
-  settings?: (SettingsQueryPartialData.Settings | null)[] | null;
+  settings?: SettingsQueryPartialData.Settings | null;
 }
 export namespace SettingsQueryData {
   export interface SettingsForceUpdate {
@@ -27,7 +27,7 @@ export namespace SettingsQueryData {
   }
 }
 export interface SettingsQueryData {
-  settings?: (SettingsQueryData.Settings | null)[] | null;
+  settings?: SettingsQueryData.Settings | null;
 }
 declare const document: DocumentNode<SettingsQueryData, never, SettingsQueryPartialData>;
 export default document;
