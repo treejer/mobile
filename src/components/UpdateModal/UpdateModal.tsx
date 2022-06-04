@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {colors} from 'constants/values';
 import GooglePlay from 'react-native-vector-icons/Ionicons';
 import {Image, Linking, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
@@ -8,29 +8,38 @@ import globalStyles from 'constants/styles';
 import {useTranslation} from 'react-i18next';
 import {googlePlayUrl} from 'services/config';
 import {useQuery} from '@apollo/client';
-import SettingsQuery, {SettingsQueryData} from 'services/graphql/Settings.graphql';
+import SettingsQuery, {SettingsQueryData, SettingsQueryPartialData} from 'services/graphql/Settings.graphql';
+import {version} from '../../../package.json';
 
-export type ForceUpdateState = {
-  force: boolean;
-  version: string;
-};
+function checkVersion(newVersion: string) {
+  return version
+    .split('-')[0]
+    .split('.')
+    .reduce<boolean[]>((isShow, item, index) => {
+      const isCurrentOlder = newVersion.split('.')[index] > item;
+      isShow.push(isCurrentOlder);
+      return isShow;
+    }, [])
+    .includes(true);
+}
 
 function UpdateModal() {
-  const {loading, data, error} = useQuery<SettingsQueryData>(SettingsQuery);
-  console.log(data, 'data is here Settings', loading, 'loading');
-  const [forceState, setForceState] = useState<ForceUpdateState | null>(null);
-
-  // const isShow = forceState?.force || ;
-  const [isShow, setIsShow] = useState(false);
-  const [isForce, setIsForce] = useState(true);
+  const {data} = useQuery<SettingsQueryData>(SettingsQuery);
+  const [isShow, setIsShow] = useState<boolean>(false);
   const {t} = useTranslation();
+
+  useEffect(() => {
+    if (data?.settings?.forceUpdate?.version) {
+      setIsShow(checkVersion(data.settings.forceUpdate.version));
+    }
+  }, [data?.settings?.forceUpdate]);
 
   const handlePress = useCallback(() => {
     Linking.openURL(googlePlayUrl);
   }, []);
 
-  return forceState ? (
-    <Modal visible>
+  return (
+    <Modal visible={isShow} onRequestClose={() => {}}>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modal}>
           <View>
@@ -41,7 +50,7 @@ function UpdateModal() {
           <Text style={[styles.bold, globalStyles.h5]}>{t('forceUpdate.versionAvailable')}</Text>
           <Text>{t('forceUpdate.updateContinue')}</Text>
           <View style={styles.btnContainer}>
-            {!isForce && (
+            {!data?.settings?.forceUpdate?.force && (
               <TouchableOpacity style={[styles.btn, styles.cancelBtn]} onPress={() => setIsShow(false)}>
                 <Text>{t('close')}</Text>
               </TouchableOpacity>
@@ -55,7 +64,7 @@ function UpdateModal() {
         </View>
       </SafeAreaView>
     </Modal>
-  ) : null;
+  );
 }
 
 export default UpdateModal;
