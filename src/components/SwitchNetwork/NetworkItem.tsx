@@ -30,7 +30,7 @@ export function NetworkItem(props: NetworkItemProps) {
       }}
       disabled={isActive}
     >
-      <Image source={networkInfo.logo} style={{width: '30%', height: 40}} />
+      <Image source={networkInfo.logo} style={{width: 80, height: 40}} />
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={{color: isActive ? colors.green : colors.grayLight, fontWeight: isActive ? 'bold' : 'normal'}}>
           {networkInfo.title}

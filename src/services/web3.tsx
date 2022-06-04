@@ -1,27 +1,26 @@
-import React, {memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import Web3, {magicGenerator, Magic} from 'services/Magic';
+import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Account} from 'web3-core';
 import {Contract} from 'web3-eth-contract';
-import {Alert} from 'react-native';
 import {getTreejerApiAccessToken} from 'utilities/helpers/getTreejerApiAccessToken';
-import configs, {BlockchainNetwork, NetworkConfig, storageKeys} from './config';
+import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig, storageKeys} from './config';
 import {useTranslation} from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export interface Web3ContextState {
-  web3: null | Web3;
+  web3: Web3;
   unlocked: boolean;
   accessToken: string;
   treeFactory: Contract;
   planter: Contract;
   planterFund: Contract;
   resetWeb3Data: () => void;
-  waiting: boolean;
   userId: string;
   magicToken: string;
   storeMagicToken: (token: string) => void;
-  wallet: null | string;
+  wallet: string;
   loading: boolean;
   network: BlockchainNetwork;
   magic: Magic | null;
@@ -37,11 +36,10 @@ const initialValue: Web3ContextState = {
   planter: {} as Contract,
   planterFund: {} as Contract,
   resetWeb3Data() {},
-  waiting: false,
   userId: '',
   magicToken: '',
-  storeMagicToken: (token: string) => {},
-  wallet: null,
+  storeMagicToken: () => {},
+  wallet: '',
   loading: true,
   network: BlockchainNetwork.Rinkeby,
   magic: null,
@@ -65,11 +63,11 @@ interface Props {
 function Web3Provider(props: Props) {
   const {
     children,
-    persistedMagicToken,
-    persistedWallet = null,
+    persistedMagicToken = '',
+    persistedWallet = '',
     persistedAccessToken = '',
     persistedUserId = '',
-    blockchainNetwork,
+    blockchainNetwork = defaultNetwork,
   } = props;
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -78,9 +76,8 @@ function Web3Provider(props: Props) {
   const magic = useMemo<Magic>(() => magicGenerator(config), [config]);
   const web3 = useMemo(() => new Web3(magic.rpcProvider), [magic]);
 
-  const [wallet, setWallet] = useState<null | string>(persistedWallet);
+  const [wallet, setWallet] = useState<string>(persistedWallet);
   const [magicToken, setMagicToken] = useState<string>(persistedMagicToken);
-  const [waiting, setWaiting] = useState<boolean>(true);
   const [unlocked, setUnlocked] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string>(persistedAccessToken);
   const [userId, setUserId] = useState<string>(persistedUserId);
@@ -91,15 +88,6 @@ function Web3Provider(props: Props) {
   const {t} = useTranslation();
 
   const isConnected = useNetInfoConnected();
-
-  const previousWeb3 = useRef<Web3 | null>(null);
-
-  const addToWallet = useCallback(
-    (privateKey: string) => {
-      web3.eth.accounts.wallet.add(privateKey);
-    },
-    [web3],
-  );
 
   const updateAccessToken = useCallback(async () => {
     try {
@@ -123,7 +111,6 @@ function Web3Provider(props: Props) {
       await web3.eth.getAccounts(async (error, accounts) => {
         if (error) {
           console.log(error, 'e is here getAccounts eth');
-          setWaiting(false);
           setLoading(false);
           web3Accounts = accounts;
           return;
@@ -132,19 +119,21 @@ function Web3Provider(props: Props) {
         if (account) {
           await AsyncStorage.setItem(storageKeys.magicWalletAddress, account);
           setWallet(account);
-          setWaiting(false);
           setLoading(false);
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log('[[[[catch]]]]');
       let {error: {message = t('loginFailed.message')} = {}} = error;
       if (error.message) {
         message = error.message;
       }
-      setWaiting(false);
       setLoading(false);
-      Alert.alert(t('loginFailed.title'), message);
+      showAlert({
+        title: t('loginFailed.title'),
+        message,
+        mode: AlertMode.Error,
+      });
     }
   }, [config.treejerApiUrl, t, web3]);
 
@@ -157,7 +146,6 @@ function Web3Provider(props: Props) {
       if (isConnected) {
         await updateAccessToken();
       } else {
-        setWaiting(false);
         setLoading(false);
         setUnlocked(true);
       }
@@ -168,7 +156,7 @@ function Web3Provider(props: Props) {
   const resetWeb3Data = useCallback(async () => {
     await setUnlocked(false);
     await setAccessToken('');
-    await setWallet(null);
+    await setWallet('');
   }, []);
 
   const changeNetwork = useCallback(async (newNetwork: BlockchainNetwork) => {
@@ -190,11 +178,10 @@ function Web3Provider(props: Props) {
       } catch (error) {
         console.log(error, 'error');
       }
-      console.log(persistedMagicToken, 'persistedMagicToken');
       if (persistedMagicToken) {
         await storeMagicToken(persistedMagicToken);
       } else {
-        setWaiting(false);
+        setLoading(false);
       }
     })();
   }, []);
@@ -205,7 +192,6 @@ function Web3Provider(props: Props) {
       unlocked,
       accessToken,
       treeFactory,
-      waiting,
       resetWeb3Data,
       userId,
       planter,
@@ -224,7 +210,6 @@ function Web3Provider(props: Props) {
       unlocked,
       accessToken,
       treeFactory,
-      waiting,
       resetWeb3Data,
       userId,
       planter,
@@ -249,6 +234,7 @@ const useContract = (web3: Web3, {abi, address}: {abi: any; address: string}) =>
 
 export default memo(Web3Provider);
 
+export const useWeb3Context = () => useContext<Web3ContextState>(Web3Context);
 export const useWeb3 = () => useContext<Web3ContextState>(Web3Context).web3;
 export const useConfig = () => useContext<Web3ContextState>(Web3Context).config;
 export const useChangeNetwork = () => useContext<Web3ContextState>(Web3Context).changeNetwork;
@@ -261,7 +247,7 @@ export const useResetWeb3Data = () => {
   const resetWeb3Data = useContext<Web3ContextState>(Web3Context).resetWeb3Data;
   return {resetWeb3Data};
 };
-export const useWalletAccount = (): string | null => {
+export const useWalletAccount = (): string => {
   return useContext<Web3ContextState>(Web3Context).wallet;
 };
 export const useWalletAccountTorus = (): Account | null => {

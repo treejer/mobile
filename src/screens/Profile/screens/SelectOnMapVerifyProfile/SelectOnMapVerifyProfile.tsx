@@ -3,23 +3,23 @@ import globalStyles from 'constants/styles';
 
 import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {PlanterJoinList} from 'types';
-import MapMarking from 'screens/TreeSubmission/components/MapMarking';
+import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {GeoPosition} from 'react-native-geolocation-service';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {MapMarker} from '../../../../../assets/icons/index';
 
-interface Props {}
+interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyProfile> {}
 
-function SelectOnMapVerifyProfile(_: Props) {
-  const navigation = useNavigation<NavigationProp<PlanterJoinList>>();
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<PlanterJoinList, 'SelectOnMapJoinPlanter'>>();
+function SelectOnMapVerifyProfile(props: Props) {
+  const {navigation, route} = props;
+  const {params} = route;
+  const {journey} = params || {};
 
   const handleSubmit = useCallback(
     (location: GeoPosition) => {
       const {coords} = location;
-      navigation.navigate('VerifyProfile', {
+      navigation.navigate(Routes.VerifyProfile, {
         journey: {
           ...journey,
           location: {
@@ -33,14 +33,16 @@ function SelectOnMapVerifyProfile(_: Props) {
   );
 
   return (
-    <View style={globalStyles.fill}>
-      <View style={styles.container}>
-        <MapMarking onSubmit={handleSubmit} />
+    <SafeAreaView style={globalStyles.fill}>
+      <View style={globalStyles.fill}>
+        <View style={styles.container}>
+          <MapMarking onSubmit={handleSubmit} />
+        </View>
+        <View pointerEvents="none" style={styles.mapMarkerWrapper}>
+          <Image style={styles.mapMarker} source={MapMarker} />
+        </View>
       </View>
-      <View pointerEvents="none" style={styles.mapMarkerWrapper}>
-        <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

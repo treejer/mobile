@@ -1,23 +1,31 @@
 import globalStyles from 'constants/styles';
-
-import React from 'react';
+import TreeSymbol from 'components/TreeList/TreeSymbol';
+import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import {useTranslation} from 'react-i18next';
+import {useCurrentJourney} from 'services/currentJourney';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
+import {colors} from 'constants/values';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props {
   currentStep: number;
   children: React.ReactNode;
-  isUpdate?: boolean;
-  isSingle?: boolean;
-  count?: number;
-  canUpdateLocation?: boolean;
 }
 
 function TreeSubmissionStepper(props: Props) {
-  const {isUpdate, currentStep, children, isSingle, count, canUpdateLocation = true} = props;
+  const {currentStep, children} = props;
   const {t} = useTranslation();
+  const {journey} = useCurrentJourney();
+
+  const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
+  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
 
   const title = isSingle
     ? 'submitTree.submitTree'
@@ -27,11 +35,19 @@ function TreeSubmissionStepper(props: Props) {
     ? 'submitTree.updateTree'
     : 'submitTree.submitTree';
 
-  console.log(canUpdateLocation, 'canUpdateLocation inside TreeSubmisionStepper');
+  const imageSize = useMemo(
+    () =>
+      isWeb() ? (journey.tree?.treeSpecsEntity.imageFs ? 136 : 80) : journey.tree?.treeSpecsEntity.imageFs ? 200 : 120,
+    [journey.tree?.treeSpecsEntity.imageFs],
+  );
 
   return (
     <>
-      <Text style={[globalStyles.h5, globalStyles.textCenter]}>{t(title, {count})}</Text>
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
+        <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+          {t(title, {count})} {isUpdate && `#${Hex2Dec(journey.tree?.id!)}`}
+        </Text>
+      </View>
       <Spacer times={10} />
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
@@ -44,7 +60,7 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 2 - Only for creation */}
-        {(!isUpdate || !!canUpdateLocation) && (
+        {(!isUpdate || Boolean(canUpdateLocation)) && (
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>
@@ -57,7 +73,7 @@ function TreeSubmissionStepper(props: Props) {
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(!(!isUpdate || !!canUpdateLocation))}>
+        <Steps.Step step={3 - Number(!(!isUpdate || Boolean(canUpdateLocation)))}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
@@ -66,17 +82,30 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(!(!isUpdate || !!canUpdateLocation))} lastStep>
+        <Steps.Step step={4 - Number(!(!isUpdate || Boolean(canUpdateLocation)))} lastStep>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}
           </View>
         </Steps.Step>
       </Steps.Container>
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter, {marginTop: 16}]}>
+        {isUpdate && (
+          <TreeSymbol
+            tree={journey.tree}
+            tint={false}
+            treeUpdateInterval={1}
+            color={colors.green}
+            size={imageSize}
+            autoHeight
+            hideId
+          />
+        )}
+      </View>
     </>
   );
 
-  function renderChildrenIfCurrentStep(step: number, element?: JSX.Element) {
+  function renderChildrenIfCurrentStep(step: number) {
     if (step === currentStep) {
       return children;
     }
