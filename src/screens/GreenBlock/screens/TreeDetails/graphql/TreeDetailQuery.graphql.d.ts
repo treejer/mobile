@@ -1,15 +1,15 @@
-import {DocumentNode} from 'graphql-typed';
+import { DocumentNode } from "graphql-typed";
 export namespace TreeDetailQueryQueryPartialData {
   export interface TreePlanter {
-    __typename?: 'planter' | null;
+    __typename?: "planter" | null;
     id?: string | null;
   }
   export interface TreeFunder {
-    __typename?: 'TreeFunder' | null;
+    __typename?: "TreeFunder" | null;
     id?: string | null;
   }
   export interface TreeTreeSpecsEntity {
-    __typename?: 'TreeSpecs' | null;
+    __typename?: "TreeSpecs" | null;
     id?: string | null;
     name?: string | null;
     description?: string | null;
@@ -28,7 +28,7 @@ export namespace TreeDetailQueryQueryPartialData {
     locations?: string | null;
   }
   export interface TreeLastUpdate {
-    __typename?: 'TreeUpdate' | null;
+    __typename?: "TreeUpdate" | null;
     id?: string | null;
     updateStatus?: number | null;
     updateSpecs?: string | null;
@@ -36,7 +36,7 @@ export namespace TreeDetailQueryQueryPartialData {
     updatedAt?: number | null;
   }
   export interface Tree {
-    __typename?: 'Tree' | null;
+    __typename?: "Tree" | null;
     id?: string | null;
     planter?: TreeDetailQueryQueryPartialData.TreePlanter | null;
     funder?: TreeDetailQueryQueryPartialData.TreeFunder | null;
@@ -57,16 +57,15 @@ export namespace TreeDetailQueryQueryData {
     id: string;
   }
   export interface TreePlanter {
-    __typename: 'planter';
+    __typename: "planter";
     id: string;
   }
   export interface TreeFunder {
-    __typename: 'TreeFunder';
+    __typename: "TreeFunder";
     id?: string | null;
   }
   export interface TreeTreeSpecsEntity {
-    __typename: 'TreeSpecs';
-    image_ipfs_hash: string | null;
+    __typename: "TreeSpecs";
     id?: string | null;
     name?: string | null;
     description?: string | null;
@@ -85,7 +84,7 @@ export namespace TreeDetailQueryQueryData {
     locations?: string | null;
   }
   export interface TreeLastUpdate {
-    __typename: 'TreeUpdate';
+    __typename: "TreeUpdate";
     id?: string | null;
     updateStatus?: number | null;
     updateSpecs?: string | null;
@@ -93,7 +92,7 @@ export namespace TreeDetailQueryQueryData {
     updatedAt: number;
   }
   export interface Tree {
-    __typename: 'Tree';
+    __typename: "Tree";
     id?: string | null;
     planter: TreeDetailQueryQueryData.TreePlanter;
     funder: TreeDetailQueryQueryData.TreeFunder;
@@ -109,9 +108,5 @@ export namespace TreeDetailQueryQueryData {
 export interface TreeDetailQueryQueryData {
   tree?: TreeDetailQueryQueryData.Tree | null;
 }
-declare const document: DocumentNode<
-  TreeDetailQueryQueryData,
-  TreeDetailQueryQueryData.Variables,
-  TreeDetailQueryQueryPartialData
->;
+declare const document: DocumentNode<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables, TreeDetailQueryQueryPartialData>;
 export default document;

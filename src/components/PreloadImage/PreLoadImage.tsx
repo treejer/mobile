@@ -69,7 +69,13 @@ function PreLoadImage() {
   if (isWeb()) {
     return <></>;
   } else {
-    return staticImages.map((img, index) => <NativeImage key={index} source={img} style={{width: 0, height: 0}} />);
+    return (
+      <>
+        {staticImages.map((img, index) => (
+          <NativeImage key={index} source={img} style={{width: 0, height: 0}} />
+        ))}
+      </>
+    );
   }
 }
 

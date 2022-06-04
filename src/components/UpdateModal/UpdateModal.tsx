@@ -7,8 +7,20 @@ import {TreejerIcon} from '../../../assets/images';
 import globalStyles from 'constants/styles';
 import {useTranslation} from 'react-i18next';
 import {googlePlayUrl} from 'services/config';
+import {useQuery} from '@apollo/client';
+import SettingsQuery, {SettingsQueryData} from 'services/graphql/Settings.graphql';
+
+export type ForceUpdateState = {
+  force: boolean;
+  version: string;
+};
 
 function UpdateModal() {
+  const {loading, data, error} = useQuery<SettingsQueryData>(SettingsQuery);
+  console.log(data, 'data is here Settings', loading, 'loading');
+  const [forceState, setForceState] = useState<ForceUpdateState | null>(null);
+
+  // const isShow = forceState?.force || ;
   const [isShow, setIsShow] = useState(false);
   const [isForce, setIsForce] = useState(true);
   const {t} = useTranslation();
@@ -17,7 +29,7 @@ function UpdateModal() {
     Linking.openURL(googlePlayUrl);
   }, []);
 
-  return isShow ? (
+  return forceState ? (
     <Modal visible>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modal}>
