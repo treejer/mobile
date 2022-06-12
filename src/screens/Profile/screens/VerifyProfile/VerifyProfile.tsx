@@ -33,6 +33,7 @@ import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
+import {restApiError} from 'utilities/helpers/error';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -138,7 +139,7 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
-  console.log(updateMobileState.data, 'updateMobileState', updateMobileState.loading);
+  console.log(updateMobileState, 'updateMobileState', updateMobileState.loading);
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
@@ -158,24 +159,14 @@ function VerifyProfile(props: Props) {
           },
         },
         errorPolicy: 'all',
-        onError: error => {
-          console.log(error, 'error is herererererererererererer');
-        },
       });
       setPhoneNumber(mobileNumber);
       setRequestedMobileVerification(true);
     } catch (e) {
-      console.log(e, 'e is hererere');
-      handleMutationAlert(e);
+      phoneNumberForm.setError('phoneNumber', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
-
-    // console.log(JSON.parse(JSON.stringify(error)), 'hererererer');
-    // if (error?.result?.error?.message) {
-    //   Alert.alert(t('error', error?.result?.error?.message));
-    // }
-    // phoneNumberForm.setError('phoneNumber', {
-    //   message: error?.networkError?.result?.error?.message || 'Unknown Error. Please contact customer support!',
-    // });
   });
 
   const resendCode = async () => {
@@ -187,7 +178,7 @@ function VerifyProfile(props: Props) {
   };
 
   const handleMutationAlert = (error: any) => {
-    const message = error?.networkError?.result?.error?.message || t('unknownError');
+    const message = restApiError(error).message || t('unknownError');
     showAlert({
       title: t('error'),
       message,
@@ -285,6 +276,9 @@ function VerifyProfile(props: Props) {
     setIdCardImageUri(selectedPhoto);
     setIsCameraVisible(false);
   };
+  const handleDismiss = () => {
+    setIsCameraVisible(false);
+  };
 
   const submitButtonMarkup = idCardImageUri ? (
     <View style={{flexDirection: 'row'}}>
@@ -299,7 +293,7 @@ function VerifyProfile(props: Props) {
   ) : null;
 
   if (isCameraVisible) {
-    return <WebCam handleDone={handleDonePicture} />;
+    return <WebCam handleDone={handleDonePicture} handleDismiss={handleDismiss} />;
   }
 
   return (
