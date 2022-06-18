@@ -31,7 +31,7 @@ import {colors} from 'constants/values';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';

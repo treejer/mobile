@@ -20,7 +20,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
-import getCroppedImg from 'utilities/hooks/cropImage';
+import getCroppedImg from 'utilities/helpers/cropImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';

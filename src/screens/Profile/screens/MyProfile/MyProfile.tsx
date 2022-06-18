@@ -24,7 +24,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
 
 export type MyProfileProps =

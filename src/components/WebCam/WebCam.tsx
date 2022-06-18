@@ -11,7 +11,7 @@ const bottomSheetSpace = 80;
 
 interface WebCamProps {
   handleDone: (image: string, croppedAreaPixels: number | null, rotation: number) => void;
-  handleDismiss: () => void;
+  handleDismiss?: () => void;
 }
 
 function WebCam(props: WebCamProps) {

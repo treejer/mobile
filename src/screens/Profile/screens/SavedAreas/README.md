@@ -1,0 +1,3 @@
+# SavedAreas screen
+
+> SavedAreas screen

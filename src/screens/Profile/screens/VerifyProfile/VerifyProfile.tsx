@@ -32,7 +32,7 @@ import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
-import getCroppedImg from 'utilities/hooks/cropImage';
+import getCroppedImg from 'utilities/helpers/cropImage';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 

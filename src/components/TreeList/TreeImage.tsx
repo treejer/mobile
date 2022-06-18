@@ -2,7 +2,6 @@ import React from 'react';
 import {treeColor, treeImageSrc} from 'utilities/helpers/tree';
 import {ActivityIndicator, Image, ImageProps, View} from 'react-native';
 import {Tree} from 'types';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import TreeSvg from 'components/Icons/Tree';
 
 export interface TreeImageProps extends Omit<ImageProps, 'source'> {

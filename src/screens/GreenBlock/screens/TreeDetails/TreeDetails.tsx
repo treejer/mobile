@@ -31,7 +31,7 @@ import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
