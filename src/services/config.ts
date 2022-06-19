@@ -75,7 +75,7 @@ export function formatUrl(url?: string) {
   return url ? url?.replace(/\/$/, '') : '';
 }
 
-export const isProd = process.env.NODE_ENV === 'Production';
+export const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
 
 const config: Config = {
   [BlockchainNetwork.MaticMain]: {
