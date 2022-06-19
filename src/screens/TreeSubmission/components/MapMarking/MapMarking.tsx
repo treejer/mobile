@@ -21,9 +21,11 @@ import {useCurrentJourney} from 'services/currentJourney';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
+  verifyProfile?: boolean;
 }
 
-export default function MapMarking({onSubmit}: IMapMarkingProps) {
+export default function MapMarking(props: IMapMarkingProps) {
+  const {onSubmit, verifyProfile} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,9 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(() => {
-    if (journey && location) {
+    if (verifyProfile && location) {
+      onSubmit?.(location);
+    } else if (journey && location) {
       const newJourney = {
         ...journey,
         location: {
@@ -170,8 +174,10 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
       }
     }
   }, [
-    journey,
+    verifyProfile,
     location,
+    journey,
+    onSubmit,
     isConnected,
     navigation,
     setNewJourney,
@@ -181,7 +187,6 @@ export default function MapMarking({onSubmit}: IMapMarkingProps) {
     dispatchAddOfflineTrees,
     persistedPlantedTrees,
     dispatchAddOfflineUpdateTree,
-    onSubmit,
   ]);
 
   useEffect(() => {
