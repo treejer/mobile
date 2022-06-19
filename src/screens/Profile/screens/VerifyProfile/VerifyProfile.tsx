@@ -18,7 +18,7 @@ import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/Use
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useUserId} from 'services/web3';
+import {useConfig, useUserId} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';
@@ -63,6 +63,12 @@ function VerifyProfile(props: Props) {
   const phoneRef = useRef<PhoneInput>(null);
   const {data} = useQuery<GetMeQueryData>(getMeQuery);
   const {user} = data || {};
+
+  const {treejerApiUrl} = useConfig();
+  console.log(treejerApiUrl, 'treejerApiUrl');
+
+  console.log(verifyMobileState.data, 'verifyMobileState.data');
+  console.log(verifyMobileState.error, 'verifyMobileState.error');
 
   const {params} = route;
   const {journey} = params || {};
@@ -139,7 +145,8 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
-  console.log(updateMobileState, 'updateMobileState', updateMobileState.loading);
+  console.log(updateMobileState.data, 'updateMobileState.data');
+  console.log(updateMobileState.error, 'updateMobileState.error');
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
@@ -210,6 +217,9 @@ function VerifyProfile(props: Props) {
         },
       });
     } catch (e) {
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
       handleMutationAlert(e);
     }
   });
@@ -437,11 +447,6 @@ function VerifyProfile(props: Props) {
               placeholder="Phone #"
               onSubmitEditing={submitPhoneNumber}
             />
-            {phoneNumberForm.formState.errors.phoneNumber && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.phoneNumber?.message}
-              </Text>
-            )}
             <Spacer times={4} />
             <Button
               variant="success"
@@ -462,11 +467,6 @@ function VerifyProfile(props: Props) {
               name="verificationCode"
               onSubmitEditing={verifyPhone}
             />
-            {phoneNumberForm.formState.errors.verificationCode && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.verificationCode?.message || t('errors.verificationCode')}
-              </Text>
-            )}
             <Spacer times={4} />
             <TouchableOpacity
               style={{marginVertical: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
