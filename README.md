@@ -27,14 +27,14 @@
   - [CurrentUserProvider](./src/services): user data provider
   - [CurrentJourneyProvide](./src/services)r: journey data provider
   - NavigationContainer: react-navigation wrapper
-- [AppLoading](./src/components/AppLoading)
+- [AppLoading](./src/components/AppLoading): loading content
 - [NetInfo](./src/components/NetInfo): internet status
 - [SwitchNetwork](./src/components/SwitchNetwork): switch network
 - [PreLoadImage](./src/components/PreloadImage): pre load images
 - ToastContainer: toast notification
 - [LandScapeModal](./src/components/LandScapeModal): rotate your phone message
 - [UpdateModal](./src/components/UpdateModal): check app version and update message in the mobile application.
-- [RootNavigation](./src/navigation/README.md): root stacks are here.##
+- [RootNavigation](./src/navigation/README.md): root stacks are here.
 
 # Build Setup
 

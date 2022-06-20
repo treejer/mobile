@@ -1,0 +1,4 @@
+# Graphql
+
+- GetMeQuery
+- SettingsQuery
