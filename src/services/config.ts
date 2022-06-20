@@ -1,6 +1,6 @@
 /* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
-import {ImageURISource} from 'react-native';
+import {ImageURISource, Platform} from 'react-native';
 
 import {RinkebyLogo, MaticLogo} from '../../assets/images';
 
@@ -74,6 +74,8 @@ export interface Config {
 export function formatUrl(url?: string) {
   return url ? url?.replace(/\/$/, '') : '';
 }
+
+export const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
 
 const config: Config = {
   [BlockchainNetwork.MaticMain]: {
@@ -170,7 +172,14 @@ const config: Config = {
     networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),
     isMainnet: false,
     web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER || '',
-    treejerApiUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL),
+    treejerApiUrl: formatUrl(
+      isProd
+        ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
+        : Platform.select({
+            android: 'http://10.0.2.2:3000/',
+            default: 'http://localhost:3000/',
+          }),
+    ),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),
@@ -202,7 +211,6 @@ export const storageKeys: StorageKeys = {
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
 };
 
-export const isProd = process.env.NODE_ENV === 'Production';
 export const rangerUrl = 'https://ranger.treejer.com';
 export const rangerDevUrl = 'https://ranger-dev.treejer.com';
 export const defaultLocale = 'en';

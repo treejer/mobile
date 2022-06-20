@@ -33,6 +33,7 @@ import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/helpers/cropImage';
+import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -236,6 +237,7 @@ function VerifyProfile(props: Props) {
         longitude: journey?.location?.longitude,
         latitude: journey?.location?.latitude,
       };
+      console.log(input, 'input');
       await verifyProfile({
         variables: {
           input,
@@ -286,6 +288,10 @@ function VerifyProfile(props: Props) {
     setIsCameraVisible(false);
   };
 
+  const handleDismissPicture = () => {
+    setIsCameraVisible(false);
+  };
+
   const submitButtonMarkup = idCardImageUri ? (
     <View style={{flexDirection: 'row'}}>
       <Button
@@ -299,7 +305,7 @@ function VerifyProfile(props: Props) {
   ) : null;
 
   if (isCameraVisible) {
-    return <WebCam handleDone={handleDonePicture} />;
+    return <WebCam handleDone={handleDonePicture} handleDismiss={handleDismissPicture} aspect={4 / 3} />;
   }
 
   return (
@@ -535,7 +541,7 @@ function VerifyProfile(props: Props) {
         <>
           <Text style={[globalStyles.normal]}>{t('physicalLicense')}</Text>
           <Spacer times={4} />
-          <Button onPress={pickImage} caption={t('openCamera')} />
+          <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
           <Spacer times={4} />
         </>
       )

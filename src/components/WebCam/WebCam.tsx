@@ -11,11 +11,12 @@ const bottomSheetSpace = 80;
 
 interface WebCamProps {
   handleDone: (image: string, croppedAreaPixels: number | null, rotation: number) => void;
-  handleDismiss?: () => void;
+  handleDismiss: () => void;
+  aspect?: number;
 }
 
 function WebCam(props: WebCamProps) {
-  const {handleDone, handleDismiss} = props;
+  const {handleDone, handleDismiss, aspect = 3 / 4} = props;
 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -57,7 +58,7 @@ function WebCam(props: WebCamProps) {
           crop={crop}
           rotation={rotation}
           zoom={zoom}
-          aspect={3 / 4}
+          aspect={aspect}
           onCropChange={setCrop}
           onRotationChange={setRotation}
           onCropComplete={onCropComplete}
