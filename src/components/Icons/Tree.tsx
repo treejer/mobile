@@ -2,8 +2,8 @@ import React from 'react';
 import Svg, {Path} from 'react-native-svg';
 
 interface Props {
-  color: string;
-  size: number;
+  color?: string;
+  size?: number;
 }
 
 function TreeSvg({color = 'white', size = 20}: Props) {

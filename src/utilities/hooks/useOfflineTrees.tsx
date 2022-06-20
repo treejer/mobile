@@ -5,7 +5,7 @@ import {ContractType, storageKeys} from 'services/config';
 import {Tree} from 'types';
 import {Alert} from 'react-native';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {assignedTreeJSON, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
@@ -122,13 +122,55 @@ function reducer(state: OfflineTreesState, action) {
   }
 }
 
-export const OfflineTressContext = React.createContext(null);
+export type OfflineTreeContextValue = {
+  offlineTrees: OfflineTreesState;
+  dispatch: (action: any) => void;
+  dispatchAddOfflineTree: (tree: TreeJourney) => void;
+  dispatchAddOfflineTrees: (tree: TreeJourney[]) => void;
+  dispatchRemoveOfflineTree: (id: string) => void;
+  dispatchAddOfflineUpdateTree: (tree: TreeJourney) => void;
+  dispatchRemoveOfflineUpdateTree: (id: string) => void;
+  dispatchResetOfflineTrees: () => void;
+  offlineLoadings: string[];
+  offlineUpdateLoadings: string[];
+  loadingMinimized: boolean;
+  setOfflineLoadings: (loading: string[]) => void;
+  setOfflineUpdateLoadings: (loading: string[]) => void;
+  setLoadingMinimized: (loading: boolean) => void;
+  handleSubmitOfflineAssignedTree: (journey: TreeJourney) => void;
+  handleSubmitOfflineTree: (journey: TreeJourney) => void;
+  handleUpdateOfflineTree: (treeJourney: Tree & TreeJourney) => void;
+  handleSendAllOffline: (trees: TreeJourney[] | Tree[], isPlanted: boolean) => void;
+};
+
+export const initialContextValue: OfflineTreeContextValue = {
+  offlineTrees: initialState,
+  dispatch: () => {},
+  dispatchAddOfflineTree: () => {},
+  dispatchAddOfflineTrees: () => {},
+  dispatchRemoveOfflineTree: () => {},
+  dispatchAddOfflineUpdateTree: () => {},
+  dispatchRemoveOfflineUpdateTree: () => {},
+  dispatchResetOfflineTrees: () => {},
+  offlineLoadings: [],
+  offlineUpdateLoadings: [],
+  loadingMinimized: false,
+  setOfflineLoadings: () => {},
+  setOfflineUpdateLoadings: () => {},
+  setLoadingMinimized: () => {},
+  handleSubmitOfflineAssignedTree: () => {},
+  handleSubmitOfflineTree: () => {},
+  handleUpdateOfflineTree: () => {},
+  handleSendAllOffline: () => {},
+};
+
+export const OfflineTressContext = React.createContext<OfflineTreeContextValue>(initialContextValue);
 
 export function OfflineTreeProvider({children}) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [offlineLoadings, setOfflineLoadings] = useState([]);
-  const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState([]);
+  const [offlineLoadings, setOfflineLoadings] = useState<string[]>([]);
+  const [offlineUpdateLoadings, setOfflineUpdateLoadings] = useState<string[]>([]);
   const [loadingMinimized, setLoadingMinimized] = useState<boolean>(false);
 
   const address = useWalletAccount();
@@ -221,13 +263,19 @@ export function OfflineTreeProvider({children}) {
 
   const handleUpdateOfflineTree = useCallback(
     async (treeJourney: Tree & TreeJourney) => {
-      if (treeJourney?.treeSpecsEntity == null || typeof treeJourney?.treeSpecsEntity === 'undefined') {
+      if (
+        treeJourney?.treeSpecsEntity == null ||
+        typeof treeJourney?.treeSpecsEntity === 'undefined' ||
+        !treeJourney.treeIdToUpdate ||
+        !treeJourney.tree ||
+        !treeJourney.photo
+      ) {
         Alert.alert(t('cannotUpdateTree'));
         return;
       }
       setOfflineUpdateLoadings([...offlineUpdateLoadings, treeJourney.treeIdToUpdate]);
       try {
-        const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo?.path);
+        const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(treeJourney.photo));
 
         const jsonData = updateTreeJSON(config.ipfsGetURL, {
           tree: treeJourney.tree,
@@ -250,7 +298,6 @@ export function OfflineTreeProvider({children}) {
         );
         dispatchRemoveOfflineUpdateTree(treeJourney.treeIdToUpdate);
         setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
-        console.log(receipt, 'receipt');
       } catch (error: any) {
         setOfflineUpdateLoadings(offlineUpdateLoadings.filter(id => id !== treeJourney.treeIdToUpdate));
         Alert.alert(
@@ -269,13 +316,16 @@ export function OfflineTreeProvider({children}) {
         Alert.alert(t('noInternet'), t('submitWhenOnline'));
         return;
       }
+      if (!journey.offlineId || !journey?.tree || !journey.treeIdToPlant || !journey.photo) {
+        return;
+      }
       try {
         setOfflineLoadings([...offlineLoadings, journey.offlineId]);
-        const photoUploadResult = await upload(config.ipfsPostURL, journey.photo?.path);
+        const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(journey.photo));
 
         const jsonData = assignedTreeJSON(config.ipfsGetURL, {
           journey,
-          tree: journey?.tree,
+          tree: journey.tree,
           photoUploadHash: photoUploadResult.Hash,
         });
 
@@ -291,7 +341,6 @@ export function OfflineTreeProvider({children}) {
           useGSN,
         );
 
-        console.log(receipt, 'receipt');
         console.log(receipt.transactionHash, 'receipt.transactionHash');
 
         setOfflineLoadings(offlineLoadings.filter(id => id !== journey.offlineId));
@@ -319,9 +368,13 @@ export function OfflineTreeProvider({children}) {
       if (!isConnected) {
         alertNoInternet();
       } else {
+        if (!treeJourney.offlineId || !treeJourney.photo) {
+          return;
+        }
+
         setOfflineLoadings([...offlineLoadings, treeJourney.offlineId]);
         try {
-          const photoUploadResult = await upload(config.ipfsPostURL, treeJourney.photo.path);
+          const photoUploadResult = await upload(config.ipfsPostURL, photoToUpload(treeJourney.photo));
           const jsonData = newTreeJSON(config.ipfsGetURL, {
             journey: treeJourney,
             photoUploadHash: photoUploadResult.Hash,
@@ -340,7 +393,6 @@ export function OfflineTreeProvider({children}) {
             useGSN,
           );
 
-          console.log(receipt, 'receipt');
           console.log(receipt.transactionHash, 'receipt.transactionHash');
 
           setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
@@ -373,7 +425,7 @@ export function OfflineTreeProvider({children}) {
                 await handleSubmitOfflineTree(tree as TreeJourney);
               }
             } else {
-              await handleUpdateOfflineTree(tree as Tree);
+              await handleUpdateOfflineTree(tree as Tree & TreeJourney);
             }
           }
           Alert.alert(t('offlineTreesSubmitted'));

@@ -3,7 +3,7 @@ import React, {createContext, useCallback, useContext, useEffect, useMemo, useSt
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {BlockchainNetwork, storageKeys} from 'services/config';
+import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
@@ -70,13 +70,13 @@ export function CurrentUserProvider(props) {
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
-  const {resetOnBoardingData, changeUseGsn} = useSettings();
+  const {changeUseGsn} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
 
   const {error, loading} = result;
   // @ts-ignore
-  const statusCode = error?.networkError?.result?.error?.statusCode;
+  const statusCode = error?.networkError?.statusCode;
 
   useEffect(() => {
     (async function () {
@@ -113,7 +113,7 @@ export function CurrentUserProvider(props) {
   }, [currentUser]);
 
   const handleLogout = useCallback(
-    async (userPressed: boolean) => {
+    async (userPressed?: boolean) => {
       try {
         if (userPressed) {
           try {
@@ -139,12 +139,14 @@ export function CurrentUserProvider(props) {
           await AsyncStorage.removeItem(storageKeys.magicToken);
         }
         const locale = await AsyncStorage.getItem(storageKeys.locale);
-        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || BlockchainNetwork.MaticMain;
+        const onBoarding = await AsyncStorage.getItem(storageKeys.onBoarding);
+        const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || defaultNetwork;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
         changeUseGsn(true);
-        await AsyncStorage.setItem(storageKeys.locale, locale);
+        await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
+        await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
         await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         if (!userPressed) {
           if (offlineTrees.planted) {
@@ -155,14 +157,13 @@ export function CurrentUserProvider(props) {
           }
         }
         await resetWeb3Data();
-        await resetOnBoardingData();
         await setCurrentUser(null);
       } catch (e) {
         console.log(e, 'e inside handleLogout');
         return Promise.reject(e);
       }
     },
-    [offlineTrees.planted, offlineTrees.updated, resetOnBoardingData, resetWeb3Data, t],
+    [changeUseGsn, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
   );
 
   useEffect(() => {

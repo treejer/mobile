@@ -10,6 +10,7 @@ import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
 import RNRestart from 'react-native-restart';
 import {useCurrentUser} from 'services/currentUser';
+import {isWeb} from 'utilities/helpers/web';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -42,7 +43,9 @@ export function SwitchNetwork() {
       setConfirming(null);
       setShowModal(false);
       handleLogout();
-      RNRestart.Restart();
+      if (!isWeb()) {
+        RNRestart.Restart();
+      }
     },
     [changeNetwork, handleLogout],
   );
@@ -77,7 +80,7 @@ export function SwitchNetwork() {
       <TouchableOpacity
         activeOpacity={0.7}
         hitSlop={{top: 8, right: 32, bottom: 8, left: 32}}
-        style={[styles.container, {top: insets.top + 4, right: insets.right + 40}]}
+        style={[styles.container, {top: insets.top + 4, right: insets.right + 44}]}
         onPress={handleOpenModal}
       >
         <Card style={[styles.card]}>

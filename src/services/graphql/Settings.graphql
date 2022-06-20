@@ -1,0 +1,9 @@
+query Settings {
+    settings @rest(type: "Settings", path: "/settings") {
+        id
+        forceUpdate {
+            version
+            force
+        }
+    }
+}

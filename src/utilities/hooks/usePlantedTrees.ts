@@ -1,10 +1,11 @@
 import {useQuery, NetworkStatus} from '@apollo/client';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {Dispatch, useCallback, useEffect, useMemo, useState} from 'react';
 import planterTreeQuery, {
   PlanterTreesQueryQueryData,
 } from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TreeFilter} from 'components/TreeList/TreeList';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {Tree} from 'types';
 
 export default function usePlantedTrees(address) {
   const [plantedTrees, setPlantedTrees] = usePersistedPlantedTrees();
@@ -29,7 +30,7 @@ export default function usePlantedTrees(address) {
     skip: !address,
   });
 
-  const trees = query?.data?.trees;
+  const trees = query?.data?.trees as unknown as Tree[];
 
   useEffect(() => {
     (async function () {
@@ -72,8 +73,8 @@ export default function usePlantedTrees(address) {
   return {plantedTrees, plantedTreesQuery: query, refetchPlantedTrees, refetching, loadMore};
 }
 
-export function usePersistedPlantedTrees() {
-  const [plantedTrees, setPlantedTrees] = useState(null);
+export function usePersistedPlantedTrees(): [Tree[] | null, Dispatch<Tree[] | null>] {
+  const [plantedTrees, setPlantedTrees] = useState<Tree[] | null>(null);
 
   useEffect(() => {
     (async function () {
@@ -81,8 +82,8 @@ export function usePersistedPlantedTrees() {
         let submittedTrees = await AsyncStorage.getItem(TreeFilter.Submitted);
 
         if (submittedTrees) {
-          submittedTrees = JSON.parse(submittedTrees);
-          setPlantedTrees(submittedTrees);
+          const _submittedTrees = JSON.parse(submittedTrees);
+          setPlantedTrees(_submittedTrees);
         }
       } catch (e) {
         console.log(e, 'Error inside ===> usePlantedTrees get');

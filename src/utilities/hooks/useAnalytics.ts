@@ -3,7 +3,7 @@ import {useCallback} from 'react';
 import {AnalyticsParams} from 'components/Analytics/Analytics';
 
 export interface UseAnalyticsHook {
-  sendEvent: (name: string, params?: AnalyticsParams) => Promise<void>;
+  sendEvent: (name: string, params?: AnalyticsParams) => void;
 }
 
 export function useAnalytics(): UseAnalyticsHook {

@@ -13,4 +13,5 @@ export const colors = {
   pink: '#D893BA',
   claimed: '#72B791',
   yellow: '#d9caa9',
+  black: '#1a1a1a',
 };

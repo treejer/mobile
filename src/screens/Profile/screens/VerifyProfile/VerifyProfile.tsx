@@ -2,7 +2,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
 import React, {useMemo, useRef, useState} from 'react';
-import {View, Text, Platform, Alert, TouchableOpacity} from 'react-native';
+import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useForm} from 'react-hook-form';
@@ -20,8 +20,6 @@ import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendS
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
 import {useUserId} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {PlanterJoinList} from 'types';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';
 import useRefer from 'utilities/hooks/useDeepLinking';
@@ -31,10 +29,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import WebCam from 'components/WebCam/WebCam';
+import getCroppedImg from 'utilities/hooks/cropImage';
+import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
 
-interface Props {
-  navigation: any;
-}
+interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
 const radioItems = [
   {
@@ -48,10 +49,10 @@ const radioItems = [
 ];
 
 function VerifyProfile(props: Props) {
+  const {navigation, route} = props;
   const {status} = useCurrentUser({didMount: true});
 
   const {openCameraHook} = useCamera();
-  const {navigation} = props;
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
   const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
@@ -59,23 +60,22 @@ function VerifyProfile(props: Props) {
   const [requestedMobileVerification, setRequestedMobileVerification] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
-  const phoneRef = useRef<PhoneInput>();
-  const {
-    data: {user},
-  } = useQuery<GetMeQueryData>(getMeQuery);
+  const phoneRef = useRef<PhoneInput>(null);
+  const {data} = useQuery<GetMeQueryData>(getMeQuery);
+  const {user} = data || {};
 
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<PlanterJoinList, 'SelectOnMapJoinPlanter'>>();
+  const {params} = route;
+  const {journey} = params || {};
 
   const [organizationKey, setOrganizationKey] = useState<string>(radioItems[1].key);
+  const [isCameraVisible, setIsCameraVisible] = useState<boolean>(false);
 
   const {t} = useTranslation();
 
   const {sendEvent} = useAnalytics();
 
   const refer = useRefer();
-  const {referrer, organization} = refer;
+  const {referrer, organization, hasRefer} = refer;
 
   const handleChangeRadioButton = (key: string) => {
     setOrganizationKey(key);
@@ -84,8 +84,8 @@ function VerifyProfile(props: Props) {
   const userId = useUserId();
 
   const parsedPhoneNumber = useMemo(() => {
-    if (user.mobile && user.mobileCountry) {
-      return PhoneNumberUtil.getInstance().parse(user.mobile, user.mobileCountry).getNationalNumber().toString();
+    if (user?.mobile && user?.mobileCountry) {
+      return PhoneNumberUtil.getInstance().parse(user.mobile, user.mobileCountry)?.getNationalNumber()?.toString();
     }
 
     return '';
@@ -116,7 +116,7 @@ function VerifyProfile(props: Props) {
   });
 
   const currentStep = (() => {
-    if (!user.mobileVerifiedAt) {
+    if (!user?.mobileVerifiedAt) {
       return 2;
     }
 
@@ -150,12 +150,12 @@ function VerifyProfile(props: Props) {
     }
 
     try {
-      const mobileNumber = `+${phoneRef.current.getCallingCode()}${phoneNumber}`;
+      const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
       await updateMobile({
         variables: {
           input: {
             mobileNumber,
-            country: `${phoneRef.current.getCountryCode()}`,
+            country: `${phoneRef.current?.getCountryCode()}`,
           },
         },
         errorPolicy: 'all',
@@ -189,7 +189,11 @@ function VerifyProfile(props: Props) {
 
   const handleMutationAlert = (error: any) => {
     const message = error?.networkError?.result?.error?.message || t('unknownError');
-    Alert.alert(t('error'), message);
+    showAlert({
+      title: t('error'),
+      message,
+      mode: AlertMode.Error,
+    });
   };
 
   const verifyPhone = phoneNumberForm.handleSubmit(async ({verificationCode}) => {
@@ -230,9 +234,10 @@ function VerifyProfile(props: Props) {
         type: organizationKey,
         organizationAddress: organization || '',
         referrer: referrer || '',
-        longitude: journey.location.longitude,
-        latitude: journey.location.latitude,
+        longitude: journey?.location?.longitude,
+        latitude: journey?.location?.latitude,
       };
+      console.log(input, 'input');
       await verifyProfile({
         variables: {
           input,
@@ -246,7 +251,7 @@ function VerifyProfile(props: Props) {
         ],
       });
 
-      navigation.navigate('VerifyPending');
+      navigation.navigate(Routes.VerifyPending);
     } catch (error) {
       handleMutationAlert(error);
     }
@@ -254,23 +259,37 @@ function VerifyProfile(props: Props) {
 
   const pickImage = async () => {
     if (Platform.OS !== 'web') {
+      // @web
       const result = await openCameraHook({
         width: 400,
         height: 300,
       });
 
-      if (result.path) {
+      if (result?.path) {
         if (/file:\//.test(result.path)) {
           setIdCardImageUri(result.path);
         } else {
-          urlToBlob(result.path).then((blob: Blob) => {
-            const fileOfBlob = new File([blob], 'file.jpg', {type: 'image/jpg'});
+          urlToBlob(result.path).then(blob => {
+            // eslint-disable-next-line no-undef
+            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
             setIdCardImageUri(fileOfBlob);
             return blob;
           });
         }
       }
+    } else {
+      setIsCameraVisible(true);
     }
+  };
+
+  const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
+    const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);
+    setIdCardImageUri(selectedPhoto);
+    setIsCameraVisible(false);
+  };
+
+  const handleDismissPicture = () => {
+    setIsCameraVisible(false);
   };
 
   const submitButtonMarkup = idCardImageUri ? (
@@ -285,11 +304,15 @@ function VerifyProfile(props: Props) {
     </View>
   ) : null;
 
+  if (isCameraVisible) {
+    return <WebCam handleDone={handleDonePicture} handleDismiss={handleDismissPicture} aspect={4 / 3} />;
+  }
+
   return (
-    <SafeAreaView style={globalStyles.fill}>
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <KeyboardAwareScrollView>
         <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p1]}>
-          <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
+          <TouchableOpacity onPress={() => navigation.navigate(Routes.MyProfile)}>
             <ChevronLeft />
           </TouchableOpacity>
         </View>
@@ -343,7 +366,7 @@ function VerifyProfile(props: Props) {
                     ) : currentStep === 4 ? (
                       <Button
                         variant="secondary"
-                        onPress={() => navigation.navigate('SelectOnMapVerifyProfile', {journey})}
+                        onPress={() => navigation.navigate(Routes.SelectOnMapVerifyProfile, {journey})}
                         caption={t('openMap')}
                       />
                     ) : (
@@ -353,7 +376,7 @@ function VerifyProfile(props: Props) {
                 </Steps.Step>
 
                 {/* Step 5 - Upload ID card */}
-                <Steps.Step step={5} lastStep={!!organization?.length}>
+                <Steps.Step step={5} lastStep={!!organization}>
                   <View style={{alignItems: 'flex-start'}}>
                     <Text style={globalStyles.h6}>{t('uploadIdCard')}</Text>
                     <Spacer times={1} />
@@ -379,20 +402,22 @@ function VerifyProfile(props: Props) {
             </>
           )}
         </View>
-        {(referrer || organization) && (
+        {hasRefer && (
           <View
             style={{
               padding: 10,
-              backgroundColor: colors.grayLighter,
+              backgroundColor: 'white',
               borderColor: colors.gray,
               borderWidth: 1,
               borderStyle: 'solid',
               borderRadius: 10,
               marginHorizontal: 20,
+              width: 300,
+              alignSelf: 'center',
             }}
           >
-            <Text>{referrer ? 'referrer' : 'organization'}</Text>
-            <Text>{referrer || organization}</Text>
+            <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
+            <Text style={globalStyles.tiny}>{referrer || organization}</Text>
           </View>
         )}
       </KeyboardAwareScrollView>
@@ -417,10 +442,10 @@ function VerifyProfile(props: Props) {
             <PhoneField
               control={phoneNumberForm.control}
               name="phoneNumber"
-              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.phoneNumber}
+              error={phoneNumberForm.formState.errors.phoneNumber}
               ref={phoneRef}
               textInputStyle={{height: 64, paddingLeft: 0}}
-              defaultCode={(user.mobileCountry as any) ?? 'CA'}
+              defaultCode={(user?.mobileCountry as any) ?? 'CA'}
               placeholder="Phone #"
               onSubmitEditing={submitPhoneNumber}
             />
@@ -445,7 +470,7 @@ function VerifyProfile(props: Props) {
               control={phoneNumberForm.control}
               placeholder="CODE"
               keyboardType="number-pad"
-              error={phoneNumberForm.formState.isDirty && phoneNumberForm.formState.errors.verificationCode}
+              error={phoneNumberForm.formState.errors.verificationCode}
               name="verificationCode"
               onSubmitEditing={verifyPhone}
             />
@@ -516,7 +541,7 @@ function VerifyProfile(props: Props) {
         <>
           <Text style={[globalStyles.normal]}>{t('physicalLicense')}</Text>
           <Spacer times={4} />
-          <Button onPress={pickImage} caption={t('openCamera')} />
+          <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
           <Spacer times={4} />
         </>
       )

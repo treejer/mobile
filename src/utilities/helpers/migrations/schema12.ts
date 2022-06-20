@@ -355,6 +355,7 @@ const migration = (oldRealm: any, newRealm: any) => {
 
     for (const index in oldInventoryObject) {
       if (oldInventoryObject[index].status === SYNCED) {
+        // @ts-ignore
         syncedInventoriesIndexToDelete.push(index);
       }
     }

@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Geolocation from 'react-native-geolocation-service';
 import {createOfflineMap, getAllOfflineMaps, getAreaName} from 'utilities/helpers/maps';
 import {locationPermission} from 'utilities/helpers/permissions';
-import Map from 'components/Map';
+import Map from 'components/Map/Map';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';
@@ -14,7 +14,8 @@ import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
-import {useConfig} from 'services/web3';
+import {Routes} from 'navigation';
+import {mapboxPrivateToken} from 'services/config';
 
 const OfflineMap = ({navigation}) => {
   const [isLoaderShow, setIsLoaderShow] = useState(false);
@@ -24,10 +25,9 @@ const OfflineMap = ({navigation}) => {
   const [isPermissionBlockedAlertShow, setIsPermissionBlockedAlertShow] = useState(false);
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
-  const {mapboxToken} = useConfig();
 
-  const MapBoxGLRef = useRef();
-  const camera = useRef();
+  const MapBoxGLRef = useRef<MapboxGL.MapView>(null);
+  const camera = useRef<MapboxGL.Camera>(null);
 
   const getAllOfflineMapsLocal = useCallback(() => {
     getAllOfflineMaps()
@@ -69,9 +69,6 @@ const OfflineMap = ({navigation}) => {
               android: 'high',
               ios: 'bestForNavigation',
             },
-            useSignificantChanges: true,
-            interval: 1000,
-            fastestInterval: 1000,
           },
         );
       })
@@ -97,9 +94,9 @@ const OfflineMap = ({navigation}) => {
     const offlineMapId = `TreeMapper-offline-map-id-${Date.now()}`;
     if (isConnected) {
       setIsLoaderShow(true);
-      const coords = await MapBoxGLRef?.current.getCenter();
-      const bounds = await MapBoxGLRef?.current.getVisibleBounds();
-      getAreaName({coords}, mapboxToken)
+      const coords = await MapBoxGLRef.current?.getCenter();
+      const bounds = await MapBoxGLRef.current?.getVisibleBounds();
+      getAreaName({coords}, mapboxPrivateToken)
         .then(async areaName => {
           setAreaName(areaName);
           const progressListener = (offlineRegion, status) => {
@@ -140,7 +137,7 @@ const OfflineMap = ({navigation}) => {
               styleURL: 'mapbox://styles/sagararl/ckdfyrsw80y3a1il9eqpecoc7',
               minZoom: 14,
               maxZoom: 20,
-              bounds: bounds,
+              bounds: bounds ? [bounds[0], bounds[1]] : undefined,
             },
             progressListener,
             errorListener,
@@ -173,11 +170,11 @@ const OfflineMap = ({navigation}) => {
   };
 
   const onPressViewAll = useCallback(() => {
-    navigation.navigate('SavedAreas');
-  }, []);
+    navigation.navigate(Routes.SavedAreas);
+  }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom]}>
+    <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom, {flex: 1}]}>
       <View style={styles.container}>
         <Spacer times={2} />
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -194,8 +191,6 @@ const OfflineMap = ({navigation}) => {
             onWillStartRenderingFrame={zoomLevelChanged}
             ref={MapBoxGLRef}
             style={styles.cont}
-            zoomLevel={15}
-            centerCoordinate={[11.256, 43.77]}
           >
             <MapboxGL.UserLocation showsUserHeadingIndicator />
             <MapboxGL.Camera ref={camera} />
