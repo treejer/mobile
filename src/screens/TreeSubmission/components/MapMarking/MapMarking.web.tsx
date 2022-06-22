@@ -6,7 +6,7 @@ import Map from './Map';
 import Button from 'components/Button';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {colors} from 'constants/values';
-import {GeoPosition} from 'react-native-geolocation-service';
+import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
 import {useTranslation} from 'react-i18next';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {TreeJourney} from 'screens/TreeSubmission/types';
@@ -18,9 +18,12 @@ export type locationType = {
   lat: number;
 };
 interface MapMarkingProps {
-  onSubmit?: (location: GeoPosition) => void;
+  onSubmit?: (location: Partial<GeoPosition>) => void;
+  verifyProfile?: boolean;
 }
-export default function MapMarking({onSubmit}: MapMarkingProps) {
+export default function MapMarking(props: MapMarkingProps) {
+  const {onSubmit, verifyProfile} = props;
+
   const {journey, setNewJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [location, setLocation] = useState<locationType | null>(null);
@@ -37,7 +40,14 @@ export default function MapMarking({onSubmit}: MapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(() => {
-    if (journey && location) {
+    if (verifyProfile && location) {
+      onSubmit?.({
+        coords: {
+          latitude: location.lat,
+          longitude: location.lng,
+        } as GeoCoordinates,
+      });
+    } else if (journey && location) {
       const newJourney = {
         ...journey,
         location: {

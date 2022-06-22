@@ -36,7 +36,7 @@ function SelectOnMapVerifyProfile(props: Props) {
     <SafeAreaView style={globalStyles.fill}>
       <View style={globalStyles.fill}>
         <View style={styles.container}>
-          <MapMarking onSubmit={handleSubmit} />
+          <MapMarking onSubmit={handleSubmit} verifyProfile />
         </View>
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={MapMarker} />
