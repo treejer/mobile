@@ -58,12 +58,14 @@ function VerifyProfile(props: Props) {
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
   const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
   const [verifyMobile, verifyMobileState] = useMutation(verifyMobileMutation);
-  const [requestedMobileVerification, setRequestedMobileVerification] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
+
   const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
   const phoneRef = useRef<PhoneInput>(null);
   const {data} = useQuery<GetMeQueryData>(getMeQuery);
   const {user} = data || {};
+
+  const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!user?.mobile);
+  const [phoneNumber, setPhoneNumber] = useState(user?.mobile || '');
 
   const {treejerApiUrl} = useConfig();
   console.log(treejerApiUrl, 'treejerApiUrl');
@@ -180,8 +182,11 @@ function VerifyProfile(props: Props) {
   const resendCode = async () => {
     try {
       await requestSMS();
+      phoneNumberForm.clearErrors('verificationCode');
     } catch (e) {
-      handleMutationAlert(e);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
   };
 
@@ -221,7 +226,6 @@ function VerifyProfile(props: Props) {
       phoneNumberForm.setError('verificationCode', {
         message: restApiError(e).message || t('unknownError'),
       });
-      handleMutationAlert(e);
     }
   });
 
@@ -254,7 +258,9 @@ function VerifyProfile(props: Props) {
 
       navigation.navigate(Routes.VerifyPending);
     } catch (error) {
-      handleMutationAlert(error);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(error).message || t('unknownError'),
+      });
     }
   });
 
@@ -344,7 +350,9 @@ function VerifyProfile(props: Props) {
                 {/* Step 2 - Add phone */}
                 <Steps.Step step={2}>
                   <View style={{alignItems: 'flex-start'}}>
-                    <Text style={globalStyles.h6}>{t('addPhone')}</Text>
+                    <Text style={globalStyles.h6}>
+                      {t(user?.mobile && requestedMobileVerification ? 'verifyPhone' : 'addPhone')}
+                    </Text>
                     {renderAddPhone()}
                   </View>
                 </Steps.Step>

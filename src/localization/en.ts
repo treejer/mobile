@@ -92,6 +92,7 @@ export const en = {
   addWalletAddress: 'Add wallet address',
   done: 'Done!',
   addPhone: 'Add phone',
+  verifyPhone: 'Verify phone',
   addName: 'Add name',
   submitLocation: 'Submit location',
   openMap: 'Open Map',
