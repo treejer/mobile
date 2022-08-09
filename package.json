@@ -21,7 +21,7 @@
     "ios:restart": "yarn clean:npm && yarn clean:ios && yarn ios",
     "android:restart": "yarn clean:npm && yarn clean:android && yarn android",
     "native:restart": "yarn clean:npm && yarn clean:android && yarn clean:ios && yarn ios && yarn android",
-    "web:restart": "rm -rf .expo && yarn clean:npm && yarn web",
+    "web:restart": "rm -rf .expo && yarn clean:npm && yarn web"
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
