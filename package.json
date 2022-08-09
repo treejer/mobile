@@ -13,8 +13,15 @@
     "lint": "eslint .",
     "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'",
     "web": "REACT_APP_WEB=true expo web",
-    "web:prod": "rm -rf web-build && REACT_APP_WEB=true expo build:web",
-    "web:prod-github": "REACT_APP_WEB=true expo build:web"
+    "web:build": "rm -rf web-build && REACT_APP_WEB=true npx expo-cli build:web",
+    "web:prod-github": "REACT_APP_WEB=true expo build:web",
+    "clean:ios": "cd ios && rm -rf Pods && rm Podfile.lock && pod install",
+    "clean:android": "cd android && ./gradlew clean && cd ..",
+    "clean:npm": "rm -rf node_modules && yarn",
+    "ios:restart": "yarn clean:npm && yarn clean:ios && yarn ios",
+    "android:restart": "yarn clean:npm && yarn clean:android && yarn android",
+    "native:restart": "yarn clean:npm && yarn clean:android && yarn clean:ios && yarn ios && yarn android",
+    "web:restart": "rm -rf .expo && yarn clean:npm && yarn web",
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
