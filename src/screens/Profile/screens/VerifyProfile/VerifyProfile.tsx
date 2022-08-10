@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -35,6 +35,8 @@ import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
 import {restApiError} from 'utilities/helpers/error';
 import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
+import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -53,7 +55,7 @@ function VerifyProfile(props: Props) {
   const {navigation, route} = props;
   const {status} = useCurrentUser({didMount: true});
 
-  const {openCameraHook} = useCamera();
+  const {openCameraHook, openLibraryHook} = useCamera();
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
   const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
@@ -288,6 +290,30 @@ function VerifyProfile(props: Props) {
       setIsCameraVisible(true);
     }
   };
+
+  const handlePickPhotoWeb = e => {
+    setIdCardImageUri(e.target.files[0]);
+  };
+
+  const handleSelectPhoto = useCallback(async () => {
+    console.log('called');
+    const selectedPhoto = await openLibraryHook();
+    console.log(selectedPhoto, '<-====');
+    if (selectedPhoto) {
+      if (selectedPhoto?.path) {
+        if (/file:\//.test(selectedPhoto.path)) {
+          setIdCardImageUri(selectedPhoto.path);
+        } else {
+          urlToBlob(selectedPhoto.path).then(blob => {
+            // eslint-disable-next-line no-undef
+            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
+            setIdCardImageUri(fileOfBlob);
+            return blob;
+          });
+        }
+      }
+    }
+  }, []);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
     const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);
@@ -540,7 +566,14 @@ function VerifyProfile(props: Props) {
         <>
           <Text style={[globalStyles.normal]}>{t('physicalLicense')}</Text>
           <Spacer times={4} />
-          <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
+          <View style={{flexDirection: 'row'}}>
+            <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
+            <PickImageButton
+              icon="images"
+              onPress={isWeb() ? handlePickPhotoWeb : () => handleSelectPhoto()}
+              caption={t('openGallery')}
+            />
+          </View>
           <Spacer times={4} />
         </>
       )

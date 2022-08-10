@@ -6,7 +6,6 @@ import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {useConfig, useMagic, usePrivateKeyStorage} from 'services/web3';
-import {useCamera} from 'utilities/hooks';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -61,18 +60,15 @@ function NoWallet(props: NoWalletProps) {
 
   const {t} = useTranslation();
 
-  const {requestCameraPermission} = useCamera();
-
   const {sendEvent} = useAnalytics();
 
   useEffect(() => {
     (async () => {
       if (!isWeb()) {
-        await requestCameraPermission();
         await locationPermission();
       }
     })();
-  }, [requestCameraPermission]);
+  }, []);
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
