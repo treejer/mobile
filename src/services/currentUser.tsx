@@ -1,4 +1,3 @@
-import {useLazyQuery} from '@apollo/client';
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
@@ -6,8 +5,10 @@ import {asyncAlert} from 'utilities/helpers/alert';
 import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'services/settings';
-import {useResetWeb3Data, useWalletAccount} from 'services/web3';
+import {useAccessToken, useResetWeb3Data, useUserId, useWalletAccount} from 'services/web3';
 import {useTranslation} from 'react-i18next';
+import {useFetch} from 'utilities/hooks/useFetch';
+import {useLazyQuery} from '@apollo/client';
 
 export enum UserStatus {
   Loading,
@@ -63,20 +64,41 @@ export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDe
 
 export function CurrentUserProvider(props) {
   const {children} = props;
+
   const [currentUser, setCurrentUser] = useState<GetMeQueryData.User | null>(null);
-  const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
+
+  // const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
+  //   fetchPolicy: 'cache-and-network',
+  // });
+
+  //@ts-ignore
+  // const statusCode = error?.networkErrro?.statusCode;
+
+  const accessToken = useAccessToken();
+  const userId = useUserId();
+
+  console.log({accessToken, userId});
+
+  const headers = useMemo(
+    () => ({
+      'x-auth-userid': userId,
+      'x-auth-logintoken': accessToken,
+      Accept: 'application/json',
+    }),
+
+    [accessToken, userId],
+  );
+
+  const {data: user, loading, error, refetch} = useFetch<GetMeQueryData.User | null>('/user/getme/user', headers);
+
+  //@ts-ignore
+  const statusCode = error?.response?.data?.statusCode;
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
   const {changeUseGsn} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
-
-  const {error, loading} = result;
-  // @ts-ignore
-  const statusCode = error?.networkError?.statusCode;
 
   useEffect(() => {
     (async function () {
@@ -89,10 +111,10 @@ export function CurrentUserProvider(props) {
 
   const refetchUser = useCallback(async () => {
     try {
-      const newUser = await refetch();
-      if (newUser?.data?.user) {
-        setCurrentUser(newUser.data.user);
-        await AsyncStorage.setItem(storageKeys.user, JSON.stringify(newUser.data.user));
+      const {data: user} = await refetch();
+      if (user) {
+        setCurrentUser(user);
+        await AsyncStorage.setItem(storageKeys.user, JSON.stringify(user));
       }
     } catch (e) {
       console.log(e, 'e inside refetchUser');
