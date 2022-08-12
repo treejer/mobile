@@ -19,7 +19,7 @@ export interface Web3ContextState {
   resetWeb3Data: () => void;
   userId: string;
   magicToken: string;
-  storeMagicToken: (token: string) => void;
+  storeMagicToken: (token: string, additionalParams?: GetUserNonceAdditionalParams) => void;
   wallet: string;
   loading: boolean;
   network: BlockchainNetwork;
@@ -58,7 +58,11 @@ interface Props {
   blockchainNetwork?: BlockchainNetwork;
 }
 
-// new Web3(magic.rpcProvider)
+export type GetUserNonceAdditionalParams = {
+  email?: string;
+  mobile?: string;
+  country?: string;
+};
 
 function Web3Provider(props: Props) {
   const {
@@ -89,62 +93,62 @@ function Web3Provider(props: Props) {
 
   const isConnected = useNetInfoConnected();
 
-  const updateAccessToken = useCallback(async () => {
-    try {
-      console.log('[[[[try]]]]');
-      const credentials = await getTreejerApiAccessToken(config.treejerApiUrl, web3);
-      setAccessToken(credentials.loginToken);
-      if (credentials.loginToken) {
-        await AsyncStorage.setItem(storageKeys.accessToken, credentials.loginToken);
-      } else {
-        await AsyncStorage.removeItem(storageKeys.accessToken);
-      }
+  const updateAccessToken = useCallback(
+    async (token: string, additionalParams: GetUserNonceAdditionalParams = {}) => {
+      try {
+        console.log('[[[[try]]]]');
+        const credentials = await getTreejerApiAccessToken(config.treejerApiUrl, web3, token, additionalParams);
+        setAccessToken(credentials.loginToken);
+        if (credentials.loginToken) {
+          await AsyncStorage.setItem(storageKeys.accessToken, credentials.loginToken);
+        } else {
+          await AsyncStorage.removeItem(storageKeys.accessToken);
+        }
 
-      setUserId(credentials.userId);
-      if (credentials.userId) {
-        await AsyncStorage.setItem(storageKeys.userId, credentials.userId);
-      } else {
-        await AsyncStorage.removeItem(storageKeys.userId);
-      }
-      setUnlocked(true);
-      let web3Accounts = [credentials.wallet];
-      await web3.eth.getAccounts(async (error, accounts) => {
-        if (error) {
-          console.log(error, 'e is here getAccounts eth');
-          setLoading(false);
-          web3Accounts = accounts;
-          return;
+        setUserId(credentials.userId);
+        if (credentials.userId) {
+          await AsyncStorage.setItem(storageKeys.userId, credentials.userId);
+        } else {
+          await AsyncStorage.removeItem(storageKeys.userId);
         }
-        const account = web3Accounts[0];
-        if (account) {
-          await AsyncStorage.setItem(storageKeys.magicWalletAddress, account);
-          setWallet(account);
-          setLoading(false);
-        }
-      });
-    } catch (error: any) {
-      console.log('[[[[catch]]]]');
-      let {error: {message = t('loginFailed.message')} = {}} = error;
-      if (error.message) {
-        message = error.message;
+        setUnlocked(true);
+        let web3Accounts = [credentials.wallet];
+        await web3.eth.getAccounts(async (error, accounts) => {
+          if (error) {
+            console.log(error, 'e is here getAccounts eth');
+            setLoading(false);
+            web3Accounts = accounts;
+            return;
+          }
+          const account = web3Accounts[0];
+          if (account) {
+            await AsyncStorage.setItem(storageKeys.magicWalletAddress, account);
+            setWallet(account);
+            setLoading(false);
+          }
+        });
+      } catch (error: any) {
+        console.log('[[[[catch]]]]', error);
+        let {message = t('loginFailed.message')} = error || {};
+        setLoading(false);
+        showAlert({
+          title: t('loginFailed.title'),
+          message,
+          mode: AlertMode.Error,
+        });
       }
-      setLoading(false);
-      showAlert({
-        title: t('loginFailed.title'),
-        message,
-        mode: AlertMode.Error,
-      });
-    }
-  }, [config.treejerApiUrl, t, web3]);
+    },
+    [config.treejerApiUrl, t, web3],
+  );
 
   const storeMagicToken = useCallback(
-    async (token: string) => {
+    async (token: string, additionalParams: GetUserNonceAdditionalParams = {}) => {
       setMagicToken(token);
       // addToWallet(token);
 
       await AsyncStorage.setItem(storageKeys.magicToken, token);
       if (isConnected) {
-        await updateAccessToken();
+        await updateAccessToken(token, additionalParams);
       } else {
         setLoading(false);
         setUnlocked(true);

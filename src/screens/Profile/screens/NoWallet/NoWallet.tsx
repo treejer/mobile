@@ -72,7 +72,7 @@ function NoWallet(props: NoWalletProps) {
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
-  }, []);
+  }, [config.learnMoreLink]);
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     Keyboard.dismiss();
@@ -87,8 +87,9 @@ function NoWallet(props: NoWalletProps) {
     const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
+      console.log(result, 'result is here');
       if (result) {
-        await storeMagicToken(result);
+        await storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
         await refetchUser();
         console.log(result, 'result is here');
       } else {
@@ -121,7 +122,7 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result);
+        await storeMagicToken(result, {email});
         await refetchUser();
         console.log(result, 'result is here');
       } else {

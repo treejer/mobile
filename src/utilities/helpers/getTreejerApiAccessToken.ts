@@ -3,8 +3,14 @@ import Web3 from 'services/Magic';
 import {getUserNonce} from 'utilities/helpers/userNonce';
 import {userSign} from 'utilities/helpers/userSign';
 import {UserSignRes} from 'services/types';
+import {GetUserNonceAdditionalParams} from 'services/web3';
 
-export async function getTreejerApiAccessToken(treejerApiUrl: string, web3: Web3): Promise<UserSignRes> {
+export async function getTreejerApiAccessToken(
+  treejerApiUrl: string,
+  web3: Web3,
+  token: string,
+  additionalParams: GetUserNonceAdditionalParams = {},
+): Promise<UserSignRes> {
   let web3Accounts;
   await web3.eth.getAccounts((e, accounts) => {
     if (e) {
@@ -37,7 +43,7 @@ export async function getTreejerApiAccessToken(treejerApiUrl: string, web3: Web3
     });
   }
 
-  const userNonceResult = await getUserNonce(treejerApiUrl, wallet);
+  const userNonceResult = await getUserNonce(treejerApiUrl, wallet, token, additionalParams);
   console.log(userNonceResult, 'userNonceResult is here<===');
 
   const signature = await web3.eth.sign(userNonceResult.message, wallet);
