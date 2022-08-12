@@ -16,7 +16,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
@@ -124,7 +124,7 @@ function MyProfile(props: MyProfileProps) {
     // }
   }, []);
 
-  const [submiting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
     if (!isConnected) {
       showAlert({
@@ -320,7 +320,7 @@ function MyProfile(props: MyProfileProps) {
                         style={styles.button}
                         caption={t('withdraw')}
                         variant="tertiary"
-                        loading={submiting}
+                        loading={submitting}
                         onPress={handleWithdrawPlanterBalance}
                       />
                       <Spacer times={4} />

@@ -7,7 +7,7 @@ import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import ProgressCircles from 'components/ProgressCircles';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
@@ -45,7 +45,7 @@ function OnboardingScreen() {
   ];
   const isEnd = currentStep === onboardingData.length - 1;
   const currentStepForRenderItem = currentStep;
-  const {markOnboardingAsDone} = useSettings();
+  const {markOnBoardingDone} = useSettings();
 
   const renderItem: ListRenderItem<OnboardingData> = useCallback(
     ({item, index}) => {
@@ -67,10 +67,10 @@ function OnboardingScreen() {
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
-      return markOnboardingAsDone();
+      return markOnBoardingDone();
     }
     carouselRef.current?.snapToNext();
-  }, [isEnd, markOnboardingAsDone]);
+  }, [isEnd, markOnBoardingDone]);
 
   const onSnapToItem = useCallback((newIndex: number) => {
     setCurrentStep(newIndex);

@@ -10,7 +10,7 @@ import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
 import {useTranslation} from 'react-i18next';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;

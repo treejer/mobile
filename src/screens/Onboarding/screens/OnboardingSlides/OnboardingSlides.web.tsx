@@ -6,7 +6,7 @@ import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import ProgressCircles from 'components/ProgressCircles';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {useTranslation} from 'react-i18next';
 import Slider from 'react-slick';
 import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
@@ -55,14 +55,14 @@ function OnboardingScreen() {
     },
   ];
   const isEnd = currentStep === onboardingData.length - 1;
-  const {markOnboardingAsDone} = useSettings();
+  const {markOnBoardingDone} = useSettings();
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
-      return markOnboardingAsDone();
+      return markOnBoardingDone();
     }
     carouselRef.current?.slickNext();
-  }, [isEnd, markOnboardingAsDone]);
+  }, [isEnd, markOnBoardingDone]);
 
   return (
     <View style={globalStyles.fill}>

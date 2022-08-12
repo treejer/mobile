@@ -1,4 +1,9 @@
-import {changeUseGGN, markOnBoardingDone, resetOnBoardingData, updateLocale} from 'redux/modules/settings/settings';
+import {
+  changeUseGSN,
+  markOnBoardingDone,
+  resetOnBoardingData,
+  updateLocale,
+} from '../../redux/modules/settings/settings';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 export const useSettings = () => {
@@ -17,15 +22,15 @@ export const useSettings = () => {
     dispatch(updateLocale(newLocale));
   };
 
-  const handleChangeUseGGN = (useGGN: boolean) => {
-    dispatch(changeUseGGN(useGGN));
+  const handleChangeUseGSN = (useGSN: boolean) => {
+    dispatch(changeUseGSN(useGSN));
   };
 
   return {
     ...settings,
     updateLocale: handleChangeLocale,
     markOnBoardingDone: handleMarkOnBoardingDone,
-    changeUseGGN: handleChangeUseGGN,
+    changeUseGSN: handleChangeUseGSN,
     resetOnBoardingData: handleResetOnBoarding,
   };
 };

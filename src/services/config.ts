@@ -23,13 +23,10 @@ export interface StorageKeys {
   magicToken: string;
   magicWalletAddress: string;
   user: string;
-  onBoarding: string;
-  locale: string;
   userId: string;
   offlineTrees: string;
   offlineUpdatedTrees: string;
   accessToken: string;
-  useGSN: string;
   blockchainNetwork: string;
   treeUpdateInterval: string;
 }
@@ -201,13 +198,10 @@ export const storageKeys: StorageKeys = {
   magicToken: '__TREEJER_MAGIC_TOKEN',
   magicWalletAddress: '__TREEJER_MAGIC_WALLET_ADDRESS',
   user: '__TREEJER_CURRENT_USER',
-  onBoarding: '__TREEJER_ONBOARDING',
-  locale: '__TREEJER_LOCALE',
   userId: '__TREEJER_USER_ID',
   offlineTrees: '__TREEJER_OFFLINE_TREES',
   offlineUpdatedTrees: '__TREEJER_OFFLINE_UPDATED_TREES',
   accessToken: '__TREEJER_ACCESS_TOKEN',
-  useGSN: '__TREEJER_USE_GSN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
 };
@@ -255,6 +249,6 @@ export const networks: Networks = {
 };
 
 export const debugFetch = false;
-export const reduxLogger = false;
+export const reduxLogger = true;
 
 export default config;

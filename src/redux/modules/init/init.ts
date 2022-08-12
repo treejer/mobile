@@ -80,7 +80,7 @@ export function useInit() {
 }
 
 export function* sessionInfo() {
-  const language = yield select((state: TReduxState) => state.language.locale);
+  const language = yield select((state: TReduxState) => state.settings.locale);
   const osMethod = Platform.select({
     android: getApiLevel,
     ios: getSystemVersion,

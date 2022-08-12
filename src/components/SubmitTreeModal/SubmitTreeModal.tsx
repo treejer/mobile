@@ -14,7 +14,7 @@ import {CommonActions, useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {ContractType} from 'services/config';
 import {Routes} from 'navigation';

@@ -1,13 +1,13 @@
 import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {i18next} from 'localization';
+import {i18next} from '../../localization';
 import {put, select} from 'redux-saga/effects';
 import {TReduxState} from 'redux/store';
-import {removeToken} from 'redux/modules/token/token';
-import {userLoggedIn} from 'redux/modules/auth/clientAuth';
+import {removeToken} from '../../redux/modules/token/token';
+import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
 import {debugFetch} from 'services/config';
-import {selectSettings} from 'redux/modules/settings/settings';
+import {selectSettings} from '../../redux/modules/settings/settings';
 
 export type FetchResult<Data> = {
   result: Data;

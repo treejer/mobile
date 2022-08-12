@@ -1,6 +1,6 @@
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {CountryCode} from 'react-native-country-picker-modal';
-import {useToken} from 'redux/modules/token/token';
+import {useToken} from '../token/token';
 
 export const USER_ONBOARDED = 'USER_ONBOARDED';
 export const userOnboarded = () => ({

@@ -1,22 +1,22 @@
 import {select} from 'redux-saga/effects';
-import {TReduxState} from 'redux/store';
+import {TReduxState} from '../../store';
 import {defaultLocale} from 'services/config';
 
 export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
-  useGGN: boolean;
+  useGSN: boolean;
 };
 
 const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
-  useGGN: true,
+  useGSN: true,
 };
 
 type TSettingsAction = {
   type: string;
-  useGGN: boolean;
+  useGSN: boolean;
   locale: string;
 };
 
@@ -32,14 +32,14 @@ export function resetOnBoardingData() {
 
 export const UPDATE_LOCALE = 'UPDATE_LOCALE';
 export function updateLocale(newLocale: string) {
-  return {type: UPDATE_LOCALE, payload: newLocale};
+  return {type: UPDATE_LOCALE, locale: newLocale};
 }
 
-export const CHANGE_USE_GGN = 'CHANGE_USE_GGN';
-export function changeUseGGN(useGGN: boolean) {
+export const CHANGE_USE_GSN = 'CHANGE_USE_GSN';
+export function changeUseGSN(useGSN: boolean) {
   return {
-    type: CHANGE_USE_GGN,
-    payload: useGGN,
+    type: CHANGE_USE_GSN,
+    useGSN: useGSN,
   };
 }
 
@@ -63,10 +63,10 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
         locale: action.locale,
       };
     }
-    case CHANGE_USE_GGN: {
+    case CHANGE_USE_GSN: {
       return {
         ...state,
-        useGGN: action.useGGN,
+        useGSN: action.useGSN,
       };
     }
 

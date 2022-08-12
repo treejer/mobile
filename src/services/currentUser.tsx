@@ -5,7 +5,7 @@ import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
 import {asyncAlert} from 'utilities/helpers/alert';
 import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {useResetWeb3Data, useWalletAccount} from 'services/web3';
 import {useTranslation} from 'react-i18next';
 
@@ -70,7 +70,7 @@ export function CurrentUserProvider(props) {
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
 
   const wallet = useWalletAccount();
-  const {changeUseGsn} = useSettings();
+  const {changeUseGSN} = useSettings();
   const {resetWeb3Data} = useResetWeb3Data();
   const {t} = useTranslation();
 
@@ -138,15 +138,17 @@ export function CurrentUserProvider(props) {
           }
           await AsyncStorage.removeItem(storageKeys.magicToken);
         }
-        const locale = await AsyncStorage.getItem(storageKeys.locale);
-        const onBoarding = await AsyncStorage.getItem(storageKeys.onBoarding);
+        // * @logic-hook
+        // const locale = await AsyncStorage.getItem(storageKeys.locale);
+        // const onBoarding = await AsyncStorage.getItem(storageKeys.onBoarding);
         const network = (await AsyncStorage.getItem(storageKeys.blockchainNetwork)) || defaultNetwork;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
-        changeUseGsn(true);
-        await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
-        await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
+        changeUseGSN(true);
+        // * @logic-hook
+        // await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
+        // await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
         await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         if (!userPressed) {
           if (offlineTrees.planted) {
@@ -163,7 +165,7 @@ export function CurrentUserProvider(props) {
         return Promise.reject(e);
       }
     },
-    [changeUseGsn, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
+    [changeUseGSN, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
   );
 
   useEffect(() => {

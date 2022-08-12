@@ -23,7 +23,7 @@ import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {
   assignedTreeJSON,
   canUpdateTreeLocation,
