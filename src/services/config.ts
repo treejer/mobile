@@ -39,10 +39,7 @@ export enum BlockchainNetwork {
 
 export interface NetworkConfig {
   contracts: {
-    [ContractType.TreeFactory]: ConfigContract;
-    [ContractType.Paymaster]: ConfigContract;
-    [ContractType.Planter]: ConfigContract;
-    [ContractType.PlanterFund]: ConfigContract;
+    [key in ContractType]: ConfigContract;
   };
   networkId: number;
   isMainnet: boolean;

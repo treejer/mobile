@@ -3,3 +3,12 @@ export interface UserSignRes {
   userId: string;
   wallet: string;
 }
+
+export interface UserSignForm {
+  signature: string;
+}
+
+export interface UserNonceRes {
+  userId: string;
+  message: string;
+}

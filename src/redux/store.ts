@@ -15,7 +15,7 @@ export const reducerInitiator = (state, action) => {
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
-  whitelist: ['token', 'clientAuth', 'settings', 'init'],
+  whitelist: ['token', 'clientAuth', 'settings', 'init', 'web3'],
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer);

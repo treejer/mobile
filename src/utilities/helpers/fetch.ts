@@ -6,8 +6,9 @@ import {put, select} from 'redux-saga/effects';
 import {TReduxState} from 'redux/store';
 import {removeToken} from '../../redux/modules/token/token';
 import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
-import {debugFetch} from 'services/config';
+import {debugFetch, NetworkConfig} from 'services/config';
 import {selectSettings} from '../../redux/modules/settings/settings';
+import {selectConfig} from 'redux/modules/web3/web3';
 
 export type FetchResult<Data> = {
   result: Data;
@@ -49,8 +50,17 @@ export function fetch<Data, Form = any>(url, options: AxiosRequestConfig<Form> =
   });
 }
 
-export function* sagaFetch<Data, Form = any>(url, options: AxiosRequestConfig<Form> = {}) {
+export type SagaFetchOptions = {
+  configUrl: keyof NetworkConfig;
+};
+
+export function* sagaFetch<Data, Form = any>(
+  url,
+  _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
+) {
   const {token} = yield select((state: TReduxState) => state.token);
+  const config: NetworkConfig = yield selectConfig();
+  let {configUrl, ...options} = _options;
   if (token) {
     options = {
       ...options,
@@ -61,7 +71,7 @@ export function* sagaFetch<Data, Form = any>(url, options: AxiosRequestConfig<Fo
     };
   }
 
-  return yield fetch<Data, Form>(url, options);
+  return yield fetch<Data, Form>(config[configUrl], options);
 }
 
 type ClientError = {
