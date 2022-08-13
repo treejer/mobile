@@ -8,7 +8,7 @@ import {removeToken} from '../../redux/modules/token/token';
 import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
 import {debugFetch, NetworkConfig} from 'services/config';
 import {selectSettings} from '../../redux/modules/settings/settings';
-import {selectConfig} from 'redux/modules/web3/web3';
+import {selectConfig} from '../../redux/modules/web3/web3';
 
 export type FetchResult<Data> = {
   result: Data;
@@ -28,7 +28,7 @@ export function fetch<Data, Form = any>(url, options: AxiosRequestConfig<Form> =
         if (res.status) {
           if (res.status.toString().split('')[0] === '2') {
             return resolve({
-              result: res.data.result,
+              result: res.data,
               status: res.status,
             });
           } else {
@@ -70,8 +70,7 @@ export function* sagaFetch<Data, Form = any>(
       },
     };
   }
-
-  return yield fetch<Data, Form>(config[configUrl], options);
+  return yield fetch<Data, Form>(config[configUrl] + url, options);
 }
 
 type ClientError = {

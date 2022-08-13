@@ -6,7 +6,7 @@ import {asyncAlert} from 'utilities/helpers/alert';
 import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useSettings} from 'utilities/hooks/useSettings';
-import {useResetWeb3Data, useWalletAccount} from 'services/web3';
+import {useUserWeb3, useWalletAccount} from 'utilities/hooks/useWeb3';
 import {useTranslation} from 'react-i18next';
 
 export enum UserStatus {
@@ -71,7 +71,7 @@ export function CurrentUserProvider(props) {
 
   const wallet = useWalletAccount();
   const {changeUseGSN} = useSettings();
-  const {resetWeb3Data} = useResetWeb3Data();
+  const {resetWeb3Data} = useUserWeb3();
   const {t} = useTranslation();
 
   const {error, loading} = result;
@@ -145,7 +145,7 @@ export function CurrentUserProvider(props) {
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
         dispatchResetOfflineTrees();
-        changeUseGSN(true);
+        // changeUseGSN(true);
         // * @logic-hook
         // await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
         // await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
@@ -158,7 +158,7 @@ export function CurrentUserProvider(props) {
             await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, JSON.stringify(offlineTrees.updated));
           }
         }
-        await resetWeb3Data();
+        // await resetWeb3Data();
         await setCurrentUser(null);
       } catch (e) {
         console.log(e, 'e inside handleLogout');

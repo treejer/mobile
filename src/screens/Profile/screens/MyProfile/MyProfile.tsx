@@ -7,7 +7,7 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';

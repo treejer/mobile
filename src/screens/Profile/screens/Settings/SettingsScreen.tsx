@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer/Spacer';
 import {useSettings} from 'utilities/hooks/useSettings';
 import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
 import {ChevronLeft} from 'components/Icons';
 

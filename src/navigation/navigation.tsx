@@ -1,6 +1,6 @@
 import React from 'react';
 import {AppLoading} from 'components/AppLoading/AppLoading';
-import {useWeb3Context} from 'services/web3';
+import {useUserWeb3} from 'utilities/hooks/useWeb3';
 import {isWeb} from 'utilities/helpers/web';
 import {useSettings} from 'utilities/hooks/useSettings';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
@@ -65,7 +65,7 @@ export enum Routes {
 }
 
 export function RootNavigation() {
-  const {loading, magic} = useWeb3Context();
+  const {loading, magic} = useUserWeb3();
   const {locale, onBoardingDone} = useSettings();
   const {
     data: {user},

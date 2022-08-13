@@ -6,6 +6,7 @@ export interface UserSignRes {
 
 export interface UserSignForm {
   signature: string;
+  wallet: string;
 }
 
 export interface UserNonceRes {

@@ -6,7 +6,7 @@ import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigati
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
 import {GreenBlockRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';

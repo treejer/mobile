@@ -101,31 +101,31 @@ export default function App() {
             {initialValuesLoading ? (
               <AppLoading />
             ) : (
-              <Web3Provider
-                persistedWallet={wallet}
-                persistedAccessToken={accessToken}
-                persistedUserId={userId}
-                persistedMagicToken={magicToken}
-                blockchainNetwork={blockchainNetwork}
-              >
-                <ApolloProvider>
-                  <OfflineTreeProvider>
-                    <CurrentUserProvider>
-                      <CurrentJourneyProvider>
-                        <NetInfo />
-                        <SwitchNetwork />
-                        <PreLoadImage />
-                        {isWeb() ? <ToastContainer /> : <></>}
-                        {isWeb() ? <LandScapeModal /> : <></>}
-                        {!isWeb() ? <UpdateModal /> : <></>}
-                        <NavigationContainer linking={linking}>
-                          <RootNavigation />
-                        </NavigationContainer>
-                      </CurrentJourneyProvider>
-                    </CurrentUserProvider>
-                  </OfflineTreeProvider>
-                </ApolloProvider>
-              </Web3Provider>
+              // <Web3Provider
+              //   persistedWallet={wallet}
+              //   persistedAccessToken={accessToken}
+              //   persistedUserId={userId}
+              //   persistedMagicToken={magicToken}
+              //   blockchainNetwork={blockchainNetwork}
+              // >
+              <ApolloProvider>
+                <OfflineTreeProvider>
+                  <CurrentUserProvider>
+                    <CurrentJourneyProvider>
+                      <NetInfo />
+                      <SwitchNetwork />
+                      <PreLoadImage />
+                      {isWeb() ? <ToastContainer /> : <></>}
+                      {isWeb() ? <LandScapeModal /> : <></>}
+                      {!isWeb() ? <UpdateModal /> : <></>}
+                      <NavigationContainer linking={linking}>
+                        <RootNavigation />
+                      </NavigationContainer>
+                    </CurrentJourneyProvider>
+                  </CurrentUserProvider>
+                </OfflineTreeProvider>
+              </ApolloProvider>
+              // </Web3Provider>
             )}
           </SafeAreaProvider>
         </I18nextProvider>

@@ -9,7 +9,7 @@ import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTranslation} from 'react-i18next';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
