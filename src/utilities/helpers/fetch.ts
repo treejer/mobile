@@ -55,7 +55,7 @@ export type SagaFetchOptions = {
 };
 
 export function* sagaFetch<Data, Form = any>(
-  url,
+  url: string,
   _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
 ) {
   const {token} = yield select((state: TReduxState) => state.token);
@@ -70,6 +70,9 @@ export function* sagaFetch<Data, Form = any>(
       },
     };
   }
+  console.log('====================================');
+  console.log(options, 'options in saga fetch');
+  console.log('====================================');
   return yield fetch<Data, Form>(config[configUrl] + url, options);
 }
 

@@ -6,6 +6,7 @@ import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {Platform} from 'react-native';
 import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device-info';
 import {version} from '../../../../package.json';
+import {startWatchConnection} from '../netInfo/netInfo';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -53,6 +54,7 @@ export function* initSagas() {
 
 export function* watchInitApp() {
   try {
+    yield put(startWatchConnection());
     const {token} = yield select((state: TReduxState) => state.token);
     if (token) {
       //* @logic-saga

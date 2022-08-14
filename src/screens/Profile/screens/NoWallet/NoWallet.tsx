@@ -29,7 +29,7 @@ export type NoWalletProps = RootNavigationProp<Routes.Login>;
 function NoWallet(props: NoWalletProps) {
   const {navigation} = props;
 
-  const {storeMagicToken} = useUserWeb3();
+  const {storeMagicToken, accessToken, userId} = useUserWeb3();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
 
@@ -70,6 +70,14 @@ function NoWallet(props: NoWalletProps) {
     })();
   }, []);
 
+  useEffect(() => {
+    if (userId && accessToken) {
+      (async function () {
+        await refetchUser();
+      })();
+    }
+  }, [userId, accessToken, refetchUser]);
+
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
   }, []);
@@ -88,7 +96,7 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
       if (result) {
-        storeMagicToken(result);
+        await storeMagicToken(result);
         // await refetchUser();
         console.log(result, 'result is here');
       } else {

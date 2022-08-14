@@ -78,14 +78,14 @@ export function CurrentUserProvider(props) {
   // @ts-ignore
   const statusCode = error?.networkError?.statusCode;
 
-  useEffect(() => {
-    (async function () {
-      const localUser = await AsyncStorage.getItem(storageKeys.user);
-      if (localUser) {
-        setCurrentUser(JSON.parse(localUser));
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async function () {
+  //     const localUser = await AsyncStorage.getItem(storageKeys.user);
+  //     if (localUser) {
+  //       setCurrentUser(JSON.parse(localUser));
+  //     }
+  //   })();
+  // }, []);
 
   const refetchUser = useCallback(async () => {
     try {
@@ -158,7 +158,7 @@ export function CurrentUserProvider(props) {
             await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, JSON.stringify(offlineTrees.updated));
           }
         }
-        // await resetWeb3Data();
+        await resetWeb3Data();
         await setCurrentUser(null);
       } catch (e) {
         console.log(e, 'e inside handleLogout');

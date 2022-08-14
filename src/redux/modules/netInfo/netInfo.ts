@@ -1,4 +1,5 @@
 import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
+import {Action, Dispatch} from 'redux';
 import {put, select, takeEvery} from 'redux-saga/effects';
 import {store, TReduxState} from '../../store';
 
@@ -13,6 +14,7 @@ const initialState: TNetInfo = {
 type TNetInfoAction = {
   type: string;
   isConnected: boolean;
+  dispatch: Dispatch<Action<any>>;
 };
 
 export const START_WATCH_CONNECTION = 'START_WATCH_CONNECTION';
@@ -41,17 +43,18 @@ export const netInfoReducer = (state: TNetInfo = initialState, action: TNetInfoA
   }
 };
 
-export function* watchStartWatchConnection() {
+export function* watchStartWatchConnection(action: TNetInfoAction) {
   try {
+    const {dispatch} = action;
     NetInfo.addEventListener((state: NetInfoState) => {
-      store.dispatch(updateWatchConnection((state?.isConnected && state?.isInternetReachable) || false));
+      dispatch(updateWatchConnection((state?.isConnected && state?.isInternetReachable) || false));
     });
   } catch (error) {
     yield put(updateWatchConnection(false));
   }
 }
 
-export function* watchConnectionSagas() {
+export function* netInfoSagas() {
   yield takeEvery(START_WATCH_CONNECTION, watchStartWatchConnection);
 }
 export function* selectNetInfo() {

@@ -6,30 +6,10 @@ import {t} from 'i18next';
 
 import {store, TReduxState} from '../../store';
 import {TUserNonceAction, TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
-import {userSignActions} from '../userSign/userSign';
+import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-
-// ? UpdateAccessToken
-
-// export interface Web3ContextState {
-//   web3: Web3;
-//   unlocked: boolean;
-//   accessToken: string;
-//   treeFactory: Contract;
-//   planter: Contract;
-//   planterFund: Contract;
-//   resetWeb3Data: () => void;
-//   userId: string;
-//   magicToken: string;
-//   storeMagicToken: (token: string) => void;
-//   wallet: string;
-//   loading: boolean;
-//   network: BlockchainNetwork;
-//   magic: Magic | null;
-//   changeNetwork: (network: BlockchainNetwork) => void;
-//   config: NetworkConfig;
-// }
+import {Action, Dispatch} from 'redux';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -46,9 +26,6 @@ export type TWeb3 = {
   planter: Contract;
   planterFund: Contract;
 };
-//   resetWeb3Data: () => void;
-//   storeMagicToken: (token: string) => void;
-//   changeNetwork: (network: BlockchainNetwork) => void;
 
 const defaultConfig = configs[defaultNetwork];
 const defaultMagic = magicGenerator(configs[defaultNetwork]);
@@ -84,11 +61,13 @@ export type TWeb3Action = {
     accessToken: string;
     userId: string;
     wallet: string;
+    magicToken: string;
   };
   newNetwork: BlockchainNetwork;
   storeMagicToken: {
     web3: Web3;
     magicToken: string;
+    dispatch: Dispatch<Action<any>>;
   };
 };
 
@@ -112,7 +91,7 @@ export function updateWeb3Done() {
   return {type: UPDATE_WEB3_DONE};
 }
 export const STORE_MAGIC_TOKEN = 'STORE_MAGIC_TOKEN';
-export function storeMagicToken(payload: {web3: Web3; magicToken: string}) {
+export function storeMagicToken(payload: {web3: Web3; magicToken: string; dispatch: Dispatch<Action<any>>}) {
   return {type: STORE_MAGIC_TOKEN, storeMagicToken: payload};
 }
 
@@ -156,9 +135,10 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
       };
     }
     case STORE_MAGIC_TOKEN: {
+      const {dispatch, ...storeMagicToken} = action.storeMagicToken;
       return {
         ...state,
-        ...action.storeMagicToken,
+        ...storeMagicToken,
         loading: true,
       };
     }
@@ -197,9 +177,6 @@ export function* watchChangeNetwork(action: TWeb3Action) {
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
-    console.log('====================================');
-    console.log({config, magic, web3, treeFactory, planter, planterFund});
-    console.log('====================================');
 
     yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
   } catch (error) {
@@ -208,12 +185,10 @@ export function* watchChangeNetwork(action: TWeb3Action) {
 }
 
 export function* watchStoreMagicToken(action: TWeb3Action) {
-  const {web3, magicToken} = action.storeMagicToken;
   try {
+    const {web3, magicToken, dispatch} = action.storeMagicToken;
+    const config = yield selectConfig();
     console.log('[[[try]]]');
-    console.log('====================================');
-    console.log({web3, magicToken});
-    console.log('====================================');
     let web3Accounts;
     yield web3.eth.getAccounts((e, accounts) => {
       if (e) {
@@ -226,40 +201,49 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
       return Promise.reject(new Error('There is no web3 accounts'));
     }
     const wallet = web3Accounts[0];
-    // const isConnect = yield selectNetInfo();
-    // if (isConnect) {
-    yield put(userNonceActions.load({wallet}));
-    const {payload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
+    const isConnect = yield selectNetInfo();
+    if (isConnect) {
+      yield put(userNonceActions.load({wallet}));
+      const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
 
-    const signature = yield web3.eth.sign(payload.message, wallet);
-    console.log('====================================');
-    console.log(signature, 'signature is hereeeee');
-    console.log('====================================');
-    yield put(userSignActions.load({wallet, signature}));
-    const credentials = yield take(userSignActions.loadSuccess);
-    console.log('====================================');
-    console.log(credentials, 'credentials is here');
-    console.log('====================================');
-    // let web3Accounts = [credentials.wallet];
+      const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
+      console.log(signature, 'signature in web3');
+      const response = yield fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({signature}),
+      });
+      const credentials = yield response.json();
+      console.log(credentials, 'credentials');
+      //? yield put(userSignActions.load({wallet, signature}));
+      //? const {payload: userSignPayload}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
+      //? console.log(userSwalletignPayload, 'credentials in web3'); //
+      web3Accounts = [wallet];
 
-    // yield web3.eth.getAccounts(async (error, accounts) => {
-    //   if (error) {
-    //     console.log(error, 'e is here getAccounts eth');
-    //     store.dispatch(networkDisconnect());
-    //     web3Accounts = accounts;
-    //     return;
-    //   }
-    //   const account = web3Accounts[0];
-    //   if (account) {
-    //     store.dispatch(
-    //       updateMagicToken({wallet: account, accessToken: credentials.accessToken, userId: credentials.userId}),
-    //     );
-    //   }
-    // });
-    // }
-    //  else {
-    //   yield put(networkDisconnect());
-    // }
+      yield web3.eth.getAccounts(async (error, accounts) => {
+        if (error) {
+          console.log(error, 'e is here getAccounts eth');
+          dispatch(networkDisconnect());
+          web3Accounts = accounts;
+          return;
+        }
+        const account = web3Accounts[0];
+        if (account) {
+          dispatch(
+            updateMagicToken({
+              wallet: account,
+              accessToken: credentials.loginToken,
+              userId: credentials.userId,
+              magicToken,
+            }),
+          );
+        }
+      });
+    } else {
+      yield put(networkDisconnect());
+    }
   } catch (error: any) {
     console.log('[[[[catch]]]]');
     let {error: {message = t('loginFailed.message')} = {}} = error;
