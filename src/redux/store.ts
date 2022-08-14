@@ -1,0 +1,55 @@
+import {createStore, applyMiddleware, Middleware, Store} from 'redux';
+import {persistStore, persistReducer, createTransform} from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import createSagaMiddleware from 'redux-saga';
+import logger from 'redux-logger';
+import {stringify, parse} from 'flatted';
+
+import {reduxLogger} from 'services/config';
+import appReducer from './reducer';
+import saga from './saga';
+
+export const reducerInitiator = (state, action) => {
+  return () => appReducer(state, action);
+};
+
+export const flattedTransform = createTransform(
+  (inboundState, key) => stringify(inboundState),
+  (outboundState, key) => parse(outboundState),
+);
+
+const persistConfig = {
+  key: 'RangerTreejerPersist',
+  storage: AsyncStorage,
+  whitelist: ['token', 'clientAuth', 'settings', 'init', 'web3'],
+  // transforms: [flattedTransform],
+};
+
+const persistedReducer = persistReducer(persistConfig, appReducer);
+
+export const sagaMiddleware = createSagaMiddleware();
+const middlewares: Array<Middleware> = [sagaMiddleware];
+
+if (reduxLogger) {
+  middlewares.push(logger);
+}
+
+export const storeGenerator = reducer => {
+  const store = createStore(reducer, applyMiddleware(...middlewares));
+  const persistor = persistStore(store);
+
+  sagaMiddleware.run(saga, store as TStoreRedux);
+
+  return {
+    store,
+    persistor,
+  };
+};
+
+const {store, persistor} = storeGenerator(persistedReducer);
+
+export type TReduxState = ReturnType<typeof appReducer>;
+export type TAppDispatch = typeof store.dispatch;
+export type TStoreRedux = Store<TReduxState>;
+
+export {store, persistor};

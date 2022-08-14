@@ -56,3 +56,31 @@ export function showAlert(options: ShowAlertOptions) {
     Alert.alert(title, message, buttons, alertOptions);
   }
 }
+
+export function showSagaAlert(options: ShowAlertOptions) {
+  const {message, title = 'Alert', buttons, alertOptions, mode} = options;
+
+  return new Promise((resolve, reject) => {
+    const _buttons = buttons ?? [
+      {
+        text: 'OK',
+        onPress: () => {
+          resolve('ok');
+        },
+      },
+      {
+        text: 'Cancel',
+        onPress: () => {
+          reject();
+        },
+      },
+    ];
+    showAlert({
+      title,
+      message,
+      buttons: _buttons,
+      alertOptions: alertOptions ?? {cancelable: false},
+      mode,
+    });
+  });
+}

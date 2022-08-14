@@ -106,6 +106,15 @@ export const en = {
   errors: {
     verificationCode: 'Code is wrong',
     phoneNumber: 'Invalid phone number',
+    0: 'No Internet Connection!',
+    INTERNET: 'No Internet Connection!',
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    405: 'Method Not Allowed',
+    500: 'Internal Server Error',
+    error: 'Error!',
   },
   'verified!': 'Verified!',
   greenBlock: {

@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
+import {Provider} from 'react-redux';
 import SplashScreen from 'react-native-splash-screen';
 import {isWeb} from './src/utilities/helpers/web';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {i18next} from './src/localization';
 import {I18nextProvider} from 'react-i18next';
-import SettingsProvider, {useAppInitialValue} from './src/services/settings';
+import {useAppInitialValue} from './src/services/settings';
 import CurrentJourneyProvider from './src/services/currentJourney';
 import {AppLoading} from './src/components/AppLoading/AppLoading';
 import {OfflineTreeProvider} from './src/utilities/hooks/useOfflineTrees';
@@ -22,6 +23,8 @@ import LandScapeModal from './src/components/LandScapeModal/LandScapeModal';
 import UpdateModal from './src/components/UpdateModal/UpdateModal';
 import {useInitialDeepLinking} from './src/utilities/hooks/useDeepLinking';
 import PreLoadImage from './src/components/PreloadImage/PreLoadImage';
+import {persistor, store} from './src/redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
 
 const config = {
   screens: {
@@ -75,9 +78,6 @@ const linking: LinkingOptions<any> = {
 export default function App() {
   const {
     loading: initialValuesLoading,
-    locale,
-    useGSN,
-    onboardingDone,
     wallet,
     accessToken,
     userId,
@@ -94,23 +94,20 @@ export default function App() {
   }, []);
 
   return (
-    <I18nextProvider i18n={i18next}>
-      <SafeAreaProvider>
-        {initialValuesLoading ? (
-          <AppLoading />
-        ) : (
-          <SettingsProvider
-            initialUseGSN={useGSN}
-            onboardingDoneInitialState={onboardingDone}
-            localeInitialState={locale}
-          >
-            <Web3Provider
-              persistedWallet={wallet}
-              persistedAccessToken={accessToken}
-              persistedUserId={userId}
-              persistedMagicToken={magicToken}
-              blockchainNetwork={blockchainNetwork}
-            >
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <I18nextProvider i18n={i18next}>
+          <SafeAreaProvider>
+            {initialValuesLoading ? (
+              <AppLoading />
+            ) : (
+              // <Web3Provider
+              //   persistedWallet={wallet}
+              //   persistedAccessToken={accessToken}
+              //   persistedUserId={userId}
+              //   persistedMagicToken={magicToken}
+              //   blockchainNetwork={blockchainNetwork}
+              // >
               <ApolloProvider>
                 <OfflineTreeProvider>
                   <CurrentUserProvider>
@@ -128,10 +125,11 @@ export default function App() {
                   </CurrentUserProvider>
                 </OfflineTreeProvider>
               </ApolloProvider>
-            </Web3Provider>
-          </SettingsProvider>
-        )}
-      </SafeAreaProvider>
-    </I18nextProvider>
+              // </Web3Provider>
+            )}
+          </SafeAreaProvider>
+        </I18nextProvider>
+      </PersistGate>
+    </Provider>
   );
 }

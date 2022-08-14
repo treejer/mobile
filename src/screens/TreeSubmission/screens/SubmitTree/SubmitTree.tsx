@@ -8,7 +8,7 @@ import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {TreeSubmissionRouteParamList} from 'types';
 import {ContractType} from 'services/config';
@@ -23,7 +23,7 @@ import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {
   assignedTreeJSON,
   canUpdateTreeLocation,

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
 import Button from '../Button';

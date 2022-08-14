@@ -1,8 +1,8 @@
 import React from 'react';
 import {AppLoading} from 'components/AppLoading/AppLoading';
-import {useWeb3Context} from 'services/web3';
+import {useUserWeb3} from 'utilities/hooks/useWeb3';
 import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
@@ -65,8 +65,8 @@ export enum Routes {
 }
 
 export function RootNavigation() {
-  const {loading, magic} = useWeb3Context();
-  const {locale, onboardingDone} = useSettings();
+  const {loading, magic} = useUserWeb3();
+  const {locale, onBoardingDone} = useSettings();
   const {
     data: {user},
     status,
@@ -89,25 +89,25 @@ export function RootNavigation() {
             component={SelectLanguage}
           />
         ) : null}
-        {!onboardingDone ? (
+        {!onBoardingDone ? (
           <RootStack.Screen
             name={Routes.Onboarding}
             options={{title: screenTitle('on-boarding')}}
             component={OnboardingSlides}
           />
         ) : null}
-        {locale && onboardingDone && !user ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
-        {locale && onboardingDone && user && !isVerified ? (
+        {locale && onBoardingDone && !user ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
+        {locale && onBoardingDone && user && !isVerified ? (
           <>
             <RootStack.Screen name={Routes.UnVerifiedProfileStack} component={UnVerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onboardingDone && user && isVerified ? (
+        {locale && onBoardingDone && user && isVerified ? (
           <>
             <RootStack.Screen name={Routes.VerifiedProfileTab} component={VerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onboardingDone && user ? (
+        {locale && onBoardingDone && user ? (
           <>
             {isWeb() ? null : (
               <>
