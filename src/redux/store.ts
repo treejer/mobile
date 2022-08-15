@@ -1,9 +1,9 @@
 import {createStore, applyMiddleware, Middleware, Store} from 'redux';
-import {persistStore, persistReducer, createTransform} from 'redux-persist';
+import {persistStore, persistReducer} from 'redux-persist';
+import {createFilter, createBlacklistFilter} from 'redux-persist-transform-filter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createSagaMiddleware from 'redux-saga';
 import logger from 'redux-logger';
-import {stringify, parse} from 'flatted';
 
 import {reduxLogger} from 'services/config';
 import appReducer from './reducer';
@@ -13,16 +13,19 @@ export const reducerInitiator = (state, action) => {
   return () => appReducer(state, action);
 };
 
-export const flattedTransform = createTransform(
-  (inboundState, key) => stringify(inboundState),
-  (outboundState, key) => parse(outboundState),
-);
+const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
+  'magic',
+  'web3',
+  'treeFactory',
+  'planter',
+  'planterFund',
+]);
 
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
   whitelist: ['token', 'clientAuth', 'settings', 'init', 'web3'],
-  // transforms: [flattedTransform],
+  transforms: [saveSubsetBlacklistFilter],
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer);

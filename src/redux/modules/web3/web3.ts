@@ -4,9 +4,8 @@ import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'service
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {t} from 'i18next';
 
-import {store, TReduxState} from '../../store';
-import {TUserNonceAction, TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
-import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
+import {TReduxState} from '../../store';
+import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {Action, Dispatch} from 'redux';
@@ -71,6 +70,11 @@ export type TWeb3Action = {
   };
 };
 
+export const CREATE_WEB3 = 'CREATE_WEB3';
+export function createWeb3() {
+  return {type: CREATE_WEB3};
+}
+
 export const CHANGE_NETWORK = 'CHANGE_NETWORK';
 export function changeNetwork(newNetwork: string) {
   return {type: CHANGE_NETWORK, newNetwork};
@@ -106,6 +110,12 @@ export function networkDisconnect() {
 
 export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): TWeb3 => {
   switch (action.type) {
+    case CREATE_WEB3: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
     case CHANGE_NETWORK: {
       return {
         ...state,
@@ -165,6 +175,22 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
 
 function contractGenerator(web3: Web3, {abi, address}: {abi: any; address: string}): Contract {
   return new web3.eth.Contract(abi, address);
+}
+
+export function* watchCreateWeb3() {
+  const config = yield selectConfig();
+
+  try {
+    const magic: Magic = magicGenerator(config);
+    const web3 = new Web3(magic.rpcProvider);
+    const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
+    const planter = contractGenerator(web3, config.contracts.Planter);
+    const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
+    console.log(1);
+    yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
+  } catch (error) {
+    console.log(error, 'update web3 error');
+  }
 }
 
 export function* watchChangeNetwork(action: TWeb3Action) {
@@ -261,6 +287,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
 export function* web3Sagas() {
   yield takeEvery(CHANGE_NETWORK, watchChangeNetwork);
   yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken);
+  yield takeEvery(CREATE_WEB3, watchCreateWeb3);
 }
 
 export function* selectConfig() {

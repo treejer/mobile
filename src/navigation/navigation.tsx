@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import {useUserWeb3} from 'utilities/hooks/useWeb3';
 import {isWeb} from 'utilities/helpers/web';
@@ -67,10 +67,15 @@ export enum Routes {
 export function RootNavigation() {
   const {loading, magic} = useUserWeb3();
   const {locale, onBoardingDone} = useSettings();
+  const {createWeb3} = useUserWeb3();
   const {
     data: {user},
     status,
   } = useCurrentUser();
+
+  useEffect(() => {
+    createWeb3();
+  }, []);
 
   const isVerified = status === UserStatus.Verified;
 
