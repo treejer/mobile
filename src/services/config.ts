@@ -172,14 +172,16 @@ const config: Config = {
     networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),
     isMainnet: false,
     web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER || '',
-    treejerApiUrl: formatUrl(
-      isProd
-        ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
-        : Platform.select({
-            android: 'http://10.0.2.2:3000/',
-            default: 'http://localhost:3000/',
-          }),
-    ),
+    // treejerApiUrl: formatUrl(
+    //   isProd
+    //     ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
+    //     : Platform.select({
+    //         android: 'http://10.0.2.2:3000/',
+    //         default: 'http://localhost:3000/',
+    //       }),
+    // ),
+    treejerApiUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL),
+
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),

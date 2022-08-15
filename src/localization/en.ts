@@ -288,4 +288,12 @@ export const en = {
     accept: 'Accept',
     reject: 'Reject',
   },
+  gps: {
+    title: 'GPS',
+    message: 'if your want plant a tree you should turn on your GPS',
+  },
+  inValidImage: {
+    title: 'Image is not valid',
+    message: 'please choose correct image',
+  },
 };
