@@ -89,7 +89,11 @@ function NoWallet(props: NoWalletProps) {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
       console.log(result, 'result is here');
       if (result) {
-        await storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
+        try {
+          await storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
+        } catch (e) {
+          throw e;
+        }
         await refetchUser();
         console.log(result, 'result is here');
       } else {

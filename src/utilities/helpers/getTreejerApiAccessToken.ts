@@ -43,17 +43,20 @@ export async function getTreejerApiAccessToken(
     });
   }
 
-  const userNonceResult = await getUserNonce(treejerApiUrl, wallet, token, additionalParams);
-  console.log(userNonceResult, 'userNonceResult is here<===');
-
-  const signature = await web3.eth.sign(userNonceResult.message, wallet);
-  console.log(signature, 'signature <===');
-
   try {
-    const credentials = await userSign(treejerApiUrl, signature, wallet, key);
-    console.log(credentials, 'credentials <===');
-    return Promise.resolve({...credentials, wallet});
+    const userNonceResult = await getUserNonce(treejerApiUrl, wallet, token, additionalParams);
+    console.log(userNonceResult, 'userNonceResult is here<===');
+    const signature = await web3.eth.sign(userNonceResult.message, wallet);
+    console.log(signature, 'signature <===');
+
+    try {
+      const credentials = await userSign(treejerApiUrl, signature, wallet, key);
+      console.log(credentials, 'credentials <===');
+      return Promise.resolve({...credentials, wallet});
+    } catch (e) {
+      throw e;
+    }
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 }
