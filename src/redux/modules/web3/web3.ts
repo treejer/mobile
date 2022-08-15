@@ -4,12 +4,12 @@ import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'service
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {t} from 'i18next';
 
-import {TReduxState} from '../../store';
+import {TReduxState, TStoreRedux} from '../../store';
 import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {Action, Dispatch} from 'redux';
-import {fetchUserRequest} from '../user/user';
+import {profileActions} from '../../modules/user/user';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -72,12 +72,15 @@ export type TWeb3Action = {
 };
 
 export const CREATE_WEB3 = 'CREATE_WEB3';
-export function createWeb3() {
-  return {type: CREATE_WEB3};
+export function createWeb3(newNetwork?: BlockchainNetwork) {
+  return {
+    type: CREATE_WEB3,
+    newNetwork,
+  };
 }
 
 export const CHANGE_NETWORK = 'CHANGE_NETWORK';
-export function changeNetwork(newNetwork: string) {
+export function changeNetwork(newNetwork: BlockchainNetwork) {
   return {type: CHANGE_NETWORK, newNetwork};
 }
 
@@ -96,7 +99,7 @@ export function updateWeb3Done() {
   return {type: UPDATE_WEB3_DONE};
 }
 export const STORE_MAGIC_TOKEN = 'STORE_MAGIC_TOKEN';
-export function storeMagicToken(payload: {web3: Web3; magicToken: string; dispatch: Dispatch<Action<any>>}) {
+export function storeMagicToken(payload: {web3: Web3; magicToken: string}) {
   return {type: STORE_MAGIC_TOKEN, storeMagicToken: payload};
 }
 
@@ -178,16 +181,18 @@ function contractGenerator(web3: Web3, {abi, address}: {abi: any; address: strin
   return new web3.eth.Contract(abi, address);
 }
 
-export function* watchCreateWeb3() {
-  const config = yield selectConfig();
-
+export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
   try {
+    let config = yield selectConfig();
+    if (newNetwork) {
+      yield put(resetWeb3Data());
+      config = configs[newNetwork];
+    }
     const magic: Magic = magicGenerator(config);
     const web3 = new Web3(magic.rpcProvider);
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
-    console.log(1);
     yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
   } catch (error) {
     console.log(error, 'update web3 error');
@@ -198,22 +203,15 @@ export function* watchChangeNetwork(action: TWeb3Action) {
   const {newNetwork} = action;
 
   try {
-    const config = configs[newNetwork];
-    const magic: Magic = magicGenerator(config);
-    const web3 = new Web3(magic.rpcProvider);
-    const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
-    const planter = contractGenerator(web3, config.contracts.Planter);
-    const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
-
-    yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
+    yield put(createWeb3(newNetwork));
   } catch (error) {
     console.log(error, 'update web3 error');
   }
 }
 
-export function* watchStoreMagicToken(action: TWeb3Action) {
+export function* watchStoreMagicToken(store, action: TWeb3Action) {
   try {
-    const {web3, magicToken, dispatch} = action.storeMagicToken;
+    const {web3, magicToken} = action.storeMagicToken;
     const config = yield selectConfig();
     console.log('[[[try]]]');
     let web3Accounts;
@@ -252,13 +250,13 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
       yield web3.eth.getAccounts(async (error, accounts) => {
         if (error) {
           console.log(error, 'e is here getAccounts eth');
-          dispatch(networkDisconnect());
+          store.dispatch(networkDisconnect());
           web3Accounts = accounts;
           return;
         }
         const account = web3Accounts[0];
         if (account) {
-          dispatch(
+          store.dispatch(
             updateMagicToken({
               wallet: account,
               accessToken: credentials.loginToken,
@@ -266,7 +264,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
               magicToken,
             }),
           );
-          dispatch(fetchUserRequest({userId: credentials.userId, accessToken: credentials.loginToken}));
+          store.dispatch(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
         }
       });
     } else {
@@ -278,7 +276,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
     if (error.message) {
       message = error.message;
     }
-    showSagaAlert({
+    yield showSagaAlert({
       title: t('loginFailed.title'),
       message,
       mode: AlertMode.Error,
@@ -286,9 +284,9 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
   }
 }
 
-export function* web3Sagas() {
+export function* web3Sagas(store: TStoreRedux) {
   yield takeEvery(CHANGE_NETWORK, watchChangeNetwork);
-  yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken);
+  yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken, store);
   yield takeEvery(CREATE_WEB3, watchCreateWeb3);
 }
 

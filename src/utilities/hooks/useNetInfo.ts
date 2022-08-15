@@ -1,7 +1,7 @@
-import NetInfo from '@react-native-community/netinfo';
+import {useNetInfo} from '../../redux/modules/netInfo/netInfo';
 
 export default function useNetInfoConnected() {
-  const netInfo = NetInfo.useNetInfo();
+  const netInfo = useNetInfo();
 
-  return netInfo.isConnected && netInfo.isInternetReachable;
+  return netInfo.isConnected;
 }

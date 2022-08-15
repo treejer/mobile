@@ -25,7 +25,7 @@ export function useUserWeb3() {
 
   const handleStoreMagicToken = useCallback(
     (magicToken: string) => {
-      dispatch(storeMagicToken({web3: web3.web3, magicToken, dispatch}));
+      dispatch(storeMagicToken({web3: web3.web3, magicToken}));
     },
     [dispatch, web3],
   );

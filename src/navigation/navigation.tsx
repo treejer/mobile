@@ -67,15 +67,15 @@ export enum Routes {
 export function RootNavigation() {
   const {loading, magic} = useUserWeb3();
   const {locale, onBoardingDone} = useSettings();
-  const {createWeb3} = useUserWeb3();
+  // const {createWeb3} = useUserWeb3();
   const {
     data: {user},
     status,
   } = useCurrentUser();
-
-  useEffect(() => {
-    createWeb3();
-  }, []);
+  //
+  // useEffect(() => {
+  //   createWeb3();
+  // }, []);
 
   const isVerified = status === UserStatus.Verified;
 

@@ -26,7 +26,6 @@ import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
-import {useCurrUser} from 'utilities/hooks/useCurrUser';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -41,7 +40,8 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
-  const {errorCode} = useCurrUser();
+  const user = useCurrentUser();
+  console.log(user, 'user>++');
 
   const {referrer, organization, hasRefer} = useRefer();
 
@@ -70,7 +70,7 @@ function MyProfile(props: MyProfileProps) {
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
+  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
   const isVerified = data?.user?.isVerified;
 
   const isConnected = useNetInfoConnected();

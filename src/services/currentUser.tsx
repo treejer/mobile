@@ -1,12 +1,10 @@
-import {useLazyQuery} from '@apollo/client';
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import getMeQuery, {GetMeQueryData} from './graphql/GetMeQuery.graphql';
+import {useCallback, useMemo} from 'react';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
+import {profileActions, TProfile} from '../redux/modules/user/user';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {defaultLocale, defaultNetwork, storageKeys} from 'services/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {useSettings} from 'utilities/hooks/useSettings';
-import {useUserWeb3, useWalletAccount} from 'utilities/hooks/useWeb3';
 import {useTranslation} from 'react-i18next';
 
 export enum UserStatus {
@@ -16,10 +14,10 @@ export enum UserStatus {
   Verified,
 }
 
-export interface CurrentUserContextState {
+export interface TUseCurrentUser {
   status: UserStatus | null;
   data: {
-    user: null | GetMeQueryData.User;
+    user: null | TProfile;
   };
   loading?: boolean;
   error?: any;
@@ -27,90 +25,29 @@ export interface CurrentUserContextState {
   handleLogout: (userPressed?: boolean) => void;
 }
 
-const initialCurrentUserContext: CurrentUserContextState = {
-  status: null,
-  data: {
-    user: null,
-  },
-  refetchUser: () => {},
-  handleLogout: () => {},
-};
+export const useCurrentUser = (): TUseCurrentUser => {
+  const user = useAppSelector(state => state.profile);
+  const dispatch = useAppDispatch();
 
-export const CurrentUserContext = createContext<CurrentUserContextState>(initialCurrentUserContext);
-
-export interface UseCurrentUserOptions {
-  didMount?: boolean;
-}
-
-const useCurrentUserDefaultOptions: UseCurrentUserOptions = {
-  didMount: false,
-};
-
-export function useCurrentUser(options: UseCurrentUserOptions = useCurrentUserDefaultOptions): CurrentUserContextState {
-  const {didMount} = options;
-
-  const context = useContext(CurrentUserContext);
-  const {refetchUser} = context;
-
-  useEffect(() => {
-    if (didMount) {
-      refetchUser();
-    }
-  }, []);
-
-  return context;
-}
-
-export function CurrentUserProvider(props) {
-  const {children} = props;
-  const [currentUser, setCurrentUser] = useState<GetMeQueryData.User | null>(null);
-  const [refetch, result] = useLazyQuery<GetMeQueryData>(getMeQuery, {
-    fetchPolicy: 'cache-and-network',
-  });
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
-
-  const wallet = useWalletAccount();
-  const {changeUseGSN} = useSettings();
-  const {resetWeb3Data} = useUserWeb3();
   const {t} = useTranslation();
 
-  const {error, loading} = result;
-  // @ts-ignore
-  const statusCode = error?.networkError?.statusCode;
-
-  // useEffect(() => {
-  //   (async function () {
-  //     const localUser = await AsyncStorage.getItem(storageKeys.user);
-  //     if (localUser) {
-  //       setCurrentUser(JSON.parse(localUser));
-  //     }
-  //   })();
-  // }, []);
-
-  const refetchUser = useCallback(async () => {
-    try {
-      const newUser = await refetch();
-      if (newUser?.data?.user) {
-        setCurrentUser(newUser.data.user);
-        await AsyncStorage.setItem(storageKeys.user, JSON.stringify(newUser.data.user));
-      }
-    } catch (e) {
-      console.log(e, 'e inside refetchUser');
-    }
-  }, [refetch]);
-
   const status: UserStatus = useMemo(() => {
-    if (!currentUser) {
+    if (!user.data) {
       return UserStatus.Loading;
     }
-    if (!currentUser?.isVerified && !currentUser?.firstName) {
+    if (!user.data?.isVerified && !user.data?.firstName) {
       return UserStatus.Unverified;
     }
-    if (!currentUser.isVerified && currentUser?.firstName) {
+    if (!user.data.isVerified && user.data?.firstName) {
       return UserStatus.Pending;
     }
     return UserStatus.Verified;
-  }, [currentUser]);
+  }, [user.data]);
+
+  const refetchUser = useCallback(() => {
+    dispatch(profileActions.load());
+  }, [dispatch]);
 
   const handleLogout = useCallback(
     async (userPressed?: boolean) => {
@@ -158,35 +95,23 @@ export function CurrentUserProvider(props) {
             await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, JSON.stringify(offlineTrees.updated));
           }
         }
-        await resetWeb3Data();
-        await setCurrentUser(null);
+        // await resetWeb3Data();
+        // @logout
+        // dispatch(profileActions.resetCache());
       } catch (e) {
         console.log(e, 'e inside handleLogout');
         return Promise.reject(e);
       }
     },
-    [changeUseGSN, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, resetWeb3Data, t],
+    [dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, t],
   );
 
-  useEffect(() => {
-    if (statusCode === 401) {
-      handleLogout(false);
-    }
-  }, [handleLogout, statusCode, wallet]);
-
-  const value: CurrentUserContextState = useMemo(
-    () => ({
-      status,
-      data: {
-        user: currentUser,
-      },
-      refetchUser,
-      handleLogout,
-      error,
-      loading,
-    }),
-    [currentUser, error, handleLogout, loading, refetchUser, status],
-  );
-
-  return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
-}
+  return {
+    data: {
+      user: user.data,
+    },
+    refetchUser,
+    handleLogout,
+    status,
+  };
+};

@@ -1,7 +1,8 @@
 import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
 import {Action, Dispatch} from 'redux';
 import {put, select, takeEvery} from 'redux-saga/effects';
-import {TReduxState} from '../../store';
+import {TReduxState, TStoreRedux} from '../../store';
+import {useAppSelector} from 'utilities/hooks/useStore';
 
 export type TNetInfo = {
   isConnected: boolean;
@@ -18,8 +19,8 @@ type TNetInfoAction = {
 };
 
 export const START_WATCH_CONNECTION = 'START_WATCH_CONNECTION';
-export function startWatchConnection(dispatch: Dispatch<Action<any>>) {
-  return {type: START_WATCH_CONNECTION, dispatch};
+export function startWatchConnection() {
+  return {type: START_WATCH_CONNECTION};
 }
 
 export const UPDATE_WATCH_CONNECTION = 'UPDATE_WATCH_CONNECTION';
@@ -43,20 +44,26 @@ export const netInfoReducer = (state: TNetInfo = initialState, action: TNetInfoA
   }
 };
 
-export function* watchStartWatchConnection(action: TNetInfoAction) {
+export function* watchStartWatchConnection(store) {
   try {
-    const {dispatch} = action;
+    const {dispatch} = store;
     NetInfo.addEventListener((state: NetInfoState) => {
-      dispatch(updateWatchConnection((state?.isConnected && state?.isInternetReachable) || false));
+      if (state.isConnected !== null && state.isInternetReachable !== null) {
+        dispatch(updateWatchConnection(state?.isConnected && state?.isInternetReachable));
+      }
     });
   } catch (error) {
     yield put(updateWatchConnection(false));
   }
 }
 
-export function* netInfoSagas() {
-  yield takeEvery(START_WATCH_CONNECTION, watchStartWatchConnection);
+export function* netInfoSagas(store: TStoreRedux) {
+  yield takeEvery(START_WATCH_CONNECTION, watchStartWatchConnection, store);
 }
 export function* selectNetInfo() {
   return yield select((state: TReduxState) => state.netInfo.isConnected);
+}
+
+export function useNetInfo(): TReduxState['netInfo'] {
+  return useAppSelector(state => state.netInfo);
 }

@@ -15,7 +15,6 @@ import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {colors} from 'constants/values';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
-import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -23,7 +22,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
-import {useCurrUser} from 'utilities/hooks/useCurrUser';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -38,8 +36,6 @@ function NoWallet(props: NoWalletProps) {
   const magic = useMagic();
 
   // const {refetchUser} = useCurrentUser();
-
-  const {fetchUserRequest} = useCurrUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -101,8 +97,6 @@ function NoWallet(props: NoWalletProps) {
       if (result) {
         storeMagicToken(result);
         // await refetchUser();
-        fetchUserRequest({userId, accessToken});
-
         console.log(result, 'result is here');
       } else {
         showAlert({

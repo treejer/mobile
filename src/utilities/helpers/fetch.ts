@@ -3,8 +3,7 @@ import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {i18next} from '../../localization';
 import {put, select} from 'redux-saga/effects';
-import {TReduxState} from 'redux/store';
-import {removeToken} from '../../redux/modules/token/token';
+import {TReduxState} from '../../redux/store';
 import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
 import {debugFetch, NetworkConfig} from 'services/config';
 import {selectSettings} from '../../redux/modules/settings/settings';
@@ -58,15 +57,17 @@ export function* sagaFetch<Data, Form = any>(
   url: string,
   _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
 ) {
-  const {token} = yield select((state: TReduxState) => state.token);
+  const {accessToken, userId} = yield select((state: TReduxState) => state.web3);
   const config: NetworkConfig = yield selectConfig();
   let {configUrl, ...options} = _options;
-  if (token) {
+  if (accessToken) {
     options = {
       ...options,
       headers: {
         ...(options.headers || {}),
-        Authorization: `Bearer ${token}`,
+        'x-auth-userid': userId,
+        'x-auth-logintoken': accessToken,
+        Accept: 'application/json',
       },
     };
   }
@@ -115,7 +116,8 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
   }
 
   if (status === 401) {
-    yield put(removeToken());
+    // @logout
+    // yield put(removeToken());
     yield put(userLoggedIn(false));
   }
 }

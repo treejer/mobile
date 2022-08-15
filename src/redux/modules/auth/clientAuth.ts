@@ -1,6 +1,5 @@
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {CountryCode} from 'react-native-country-picker-modal';
-import {useToken} from '../token/token';
 
 export const USER_ONBOARDED = 'USER_ONBOARDED';
 export const userOnboarded = () => ({
@@ -73,7 +72,6 @@ export function clientAuth(state: ClientAuthState = clientAuthInitialState, acti
 export function useClientAuth() {
   const dispatch = useAppDispatch();
   const _clientAuth = useAppSelector(state => state.clientAuth);
-  const {dispatchRemoveToken} = useToken();
 
   const dispatchSetPhoneNumber = (phone: ClientPhone) => {
     dispatch(setPhoneNumber(phone));
@@ -89,7 +87,6 @@ export function useClientAuth() {
 
   const dispatchUserLoggedOut = () => {
     dispatch(userLoggedIn(false));
-    dispatchRemoveToken();
   };
 
   return {

@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 
-import {tokenReducer} from './modules/token/token';
 import {clientAuth} from './modules/auth/clientAuth';
 import {initReducer} from './modules/init/init';
 import {settingsReducer} from './modules/settings/settings';
@@ -8,10 +7,10 @@ import {web3Reducer} from './modules/web3/web3';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
 import {netInfoReducer} from './modules/netInfo/netInfo';
-import {userReducer} from './modules/user/user';
+import {userReducer} from './modules/user/_user';
+import {profileReducer} from './modules/user/user';
 
 const appReducer = combineReducers({
-  token: tokenReducer,
   clientAuth,
   init: initReducer,
   settings: settingsReducer,
@@ -20,6 +19,7 @@ const appReducer = combineReducers({
   netInfo: netInfoReducer,
   web3: web3Reducer,
   user: userReducer,
+  profile: profileReducer,
 });
 
 export default appReducer;
