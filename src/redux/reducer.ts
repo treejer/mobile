@@ -8,6 +8,7 @@ import {web3Reducer} from './modules/web3/web3';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
 import {netInfoReducer} from './modules/netInfo/netInfo';
+import {userReducer} from './modules/user/user';
 
 const appReducer = combineReducers({
   token: tokenReducer,
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
   userNonce: userNonceReducer,
   netInfo: netInfoReducer,
   web3: web3Reducer,
+  user: userReducer,
 });
 
 export default appReducer;

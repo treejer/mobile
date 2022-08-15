@@ -110,19 +110,19 @@ export default function App() {
               // >
               <ApolloProvider>
                 <OfflineTreeProvider>
-                  <CurrentUserProvider>
-                    <CurrentJourneyProvider>
-                      <NetInfo />
-                      <SwitchNetwork />
-                      <PreLoadImage />
-                      {isWeb() ? <ToastContainer /> : <></>}
-                      {isWeb() ? <LandScapeModal /> : <></>}
-                      {!isWeb() ? <UpdateModal /> : <></>}
-                      <NavigationContainer linking={linking}>
-                        <RootNavigation />
-                      </NavigationContainer>
-                    </CurrentJourneyProvider>
-                  </CurrentUserProvider>
+                  {/* <CurrentUserProvider> */}
+                  {/* <CurrentJourneyProvider> */}
+                  <NetInfo />
+                  <SwitchNetwork />
+                  <PreLoadImage />
+                  {isWeb() ? <ToastContainer /> : <></>}
+                  {isWeb() ? <LandScapeModal /> : <></>}
+                  {!isWeb() ? <UpdateModal /> : <></>}
+                  <NavigationContainer linking={linking}>
+                    <RootNavigation />
+                  </NavigationContainer>
+                  {/* </CurrentJourneyProvider> */}
+                  {/* </CurrentUserProvider> */}
                 </OfflineTreeProvider>
               </ApolloProvider>
               // </Web3Provider>

@@ -9,6 +9,7 @@ import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce'
 import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {Action, Dispatch} from 'redux';
+import {fetchUserRequest} from '../user/user';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -265,6 +266,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
               magicToken,
             }),
           );
+          dispatch(fetchUserRequest({userId: credentials.userId, accessToken: credentials.loginToken}));
         }
       });
     } else {
