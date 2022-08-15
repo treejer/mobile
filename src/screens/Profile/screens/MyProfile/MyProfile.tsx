@@ -26,6 +26,7 @@ import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
+import {useCurrUser} from 'utilities/hooks/useCurrUser';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -40,6 +41,7 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
+  const {errorCode} = useCurrUser();
 
   const {referrer, organization, hasRefer} = useRefer();
 

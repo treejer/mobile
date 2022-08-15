@@ -5,7 +5,8 @@ import {initSagas} from './modules/init/init';
 import {userNonceSagas} from './modules/userNonce/userNonce';
 import {userSignSagas} from './modules/userSign/userSign';
 import {netInfoSagas} from './modules/netInfo/netInfo';
+import {userSagas} from './modules/user/user';
 
 export default function* root(store: TStoreRedux) {
-  yield all([initSagas(), web3Sagas(), userNonceSagas(), userSignSagas(), netInfoSagas()]);
+  yield all([initSagas(), web3Sagas(), userNonceSagas(), userSignSagas(), netInfoSagas(), userSagas()]);
 }

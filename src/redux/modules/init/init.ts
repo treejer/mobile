@@ -1,6 +1,6 @@
-import {put, select, takeEvery, take} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {TReduxState} from 'redux/store';
+import {store, TReduxState} from '../../store';
 
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {Platform} from 'react-native';
@@ -54,7 +54,8 @@ export function* initSagas() {
 
 export function* watchInitApp() {
   try {
-    yield put(startWatchConnection());
+    // yield put(startWatchConnection(store.dispatch));
+    // yield put(createWeb3());
     const {token} = yield select((state: TReduxState) => state.token);
     if (token) {
       //* @logic-saga

@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {changeNetwork, resetWeb3Data, storeMagicToken} from '../../redux/modules/web3/web3';
+import {changeNetwork, createWeb3, resetWeb3Data, storeMagicToken} from '../../redux/modules/web3/web3';
 import {BlockchainNetwork} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {Account} from 'web3-core';
@@ -7,6 +7,10 @@ import {Account} from 'web3-core';
 export function useUserWeb3() {
   const web3 = useAppSelector(state => state.web3);
   const dispatch = useAppDispatch();
+
+  const handleCreateWeb3 = useCallback(() => {
+    dispatch(createWeb3());
+  }, [dispatch]);
 
   const handleChangeNetwork = useCallback(
     (newNetwork: BlockchainNetwork) => {
@@ -31,6 +35,7 @@ export function useUserWeb3() {
     changeNetwork: handleChangeNetwork,
     resetWeb3Data: handleResetWeb3Data,
     storeMagicToken: handleStoreMagicToken,
+    createWeb3: handleCreateWeb3,
   };
 }
 

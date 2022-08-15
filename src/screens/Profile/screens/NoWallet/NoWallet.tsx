@@ -23,6 +23,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
+import {useCurrUser} from 'utilities/hooks/useCurrUser';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -36,7 +37,9 @@ function NoWallet(props: NoWalletProps) {
   const config = useConfig();
   const magic = useMagic();
 
-  const {refetchUser} = useCurrentUser();
+  // const {refetchUser} = useCurrentUser();
+
+  const {fetchUserRequest} = useCurrUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -70,13 +73,13 @@ function NoWallet(props: NoWalletProps) {
     })();
   }, []);
 
-  useEffect(() => {
-    if (userId && accessToken) {
-      (async function () {
-        await refetchUser();
-      })();
-    }
-  }, [userId, accessToken, refetchUser]);
+  // useEffect(() => {
+  //   if (userId && accessToken) {
+  //     (async function () {
+  // fetchUserRequest({userId, accessToken});
+  //     })();
+  //   }
+  // }, [userId, accessToken, fetchUserRequest]);
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
@@ -96,8 +99,10 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
       if (result) {
-        await storeMagicToken(result);
+        storeMagicToken(result);
         // await refetchUser();
+        fetchUserRequest({userId, accessToken});
+
         console.log(result, 'result is here');
       } else {
         showAlert({
@@ -129,8 +134,9 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result);
+        storeMagicToken(result);
         // await refetchUser();
+
         console.log(result, 'result is here');
       } else {
         showAlert({

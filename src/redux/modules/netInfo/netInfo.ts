@@ -1,7 +1,7 @@
 import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
 import {Action, Dispatch} from 'redux';
 import {put, select, takeEvery} from 'redux-saga/effects';
-import {store, TReduxState} from '../../store';
+import {TReduxState} from '../../store';
 
 export type TNetInfo = {
   isConnected: boolean;
@@ -18,8 +18,8 @@ type TNetInfoAction = {
 };
 
 export const START_WATCH_CONNECTION = 'START_WATCH_CONNECTION';
-export function startWatchConnection() {
-  return {type: START_WATCH_CONNECTION};
+export function startWatchConnection(dispatch: Dispatch<Action<any>>) {
+  return {type: START_WATCH_CONNECTION, dispatch};
 }
 
 export const UPDATE_WATCH_CONNECTION = 'UPDATE_WATCH_CONNECTION';
