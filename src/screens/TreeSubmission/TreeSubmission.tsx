@@ -16,6 +16,8 @@ import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
+import {usePlantTreejerPermissions} from 'utilities/hooks/userPlantTreePermissions';
+import PermissionsInfo from 'components/PermissionsInfo/PermissionInfo';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -38,6 +40,8 @@ function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
+  const {cameraPermission, locationPermission, isCameraBlocked, isLocationBlocked, requestPermission} =
+    usePlantTreejerPermissions();
 
   const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
 
@@ -50,6 +54,18 @@ function TreeSubmission({route, navigation}: Props) {
       },
     });
   }
+
+  useEffect(() => {
+    console.log({isCameraBlocked, isLocationBlocked}, 'permissions are here');
+  }, [isCameraBlocked, isLocationBlocked]);
+
+  useEffect(() => {
+    (async function () {
+      try {
+        await requestPermission();
+      } catch (error) {}
+    })();
+  }, []);
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType) {

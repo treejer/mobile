@@ -30,6 +30,7 @@ import {PickImageButton} from './PickImageButton';
 import {locationPermission} from 'utilities/helpers/permissions';
 import Geolocation from 'react-native-geolocation-service';
 import {calcDistance, TPoint} from 'utilities/distance';
+// import piexif from 'piexifjs';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
@@ -79,57 +80,47 @@ function SelectPhoto(props: Props) {
       if (isWeb()) {
         setShowWebCam(true);
       } else {
-        locationPermission()
-          .then(async () => {
-            let selectedPhoto;
-            if (fromGallery) {
-              selectedPhoto = await openLibraryHook();
-            } else {
-              selectedPhoto = await openCameraHook();
-            }
-            if (selectedPhoto) {
-              if (selectedPhoto.path) {
-                // @here
-                Geolocation.getCurrentPosition(position => {
-                  let maxDistance = 20.0;
-                  const userCoords: TPoint = {
-                    latitude: position?.coords.latitude,
-                    longitude: position?.coords.longitude,
-                  };
-                  const imageCoords: TPoint = {
-                    latitude: selectedPhoto?.exif.Latitude,
-                    longitude: selectedPhoto?.exif.Longitude,
-                  };
-                  const distance = calcDistance(imageCoords, userCoords);
-                  console.log({userCoords, imageCoords, distance});
+        let selectedPhoto;
+        if (fromGallery) {
+          selectedPhoto = await openLibraryHook();
+        } else {
+          selectedPhoto = await openCameraHook();
+        }
+        if (selectedPhoto) {
+          if (selectedPhoto.path) {
+            // @here
+            console.log({selectedPhoto});
+            Geolocation.getCurrentPosition(position => {
+              let maxDistance = 20.0;
+              const userCoords: TPoint = {
+                latitude: position?.coords.latitude,
+                longitude: position?.coords.longitude,
+              };
+              const imageCoords: TPoint = {
+                latitude: selectedPhoto?.exif.Latitude,
+                longitude: selectedPhoto?.exif.Longitude,
+              };
+              const distance = calcDistance(imageCoords, userCoords);
+              console.log({userCoords, imageCoords, distance});
 
-                  if (40 < maxDistance) {
-                    handleAfterSelectPhoto({
-                      selectedPhoto,
-                      setPhoto,
-                      isUpdate,
-                      isNursery,
-                      canUpdate,
-                    });
-                  } else {
-                    showAlert({
-                      title: t('inValidImage.title'),
-                      mode: AlertMode.Error,
-                      message: t('inValidImage.message'),
-                    });
-                  }
+              if (distance < maxDistance) {
+                handleAfterSelectPhoto({
+                  selectedPhoto,
+                  setPhoto,
+                  isUpdate,
+                  isNursery,
+                  canUpdate,
+                });
+              } else {
+                showAlert({
+                  title: t('inValidImage.title'),
+                  mode: AlertMode.Error,
+                  message: t('inValidImage.message'),
                 });
               }
-            }
-          })
-          .catch((err: any) => {
-            console.log(err, 'GPS error');
-
-            showAlert({
-              title: t('gps.title'),
-              message: t('gps.message'),
             });
-          });
+          }
+        }
       }
     },
     [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],

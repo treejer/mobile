@@ -67,6 +67,7 @@ export enum Routes {
 export function RootNavigation() {
   const {loading, magic} = useWeb3Context();
   const {locale, onboardingDone} = useSettings();
+
   const {
     data: {user},
     status,
