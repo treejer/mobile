@@ -16,6 +16,8 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -28,6 +30,7 @@ export interface SelectPlantTypeProps {
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -94,6 +97,9 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
+  if (!isGranted) {
+    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>

@@ -10,11 +10,18 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {MapMarker} from '../../../../../assets/icons/index';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
 
 function SelectOnMap(_: Props) {
+  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
   const isConnected = useNetInfoConnected();
+
+  if (!isGranted) {
+    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  }
 
   return (
     <SafeAreaView style={globalStyles.fill}>

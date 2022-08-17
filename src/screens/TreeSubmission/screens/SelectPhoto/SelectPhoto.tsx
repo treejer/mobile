@@ -30,6 +30,8 @@ import {PickImageButton} from './PickImageButton';
 import {locationPermission} from 'utilities/helpers/permissions';
 import Geolocation from 'react-native-geolocation-service';
 import {calcDistance, TPoint} from 'utilities/distance';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 // import piexif from 'piexifjs';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
@@ -37,6 +39,7 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 function SelectPhoto(props: Props) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -217,6 +220,10 @@ function SelectPhoto(props: Props) {
     navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
+
+  if (!isGranted) {
+    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  }
 
   if (canPlant === false) {
     return (

@@ -21,7 +21,25 @@ const treejerPermissions = Platform.select({
   ],
 });
 
-export function usePlantTreePermissions() {
+export type TUsePlantTreePermissions = {
+  cameraPermission: string | null;
+  locationPermission: string | null;
+  libraryPermission: string | null;
+  checkPermission: () => void;
+  requestPermission: () => void;
+  isCameraBlocked: boolean;
+  isLocationBlocked: boolean;
+  isLibraryBlocked: boolean;
+  isCameraGranted: boolean;
+  isLocationGranted: boolean;
+  isLibraryGranted: boolean;
+  isChecking: boolean;
+  isGranted: boolean;
+  cantProceed: boolean;
+  requested: boolean;
+};
+
+export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const {appState} = useAppState();
 
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
@@ -129,31 +147,10 @@ export function usePlantTreePermissions() {
     [checked, isCameraBlocked, isLocationBlocked],
   );
 
-  useEffect(() => {
-    console.log('====================================');
-    console.log({
-      isChecking,
-      checked,
-      requested,
-      cameraPermission,
-      locationPermission,
-      isCameraBlocked,
-      isLocationBlocked,
-      isCameraGranted,
-      isLocationGranted,
-    });
-    console.log('====================================');
-  }, [
-    cameraPermission,
-    checked,
-    isCameraBlocked,
-    isCameraGranted,
-    isChecking,
-    isLocationBlocked,
-    isLocationGranted,
-    locationPermission,
-    requested,
-  ]);
+  const isGranted = useMemo(
+    () => !isChecking && isCameraGranted && isLocationGranted,
+    [isCameraGranted, isChecking, isLocationGranted],
+  );
 
   return {
     cameraPermission,
@@ -168,6 +165,7 @@ export function usePlantTreePermissions() {
     isLocationGranted,
     isLibraryGranted,
     isChecking,
+    isGranted,
     cantProceed,
     requested,
   };

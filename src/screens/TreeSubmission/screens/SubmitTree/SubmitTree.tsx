@@ -38,6 +38,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -46,6 +48,8 @@ interface Props {
 function SubmitTree(props: Props) {
   const {navigation} = props;
   const {journey, clearJourney} = useCurrentJourney();
+  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
+
   // const {
   //   params: {journey},
   // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
@@ -304,6 +308,10 @@ function SubmitTree(props: Props) {
       }
     })();
   }, [journey.photo]);
+
+  if (!isGranted) {
+    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  }
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper currentStep={4}>

@@ -1,4 +1,6 @@
-export function usePlantTreePermissions() {
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+
+export function usePlantTreePermissions(): TUsePlantTreePermissions {
   return {
     cameraPermission: 'unavailable',
     locationPermission: 'unavailable',
@@ -14,5 +16,6 @@ export function usePlantTreePermissions() {
     isChecking: false,
     cantProceed: false,
     requested: false,
+    isGranted: false,
   };
 }

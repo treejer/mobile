@@ -296,4 +296,20 @@ export const en = {
     title: 'Image is not valid',
     message: 'please choose correct image',
   },
+  checkPermission: {
+    permissions: {
+      location: 'Location',
+      camera: 'Camera',
+      media: 'Media',
+    },
+    toBeSure: 'We need to be sure, these permissions are granted.',
+    granted: 'Granted',
+    blocked: 'Blocked',
+    checking: 'Checking...',
+    wrong: "What's wrong?",
+    checkingTitle: 'We are checking permissions to continue...',
+    cantProceed: "We can't proceed",
+    cantProceedDesc:
+      'To plant a tree and nursery or upload a tree we need location, camera, and media permissions to acuurateyour activities and detect fraud.',
+  },
 };
