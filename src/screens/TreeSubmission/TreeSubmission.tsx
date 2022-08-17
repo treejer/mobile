@@ -16,8 +16,8 @@ import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
-import {usePlantTreejerPermissions} from 'utilities/hooks/userPlantTreePermissions';
-import PermissionsInfo from 'components/PermissionsInfo/PermissionInfo';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/screens/CheckPermissions/CheckPermissions';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -40,8 +40,8 @@ function TreeSubmission({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
-  const {cameraPermission, locationPermission, isCameraBlocked, isLocationBlocked, requestPermission} =
-    usePlantTreejerPermissions();
+  const {cantProceed, isChecking, isCameraBlocked, isLocationBlocked, isLibraryBlocked, requestPermission} =
+    usePlantTreePermissions();
 
   const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
 
@@ -55,17 +55,18 @@ function TreeSubmission({route, navigation}: Props) {
     });
   }
 
-  useEffect(() => {
-    console.log({isCameraBlocked, isLocationBlocked}, 'permissions are here');
-  }, [isCameraBlocked, isLocationBlocked]);
+  // useEffect(() => {
+  //   console.log({isCameraBlocked, isLocationBlocked, isLibraryBlocked}, 'permissions are here');
+  // }, [isCameraBlocked, isLibraryBlocked, isLocationBlocked]);
 
-  useEffect(() => {
-    (async function () {
-      try {
-        await requestPermission();
-      } catch (error) {}
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async function () {
+  //     try {
+  //       await requestPermission();
+  //     } catch (error) {}
+  //   })();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType) {
@@ -80,14 +81,20 @@ function TreeSubmission({route, navigation}: Props) {
         animationEnabled: true,
       }}
     >
-      <Stack.Screen
-        name={Routes.SelectPlantType}
-        component={SelectPlantType}
-        options={{title: screenTitle('Plant Type')}}
-      />
-      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} options={{title: screenTitle('Photo')}} />
-      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} options={{title: screenTitle('Location')}} />
-      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} options={{title: screenTitle('Submit Tree')}} />
+      {isChecking || cantProceed ? (
+        <Stack.Screen name={Routes.CheckPermissions} component={CheckPermissions} />
+      ) : (
+        <>
+          <Stack.Screen
+            name={Routes.SelectPlantType}
+            component={SelectPlantType}
+            options={{title: screenTitle('Plant Type')}}
+          />
+          <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} options={{title: screenTitle('Photo')}} />
+          <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} options={{title: screenTitle('Location')}} />
+          <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} options={{title: screenTitle('Submit Tree')}} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

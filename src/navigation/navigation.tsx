@@ -62,6 +62,7 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
+  CheckPermissions = 'CheckPermissions',
 }
 
 export function RootNavigation() {

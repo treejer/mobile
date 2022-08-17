@@ -64,6 +64,7 @@ const config = {
     [Routes.Login]: 'login',
     [Routes.Onboarding]: 'on-boarding',
     [Routes.Organization]: 'organization',
+    [Routes.CheckPermissions]: 'check-permissions',
   },
 };
 

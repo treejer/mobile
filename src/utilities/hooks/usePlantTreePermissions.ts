@@ -6,16 +6,29 @@ import {useAppState} from 'utilities/hooks/useAppState';
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 
 const treejerPermissions = Platform.select({
-  android: [PERMISSIONS.ANDROID.CAMERA, PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION],
-  default: [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.LOCATION_ALWAYS, PERMISSIONS.IOS.LOCATION_WHEN_IN_USE],
+  android: [
+    PERMISSIONS.ANDROID.CAMERA,
+    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+    PERMISSIONS.ANDROID.READ_MEDIA_AUDIO,
+    PERMISSIONS.ANDROID.READ_MEDIA_VIDEO,
+  ],
+  default: [
+    PERMISSIONS.IOS.CAMERA,
+    PERMISSIONS.IOS.LOCATION_ALWAYS,
+    PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    PERMISSIONS.IOS.MEDIA_LIBRARY,
+  ],
 });
 
-export function usePlantTreejerPermissions() {
+export function usePlantTreePermissions() {
   const {appState} = useAppState();
 
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
   const [locationPermission, setLocationPermission] = useState<string | null>(null);
+  const [libraryPermission, setLibraryPermission] = useState<string | null>(null);
   const [requested, setRequested] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -51,19 +64,15 @@ export function usePlantTreejerPermissions() {
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
+        setLibraryPermission(res['android.permission.READ_MEDIA_IMAGES']);
       } else {
         setCameraPermission(res['ios.permission.CAMERA']);
         setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
+        setLibraryPermission(res['ios.permission.MEDIA_LIBRARY']);
       }
-      Object.entries(res).map(([key, value]) => {
-        if (['blocked', 'denied'].includes(value)) {
-          console.log('====================================');
-          console.log(key, value);
-          console.log('====================================');
-          return Promise.reject(key);
-        }
-        return Promise.resolve(res);
-      });
+
+      setChecked(true);
+      return Promise.resolve(res);
     } catch (e: any) {
       console.log(e, 'Error inside checkPermission useRNContacts');
     }
@@ -77,17 +86,14 @@ export function usePlantTreejerPermissions() {
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
+        setLibraryPermission(res['android.permission.READ_MEDIA_IMAGES']);
       } else {
         setCameraPermission(res['ios.permission.CAMERA']);
         setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
+        setLibraryPermission(res['ios.permission.MEDIA_LIBRARY']);
       }
       setRequested(true);
-      Object.entries(res).map(([key, value]) => {
-        if (['blocked', 'denied'].includes(value)) {
-          return Promise.reject(key);
-        }
-        return Promise.resolve(res);
-      });
+      return Promise.resolve(res);
     } catch (e) {
       console.log(e, 'e requestPermission');
       return Promise.reject(e);
@@ -97,25 +103,72 @@ export function usePlantTreejerPermissions() {
   }, []);
 
   const isCameraBlocked = useMemo(
-    () => (requested && cameraPermission === 'denied') || cameraPermission === 'blocked',
-    [cameraPermission, requested],
+    () => cameraPermission === RESULTS.DENIED || cameraPermission === RESULTS.BLOCKED,
+    [cameraPermission],
   );
   const isLocationBlocked = useMemo(
-    () => (requested && locationPermission === 'denied') || locationPermission === 'blocked',
-    [locationPermission, requested],
+    () => locationPermission === RESULTS.DENIED || locationPermission === RESULTS.BLOCKED,
+    [locationPermission],
   );
 
-  const isCameraGranted = useMemo(() => cameraPermission === 'granted', [cameraPermission]);
-  const isLocationGranted = useMemo(() => locationPermission === 'granted', [locationPermission]);
+  const isLibraryBlocked = useMemo(
+    () => libraryPermission === RESULTS.DENIED || libraryPermission === RESULTS.BLOCKED,
+    [libraryPermission],
+  );
+
+  const isCameraGranted = useMemo(() => cameraPermission === RESULTS.GRANTED, [cameraPermission]);
+  const isLocationGranted = useMemo(() => locationPermission === RESULTS.GRANTED, [locationPermission]);
+  const isLibraryGranted = useMemo(() => libraryPermission === RESULTS.GRANTED, [libraryPermission]);
+
+  const isChecking = useMemo(() => {
+    return !checked && (!cameraPermission || !locationPermission);
+  }, [checked, cameraPermission, locationPermission]);
+
+  const cantProceed = useMemo(
+    () => checked && (isCameraBlocked || isLocationBlocked),
+    [checked, isCameraBlocked, isLocationBlocked],
+  );
+
+  useEffect(() => {
+    console.log('====================================');
+    console.log({
+      isChecking,
+      checked,
+      requested,
+      cameraPermission,
+      locationPermission,
+      isCameraBlocked,
+      isLocationBlocked,
+      isCameraGranted,
+      isLocationGranted,
+    });
+    console.log('====================================');
+  }, [
+    cameraPermission,
+    checked,
+    isCameraBlocked,
+    isCameraGranted,
+    isChecking,
+    isLocationBlocked,
+    isLocationGranted,
+    locationPermission,
+    requested,
+  ]);
 
   return {
     cameraPermission,
     locationPermission,
+    libraryPermission,
     checkPermission,
     requestPermission,
     isCameraBlocked,
     isLocationBlocked,
+    isLibraryBlocked,
     isCameraGranted,
     isLocationGranted,
+    isLibraryGranted,
+    isChecking,
+    cantProceed,
+    requested,
   };
 }
