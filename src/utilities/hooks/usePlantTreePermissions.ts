@@ -1,6 +1,8 @@
-import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
+import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
+import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
+
 import {useAppState} from 'utilities/hooks/useAppState';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
@@ -27,16 +29,46 @@ export type TUsePlantTreePermissions = {
   libraryPermission: string | null;
   checkPermission: () => void;
   requestPermission: () => void;
+  checkUserLocation: () => void;
   isCameraBlocked: boolean;
   isLocationBlocked: boolean;
   isLibraryBlocked: boolean;
   isCameraGranted: boolean;
   isLocationGranted: boolean;
   isLibraryGranted: boolean;
+  hasLocation: boolean;
   isChecking: boolean;
   isGranted: boolean;
   cantProceed: boolean;
   requested: boolean;
+};
+
+export type TUserLocation = {
+  latitude: number;
+  longitude: number;
+};
+
+export const getCurrentPositionAsync = () => {
+  return new Promise<GeoPosition['coords']>((resolve, reject) => {
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log(position, 'position is here');
+        resolve(position.coords);
+      },
+      err => {
+        console.log(err, 'err inside updateCurrentPosition');
+        reject(err);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        accuracy: {
+          android: 'high',
+          ios: 'bestForNavigation',
+        },
+      },
+    );
+  });
 };
 
 export function usePlantTreePermissions(): TUsePlantTreePermissions {
@@ -45,6 +77,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
   const [locationPermission, setLocationPermission] = useState<string | null>(null);
   const [libraryPermission, setLibraryPermission] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<TUserLocation | null>(null);
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -71,9 +104,11 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appState]);
 
-  // useEffect(() => {
-  //   console.log(permission, '<== contact permission updated');
-  // }, [permission]);
+  useEffect(() => {
+    (async function () {
+      await checkUserLocation();
+    })();
+  }, []);
 
   const checkPermission = useCallback(async () => {
     try {
@@ -120,6 +155,18 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const checkUserLocation = useCallback(async () => {
+    try {
+      const {latitude, longitude} = await getCurrentPositionAsync();
+      setUserLocation({
+        latitude,
+        longitude,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   const isCameraBlocked = useMemo(
     () => cameraPermission === RESULTS.DENIED || cameraPermission === RESULTS.BLOCKED,
     [cameraPermission],
@@ -147,16 +194,16 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     [checked, isCameraBlocked, isLocationBlocked],
   );
 
-  const isGranted = useMemo(
-    () => !isChecking && isCameraGranted && isLocationGranted,
-    [isCameraGranted, isChecking, isLocationGranted],
-  );
+  const isGranted = useMemo(() => isCameraGranted && isLocationGranted, [isCameraGranted, isLocationGranted]);
+
+  const hasLocation = useMemo(() => !!userLocation, [userLocation]);
 
   return {
     cameraPermission,
     locationPermission,
     libraryPermission,
     checkPermission,
+    checkUserLocation,
     requestPermission,
     isCameraBlocked,
     isLocationBlocked,
@@ -167,6 +214,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     isChecking,
     isGranted,
     cantProceed,
+    hasLocation,
     requested,
   };
 }

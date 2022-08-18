@@ -294,7 +294,8 @@ export const en = {
   },
   inValidImage: {
     title: 'Image is not valid',
-    message: 'please choose correct image',
+    message:
+      "You can't upload this image because you didn't take this photo, or your GPS was off when you were taking that photo with the Camera",
   },
   checkPermission: {
     permissions: {
@@ -302,6 +303,7 @@ export const en = {
       camera: 'Camera',
       media: 'Media',
     },
+    grantNow: 'Grant Now!',
     toBeSure: 'We need to be sure, these permissions are granted.',
     granted: 'Granted',
     blocked: 'Blocked',

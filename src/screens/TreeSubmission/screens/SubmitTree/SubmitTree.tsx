@@ -48,7 +48,7 @@ interface Props {
 function SubmitTree(props: Props) {
   const {navigation} = props;
   const {journey, clearJourney} = useCurrentJourney();
-  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
+  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
 
   // const {
   //   params: {journey},
@@ -307,10 +307,15 @@ function SubmitTree(props: Props) {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
 
-  if (!isGranted) {
-    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  if ((!isGranted && !isChecking) || hasLocation) {
+    return (
+      <CheckPermissions
+        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
+      />
+    );
   }
 
   const contentMarkup = isReadyToSubmit ? (

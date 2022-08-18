@@ -16,11 +16,15 @@ import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
 
 function SelectOnMap(_: Props) {
-  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
+  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
   const isConnected = useNetInfoConnected();
 
-  if (!isGranted) {
-    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  if ((!isGranted && !isChecking) || !hasLocation) {
+    return (
+      <CheckPermissions
+        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
+      />
+    );
   }
 
   return (

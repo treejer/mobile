@@ -39,7 +39,7 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 function SelectPhoto(props: Props) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
+  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -91,41 +91,50 @@ function SelectPhoto(props: Props) {
         }
         if (selectedPhoto) {
           if (selectedPhoto.path) {
-            // @here
-            console.log({selectedPhoto});
-            Geolocation.getCurrentPosition(position => {
-              let maxDistance = 20.0;
-              const userCoords: TPoint = {
-                latitude: position?.coords.latitude,
-                longitude: position?.coords.longitude,
-              };
-              const imageCoords: TPoint = {
-                latitude: selectedPhoto?.exif.Latitude,
-                longitude: selectedPhoto?.exif.Longitude,
-              };
-              const distance = calcDistance(imageCoords, userCoords);
-              console.log({userCoords, imageCoords, distance});
+            if (selectedPhoto?.exif.lLatitude && selectedPhoto?.exif.Longitude) {
+              // @here
+              console.log({selectedPhoto});
+              Geolocation.getCurrentPosition(position => {
+                let maxDistance = 20.0;
+                const userCoords: TPoint = {
+                  latitude: position?.coords.latitude,
+                  longitude: position?.coords.longitude,
+                };
+                const imageCoords: TPoint = {
+                  latitude: selectedPhoto?.exif.Latitude,
+                  longitude: selectedPhoto?.exif.Longitude,
+                };
+                const distance = calcDistance(imageCoords, userCoords);
+                console.log({userCoords, imageCoords, distance});
 
-              if (distance < maxDistance) {
-                handleAfterSelectPhoto({
-                  selectedPhoto,
-                  setPhoto,
-                  isUpdate,
-                  isNursery,
-                  canUpdate,
-                });
-              } else {
-                showAlert({
-                  title: t('inValidImage.title'),
-                  mode: AlertMode.Error,
-                  message: t('inValidImage.message'),
-                });
-              }
-            });
+                if (distance < maxDistance) {
+                  handleAfterSelectPhoto({
+                    selectedPhoto,
+                    setPhoto,
+                    isUpdate,
+                    isNursery,
+                    canUpdate,
+                  });
+                } else {
+                  showAlert({
+                    title: t('inValidImage.title'),
+                    mode: AlertMode.Error,
+                    message: t('inValidImage.message'),
+                  });
+                }
+              });
+            } else {
+              showAlert({
+                title: t('inValidImage.title'),
+                mode: AlertMode.Error,
+                message: t('inValidImage.message'),
+              });
+            }
           }
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
   );
 
@@ -221,8 +230,12 @@ function SelectPhoto(props: Props) {
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
-  if (!isGranted) {
-    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  if ((!isGranted && !isChecking) || !hasLocation) {
+    return (
+      <CheckPermissions
+        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
+      />
+    );
   }
 
   if (canPlant === false) {

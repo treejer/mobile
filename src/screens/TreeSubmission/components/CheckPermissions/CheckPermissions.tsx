@@ -99,11 +99,12 @@ function CheckPermissions(props: TCheckPermissionsProps) {
 export default CheckPermissions;
 
 export function OpenSettingsButton() {
+  const {t} = useTranslation();
   const handleOpenSettings = () => {
     openSettings().catch(() => console.log('open settings catched'));
   };
 
-  return <Button variant="secondary" caption={'Grant now'} onPress={handleOpenSettings} />;
+  return <Button variant="secondary" caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />;
 }
 
 const styles = StyleSheet.create({

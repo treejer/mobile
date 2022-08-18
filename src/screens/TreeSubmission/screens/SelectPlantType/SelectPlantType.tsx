@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyles from 'constants/styles';
@@ -30,7 +30,7 @@ export interface SelectPlantTypeProps {
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {cantProceed, isChecking, isGranted, ...plantTreePermissions} = usePlantTreePermissions();
+  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -97,8 +97,12 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
-  if (!isGranted) {
-    return <CheckPermissions plantTreePermissions={{cantProceed, isChecking, isGranted, ...plantTreePermissions}} />;
+  if (!isGranted || isChecking || !hasLocation) {
+    return (
+      <CheckPermissions
+        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
+      />
+    );
   }
 
   return (
