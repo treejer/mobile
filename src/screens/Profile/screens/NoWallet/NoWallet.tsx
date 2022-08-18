@@ -87,7 +87,6 @@ function NoWallet(props: NoWalletProps) {
     const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
-      console.log(result, 'result is here');
       if (result) {
         try {
           await storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
@@ -95,7 +94,6 @@ function NoWallet(props: NoWalletProps) {
           throw e;
         }
         await refetchUser();
-        console.log(result, 'result is here');
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -122,7 +120,6 @@ function NoWallet(props: NoWalletProps) {
     Keyboard.dismiss();
     sendEvent('connect_wallet');
     setLoading(true);
-    console.log(email, 'email');
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
