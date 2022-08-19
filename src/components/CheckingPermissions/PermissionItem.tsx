@@ -13,7 +13,7 @@ export type TPermissionItem = {
     status: string | JSX.Element;
     icon: string;
     isGranted: boolean;
-    onPress: () => void | Promise<void> | undefined;
+    onPress: (isGranted: boolean) => void | Promise<void> | undefined;
   };
   col?: boolean;
 };
@@ -36,7 +36,7 @@ export function PermissionItem(props: TPermissionItem) {
   return (
     <View style={[styles.flexBetween, col && styles.col, col && permission.isGranted && styles.smaller]}>
       <TouchableOpacity
-        onPress={() => permission.onPress(permission)}
+        onPress={() => permission.onPress(permission.isGranted)}
         activeOpacity={permission.isGranted ? 1 : undefined}
         style={col ? styles.col : styles.flexRow}
       >

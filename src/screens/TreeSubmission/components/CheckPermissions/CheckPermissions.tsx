@@ -38,16 +38,16 @@ function CheckPermissions(props: TCheckPermissionsProps) {
     console.log({isCameraGranted, isLocationGranted}, 'permissions');
   }, [cantProceed, hasLocation, isCameraGranted, isChecking, isGPSEnabled, isLocationGranted]);
 
-  const handleOpenSettings = useCallback((permission?: TPermissionItem['permission']) => {
-    if (permission?.isGranted) {
+  const handleOpenSettings = useCallback((isGranted?: boolean) => {
+    if (isGranted) {
       return;
     }
     openSettings().catch(() => console.log('cant open settings for permissions'));
   }, []);
 
   const handleGPSRequest = useCallback(
-    async (permission?: TPermissionItem['permission']) => {
-      if (permission?.isGranted) {
+    async (isGranted?: boolean) => {
+      if (isGranted) {
         return;
       }
       await checkUserLocation();
@@ -63,7 +63,7 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isLocationGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />
+            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={() => handleOpenSettings(false)} />
           )
         ) : (
           t('checkPermission.checking')
@@ -79,7 +79,7 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isCameraGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />
+            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={() => handleOpenSettings(false)} />
           )
         ) : (
           t('checkPermission.checking')
@@ -95,13 +95,13 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           hasLocation ? (
             t('checkPermission.enabled')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.turnOn')} onPress={handleGPSRequest} />
+            <OpenSettingsButton caption={t('checkPermission.turnOn')} onPress={() => handleGPSRequest(false)} />
           )
         ) : (
           t('checkPermission.checking')
         ),
         onPress: handleGPSRequest,
-        icon: 'images',
+        icon: 'locate',
         isExist: isGPSEnabled,
         isGranted: hasLocation,
       },

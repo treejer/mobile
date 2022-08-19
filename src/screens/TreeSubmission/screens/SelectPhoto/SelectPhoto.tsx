@@ -27,7 +27,6 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import {locationPermission} from 'utilities/helpers/permissions';
 import Geolocation from 'react-native-geolocation-service';
 import {calcDistance, TPoint} from 'utilities/distance';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
@@ -39,7 +38,7 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 function SelectPhoto(props: Props) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions} = usePlantTreePermissions();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -91,21 +90,16 @@ function SelectPhoto(props: Props) {
         }
         if (selectedPhoto) {
           if (selectedPhoto.path) {
-            if (selectedPhoto?.exif.lLatitude && selectedPhoto?.exif.Longitude) {
+            if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
               // @here
-              console.log({selectedPhoto});
-              Geolocation.getCurrentPosition(position => {
-                let maxDistance = 20.0;
-                const userCoords: TPoint = {
-                  latitude: position?.coords.latitude,
-                  longitude: position?.coords.longitude,
-                };
+              let maxDistance = 20.0;
+              if (userLocation) {
                 const imageCoords: TPoint = {
                   latitude: selectedPhoto?.exif.Latitude,
                   longitude: selectedPhoto?.exif.Longitude,
                 };
-                const distance = calcDistance(imageCoords, userCoords);
-                console.log({userCoords, imageCoords, distance});
+                const distance = calcDistance(imageCoords, userLocation);
+                console.log({userLocation, imageCoords, distance});
 
                 if (distance < maxDistance) {
                   handleAfterSelectPhoto({
@@ -122,7 +116,7 @@ function SelectPhoto(props: Props) {
                     message: t('inValidImage.message'),
                   });
                 }
-              });
+              }
             } else {
               showAlert({
                 title: t('inValidImage.title'),
@@ -231,8 +225,8 @@ function SelectPhoto(props: Props) {
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
   const plantTreePermissionsValues = useMemo(
-    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
-    [hasLocation, isChecking, isGranted, plantTreePermissions],
+    () => ({isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions, userLocation],
   );
 
   if (!isGranted && !isChecking && !hasLocation) {
