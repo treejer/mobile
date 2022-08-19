@@ -62,11 +62,13 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
+  CheckPermissions = 'CheckPermissions',
 }
 
 export function RootNavigation() {
   const {loading, magic} = useWeb3Context();
   const {locale, onboardingDone} = useSettings();
+
   const {
     data: {user},
     status,

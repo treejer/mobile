@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
 import {CommonActions, RouteProp, useRoute} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
@@ -38,6 +38,9 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -46,6 +49,8 @@ interface Props {
 function SubmitTree(props: Props) {
   const {navigation} = props;
   const {journey, clearJourney} = useCurrentJourney();
+  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+
   // const {
   //   params: {journey},
   // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
@@ -89,6 +94,7 @@ function SubmitTree(props: Props) {
   //     address: wallet.address,
   //   },
   // });
+
   const handleUploadToIpfs = useCallback(async () => {
     if (
       isUpdate &&
@@ -303,7 +309,17 @@ function SubmitTree(props: Props) {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
+
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions],
+  );
+
+  if (!isGranted && !isChecking && !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  }
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper currentStep={4}>

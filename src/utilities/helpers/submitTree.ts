@@ -245,7 +245,9 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
     extraJson.image = tree?.treeSpecsEntity?.imageFs?.toString();
   }
   // @here
+  //@ts-ignore
   if (tree?.treeSpecsEntity?.image_ipfs_hash) {
+    //@ts-ignore
     extraJson.image_ipfs_hash = tree?.treeSpecsEntity?.image_ipfs_hash?.toString();
   }
   if (tree?.treeSpecsEntity?.nursery) {

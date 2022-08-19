@@ -25,6 +25,7 @@ function WebImagePickerCropper(props: WebCamProps) {
   const {t} = useTranslation();
 
   useEffect(() => {
+    // eslint-disable-next-line no-undef
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage(reader.result);

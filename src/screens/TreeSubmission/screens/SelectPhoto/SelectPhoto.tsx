@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -27,12 +27,18 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
+import Geolocation from 'react-native-geolocation-service';
+import {calcDistance, TPoint} from 'utilities/distance';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+// import piexif from 'piexifjs';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 
 function SelectPhoto(props: Props) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const {isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions} = usePlantTreePermissions();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -84,18 +90,45 @@ function SelectPhoto(props: Props) {
         }
         if (selectedPhoto) {
           if (selectedPhoto.path) {
-            // @here
-            handleAfterSelectPhoto({
-              selectedPhoto,
-              setPhoto,
-              isUpdate,
-              isNursery,
-              canUpdate,
-            });
+            if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
+              // @here
+              let maxDistance = 20.0;
+              if (userLocation) {
+                const imageCoords: TPoint = {
+                  latitude: selectedPhoto?.exif.Latitude,
+                  longitude: selectedPhoto?.exif.Longitude,
+                };
+                const distance = calcDistance(imageCoords, userLocation);
+                console.log({userLocation, imageCoords, distance});
+
+                if (distance < maxDistance) {
+                  handleAfterSelectPhoto({
+                    selectedPhoto,
+                    setPhoto,
+                    isUpdate,
+                    isNursery,
+                    canUpdate,
+                  });
+                } else {
+                  showAlert({
+                    title: t('inValidImage.title'),
+                    mode: AlertMode.Error,
+                    message: t('inValidImage.message'),
+                  });
+                }
+              }
+            } else {
+              showAlert({
+                title: t('inValidImage.title'),
+                mode: AlertMode.Error,
+                message: t('inValidImage.message'),
+              });
+            }
           }
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
   );
 
@@ -190,6 +223,15 @@ function SelectPhoto(props: Props) {
     navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
+
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions, userLocation],
+  );
+
+  if (!isGranted && !isChecking && !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  }
 
   if (canPlant === false) {
     return (

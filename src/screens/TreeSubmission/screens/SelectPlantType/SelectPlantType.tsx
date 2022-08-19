@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyles from 'constants/styles';
@@ -16,6 +16,8 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -28,6 +30,7 @@ export interface SelectPlantTypeProps {
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -35,6 +38,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const isConnected = useNetInfoConnected();
+
+  useEffect(() => {
+    console.log({isGranted, isChecking, hasLocation}, 'hreeeeeereere');
+  }, [hasLocation, isChecking, isGranted]);
 
   useRefocusEffect(clearJourney);
 
@@ -94,6 +101,15 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
+
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions],
+  );
+
+  if (!isGranted || isChecking || !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>

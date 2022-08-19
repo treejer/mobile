@@ -43,6 +43,7 @@ function TreeSubmission({route, navigation}: Props) {
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
       variables: {
         id: treeIdToPlant, //todo fix it
