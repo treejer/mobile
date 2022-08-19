@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {openSettings} from 'react-native-permissions';
@@ -11,6 +11,7 @@ import CheckingPermissions from 'components/CheckingPermissions/CheckingPermissi
 import Spacer from 'components/Spacer';
 import Button from 'components/Button';
 import BlockedPermissions from 'components/CheckingPermissions/BlockedPermissions';
+import {TPermissionItem} from 'components/CheckingPermissions/PermissionItem';
 
 export type TCheckPermissionsProps = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -18,19 +19,43 @@ export type TCheckPermissionsProps = {
 
 function CheckPermissions(props: TCheckPermissionsProps) {
   const {
-    isLocationGranted,
-    locationPermission,
-    isCameraGranted,
-    isLibraryGranted,
     cameraPermission,
-    libraryPermission,
+    locationPermission,
+    checkUserLocation,
+    isLocationGranted,
+    isCameraGranted,
+    isGPSEnabled,
     cantProceed,
     isChecking,
+    hasLocation,
   } = props.plantTreePermissions;
 
   const {t} = useTranslation();
 
-  const permissions = useMemo(
+  useEffect(() => {
+    console.log({cantProceed, isChecking}, 'check');
+    console.log({hasLocation, isGPSEnabled}, 'GPS');
+    console.log({isCameraGranted, isLocationGranted}, 'permissions');
+  }, [cantProceed, hasLocation, isCameraGranted, isChecking, isGPSEnabled, isLocationGranted]);
+
+  const handleOpenSettings = useCallback((permission?: TPermissionItem['permission']) => {
+    if (permission?.isGranted) {
+      return;
+    }
+    openSettings().catch(() => console.log('cant open settings for permissions'));
+  }, []);
+
+  const handleGPSRequest = useCallback(
+    async (permission?: TPermissionItem['permission']) => {
+      if (permission?.isGranted) {
+        return;
+      }
+      await checkUserLocation();
+    },
+    [checkUserLocation],
+  );
+
+  const permissions: TPermissionItem['permission'][] = useMemo(
     () => [
       {
         name: t('checkPermission.permissions.location'),
@@ -38,11 +63,12 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isLocationGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton />
+            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />
           )
         ) : (
           t('checkPermission.checking')
         ),
+        onPress: handleOpenSettings,
         icon: 'md-location-outline',
         isExist: locationPermission,
         isGranted: isLocationGranted,
@@ -53,33 +79,46 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isCameraGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton />
+            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />
           )
         ) : (
           t('checkPermission.checking')
         ),
+        onPress: handleOpenSettings,
         icon: 'camera-outline',
         isExist: cameraPermission,
         isGranted: isCameraGranted,
       },
       {
-        name: t('checkPermission.permissions.media'),
-        status: libraryPermission ? (
-          isLibraryGranted ? (
-            t('checkPermission.granted')
+        name: t('checkPermission.permissions.GPS'),
+        status: isGPSEnabled ? (
+          hasLocation ? (
+            t('checkPermission.enabled')
           ) : (
-            <OpenSettingsButton />
+            <OpenSettingsButton caption={t('checkPermission.turnOn')} onPress={handleGPSRequest} />
           )
         ) : (
           t('checkPermission.checking')
         ),
+        onPress: handleGPSRequest,
         icon: 'images',
-        isExist: libraryPermission,
-        isGranted: isLibraryGranted,
+        isExist: isGPSEnabled,
+        isGranted: hasLocation,
       },
     ],
-    [t, locationPermission, isLocationGranted, cameraPermission, isCameraGranted, libraryPermission, isLibraryGranted],
+    [
+      t,
+      locationPermission,
+      isLocationGranted,
+      handleOpenSettings,
+      handleGPSRequest,
+      cameraPermission,
+      isCameraGranted,
+      isGPSEnabled,
+      hasLocation,
+    ],
   );
+
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <View style={[globalStyles.fill, !cantProceed && styles.flexCenter, globalStyles.p1]}>
@@ -98,13 +137,15 @@ function CheckPermissions(props: TCheckPermissionsProps) {
 
 export default CheckPermissions;
 
-export function OpenSettingsButton() {
-  const {t} = useTranslation();
-  const handleOpenSettings = () => {
-    openSettings().catch(() => console.log('open settings catched'));
-  };
+export type TOpenSettingsButtonProps = {
+  caption: string;
+  onPress: () => void | Promise<void> | undefined;
+};
 
-  return <Button variant="secondary" caption={t('checkPermission.grantNow')} onPress={handleOpenSettings} />;
+export function OpenSettingsButton(props: TOpenSettingsButtonProps) {
+  const {caption, onPress} = props;
+
+  return <Button variant="secondary" caption={caption} onPress={onPress} />;
 }
 
 const styles = StyleSheet.create({
@@ -117,31 +158,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 24,
-  },
-  title: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  hr: {
-    backgroundColor: colors.grayOpacity,
-    height: 1,
-    width: '100%',
-  },
-  flexRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconBox: {
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderRadius: 50,
-    width: 40,
-    height: 40,
-  },
-  iconBoxGranted: {
-    borderColor: colors.green,
-  },
-  iconBoxBlocked: {
-    borderColor: colors.red,
   },
 });

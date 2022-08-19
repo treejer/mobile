@@ -30,7 +30,7 @@ export interface SelectPlantTypeProps {
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -38,6 +38,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const isConnected = useNetInfoConnected();
+
+  useEffect(() => {
+    console.log({isGranted, isChecking, hasLocation}, 'hreeeeeereere');
+  }, [hasLocation, isChecking, isGranted]);
 
   useRefocusEffect(clearJourney);
 
@@ -97,12 +101,14 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
+
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions],
+  );
+
   if (!isGranted || isChecking || !hasLocation) {
-    return (
-      <CheckPermissions
-        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
-      />
-    );
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
   }
 
   return (

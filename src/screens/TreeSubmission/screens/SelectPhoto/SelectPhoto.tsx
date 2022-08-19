@@ -1,6 +1,6 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -39,7 +39,7 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
 function SelectPhoto(props: Props) {
   const {navigation} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -230,12 +230,13 @@ function SelectPhoto(props: Props) {
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
-  if ((!isGranted && !isChecking) || !hasLocation) {
-    return (
-      <CheckPermissions
-        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
-      />
-    );
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions],
+  );
+
+  if (!isGranted && !isChecking && !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
   }
 
   if (canPlant === false) {

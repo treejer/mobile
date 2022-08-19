@@ -1,7 +1,7 @@
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {Routes} from 'navigation';
@@ -12,19 +12,21 @@ import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmiss
 import {MapMarker} from '../../../../../assets/icons/index';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
 
 function SelectOnMap(_: Props) {
-  const {cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
   const isConnected = useNetInfoConnected();
 
-  if ((!isGranted && !isChecking) || !hasLocation) {
-    return (
-      <CheckPermissions
-        plantTreePermissions={{cantProceed, isChecking, isGranted, hasLocation, ...plantTreePermissions}}
-      />
-    );
+  const plantTreePermissionsValues = useMemo(
+    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
+    [hasLocation, isChecking, isGranted, plantTreePermissions],
+  );
+
+  if (!isGranted && !isChecking && !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
   }
 
   return (

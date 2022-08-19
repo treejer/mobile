@@ -4,38 +4,27 @@ import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import {useAppState} from 'utilities/hooks/useAppState';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 
 const treejerPermissions = Platform.select({
-  android: [
-    PERMISSIONS.ANDROID.CAMERA,
-    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-    PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
-    PERMISSIONS.ANDROID.READ_MEDIA_AUDIO,
-    PERMISSIONS.ANDROID.READ_MEDIA_VIDEO,
-  ],
-  default: [
-    PERMISSIONS.IOS.CAMERA,
-    PERMISSIONS.IOS.LOCATION_ALWAYS,
-    PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-    PERMISSIONS.IOS.MEDIA_LIBRARY,
-  ],
+  android: [PERMISSIONS.ANDROID.CAMERA, PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION],
+  default: [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.LOCATION_ALWAYS, PERMISSIONS.IOS.LOCATION_WHEN_IN_USE],
 });
 
 export type TUsePlantTreePermissions = {
   cameraPermission: string | null;
   locationPermission: string | null;
-  libraryPermission: string | null;
+  userLocation: TUserLocation | null;
   checkPermission: () => void;
   requestPermission: () => void;
   checkUserLocation: () => void;
   isCameraBlocked: boolean;
   isLocationBlocked: boolean;
-  isLibraryBlocked: boolean;
   isCameraGranted: boolean;
   isLocationGranted: boolean;
-  isLibraryGranted: boolean;
+  isGPSEnabled: boolean;
   hasLocation: boolean;
   isChecking: boolean;
   isGranted: boolean;
@@ -52,7 +41,6 @@ export const getCurrentPositionAsync = () => {
   return new Promise<GeoPosition['coords']>((resolve, reject) => {
     Geolocation.getCurrentPosition(
       position => {
-        console.log(position, 'position is here');
         resolve(position.coords);
       },
       err => {
@@ -61,7 +49,7 @@ export const getCurrentPositionAsync = () => {
       },
       {
         enableHighAccuracy: true,
-        timeout: 20000,
+        timeout: 2000,
         accuracy: {
           android: 'high',
           ios: 'bestForNavigation',
@@ -76,7 +64,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
 
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
   const [locationPermission, setLocationPermission] = useState<string | null>(null);
-  const [libraryPermission, setLibraryPermission] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<TUserLocation | null>(null);
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -84,6 +71,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
+        await watchUserLocation();
         await checkPermission();
       } catch (e) {}
     })();
@@ -95,7 +83,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     (async () => {
       try {
         const res = await checkPermission();
-        console.log(res, 'permission appState changed');
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change useRNContacts');
       }
@@ -104,11 +91,36 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appState]);
 
-  useEffect(() => {
-    (async function () {
+  useRefocusEffect(() => {
+    (async () => {
       await checkUserLocation();
+      console.log('again ereresfsa');
     })();
-  }, []);
+  });
+
+  const watchCurrentPositionAsync = () => {
+    return new Promise<GeoPosition['coords']>((resolve, reject) => {
+      Geolocation.watchPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          setUserLocation({latitude, longitude});
+          resolve(position.coords);
+        },
+        err => {
+          console.log(err, 'err inside watchCurrentPosition');
+          setUserLocation({latitude: 0, longitude: 0});
+          reject(err);
+        },
+        {
+          enableHighAccuracy: true,
+          accuracy: {
+            android: 'high',
+            ios: 'bestForNavigation',
+          },
+        },
+      );
+    });
+  };
 
   const checkPermission = useCallback(async () => {
     try {
@@ -117,11 +129,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
-        setLibraryPermission(res['android.permission.READ_MEDIA_IMAGES']);
       } else {
         setCameraPermission(res['ios.permission.CAMERA']);
         setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
-        setLibraryPermission(res['ios.permission.MEDIA_LIBRARY']);
       }
 
       setChecked(true);
@@ -139,11 +149,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
-        setLibraryPermission(res['android.permission.READ_MEDIA_IMAGES']);
       } else {
         setCameraPermission(res['ios.permission.CAMERA']);
         setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
-        setLibraryPermission(res['ios.permission.MEDIA_LIBRARY']);
       }
       setRequested(true);
       return Promise.resolve(res);
@@ -164,6 +172,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       });
     } catch (error) {
       console.log(error);
+      setUserLocation({latitude: 0, longitude: 0});
+    }
+  }, []);
+
+  const watchUserLocation = useCallback(async () => {
+    try {
+      await watchCurrentPositionAsync();
+    } catch (error) {
+      console.log(error);
     }
   }, []);
 
@@ -176,45 +193,42 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     [locationPermission],
   );
 
-  const isLibraryBlocked = useMemo(
-    () => libraryPermission === RESULTS.DENIED || libraryPermission === RESULTS.BLOCKED,
-    [libraryPermission],
-  );
-
   const isCameraGranted = useMemo(() => cameraPermission === RESULTS.GRANTED, [cameraPermission]);
   const isLocationGranted = useMemo(() => locationPermission === RESULTS.GRANTED, [locationPermission]);
-  const isLibraryGranted = useMemo(() => libraryPermission === RESULTS.GRANTED, [libraryPermission]);
+  const hasLocation = useMemo(() => !!(userLocation?.latitude && userLocation?.longitude), [userLocation]);
+
+  const isGranted = useMemo(
+    () => isCameraGranted && isLocationGranted && hasLocation,
+    [hasLocation, isCameraGranted, isLocationGranted],
+  );
+
+  const isGPSEnabled = useMemo(() => !!userLocation, [userLocation]);
 
   const isChecking = useMemo(() => {
     return !checked && (!cameraPermission || !locationPermission);
   }, [checked, cameraPermission, locationPermission]);
 
   const cantProceed = useMemo(
-    () => checked && (isCameraBlocked || isLocationBlocked),
-    [checked, isCameraBlocked, isLocationBlocked],
+    () => checked && (isCameraBlocked || isLocationBlocked || (isGPSEnabled && !hasLocation)),
+    [checked, hasLocation, isCameraBlocked, isGPSEnabled, isLocationBlocked],
   );
-
-  const isGranted = useMemo(() => isCameraGranted && isLocationGranted, [isCameraGranted, isLocationGranted]);
-
-  const hasLocation = useMemo(() => !!userLocation, [userLocation]);
 
   return {
     cameraPermission,
     locationPermission,
-    libraryPermission,
+    userLocation,
     checkPermission,
     checkUserLocation,
     requestPermission,
     isCameraBlocked,
     isLocationBlocked,
-    isLibraryBlocked,
     isCameraGranted,
     isLocationGranted,
-    isLibraryGranted,
     isChecking,
     isGranted,
     cantProceed,
     hasLocation,
     requested,
+    isGPSEnabled,
   };
 }

@@ -9,23 +9,17 @@ import {colors} from 'constants/values';
 export type TPermissionItem = {
   permission: {
     name: string;
-    isExist: string | null;
+    isExist: string | boolean | null;
     status: string | JSX.Element;
     icon: string;
     isGranted: boolean;
+    onPress: () => void | Promise<void> | undefined;
   };
   col?: boolean;
 };
 
 export function PermissionItem(props: TPermissionItem) {
   const {permission, col} = props;
-
-  const handleOpenSettings = useCallback(() => {
-    if (permission.isGranted) {
-      return;
-    }
-    openSettings().catch(() => console.log('cant open settings for permissions'));
-  }, [permission]);
 
   const permissionStyles = useMemo(
     () => ({
@@ -42,7 +36,7 @@ export function PermissionItem(props: TPermissionItem) {
   return (
     <View style={[styles.flexBetween, col && styles.col, col && permission.isGranted && styles.smaller]}>
       <TouchableOpacity
-        onPress={handleOpenSettings}
+        onPress={() => permission.onPress(permission)}
         activeOpacity={permission.isGranted ? 1 : undefined}
         style={col ? styles.col : styles.flexRow}
       >
