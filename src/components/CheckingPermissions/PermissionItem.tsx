@@ -1,7 +1,6 @@
 import React, {useCallback, useMemo} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {openSettings} from 'react-native-permissions';
 
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
