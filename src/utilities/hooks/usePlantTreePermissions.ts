@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
-import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
+import Permissions, {PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import {useAppState} from 'utilities/hooks/useAppState';
@@ -20,6 +20,7 @@ export type TUsePlantTreePermissions = {
   checkPermission: () => void;
   requestPermission: () => void;
   checkUserLocation: () => void;
+  openPermissionsSettings: () => void;
   isCameraBlocked: boolean;
   isLocationBlocked: boolean;
   isCameraGranted: boolean;
@@ -98,7 +99,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     })();
   });
 
-  const watchCurrentPositionAsync = () => {
+  const watchCurrentPositionAsync = useCallback(() => {
     return new Promise<GeoPosition['coords']>((resolve, reject) => {
       Geolocation.watchPosition(
         position => {
@@ -120,7 +121,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         },
       );
     });
-  };
+  }, []);
 
   const checkPermission = useCallback(async () => {
     try {
@@ -182,6 +183,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     } catch (error) {
       console.log(error);
     }
+  }, [watchCurrentPositionAsync]);
+
+  const openPermissionsSettings = useCallback(() => {
+    openSettings().catch(() => console.log('cant open settings for permissions'));
   }, []);
 
   const isCameraBlocked = useMemo(
@@ -219,6 +224,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     userLocation,
     checkPermission,
     checkUserLocation,
+    openPermissionsSettings,
     requestPermission,
     isCameraBlocked,
     isLocationBlocked,

@@ -18,7 +18,7 @@ import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/Use
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useConfig, useUserId} from 'services/web3';
+import {useUserId} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';
@@ -68,12 +68,6 @@ function VerifyProfile(props: Props) {
 
   const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!user?.mobile);
   const [phoneNumber, setPhoneNumber] = useState(user?.mobile || '');
-
-  const {treejerApiUrl} = useConfig();
-  console.log(treejerApiUrl, 'treejerApiUrl');
-
-  console.log(verifyMobileState.data, 'verifyMobileState.data');
-  console.log(verifyMobileState.error, 'verifyMobileState.error');
 
   const {params} = route;
   const {journey} = params || {};

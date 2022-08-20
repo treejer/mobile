@@ -38,18 +38,19 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
-import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 function SubmitTree(props: Props) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
   const {journey, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation} = plantTreePermissions;
 
   // const {
   //   params: {journey},
@@ -312,13 +313,8 @@ function SubmitTree(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
 
-  const plantTreePermissionsValues = useMemo(
-    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
-    [hasLocation, isChecking, isGranted, plantTreePermissions],
-  );
-
-  if (!isGranted && !isChecking && !hasLocation) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  if (!isGranted || isChecking || !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 
   const contentMarkup = isReadyToSubmit ? (

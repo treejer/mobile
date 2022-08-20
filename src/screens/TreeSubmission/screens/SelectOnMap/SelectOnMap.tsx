@@ -10,23 +10,21 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {MapMarker} from '../../../../../assets/icons/index';
-import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
-interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
+  plantTreePermissions: TUsePlantTreePermissions;
+}
 
-function SelectOnMap(_: Props) {
-  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+function SelectOnMap(props: Props) {
+  const {plantTreePermissions} = props;
+  const {isChecking, isGranted, hasLocation} = plantTreePermissions;
   const isConnected = useNetInfoConnected();
 
-  const plantTreePermissionsValues = useMemo(
-    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
-    [hasLocation, isChecking, isGranted, plantTreePermissions],
-  );
-
-  if (!isGranted && !isChecking && !hasLocation) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  if (!isGranted || isChecking || !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 
   return (

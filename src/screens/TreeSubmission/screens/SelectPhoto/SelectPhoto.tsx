@@ -27,18 +27,19 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import Geolocation from 'react-native-geolocation-service';
 import {calcDistance, TPoint} from 'utilities/distance';
-import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 // import piexif from 'piexifjs';
 
-interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
+  plantTreePermissions: TUsePlantTreePermissions;
+}
 
 function SelectPhoto(props: Props) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation, userLocation} = plantTreePermissions;
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -118,11 +119,19 @@ function SelectPhoto(props: Props) {
                 }
               }
             } else {
-              showAlert({
-                title: t('inValidImage.title'),
-                mode: AlertMode.Error,
-                message: t('inValidImage.message'),
-              });
+              if (fromGallery) {
+                showAlert({
+                  title: t('inValidImage.title'),
+                  mode: AlertMode.Error,
+                  message: t('inValidImage.message'),
+                });
+              } else {
+                showAlert({
+                  title: t('inValidImage.title'),
+                  mode: AlertMode.Error,
+                  message: t('inValidImage.hasNoLocation'),
+                });
+              }
             }
           }
         }
@@ -224,13 +233,8 @@ function SelectPhoto(props: Props) {
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
-  const plantTreePermissionsValues = useMemo(
-    () => ({isChecking, isGranted, hasLocation, userLocation, ...plantTreePermissions}),
-    [hasLocation, isChecking, isGranted, plantTreePermissions, userLocation],
-  );
-
-  if (!isGranted && !isChecking && !hasLocation) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+  if (!isGranted || isChecking || !hasLocation) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 
   if (canPlant === false) {

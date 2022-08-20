@@ -1,11 +1,9 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {openSettings} from 'react-native-permissions';
 import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckingPermissions from 'components/CheckingPermissions/CheckingPermissions';
 import Spacer from 'components/Spacer';
@@ -28,6 +26,7 @@ function CheckPermissions(props: TCheckPermissionsProps) {
     cantProceed,
     isChecking,
     hasLocation,
+    openPermissionsSettings,
   } = props.plantTreePermissions;
 
   const {t} = useTranslation();
@@ -38,12 +37,15 @@ function CheckPermissions(props: TCheckPermissionsProps) {
     console.log({isCameraGranted, isLocationGranted}, 'permissions');
   }, [cantProceed, hasLocation, isCameraGranted, isChecking, isGPSEnabled, isLocationGranted]);
 
-  const handleOpenSettings = useCallback((isGranted?: boolean) => {
-    if (isGranted) {
-      return;
-    }
-    openSettings().catch(() => console.log('cant open settings for permissions'));
-  }, []);
+  const handleOpenSettings = useCallback(
+    (isGranted?: boolean) => {
+      if (isGranted) {
+        return;
+      }
+      openPermissionsSettings();
+    },
+    [openPermissionsSettings],
+  );
 
   const handleGPSRequest = useCallback(
     async (isGranted?: boolean) => {
