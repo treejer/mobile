@@ -116,9 +116,16 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [watchCurrentPositionAsyncWeb]);
 
   const openPermissionsSettings = useCallback(() => {
-    navigator.mediaDevices.getUserMedia({audio: false, video: true}).then(result => {
-      console.log(result, 'result is here');
-    });
+    navigator.mediaDevices
+      .getUserMedia({audio: false, video: true})
+      .then(result => {
+        if (result.active) {
+          setCameraPermission('granted');
+        }
+      })
+      .catch(e => {
+        setCameraPermission('blocked');
+      });
   }, []);
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
