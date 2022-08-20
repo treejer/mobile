@@ -1,7 +1,7 @@
 {
   "name": "treejer-ranger",
   "main": "index",
-  "version": "1.4.0",
+  "version": "1.4.1-alpha",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@apollo/client": "3.5.7",
     "@expo/webpack-config": "0.16.20",
-    "@magic-sdk/react-native": "8.2.1",
+    "@magic-sdk/react-native": "^10.0.0",
     "@opengsn/gsn": "2.1.0",
     "@opengsn/provider": "2.2.6",
     "@react-native-async-storage/async-storage": "1.16.1",
@@ -54,7 +54,7 @@
     "humanize-duration": "3.27.1",
     "i18next": "21.6.11",
     "lodash": "4.17.21",
-    "magic-sdk": "8.1.1",
+    "magic-sdk": "^9.0.0",
     "mapbox-gl": "2.7.0",
     "node-libs-browser": "2.2.1",
     "piexifjs": "^1.0.6",
