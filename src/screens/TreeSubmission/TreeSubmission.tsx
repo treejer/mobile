@@ -16,6 +16,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
+import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -35,6 +36,8 @@ interface Props {
 }
 
 function TreeSubmission({route, navigation}: Props) {
+  const plantTreePermissions = usePlantTreePermissions();
+
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
@@ -64,14 +67,18 @@ function TreeSubmission({route, navigation}: Props) {
         animationEnabled: true,
       }}
     >
-      <Stack.Screen
-        name={Routes.SelectPlantType}
-        component={SelectPlantType}
-        options={{title: screenTitle('Plant Type')}}
-      />
-      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} options={{title: screenTitle('Photo')}} />
-      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} options={{title: screenTitle('Location')}} />
-      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} options={{title: screenTitle('Submit Tree')}} />
+      <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
+        {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
+        {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectOnMap} options={{title: screenTitle('Location')}}>
+        {props => <SelectOnMap {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SubmitTree} options={{title: screenTitle('Submit Tree')}}>
+        {props => <SubmitTree {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

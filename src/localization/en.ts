@@ -296,6 +296,8 @@ export const en = {
     title: 'Image is not valid',
     message:
       "You can't upload this image because you didn't take this photo, or your GPS was off when you were taking that photo with the Camera",
+    hasNoLocation:
+      "your image doesn't have location detail please go to your camera settings and allow location permission",
   },
   checkPermission: {
     permissions: {

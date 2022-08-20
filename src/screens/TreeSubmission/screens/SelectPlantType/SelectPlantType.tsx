@@ -16,7 +16,7 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -25,12 +25,13 @@ type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.Selec
 export interface SelectPlantTypeProps {
   navigation: NavigationProps;
   route: RouteNavigationProps;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation, ...plantTreePermissions} = usePlantTreePermissions();
+  const {isChecking, isGranted, hasLocation} = plantTreePermissions;
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
 
@@ -102,13 +103,8 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     [isFocused],
   );
 
-  const plantTreePermissionsValues = useMemo(
-    () => ({isChecking, isGranted, hasLocation, ...plantTreePermissions}),
-    [hasLocation, isChecking, isGranted, plantTreePermissions],
-  );
-
   if (!isGranted || isChecking || !hasLocation) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissionsValues} />;
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 
   return (
