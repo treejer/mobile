@@ -306,6 +306,9 @@ export const en = {
       media: 'Media',
       GPS: 'GPS',
     },
+    error: {
+      deviceNotFound: 'Camera Device Not Found',
+    },
     enabled: 'Enabled',
     turnOn: 'Turn ON!',
     grantNow: 'Grant Now!',

@@ -10,6 +10,7 @@ import Spacer from 'components/Spacer';
 import Button from 'components/Button';
 import BlockedPermissions from 'components/CheckingPermissions/BlockedPermissions';
 import {TPermissionItem} from 'components/CheckingPermissions/PermissionItem';
+import {isWeb} from 'utilities/helpers/web';
 
 export type TCheckPermissionsProps = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -19,7 +20,6 @@ function CheckPermissions(props: TCheckPermissionsProps) {
   const {
     cameraPermission,
     locationPermission,
-    checkUserLocation,
     isLocationGranted,
     isCameraGranted,
     isGPSEnabled,
@@ -27,6 +27,9 @@ function CheckPermissions(props: TCheckPermissionsProps) {
     isChecking,
     hasLocation,
     openPermissionsSettings,
+    requestCameraPermission,
+    requestLocationPermission,
+    openGpsRequest,
   } = props.plantTreePermissions;
 
   const {t} = useTranslation();
@@ -37,26 +40,6 @@ function CheckPermissions(props: TCheckPermissionsProps) {
     console.log({isCameraGranted, isLocationGranted}, 'permissions');
   }, [cantProceed, hasLocation, isCameraGranted, isChecking, isGPSEnabled, isLocationGranted]);
 
-  const handleOpenSettings = useCallback(
-    (isGranted?: boolean) => {
-      if (isGranted) {
-        return;
-      }
-      openPermissionsSettings();
-    },
-    [openPermissionsSettings],
-  );
-
-  const handleGPSRequest = useCallback(
-    async (isGranted?: boolean) => {
-      if (isGranted) {
-        return;
-      }
-      await checkUserLocation();
-    },
-    [checkUserLocation],
-  );
-
   const permissions: TPermissionItem['permission'][] = useMemo(
     () => [
       {
@@ -65,12 +48,15 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isLocationGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={() => handleOpenSettings(false)} />
+            <OpenSettingsButton
+              caption={t('checkPermission.grantNow')}
+              onPress={() => (isWeb() ? requestLocationPermission(false) : openPermissionsSettings(false))}
+            />
           )
         ) : (
           t('checkPermission.checking')
         ),
-        onPress: handleOpenSettings,
+        onPress: isWeb() ? requestLocationPermission : openPermissionsSettings,
         icon: 'md-location-outline',
         isExist: locationPermission,
         isGranted: isLocationGranted,
@@ -81,12 +67,15 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           isCameraGranted ? (
             t('checkPermission.granted')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.grantNow')} onPress={() => handleOpenSettings(false)} />
+            <OpenSettingsButton
+              caption={t('checkPermission.grantNow')}
+              onPress={() => (isWeb() ? requestCameraPermission(false) : openPermissionsSettings(false))}
+            />
           )
         ) : (
           t('checkPermission.checking')
         ),
-        onPress: handleOpenSettings,
+        onPress: isWeb() ? requestCameraPermission : openPermissionsSettings,
         icon: 'camera-outline',
         isExist: cameraPermission,
         isGranted: isCameraGranted,
@@ -97,12 +86,12 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           hasLocation ? (
             t('checkPermission.enabled')
           ) : (
-            <OpenSettingsButton caption={t('checkPermission.turnOn')} onPress={() => handleGPSRequest(false)} />
+            <OpenSettingsButton caption={t('checkPermission.turnOn')} onPress={() => openGpsRequest(false)} />
           )
         ) : (
           t('checkPermission.checking')
         ),
-        onPress: handleGPSRequest,
+        onPress: openGpsRequest,
         icon: 'locate',
         isExist: isGPSEnabled,
         isGranted: hasLocation,
@@ -112,12 +101,14 @@ function CheckPermissions(props: TCheckPermissionsProps) {
       t,
       locationPermission,
       isLocationGranted,
-      handleOpenSettings,
-      handleGPSRequest,
+      requestLocationPermission,
+      openPermissionsSettings,
       cameraPermission,
       isCameraGranted,
+      requestCameraPermission,
       isGPSEnabled,
       hasLocation,
+      openGpsRequest,
     ],
   );
 

@@ -20,7 +20,10 @@ export type TUsePlantTreePermissions = {
   checkPermission: () => void;
   requestPermission: () => void;
   checkUserLocation: () => void;
-  openPermissionsSettings: () => void;
+  openPermissionsSettings: (isGranted?: boolean) => void;
+  openGpsRequest: (isGranted?: boolean) => void;
+  requestCameraPermission: (isGranted?: boolean) => void;
+  requestLocationPermission: (isGranted?: boolean) => void;
   isCameraBlocked: boolean;
   isLocationBlocked: boolean;
   isCameraGranted: boolean;
@@ -185,9 +188,22 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     }
   }, [watchCurrentPositionAsync]);
 
-  const openPermissionsSettings = useCallback(() => {
+  const openPermissionsSettings = useCallback((isGranted?: boolean) => {
+    if (isGranted) {
+      return;
+    }
     openSettings().catch(() => console.log('cant open settings for permissions'));
   }, []);
+
+  const openGpsRequest = useCallback(
+    async (isGranted?: boolean) => {
+      if (isGranted) {
+        return;
+      }
+      await checkUserLocation();
+    },
+    [checkUserLocation],
+  );
 
   const isCameraBlocked = useMemo(
     () => cameraPermission === RESULTS.DENIED || cameraPermission === RESULTS.BLOCKED,
@@ -226,6 +242,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     checkUserLocation,
     openPermissionsSettings,
     requestPermission,
+    requestCameraPermission: () => {},
+    requestLocationPermission: () => {},
+    openGpsRequest,
     isCameraBlocked,
     isLocationBlocked,
     isCameraGranted,

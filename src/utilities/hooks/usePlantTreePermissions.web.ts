@@ -1,4 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
@@ -21,6 +23,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [userLocation, setUserLocation] = useState<TUserLocation | null>(null);
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const {t} = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -87,6 +91,22 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const requestPermission = useCallback(async () => {
     try {
       await checkPermission();
+      navigator.mediaDevices
+        .getUserMedia({audio: false, video: true})
+        .then(result => {
+          if (result.active) {
+            setCameraPermission('granted');
+          }
+        })
+        .catch(e => {
+          setCameraPermission('blocked');
+        });
+      const {latitude, longitude} = await getCurrentPositionAsyncWeb();
+      console.log({latitude, longitude}, 'user location');
+      setUserLocation({
+        latitude,
+        longitude,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -115,18 +135,62 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     }
   }, [watchCurrentPositionAsyncWeb]);
 
-  const openPermissionsSettings = useCallback(() => {
-    navigator.mediaDevices
-      .getUserMedia({audio: false, video: true})
-      .then(result => {
-        if (result.active) {
-          setCameraPermission('granted');
-        }
-      })
-      .catch(e => {
-        setCameraPermission('blocked');
+  const requestCameraPermission = useCallback(
+    (isGranted?: boolean) => {
+      if (isGranted) {
+        return;
+      }
+      navigator.mediaDevices
+        .getUserMedia({audio: false, video: true})
+        .then(result => {
+          console.log(result, 'result');
+          if (result.active) {
+            setCameraPermission('granted');
+          }
+        })
+        .catch(error => {
+          console.log(error, 'error');
+          showAlert({
+            title: t('checkPermission.error.deviceNotFound'),
+            message: String(error),
+            mode: AlertMode.Error,
+          });
+          setCameraPermission('blocked');
+        });
+    },
+    [t],
+  );
+
+  const requestLocationPermission = useCallback(async (isGranted?: boolean) => {
+    try {
+      if (isGranted) {
+        return;
+      }
+      const {latitude, longitude} = await getCurrentPositionAsyncWeb();
+      console.log({latitude, longitude}, 'user location');
+      setUserLocation({
+        latitude,
+        longitude,
       });
+    } catch (error) {
+      console.log(error, 'error');
+      setUserLocation({
+        latitude: 0,
+        longitude: 0,
+      });
+      console.log(error, 'request location permission');
+    }
   }, []);
+
+  const openGpsRequest = useCallback(
+    async (isGranted?: boolean) => {
+      if (isGranted) {
+        return;
+      }
+      await checkUserLocation();
+    },
+    [checkUserLocation],
+  );
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
   const isLocationBlocked = useMemo(() => locationPermission === 'blocked', [locationPermission]);
@@ -158,7 +222,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     checkPermission,
     checkUserLocation,
     requestPermission,
-    openPermissionsSettings,
+    openPermissionsSettings: () => {},
+    openGpsRequest,
+    requestCameraPermission,
+    requestLocationPermission,
     isCameraBlocked,
     isLocationBlocked,
     isCameraGranted,
