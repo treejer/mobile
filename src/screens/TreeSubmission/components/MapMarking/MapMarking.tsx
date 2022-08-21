@@ -22,13 +22,14 @@ import {useCurrentJourney} from 'services/currentJourney';
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
   verifyProfile?: boolean;
+  permissionHasLocation?: boolean;
 }
 
 export default function MapMarking(props: IMapMarkingProps) {
-  const {onSubmit, verifyProfile} = props;
+  const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!permissionHasLocation);
   const [isInitial, setIsInitial] = useState(true);
   const [location, setLocation] = useState<GeoPosition>();
   const isConnected = useNetInfoConnected();
@@ -106,8 +107,8 @@ export default function MapMarking(props: IMapMarkingProps) {
       const newJourney = {
         ...journey,
         location: {
-          latitude: location?.coords.latitude,
-          longitude: location?.coords.longitude,
+          latitude: location?.coords?.latitude,
+          longitude: location?.coords?.longitude,
         },
       };
       if (isConnected) {

@@ -18,13 +18,13 @@ function SelectOnMapVerifyProfile(props: Props) {
 
   const handleSubmit = useCallback(
     (location: GeoPosition) => {
-      const {coords} = location;
+      const {latitude, longitude} = location.coords;
       navigation.navigate(Routes.VerifyProfile, {
         journey: {
           ...journey,
           location: {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude,
+            longitude,
           },
         },
       });

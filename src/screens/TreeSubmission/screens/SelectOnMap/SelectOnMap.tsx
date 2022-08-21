@@ -30,7 +30,7 @@ function SelectOnMap(props: Props) {
     <SafeAreaView style={globalStyles.fill}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
-        <MapMarking />
+        <MapMarking permissionHasLocation={hasLocation} />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={MapMarker} />
         </View>

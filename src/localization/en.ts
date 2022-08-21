@@ -297,7 +297,7 @@ export const en = {
     message:
       "You can't upload this image because you didn't take this photo, or your GPS was off when you were taking that photo with the Camera.",
     hasNoLocation:
-      "This image doesn't have location metadata please go to your camera settings and allow location permission.",
+      "This image doesn't have location metadata please go to your camera settings and allow location permission. \nIf you still have trouble you can try to upload to photo from gallery",
     longDistance: "You can't upload this image because distance between your location and image are too far.",
   },
   checkPermission: {
@@ -313,6 +313,11 @@ export const en = {
       '1': 'Please allow location permission for this site in your browser site settings',
       turnOnGPS: 'First you need to turn on your GPS',
       cantSupportGop: 'This devices can"t support geolocation',
+      GPS: {
+        '1Title': 'Grant location permission',
+        '1': 'First you need to grant location permission',
+      },
+      unknownError: 'Unknown error',
     },
     enabled: 'Enabled',
     turnOn: 'Turn ON!',

@@ -20,14 +20,12 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
           }
         },
         function (err) {
-          if (err.code === 1) {
-            showAlert({
-              title: t('checkPermission.error.siteSettings'),
-              message: t('checkPermission.error.1'),
-              mode: AlertMode.Info,
-            });
-            reject(err);
-          }
+          showAlert({
+            title: err.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+            message: err.code ? t(`checkPermission.error.${err.code}`) : t('checkPermission.error.unknownError'),
+            mode: AlertMode.Info,
+          });
+          reject(err);
         },
         {timeout: 1000, enableHighAccuracy: true},
       );

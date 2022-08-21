@@ -1,3 +1,4 @@
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
 import Permissions, {PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
@@ -5,6 +6,7 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import {useAppState} from 'utilities/hooks/useAppState';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {useTranslation} from 'react-i18next';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 
@@ -63,7 +65,11 @@ export const getCurrentPositionAsync = () => {
   });
 };
 
-export function usePlantTreePermissions(): TUsePlantTreePermissions {
+export type TPlantTreePermissionsOptions = {didMount: boolean};
+
+export function usePlantTreePermissions(
+  {didMount}: TPlantTreePermissionsOptions = {didMount: true},
+): TUsePlantTreePermissions {
   const {appState} = useAppState();
 
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
@@ -72,11 +78,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  const {t} = useTranslation();
+
   useEffect(() => {
     (async () => {
       try {
-        await watchUserLocation();
-        await checkPermission();
+        if (didMount) {
+          await watchUserLocation();
+          await checkPermission();
+        }
       } catch (e) {}
     })();
 
@@ -141,7 +151,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       setChecked(true);
       return Promise.resolve(res);
     } catch (e: any) {
-      console.log(e, 'Error inside checkPermission useRNContacts');
+      console.log(e, 'Error inside checkPermission uesPlantTreePermissions');
     }
   }, []);
 
@@ -174,11 +184,18 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         latitude,
         longitude,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      showAlert({
+        title: error.code
+          ? t(`checkPermission.error.GPS.${error.code}Title`)
+          : t('checkPermissions.error.unknownError'),
+        message: error.code ? t(`checkPermission.error.GPS.${error.code}`) : t('checkPermissions.error.unknownError'),
+        mode: AlertMode.Error,
+      });
       setUserLocation({latitude: 0, longitude: 0});
     }
-  }, []);
+  }, [t]);
 
   const watchUserLocation = useCallback(async () => {
     try {
