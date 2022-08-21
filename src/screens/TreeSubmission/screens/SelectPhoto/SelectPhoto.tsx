@@ -28,9 +28,9 @@ import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/We
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
 import {calcDistance, TPoint} from 'utilities/distance';
-import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-// import piexif from 'piexifjs';
+import exifr from 'exifr';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -93,7 +93,7 @@ function SelectPhoto(props: Props) {
           if (selectedPhoto.path) {
             if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
               // @here
-              let maxDistance = 20.0;
+              let maxDistance = 5;
               if (userLocation) {
                 const imageCoords: TPoint = {
                   latitude: selectedPhoto?.exif.Latitude,
@@ -114,7 +114,7 @@ function SelectPhoto(props: Props) {
                   showAlert({
                     title: t('inValidImage.title'),
                     mode: AlertMode.Error,
-                    message: t('inValidImage.message'),
+                    message: t('inValidImage.longDistance'),
                   });
                 }
               }
@@ -151,15 +151,41 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setShowWebCam(false);
 
-      handleAfterSelectPhoto({
-        selectedPhoto: file,
-        setPhoto,
-        isUpdate,
-        isNursery,
-        canUpdate,
-      });
+      const {latitude, longitude} = await exifr.parse(image);
+      if (latitude > 0 && longitude > 0) {
+        let maxDistance = 5;
+        if (userLocation) {
+          const imageCoords: TPoint = {
+            latitude,
+            longitude,
+          };
+          const distance = calcDistance(imageCoords, userLocation);
+          console.log({userLocation, imageCoords, distance});
+          if (distance < maxDistance) {
+            handleAfterSelectPhoto({
+              selectedPhoto: file,
+              setPhoto,
+              isUpdate,
+              isNursery,
+              canUpdate,
+            });
+          } else {
+            showAlert({
+              title: t('inValidImage.title'),
+              mode: AlertMode.Error,
+              message: t('inValidImage.longDistance'),
+            });
+          }
+        } else {
+          showAlert({
+            title: t('inValidImage.title'),
+            mode: AlertMode.Error,
+            message: t('inValidImage.hasNoLocation'),
+          });
+        }
+      }
     },
-    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate],
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, t, userLocation],
   );
 
   const handleSelectLibraryPhotoWeb = useCallback(
@@ -168,15 +194,41 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setPickedImage(null);
 
-      handleAfterSelectPhoto({
-        selectedPhoto: file,
-        setPhoto,
-        isUpdate,
-        isNursery,
-        canUpdate,
-      });
+      const {latitude, longitude} = await exifr.parse(image);
+      if (latitude > 0 && longitude > 0) {
+        let maxDistance = 5;
+        if (userLocation) {
+          const imageCoords: TPoint = {
+            latitude,
+            longitude,
+          };
+          const distance = calcDistance(imageCoords, userLocation);
+          console.log({userLocation, imageCoords, distance});
+          if (distance < maxDistance) {
+            handleAfterSelectPhoto({
+              selectedPhoto: file,
+              setPhoto,
+              isUpdate,
+              isNursery,
+              canUpdate,
+            });
+          } else {
+            showAlert({
+              title: t('inValidImage.title'),
+              mode: AlertMode.Error,
+              message: t('inValidImage.longDistance'),
+            });
+          }
+        } else {
+          showAlert({
+            title: t('inValidImage.title'),
+            mode: AlertMode.Error,
+            message: t('inValidImage.hasNoLocation'),
+          });
+        }
+      }
     },
-    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage],
+    [canUpdate, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage?.name, t, userLocation],
   );
 
   const handleContinue = useCallback(() => {

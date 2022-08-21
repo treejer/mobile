@@ -10,9 +10,8 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {MapMarker} from '../../../../../assets/icons/index';
-import {TUsePlantTreePermissions, usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
   plantTreePermissions: TUsePlantTreePermissions;
