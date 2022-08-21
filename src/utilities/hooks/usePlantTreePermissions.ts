@@ -88,7 +88,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       try {
         const res = await checkPermission();
       } catch (e) {
-        console.log(e, 'e inside useEffect AppState change useRNContacts');
+        console.log(e, 'e inside useEffect AppState change usePlantTreePermissions');
       }
     })();
 

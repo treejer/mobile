@@ -308,6 +308,10 @@ export const en = {
     },
     error: {
       deviceNotFound: 'Camera Device Not Found',
+      siteSettings: 'Go to site settings',
+      '1': 'Please allow location permission for this site in your browser site settings',
+      turnOnGPS: 'First you need to turn on your GPS',
+      cantSupportGop: 'This devices can"t support geolocation',
     },
     enabled: 'Enabled',
     turnOn: 'Turn ON!',
