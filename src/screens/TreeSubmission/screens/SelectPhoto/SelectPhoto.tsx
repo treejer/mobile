@@ -90,50 +90,67 @@ function SelectPhoto(props: Props) {
         } else {
           selectedPhoto = await openCameraHook();
         }
+
+        const imageCoords: TPoint = {
+          latitude: selectedPhoto?.exif.Latitude,
+          longitude: selectedPhoto?.exif.Longitude,
+        };
+
         if (selectedPhoto) {
           if (selectedPhoto.path) {
-            if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
-              // @here
-              let maxDistance = 5;
-              if (userLocation) {
-                const imageCoords: TPoint = {
-                  latitude: selectedPhoto?.exif.Latitude,
-                  longitude: selectedPhoto?.exif.Longitude,
-                };
-                const distance = calcDistance(imageCoords, userLocation);
-                console.log({userLocation, imageCoords, distance});
+            checkTreePhoto(
+              '',
+              userLocation,
+              () => {
+                handleAfterSelectPhoto({
+                  selectedPhoto,
+                  setPhoto,
+                  isUpdate,
+                  isNursery,
+                  canUpdate,
+                });
+              },
+              imageCoords,
+              fromGallery,
+            );
+            // if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
+            //   // @here
+            //   let maxDistance = 5;
+            //   if (userLocation) {
+            //     const distance = calcDistance(imageCoords, userLocation);
+            //     console.log({userLocation, imageCoords, distance});
 
-                if (distance < maxDistance) {
-                  handleAfterSelectPhoto({
-                    selectedPhoto,
-                    setPhoto,
-                    isUpdate,
-                    isNursery,
-                    canUpdate,
-                  });
-                } else {
-                  showAlert({
-                    title: t('inValidImage.title'),
-                    mode: AlertMode.Error,
-                    message: t('inValidImage.longDistance'),
-                  });
-                }
-              }
-            } else {
-              if (fromGallery) {
-                showAlert({
-                  title: t('inValidImage.title'),
-                  mode: AlertMode.Error,
-                  message: t('inValidImage.message'),
-                });
-              } else {
-                showAlert({
-                  title: t('inValidImage.title'),
-                  mode: AlertMode.Error,
-                  message: t('inValidImage.hasNoLocation'),
-                });
-              }
-            }
+            //     if (distance < maxDistance) {
+            //       handleAfterSelectPhoto({
+            //         selectedPhoto,
+            //         setPhoto,
+            //         isUpdate,
+            //         isNursery,
+            //         canUpdate,
+            //       });
+            //     } else {
+            //       showAlert({
+            //         title: t('inValidImage.title'),
+            //         mode: AlertMode.Error,
+            //         message: t('inValidImage.longDistance'),
+            //       });
+            //     }
+            //   }
+            // } else {
+            //   if (fromGallery) {
+            //     showAlert({
+            //       title: t('inValidImage.title'),
+            //       mode: AlertMode.Error,
+            //       message: t('inValidImage.message'),
+            //     });
+            //   } else {
+            //     showAlert({
+            //       title: t('inValidImage.title'),
+            //       mode: AlertMode.Error,
+            //       message: t('inValidImage.hasNoLocation'),
+            //     });
+            //   }
+            // }
           }
         }
       }

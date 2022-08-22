@@ -1,5 +1,5 @@
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Platform} from 'react-native';
 import Permissions, {PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -43,7 +43,7 @@ export type TUserLocation = {
   longitude: number;
 };
 
-export const getCurrentPositionAsync = () => {
+export const getCurrentPositionAsync = (showDialog: boolean = true) => {
   return new Promise<GeoPosition['coords']>((resolve, reject) => {
     Geolocation.getCurrentPosition(
       position => {
@@ -55,6 +55,7 @@ export const getCurrentPositionAsync = () => {
       },
       {
         enableHighAccuracy: true,
+        showLocationDialog: showDialog,
         timeout: 4000,
         accuracy: {
           android: 'high',
@@ -82,29 +83,25 @@ export function usePlantTreePermissions(
 
   useEffect(() => {
     console.log({userLocation}, 'userLocation');
-    showAlert({
-      title: 'console.log',
-      message: `lat: ${userLocation?.latitude}, long: ${userLocation?.longitude}`,
-    });
   }, [userLocation, locationPermission]);
 
   useEffect(() => {
     (async () => {
       try {
         if (didMount) {
-          await watchUserLocation();
           await checkPermission();
         }
       } catch (e) {}
     })();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await checkPermission();
+        await checkPermission();
+        await watchUserLocation();
+        console.log('appState');
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissions');
       }
@@ -125,6 +122,7 @@ export function usePlantTreePermissions(
       Geolocation.watchPosition(
         position => {
           const {latitude, longitude} = position.coords;
+          console.log({latitude, longitude}, 'watcher logger');
           setUserLocation({latitude, longitude});
           resolve(position.coords);
         },
@@ -185,38 +183,42 @@ export function usePlantTreePermissions(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkUserLocation = useCallback(async () => {
-    try {
-      const {latitude, longitude} = await getCurrentPositionAsync();
-      setUserLocation({
-        latitude,
-        longitude,
-      });
-    } catch (error: any) {
-      if (checked) {
-        showAlert({
-          title: error.code
-            ? t(`checkPermission.error.GPS.${error.code}Title`)
-            : t('checkPermissions.error.unknownError'),
-          message: error.code
-            ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
-            : t('checkPermissions.error.unknownError'),
-          mode: AlertMode.Error,
+  const checkUserLocation = useCallback(
+    async (showDialog: boolean = true) => {
+      try {
+        const {latitude, longitude} = await getCurrentPositionAsync(showDialog);
+        setUserLocation({
+          latitude,
+          longitude,
         });
+      } catch (error: any) {
+        if (checked) {
+          showAlert({
+            title: error.code
+              ? t(`checkPermission.error.GPS.${error.code}Title`)
+              : t('checkPermissions.error.unknownError'),
+            message: error.code
+              ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
+              : t('checkPermissions.error.unknownError'),
+            mode: AlertMode.Error,
+          });
+        }
+        setUserLocation({latitude: 0, longitude: 0});
       }
-      setUserLocation({latitude: 0, longitude: 0});
-    }
-  }, [checked, t]);
+    },
+    [checked, t],
+  );
 
   const watchUserLocation = useCallback(async () => {
     try {
       await watchCurrentPositionAsync();
     } catch (error) {
       console.log(error);
+      setUserLocation({latitude: 0, longitude: 0});
     }
   }, [watchCurrentPositionAsync]);
 
-  const openPermissionsSettings = useCallback((isGranted?: boolean) => {
+  const openPermissionsSettings = useCallback(async (isGranted?: boolean) => {
     if (isGranted) {
       return;
     }

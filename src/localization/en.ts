@@ -311,6 +311,8 @@ export const en = {
       deviceNotFound: 'Camera Device Not Found',
       siteSettings: 'Go to site settings',
       '1': 'Please allow location permission for this site in your browser site settings',
+      '2': '{{message}}',
+      '3': "we could'nt access to Geolocation at this time \n({{message}})",
       turnOnGPS: 'First you need to turn on your GPS',
       cantSupportGop: 'This devices can"t support geolocation',
       GPS: {
