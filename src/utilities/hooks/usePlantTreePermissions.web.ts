@@ -143,6 +143,22 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [t, userLocation]);
 
   const checkPermission = useCallback(async () => {
+    navigator.mediaDevices
+      .getUserMedia({audio: false, video: true})
+      .then(result => {
+        if (result.active) {
+          setCameraPermission('granted');
+        }
+      })
+      .catch(error => {
+        console.log(error, 'error');
+        showAlert({
+          title: t('checkPermission.error.deviceNotFound'),
+          message: String(error),
+          mode: AlertMode.Error,
+        });
+        setCameraPermission('blocked');
+      });
     navigator.permissions
       // @ts-ignore
       .query({name: 'camera'})
@@ -152,6 +168,19 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       .catch(err => {
         console.log(err, 'error request permissions web');
       });
+    getCurrentPositionAsyncWeb(t)
+      .then(({latitude, longitude}) => {
+        setUserLocation({
+          latitude,
+          longitude,
+        });
+        setLocationPermission('granted');
+      })
+      .catch(() => {
+        setUserLocation({latitude: 0, longitude: 0});
+        setLocationPermission('blocked');
+      });
+    setLocationPermission('granted');
     navigator.permissions
       .query({name: 'geolocation'})
       .then(async ({state}) => {
@@ -170,7 +199,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       });
 
     setChecked(true);
-  }, [checkUserLocation]);
+  }, [checkUserLocation, t]);
 
   const requestPermission = useCallback(async () => {
     try {
