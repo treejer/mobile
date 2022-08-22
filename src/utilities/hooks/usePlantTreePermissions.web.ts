@@ -23,7 +23,7 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
           console.log(err, 'error is here');
           reject(err);
         },
-        {maximumAge: 60000, timeout: 4000, enableHighAccuracy: true},
+        {maximumAge: 60000, timeout: 6000, enableHighAccuracy: true},
       );
     } else {
       reject(t('checkPermission.error.cantSupportGeo'));
@@ -45,11 +45,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const {t} = useTranslation();
 
   useEffect(() => {
+    console.log({userLocation, locationPermission, cameraPermission}, 'userLocation is here');
+  }, [locationPermission, userLocation]);
+
+  useEffect(() => {
     (async () => {
       try {
         intervalRef.current = setInterval(async () => {
           await checkPermission();
-        }, 10000);
+        }, 5000);
       } catch (err) {
         showAlert({
           title: 'Error',
@@ -105,7 +109,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           },
           {
             maximumAge: 60000,
-            timeout: 4000,
+            timeout: 6000,
             enableHighAccuracy: true,
           },
         );
