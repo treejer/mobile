@@ -174,6 +174,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           latitude,
           longitude,
         });
+        setLocationPermission('granted');
       })
       .catch(() => {
         setUserLocation({latitude: 0, longitude: 0});
