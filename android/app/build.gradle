@@ -146,8 +146,8 @@ android {
         applicationId 'com.treejer.ranger'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 25
-        versionName "1.4.1-alpha"
+        versionCode 26
+        versionName "1.4.2-alpha4"
         manifestPlaceholders = [
                 'torusRedirectScheme': 'treejer',
                 'torusRedirectHost': 'torus',
