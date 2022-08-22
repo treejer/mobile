@@ -55,7 +55,7 @@ export const getCurrentPositionAsync = () => {
       },
       {
         enableHighAccuracy: true,
-        timeout: 2000,
+        timeout: 4000,
         accuracy: {
           android: 'high',
           ios: 'bestForNavigation',
@@ -79,6 +79,14 @@ export function usePlantTreePermissions(
   const [checked, setChecked] = useState(false);
 
   const {t} = useTranslation();
+
+  useEffect(() => {
+    console.log({userLocation}, 'userLocation');
+    showAlert({
+      title: 'console.log',
+      message: `lat: ${userLocation?.latitude}, long: ${userLocation?.longitude}`,
+    });
+  }, [userLocation, locationPermission]);
 
   useEffect(() => {
     (async () => {
@@ -185,17 +193,20 @@ export function usePlantTreePermissions(
         longitude,
       });
     } catch (error: any) {
-      console.log(error);
-      showAlert({
-        title: error.code
-          ? t(`checkPermission.error.GPS.${error.code}Title`)
-          : t('checkPermissions.error.unknownError'),
-        message: error.code ? t(`checkPermission.error.GPS.${error.code}`) : t('checkPermissions.error.unknownError'),
-        mode: AlertMode.Error,
-      });
+      if (checked) {
+        showAlert({
+          title: error.code
+            ? t(`checkPermission.error.GPS.${error.code}Title`)
+            : t('checkPermissions.error.unknownError'),
+          message: error.code
+            ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
+            : t('checkPermissions.error.unknownError'),
+          mode: AlertMode.Error,
+        });
+      }
       setUserLocation({latitude: 0, longitude: 0});
     }
-  }, [t]);
+  }, [checked, t]);
 
   const watchUserLocation = useCallback(async () => {
     try {
