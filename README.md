@@ -16,7 +16,7 @@ $ yarn android:play
 # Web Development
 $ yarn web
 # Web Production
-$ SERVER_USERNAME="username" SERVER_IP="0.0.0.0" ./deploy-staging.sh
+$ SERVER_USERNAME="username" SERVER_IP="0.0.0.0" PORT=4000 ./deploy.sh
 
 ```
 
