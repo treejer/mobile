@@ -23,7 +23,7 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
           console.log(err, 'error is here');
           reject(err);
         },
-        {maximumAge: 60000, timeout: 6000, enableHighAccuracy: true},
+        {timeout: 6000, enableHighAccuracy: true},
       );
     } else {
       reject(t('checkPermission.error.cantSupportGeo'));
@@ -108,7 +108,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             reject(err);
           },
           {
-            maximumAge: 60000,
             timeout: 6000,
             enableHighAccuracy: true,
           },
