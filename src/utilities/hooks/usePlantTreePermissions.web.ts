@@ -272,9 +272,25 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      await requestLocationPermission();
+      try {
+        const state = (await navigator.permissions.query({name: 'geolocation'})).state;
+        if (state !== 'granted') {
+          throw {code: 1, message: 'geolcaiton denied'};
+        }
+        setLocationPermission('granted');
+        await checkUserLocation();
+      } catch (error: any) {
+        console.log(error, 'errirrrrsrseresrseresres');
+        showAlert({
+          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          message: error.code
+            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            : t('checkPermission.error.unknownError'),
+          mode: AlertMode.Info,
+        });
+      }
     },
-    [requestLocationPermission],
+    [checkUserLocation, t],
   );
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
