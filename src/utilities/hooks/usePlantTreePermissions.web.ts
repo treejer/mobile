@@ -168,6 +168,18 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       .catch(err => {
         console.log(err, 'error request permissions web');
       });
+    getCurrentPositionAsyncWeb(t)
+      .then(({latitude, longitude}) => {
+        setUserLocation({
+          latitude,
+          longitude,
+        });
+      })
+      .catch(() => {
+        setUserLocation({latitude: 0, longitude: 0});
+        setLocationPermission('blocked');
+      });
+    setLocationPermission('granted');
     navigator.permissions
       .query({name: 'geolocation'})
       .then(async ({state}) => {
@@ -186,7 +198,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       });
 
     setChecked(true);
-  }, [checkUserLocation]);
+  }, [checkUserLocation, t]);
 
   const requestPermission = useCallback(async () => {
     try {
