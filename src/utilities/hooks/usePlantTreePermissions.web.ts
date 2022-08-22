@@ -21,13 +21,6 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
         },
         function (err) {
           console.log(err, 'error is here');
-          // showAlert({
-          //   title: err.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-          //   message: err.code
-          //     ? t(`checkPermission.error.${err.code}`, {message: err.message})
-          //     : t('checkPermission.error.unknownError'),
-          //   mode: AlertMode.Info,
-          // });
           reject(err);
         },
         {maximumAge: 60000, timeout: 4000, enableHighAccuracy: true},
@@ -54,9 +47,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
-        // intervalRef.current = setInterval(async () => {
-        // await checkPermission();
-        // }, 200);
+        intervalRef.current = setInterval(async () => {
+          await checkPermission();
+        }, 10000);
       } catch (err) {
         showAlert({
           title: 'Error',
@@ -67,9 +60,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     })();
 
     return () => {
-      // if (intervalRef?.current) {
-      //   clearInterval(intervalRef?.current);
-      // }
+      if (intervalRef?.current) {
+        clearInterval(intervalRef?.current);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -90,7 +83,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     (async () => {
       try {
         await checkPermission();
-        // await checkUserLocation();
       } catch (err) {
         setUserLocation({latitude: 0, longitude: 0});
         setLocationPermission('blocked');
