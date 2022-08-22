@@ -8,6 +8,8 @@ export interface ResendCodeButtonProps {
   loading: boolean;
 }
 
+const RESEND_SECONDS = 3;
+
 export default function ResendCodeButton(props: ResendCodeButtonProps) {
   const {loading, resendCode} = props;
 
@@ -15,12 +17,12 @@ export default function ResendCodeButton(props: ResendCodeButtonProps) {
 
   const {t} = useTranslation();
 
-  const [time, setTimer] = useTimer(120, () => setIsTimeYet(true));
+  const [time, setTimer] = useTimer(RESEND_SECONDS, () => setIsTimeYet(true));
 
   const handlePress = async () => {
     await resendCode();
     setIsTimeYet(false);
-    setTimer(120);
+    setTimer(RESEND_SECONDS);
   };
 
   return (

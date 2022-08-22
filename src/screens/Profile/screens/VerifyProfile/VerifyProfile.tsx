@@ -18,7 +18,7 @@ import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/Use
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useUserId} from 'services/web3';
+import {useConfig, useUserId} from 'services/web3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';
@@ -33,6 +33,7 @@ import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
 import getCroppedImg from 'utilities/hooks/cropImage';
+import {restApiError} from 'utilities/helpers/error';
 import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
@@ -57,12 +58,20 @@ function VerifyProfile(props: Props) {
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
   const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
   const [verifyMobile, verifyMobileState] = useMutation(verifyMobileMutation);
-  const [requestedMobileVerification, setRequestedMobileVerification] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
+
   const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
   const phoneRef = useRef<PhoneInput>(null);
   const {data} = useQuery<GetMeQueryData>(getMeQuery);
   const {user} = data || {};
+
+  const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!user?.mobile);
+  const [phoneNumber, setPhoneNumber] = useState(user?.mobile || '');
+
+  const {treejerApiUrl} = useConfig();
+  console.log(treejerApiUrl, 'treejerApiUrl');
+
+  console.log(verifyMobileState.data, 'verifyMobileState.data');
+  console.log(verifyMobileState.error, 'verifyMobileState.error');
 
   const {params} = route;
   const {journey} = params || {};
@@ -139,7 +148,8 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
-  console.log(updateMobileState.data, 'updateMobileState', updateMobileState.loading);
+  console.log(updateMobileState.data, 'updateMobileState.data');
+  console.log(updateMobileState.error, 'updateMobileState.error');
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
@@ -159,36 +169,29 @@ function VerifyProfile(props: Props) {
           },
         },
         errorPolicy: 'all',
-        onError: error => {
-          console.log(error, 'error is herererererererererererer');
-        },
       });
       setPhoneNumber(mobileNumber);
       setRequestedMobileVerification(true);
     } catch (e) {
-      console.log(e, 'e is hererere');
-      handleMutationAlert(e);
+      phoneNumberForm.setError('phoneNumber', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
-
-    // console.log(JSON.parse(JSON.stringify(error)), 'hererererer');
-    // if (error?.result?.error?.message) {
-    //   Alert.alert(t('error', error?.result?.error?.message));
-    // }
-    // phoneNumberForm.setError('phoneNumber', {
-    //   message: error?.networkError?.result?.error?.message || 'Unknown Error. Please contact customer support!',
-    // });
   });
 
   const resendCode = async () => {
     try {
       await requestSMS();
+      phoneNumberForm.clearErrors('verificationCode');
     } catch (e) {
-      handleMutationAlert(e);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
   };
 
   const handleMutationAlert = (error: any) => {
-    const message = error?.networkError?.result?.error?.message || t('unknownError');
+    const message = restApiError(error).message || t('unknownError');
     showAlert({
       title: t('error'),
       message,
@@ -220,7 +223,9 @@ function VerifyProfile(props: Props) {
         },
       });
     } catch (e) {
-      handleMutationAlert(e);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
   });
 
@@ -253,7 +258,9 @@ function VerifyProfile(props: Props) {
 
       navigation.navigate(Routes.VerifyPending);
     } catch (error) {
-      handleMutationAlert(error);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(error).message || t('unknownError'),
+      });
     }
   });
 
@@ -343,7 +350,9 @@ function VerifyProfile(props: Props) {
                 {/* Step 2 - Add phone */}
                 <Steps.Step step={2}>
                   <View style={{alignItems: 'flex-start'}}>
-                    <Text style={globalStyles.h6}>{t('addPhone')}</Text>
+                    <Text style={globalStyles.h6}>
+                      {t(user?.mobile && requestedMobileVerification ? 'verifyPhone' : 'addPhone')}
+                    </Text>
                     {renderAddPhone()}
                   </View>
                 </Steps.Step>
@@ -449,11 +458,6 @@ function VerifyProfile(props: Props) {
               placeholder="Phone #"
               onSubmitEditing={submitPhoneNumber}
             />
-            {phoneNumberForm.formState.errors.phoneNumber && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.phoneNumber?.message}
-              </Text>
-            )}
             <Spacer times={4} />
             <Button
               variant="success"
@@ -474,11 +478,6 @@ function VerifyProfile(props: Props) {
               name="verificationCode"
               onSubmitEditing={verifyPhone}
             />
-            {phoneNumberForm.formState.errors.verificationCode && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.verificationCode?.message || t('errors.verificationCode')}
-              </Text>
-            )}
             <Spacer times={4} />
             <TouchableOpacity
               style={{marginVertical: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}

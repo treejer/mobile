@@ -72,24 +72,32 @@ export const PhoneField = React.forwardRef<PhoneInput, PhoneFieldProps>(
 
     if (control) {
       return (
-        <Controller
-          control={control}
-          render={({field: {onBlur, onChange, value}}) => (
-            <PhoneInput
-              {...inputProps}
-              textInputProps={{onBlur}}
-              flagButtonStyle={styles.flagButton}
-              containerStyle={[styles.phoneContainer, success && styles.success, error && styles.error, containerStyle]}
-              textContainerStyle={[styles.wrapper, styles.phoneInputContainer, {width: '100%', paddingVertical: 0}]}
-              codeTextStyle={{height: 25, padding: 0, textAlign: 'right'}}
-              onChangeText={inputValue => onChange(inputValue)}
-              value={value}
-            />
-          )}
-          name={name}
-          rules={rules}
-          defaultValue={defaultValue}
-        />
+        <View style={styles.inputWrapper}>
+          <Controller
+            control={control}
+            render={({field: {onBlur, onChange, value}}) => (
+              <PhoneInput
+                {...inputProps}
+                textInputProps={{onBlur}}
+                flagButtonStyle={styles.flagButton}
+                containerStyle={[
+                  styles.phoneContainer,
+                  success && styles.success,
+                  error && styles.error,
+                  containerStyle,
+                ]}
+                textContainerStyle={[styles.wrapper, styles.phoneInputContainer, {width: '100%', paddingVertical: 0}]}
+                codeTextStyle={{height: 25, padding: 0, textAlign: 'right'}}
+                onChangeText={inputValue => onChange(inputValue)}
+                value={value}
+              />
+            )}
+            name={name}
+            rules={rules}
+            defaultValue={defaultValue}
+          />
+          {error?.message ? <Text style={[globalStyles.small, styles.errorText]}>{error.message}</Text> : null}
+        </View>
       );
     }
 
