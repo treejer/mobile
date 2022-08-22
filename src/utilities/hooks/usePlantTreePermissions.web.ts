@@ -46,7 +46,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
 
   useEffect(() => {
     console.log({userLocation, locationPermission, cameraPermission}, 'userLocation is here');
-  }, [locationPermission, userLocation]);
+  }, [cameraPermission, locationPermission, userLocation]);
 
   useEffect(() => {
     (async () => {
@@ -273,9 +273,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      await checkUserLocation();
+      await requestLocationPermission();
     },
-    [checkUserLocation],
+    [requestLocationPermission],
   );
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
