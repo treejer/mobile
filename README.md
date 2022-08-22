@@ -21,3 +21,8 @@ $ yarn web # ALWAYS
 $ SERVER_USERNAME="username" SERVER_IP="0.0.0.0" ./deploy-staging.sh
 
 ```
+
+### Translations :earth_americas:
+
+- [Spanish version](./translations/README-es.md)
+- [Portuguese version](./translations/README-pt-br.md)

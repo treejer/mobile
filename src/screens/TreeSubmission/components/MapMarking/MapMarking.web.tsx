@@ -20,14 +20,15 @@ export type locationType = {
 interface MapMarkingProps {
   onSubmit?: (location: Partial<GeoPosition>) => void;
   verifyProfile?: boolean;
+  permissionHasLocation?: boolean;
 }
 export default function MapMarking(props: MapMarkingProps) {
-  const {onSubmit, verifyProfile} = props;
+  const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
 
   const {journey, setNewJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [location, setLocation] = useState<locationType | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!permissionHasLocation);
   const {t} = useTranslation();
   // const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
   const navigation = useNavigation<any>();
@@ -78,6 +79,7 @@ export default function MapMarking(props: MapMarkingProps) {
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, journey, location, navigation]);
 
   return (

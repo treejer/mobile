@@ -1,3 +1,4 @@
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
 import Permissions, {PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
@@ -5,6 +6,7 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import {useAppState} from 'utilities/hooks/useAppState';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {useTranslation} from 'react-i18next';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 
@@ -20,7 +22,10 @@ export type TUsePlantTreePermissions = {
   checkPermission: () => void;
   requestPermission: () => void;
   checkUserLocation: () => void;
-  openPermissionsSettings: () => void;
+  openPermissionsSettings: (isGranted?: boolean) => void;
+  openGpsRequest: (isGranted?: boolean) => void;
+  requestCameraPermission: (isGranted?: boolean) => void;
+  requestLocationPermission: (isGranted?: boolean) => void;
   isCameraBlocked: boolean;
   isLocationBlocked: boolean;
   isCameraGranted: boolean;
@@ -60,7 +65,11 @@ export const getCurrentPositionAsync = () => {
   });
 };
 
-export function usePlantTreePermissions(): TUsePlantTreePermissions {
+export type TPlantTreePermissionsOptions = {didMount: boolean};
+
+export function usePlantTreePermissions(
+  {didMount}: TPlantTreePermissionsOptions = {didMount: true},
+): TUsePlantTreePermissions {
   const {appState} = useAppState();
 
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
@@ -69,11 +78,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  const {t} = useTranslation();
+
   useEffect(() => {
     (async () => {
       try {
-        await watchUserLocation();
-        await checkPermission();
+        if (didMount) {
+          await watchUserLocation();
+          await checkPermission();
+        }
       } catch (e) {}
     })();
 
@@ -85,7 +98,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       try {
         const res = await checkPermission();
       } catch (e) {
-        console.log(e, 'e inside useEffect AppState change useRNContacts');
+        console.log(e, 'e inside useEffect AppState change usePlantTreePermissions');
       }
     })();
 
@@ -138,7 +151,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       setChecked(true);
       return Promise.resolve(res);
     } catch (e: any) {
-      console.log(e, 'Error inside checkPermission useRNContacts');
+      console.log(e, 'Error inside checkPermission uesPlantTreePermissions');
     }
   }, []);
 
@@ -171,11 +184,18 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         latitude,
         longitude,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      showAlert({
+        title: error.code
+          ? t(`checkPermission.error.GPS.${error.code}Title`)
+          : t('checkPermissions.error.unknownError'),
+        message: error.code ? t(`checkPermission.error.GPS.${error.code}`) : t('checkPermissions.error.unknownError'),
+        mode: AlertMode.Error,
+      });
       setUserLocation({latitude: 0, longitude: 0});
     }
-  }, []);
+  }, [t]);
 
   const watchUserLocation = useCallback(async () => {
     try {
@@ -185,9 +205,22 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     }
   }, [watchCurrentPositionAsync]);
 
-  const openPermissionsSettings = useCallback(() => {
+  const openPermissionsSettings = useCallback((isGranted?: boolean) => {
+    if (isGranted) {
+      return;
+    }
     openSettings().catch(() => console.log('cant open settings for permissions'));
   }, []);
+
+  const openGpsRequest = useCallback(
+    async (isGranted?: boolean) => {
+      if (isGranted) {
+        return;
+      }
+      await checkUserLocation();
+    },
+    [checkUserLocation],
+  );
 
   const isCameraBlocked = useMemo(
     () => cameraPermission === RESULTS.DENIED || cameraPermission === RESULTS.BLOCKED,
@@ -226,6 +259,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     checkUserLocation,
     openPermissionsSettings,
     requestPermission,
+    requestCameraPermission: () => {},
+    requestLocationPermission: () => {},
+    openGpsRequest,
     isCameraBlocked,
     isLocationBlocked,
     isCameraGranted,
