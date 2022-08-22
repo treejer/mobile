@@ -143,6 +143,22 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [t, userLocation]);
 
   const checkPermission = useCallback(async () => {
+    navigator.mediaDevices
+      .getUserMedia({audio: false, video: true})
+      .then(result => {
+        if (result.active) {
+          setCameraPermission('granted');
+        }
+      })
+      .catch(error => {
+        console.log(error, 'error');
+        showAlert({
+          title: t('checkPermission.error.deviceNotFound'),
+          message: String(error),
+          mode: AlertMode.Error,
+        });
+        setCameraPermission('blocked');
+      });
     navigator.permissions
       // @ts-ignore
       .query({name: 'camera'})
