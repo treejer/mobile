@@ -20,14 +20,17 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
           }
         },
         function (err) {
-          showAlert({
-            title: err.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-            message: err.code ? t(`checkPermission.error.${err.code}`) : t('checkPermission.error.unknownError'),
-            mode: AlertMode.Info,
-          });
+          console.log(err, 'error is here');
+          // showAlert({
+          //   title: err.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          //   message: err.code
+          //     ? t(`checkPermission.error.${err.code}`, {message: err.message})
+          //     : t('checkPermission.error.unknownError'),
+          //   mode: AlertMode.Info,
+          // });
           reject(err);
         },
-        {timeout: 1000, enableHighAccuracy: true},
+        {maximumAge: 60000, timeout: 4000, enableHighAccuracy: true},
       );
     } else {
       reject(t('checkPermission.error.cantSupportGeo'));
@@ -51,9 +54,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
-        intervalRef.current = setInterval(async () => {
-          await checkPermission();
-        }, 200);
+        // intervalRef.current = setInterval(async () => {
+        // await checkPermission();
+        // }, 200);
       } catch (err) {
         showAlert({
           title: 'Error',
@@ -64,9 +67,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     })();
 
     return () => {
-      if (intervalRef?.current) {
-        clearInterval(intervalRef?.current);
-      }
+      // if (intervalRef?.current) {
+      //   clearInterval(intervalRef?.current);
+      // }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -87,7 +90,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     (async () => {
       try {
         await checkPermission();
-        await checkUserLocation();
+        // await checkUserLocation();
       } catch (err) {
         setUserLocation({latitude: 0, longitude: 0});
         setLocationPermission('blocked');
@@ -109,6 +112,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             reject(err);
           },
           {
+            maximumAge: 60000,
+            timeout: 4000,
             enableHighAccuracy: true,
           },
         );
@@ -130,7 +135,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       setLocationPermission('granted');
     } catch (error: any) {
       showAlert({
-        message: error,
+        title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+        message: error.code
+          ? t(`checkPermission.error.${error.code}`, {message: error.message})
+          : t('checkPermission.error.unknownError'),
         mode: AlertMode.Info,
       });
       setUserLocation({latitude: 0, longitude: 0});
@@ -246,7 +254,14 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             mode: AlertMode.Info,
           });
         }
-      } catch (error) {
+      } catch (error: any) {
+        showAlert({
+          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          message: error.code
+            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            : t('checkPermission.error.unknownError'),
+          mode: AlertMode.Info,
+        });
         setLocationPermission('blocked');
         setUserLocation({
           latitude: 0,
