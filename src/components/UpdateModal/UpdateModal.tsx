@@ -11,22 +11,20 @@ import {useQuery} from '@apollo/client';
 import SettingsQuery, {SettingsQueryData, SettingsQueryPartialData} from 'services/graphql/Settings.graphql';
 import {version} from '../../../package.json';
 
-function checkVersion(newVersion: string) {
-  return version
-    .split('-')[0]
-    .split('.')
-    .reduce<boolean[]>((isShow, item, index) => {
-      const isCurrentOlder = newVersion.split('.')[index] > item;
-      isShow.push(isCurrentOlder);
-      return isShow;
-    }, [])
-    .includes(true);
+function versionToNumber(versionWithDot: string) {
+  return Number(versionWithDot.split('-')[0].split('.').join(''));
+}
+
+function checkVersion(newVersion) {
+  return versionToNumber(newVersion) > versionToNumber(version);
 }
 
 function UpdateModal() {
   const {data} = useQuery<SettingsQueryData>(SettingsQuery);
   const [isShow, setIsShow] = useState<boolean>(false);
   const {t} = useTranslation();
+
+  console.log(data, 'data is here');
 
   useEffect(() => {
     if (data?.settings?.forceUpdate?.version) {

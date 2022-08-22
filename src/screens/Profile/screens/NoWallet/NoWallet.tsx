@@ -6,7 +6,6 @@ import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {useConfig, useMagic, usePrivateKeyStorage} from 'services/web3';
-import {useCamera} from 'utilities/hooks';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -61,22 +60,19 @@ function NoWallet(props: NoWalletProps) {
 
   const {t} = useTranslation();
 
-  const {requestCameraPermission} = useCamera();
-
   const {sendEvent} = useAnalytics();
 
   useEffect(() => {
     (async () => {
       if (!isWeb()) {
-        await requestCameraPermission();
         await locationPermission();
       }
     })();
-  }, [requestCameraPermission]);
+  }, []);
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
-  }, []);
+  }, [config.learnMoreLink]);
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     Keyboard.dismiss();
@@ -92,9 +88,12 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
       if (result) {
-        await storeMagicToken(result);
+        try {
+          await storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
+        } catch (e) {
+          throw e;
+        }
         await refetchUser();
-        console.log(result, 'result is here');
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -121,11 +120,10 @@ function NoWallet(props: NoWalletProps) {
     Keyboard.dismiss();
     sendEvent('connect_wallet');
     setLoading(true);
-    console.log(email, 'email');
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result);
+        await storeMagicToken(result, {email});
         await refetchUser();
         console.log(result, 'result is here');
       } else {
