@@ -10,7 +10,7 @@ export const useCheckTreePhoto = () => {
 
   const checkPickedPhoto = useCallback(
     async (image64Base: string, userLocation: TUserLocation, successCallback: () => void) => {
-      const {latitude, longitude} = await exifr.parse(image64Base);
+      const {latitude, longitude} = (await exifr.parse(image64Base)) || {};
       if (latitude > 0 && longitude > 0) {
         let maxDistance = 5;
         if (userLocation) {
