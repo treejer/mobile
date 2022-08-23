@@ -10,32 +10,40 @@ export const useCheckTreePhoto = () => {
 
   const checkPickedPhoto = useCallback(
     async (image64Base: string, userLocation: TUserLocation, successCallback: () => void) => {
-      const {latitude, longitude} = (await exifr.parse(image64Base)) || {};
-      if (latitude > 0 && longitude > 0) {
-        let maxDistance = 5;
-        if (userLocation) {
-          const imageCoords: TPoint = {
-            latitude,
-            longitude,
-          };
-          const distance = calcDistance(imageCoords, userLocation);
-          console.log({userLocation, imageCoords, distance});
-          if (distance < maxDistance) {
-            successCallback();
+      try {
+        const {latitude, longitude} = (await exifr.parse(image64Base)) || {};
+        if (latitude > 0 && longitude > 0) {
+          let maxDistance = 5;
+          if (userLocation) {
+            const imageCoords: TPoint = {
+              latitude,
+              longitude,
+            };
+            const distance = calcDistance(imageCoords, userLocation);
+            console.log({userLocation, imageCoords, distance});
+            if (distance < maxDistance) {
+              successCallback();
+            } else {
+              showAlert({
+                title: t('inValidImage.title'),
+                mode: AlertMode.Error,
+                message: t('inValidImage.longDistance'),
+              });
+            }
           } else {
             showAlert({
               title: t('inValidImage.title'),
               mode: AlertMode.Error,
-              message: t('inValidImage.longDistance'),
+              message: t('inValidImage.hasNoLocation'),
             });
           }
-        } else {
-          showAlert({
-            title: t('inValidImage.title'),
-            mode: AlertMode.Error,
-            message: t('inValidImage.hasNoLocation'),
-          });
         }
+      } catch (error) {
+        showAlert({
+          title: t('inValidImage.title'),
+          mode: AlertMode.Error,
+          message: t('inValidImage.hasNoLocation'),
+        });
       }
     },
     [t],
