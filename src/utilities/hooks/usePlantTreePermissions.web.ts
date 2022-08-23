@@ -159,15 +159,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
         setCameraPermission('blocked');
       });
-    navigator.permissions
-      // @ts-ignore
-      .query({name: 'camera'})
-      .then(({state}) => {
-        setCameraPermission(state === 'granted' ? state : 'blocked');
-      })
-      .catch(err => {
-        console.log(err, 'error request permissions web');
-      });
     getCurrentPositionAsyncWeb(t)
       .then(({latitude, longitude}) => {
         setUserLocation({
@@ -180,7 +171,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         setUserLocation({latitude: 0, longitude: 0});
         setLocationPermission('blocked');
       });
-    setLocationPermission('granted');
     navigator.permissions
       .query({name: 'geolocation'})
       .then(async ({state}) => {
