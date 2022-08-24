@@ -71,6 +71,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       try {
         if (checked) {
           await checkPermission();
+          requestCameraPermission();
         }
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
@@ -84,6 +85,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     (async () => {
       try {
         await checkPermission();
+        requestCameraPermission();
       } catch (err) {
         setUserLocation({latitude: 0, longitude: 0});
         setLocationPermission('blocked');
@@ -150,27 +152,27 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [watchCurrentPositionAsyncWeb]);
 
   const checkPermission = useCallback(async () => {
-    navigator.mediaDevices
-      .getUserMedia({audio: false, video: true})
-      .then(result => {
-        if (result.active) {
-          setCameraPermission('granted');
-          const mediaStreamTracks = result.getTracks();
-          mediaStreamTracks.forEach(track => {
-            track.stop();
-          });
-        }
-      })
-      .catch(error => {
-        if (!checked) {
-          showAlert({
-            title: t('checkPermission.error.deviceNotFound'),
-            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-            mode: AlertMode.Error,
-          });
-        }
-        setCameraPermission('blocked');
-      });
+    // navigator.mediaDevices
+    //   .getUserMedia({audio: false, video: true})
+    //   .then(result => {
+    //     if (result.active) {
+    //       setCameraPermission('granted');
+    //       const mediaStreamTracks = result.getTracks();
+    //       mediaStreamTracks.forEach(track => {
+    //         track.stop();
+    //       });
+    //     }
+    //   })
+    //   .catch(error => {
+    //     if (!checked) {
+    //       showAlert({
+    //         title: t('checkPermission.error.deviceNotFound'),
+    //         message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+    //         mode: AlertMode.Error,
+    //       });
+    //     }
+    //     setCameraPermission('blocked');
+    //   });
     if (browserPlatform === 'iOS') {
       getCurrentPositionAsyncWeb(t)
         .then(({latitude, longitude}) => {
