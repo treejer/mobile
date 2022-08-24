@@ -156,9 +156,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         if (result.active) {
           setCameraPermission('granted');
           const mediaStreamTracks = result.getTracks();
-          mediaStreamTracks.forEach(track => {
-            track.stop();
-          });
+          mediaStreamTracks[0].stop();
         }
       })
       .catch(error => {
@@ -213,9 +211,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           if (result.active) {
             setCameraPermission('granted');
             const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks.forEach(track => {
-              track.stop();
-            });
+            mediaStreamTracks[0].stop();
           }
         })
         .catch(e => {
@@ -248,7 +244,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         .then(result => {
           if (result.active) {
             setCameraPermission('granted');
-
             const mediaStreamTracks = result.getTracks();
             mediaStreamTracks[0].stop();
           }
