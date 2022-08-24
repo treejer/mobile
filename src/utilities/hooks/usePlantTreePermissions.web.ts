@@ -4,6 +4,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useAppState} from 'utilities/hooks/useAppState';
 import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined>) => {
   return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
@@ -40,6 +41,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [checked, setChecked] = useState(false);
 
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const browserPlatform = useBrowserPlatform();
 
   const {t} = useTranslation();
 
@@ -258,29 +260,38 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         if (isGranted) {
           return;
         }
-        const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
-        if (state === 'granted') {
+        if (browserPlatform !== 'iOS') {
+          const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
+          if (state === 'granted') {
+            const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
+            setLocationPermission('granted');
+            setUserLocation({
+              latitude,
+              longitude,
+            });
+          } else {
+            showAlert({
+              title: t('checkPermission.error.siteSettings'),
+              message: t('checkPermission.error.turnOnGPS'),
+              mode: AlertMode.Info,
+            });
+          }
+        } else {
           const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
           setLocationPermission('granted');
           setUserLocation({
             latitude,
             longitude,
           });
-        } else {
-          showAlert({
-            title: t('checkPermission.error.siteSettings'),
-            message: t('checkPermission.error.turnOnGPS'),
-            mode: AlertMode.Info,
-          });
         }
       } catch (error: any) {
-        // showAlert({
-        //   title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-        //   message: error.code
-        //     ? t(`checkPermission.error.${error.code}`, {message: error.message})
-        //     : t('checkPermission.error.unknownError'),
-        //   mode: AlertMode.Info,
-        // });
+        showAlert({
+          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          message: error.code
+            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            : t('checkPermission.error.unknownError'),
+          mode: AlertMode.Info,
+        });
         showAlert({
           message: String(error),
         });
@@ -291,7 +302,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
       }
     },
-    [t],
+    [browserPlatform, t],
   );
 
   const openGpsRequest = useCallback(
@@ -300,26 +311,28 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         return;
       }
       try {
-        const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
-        if (state !== 'granted') {
-          throw {code: 1, message: 'geolocation denied'};
+        if (browserPlatform !== 'iOS') {
+          const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
+          if (state !== 'granted') {
+            throw {code: 1, message: 'geolocation denied'};
+          }
         }
         await checkUserLocation();
       } catch (error: any) {
         console.log(error, 'errirrrrsrseresrseresres');
-        // showAlert({
-        //   title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-        //   message: error.code
-        //     ? t(`checkPermission.error.${error.code}`, {message: error.message})
-        //     : t('checkPermission.error.unknownError'),
-        //   mode: AlertMode.Info,
-        // });
+        showAlert({
+          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          message: error.code
+            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            : t('checkPermission.error.unknownError'),
+          mode: AlertMode.Info,
+        });
         showAlert({
           message: String(error),
         });
       }
     },
-    [checkUserLocation, t],
+    [browserPlatform, checkUserLocation, t],
   );
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
