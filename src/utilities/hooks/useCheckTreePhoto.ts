@@ -16,7 +16,7 @@ export const useCheckTreePhoto = () => {
   ) => {
     if (imageLocation?.latitude && imageLocation?.longitude) {
       // @here
-      let maxDistance = 5;
+      let maxDistance = 0.19369;
       if (userLocation) {
         const distance = calcDistance(imageLocation, userLocation);
         console.log({userLocation, imageLocation, distance});
