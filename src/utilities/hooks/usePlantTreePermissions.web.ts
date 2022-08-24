@@ -207,6 +207,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         .then(result => {
           if (result.active) {
             setCameraPermission('granted');
+            const mediaStreamTracks = result.getTracks();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
           }
         })
         .catch(e => {
@@ -239,6 +243,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         .then(result => {
           if (result.active) {
             setCameraPermission('granted');
+            const mediaStreamTracks = result.getTracks();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
           }
         })
         .catch(error => {
