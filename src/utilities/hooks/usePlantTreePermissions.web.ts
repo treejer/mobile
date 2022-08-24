@@ -156,7 +156,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         if (result.active) {
           setCameraPermission('granted');
           const mediaStreamTracks = result.getTracks();
-          mediaStreamTracks[0].stop();
+          mediaStreamTracks.forEach(track => {
+            track.stop();
+          });
         }
       })
       .catch(error => {
@@ -212,7 +214,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           if (result.active) {
             setCameraPermission('granted');
             const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks[0].stop();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
           }
         })
         .catch(e => {
@@ -246,7 +250,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           if (result.active) {
             setCameraPermission('granted');
             const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks[0].stop();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
           }
         })
         .catch(error => {
@@ -301,9 +307,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
         });
-        showAlert({
-          message: String(error.message + error.message),
-        });
         setLocationPermission('blocked');
         setUserLocation({
           latitude: 0,
@@ -337,7 +340,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           mode: AlertMode.Info,
         });
         showAlert({
-          message: String(error),
+          message: String(error.code + error.message),
         });
       }
     },
