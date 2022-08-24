@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
@@ -114,16 +114,18 @@ function CheckPermissions(props: TCheckPermissionsProps) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <View style={[globalStyles.fill, !cantProceed && styles.flexCenter, globalStyles.p1]}>
-        <Spacer times={4} />
-        {!isChecking && cantProceed && (
-          <>
-            <BlockedPermissions permissions={permissions} />
-            <Spacer times={14} />
-          </>
-        )}
-        <CheckingPermissions permissions={permissions} cantProceed={cantProceed} />
-      </View>
+      <ScrollView>
+        <View style={[globalStyles.fill, !cantProceed && styles.flexCenter, globalStyles.p1]}>
+          <Spacer times={4} />
+          {!isChecking && cantProceed && (
+            <>
+              <BlockedPermissions permissions={permissions} />
+              <Spacer times={14} />
+            </>
+          )}
+          <CheckingPermissions permissions={permissions} cantProceed={cantProceed} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
