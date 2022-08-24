@@ -195,14 +195,31 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         ?.query({name: 'geolocation'})
         .then(async ({state}) => {
           setLocationPermission(state === 'granted' ? state : 'blocked');
-          await checkUserLocation();
+          if (state === 'granted' || !checked) {
+            await checkUserLocation();
+          } else {
+            setUserLocation({latitude: 0, longitude: 0});
+          }
+          // getCurrentPositionAsyncWeb(t)
+          //   .then(({latitude, longitude}) => {
+          //     setUserLocation({
+          //       latitude,
+          //       longitude,
+          //     });
+          //     setLocationPermission('granted');
+          //   })
+          //   .catch(error => {
+          //     console.log(error, 'error in checkPermissions');
+          //     setUserLocation({latitude: 0, longitude: 0});
+          //     setLocationPermission('blocked');
+          //   });
         })
         .catch(err => {
           console.log(err, 'error request permissions web');
         });
     }
     setChecked(true);
-  }, [browserPlatform, checkUserLocation, t]);
+  }, [browserPlatform, checkUserLocation, checked, t]);
 
   const requestPermission = useCallback(async () => {
     try {
@@ -242,12 +259,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      if (browserPlatform !== 'iOS') {
-        // @ts-ignore
-        navigator.permissions.query({name: 'camera'}).then(({state}) => {
-          setCameraPermission(state === 'granted' ? state : 'blocked');
-        });
-      }
       navigator.mediaDevices
         .getUserMedia({audio: false, video: true})
         .then(result => {
@@ -268,6 +279,13 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           });
           setCameraPermission('blocked');
         });
+      if (browserPlatform !== 'iOS') {
+        // @ts-ignore
+        navigator.permissions.query({name: 'camera'}).then(({state}) => {
+          console.log(state, 'state');
+          setCameraPermission(state === 'granted' ? state : 'blocked');
+        });
+      }
     },
     [browserPlatform, t],
   );
