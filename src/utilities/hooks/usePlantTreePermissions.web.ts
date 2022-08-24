@@ -274,12 +274,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           });
         }
       } catch (error: any) {
+        // showAlert({
+        //   title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+        //   message: error.code
+        //     ? t(`checkPermission.error.${error.code}`, {message: error.message})
+        //     : t('checkPermission.error.unknownError'),
+        //   mode: AlertMode.Info,
+        // });
         showAlert({
-          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-          message: error.code
-            ? t(`checkPermission.error.${error.code}`, {message: error.message})
-            : t('checkPermission.error.unknownError'),
-          mode: AlertMode.Info,
+          message: String(error),
         });
         setLocationPermission('blocked');
         setUserLocation({
@@ -304,12 +307,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         await checkUserLocation();
       } catch (error: any) {
         console.log(error, 'errirrrrsrseresrseresres');
+        // showAlert({
+        //   title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+        //   message: error.code
+        //     ? t(`checkPermission.error.${error.code}`, {message: error.message})
+        //     : t('checkPermission.error.unknownError'),
+        //   mode: AlertMode.Info,
+        // });
         showAlert({
-          title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
-          message: error.code
-            ? t(`checkPermission.error.${error.code}`, {message: error.message})
-            : t('checkPermission.error.unknownError'),
-          mode: AlertMode.Info,
+          message: String(error),
         });
       }
     },
@@ -319,8 +325,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
   const isLocationBlocked = useMemo(() => locationPermission === 'blocked', [locationPermission]);
 
-  const isCameraGranted = useMemo(() => cameraPermission === 'granted', [cameraPermission]);
-  // const isCameraGranted = useMemo(() => true, []);
+  // const isCameraGranted = useMemo(() => cameraPermission === 'granted', [cameraPermission]);
+  const isCameraGranted = useMemo(() => true, []);
   const isLocationGranted = useMemo(() => locationPermission === 'granted', [locationPermission]);
   const hasLocation = useMemo(() => !!(userLocation?.latitude && userLocation?.longitude), [userLocation]);
 
