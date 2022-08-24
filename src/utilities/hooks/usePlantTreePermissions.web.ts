@@ -169,20 +169,21 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         }
         setCameraPermission('blocked');
       });
-    getCurrentPositionAsyncWeb(t)
-      .then(({latitude, longitude}) => {
-        setUserLocation({
-          latitude,
-          longitude,
+    if (browserPlatform === 'iOS') {
+      getCurrentPositionAsyncWeb(t)
+        .then(({latitude, longitude}) => {
+          setUserLocation({
+            latitude,
+            longitude,
+          });
+          setLocationPermission('granted');
+        })
+        .catch(error => {
+          console.log(error, 'error in checkPermissions');
+          setUserLocation({latitude: 0, longitude: 0});
+          setLocationPermission('blocked');
         });
-        setLocationPermission('granted');
-      })
-      .catch(error => {
-        console.log(error, 'error in checkPermissions');
-        setUserLocation({latitude: 0, longitude: 0});
-        setLocationPermission('blocked');
-      });
-    if (browserPlatform !== 'iOS') {
+    } else {
       navigator?.permissions
         ?.query({name: 'geolocation'})
         .then(async ({state}) => {
