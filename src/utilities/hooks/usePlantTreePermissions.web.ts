@@ -138,6 +138,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           : t('checkPermission.error.unknownError'),
         mode: AlertMode.Info,
       });
+      showAlert({
+        message: String(error.code + error.message),
+      });
       setUserLocation({latitude: 0, longitude: 0});
       setLocationPermission('blocked');
     }
@@ -192,21 +195,31 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         ?.query({name: 'geolocation'})
         .then(async ({state}) => {
           setLocationPermission(state === 'granted' ? state : 'blocked');
-          if (state === 'granted') {
+          if (state === 'granted' || !checked) {
             await checkUserLocation();
           } else {
-            setUserLocation({
-              latitude: 0,
-              longitude: 0,
-            });
+            setUserLocation({latitude: 0, longitude: 0});
           }
+          // getCurrentPositionAsyncWeb(t)
+          //   .then(({latitude, longitude}) => {
+          //     setUserLocation({
+          //       latitude,
+          //       longitude,
+          //     });
+          //     setLocationPermission('granted');
+          //   })
+          //   .catch(error => {
+          //     console.log(error, 'error in checkPermissions');
+          //     setUserLocation({latitude: 0, longitude: 0});
+          //     setLocationPermission('blocked');
+          //   });
         })
         .catch(err => {
           console.log(err, 'error request permissions web');
         });
     }
     setChecked(true);
-  }, [browserPlatform, checkUserLocation, t]);
+  }, [browserPlatform, checkUserLocation, checked, t]);
 
   const requestPermission = useCallback(async () => {
     try {
@@ -246,32 +259,32 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      if (browserPlatform === 'Android') {
+      navigator.mediaDevices
+        .getUserMedia({audio: false, video: true})
+        .then(result => {
+          if (result.active) {
+            setCameraPermission('granted');
+            const mediaStreamTracks = result.getTracks();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error, 'error');
+          showAlert({
+            title: t('checkPermission.error.deviceNotFound'),
+            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+            mode: AlertMode.Error,
+          });
+          setCameraPermission('blocked');
+        });
+      if (browserPlatform !== 'iOS') {
         // @ts-ignore
         navigator.permissions.query({name: 'camera'}).then(({state}) => {
+          console.log(state, 'state');
           setCameraPermission(state === 'granted' ? state : 'blocked');
         });
-      } else {
-        navigator.mediaDevices
-          .getUserMedia({audio: false, video: true})
-          .then(result => {
-            if (result.active) {
-              setCameraPermission('granted');
-              const mediaStreamTracks = result.getTracks();
-              mediaStreamTracks.forEach(track => {
-                track.stop();
-              });
-            }
-          })
-          .catch(error => {
-            console.log(error, 'error');
-            showAlert({
-              title: t('checkPermission.error.deviceNotFound'),
-              message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-              mode: AlertMode.Error,
-            });
-            setCameraPermission('blocked');
-          });
       }
     },
     [browserPlatform, t],
