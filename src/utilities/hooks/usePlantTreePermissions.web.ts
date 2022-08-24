@@ -138,6 +138,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           : t('checkPermission.error.unknownError'),
         mode: AlertMode.Info,
       });
+      showAlert({
+        message: String(error.code + error.message),
+      });
       setUserLocation({latitude: 0, longitude: 0});
       setLocationPermission('blocked');
     }
@@ -246,33 +249,32 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      if (browserPlatform === 'Android') {
+      if (browserPlatform !== 'iOS') {
         // @ts-ignore
         navigator.permissions.query({name: 'camera'}).then(({state}) => {
           setCameraPermission(state === 'granted' ? state : 'blocked');
         });
-      } else {
-        navigator.mediaDevices
-          .getUserMedia({audio: false, video: true})
-          .then(result => {
-            if (result.active) {
-              setCameraPermission('granted');
-              const mediaStreamTracks = result.getTracks();
-              mediaStreamTracks.forEach(track => {
-                track.stop();
-              });
-            }
-          })
-          .catch(error => {
-            console.log(error, 'error');
-            showAlert({
-              title: t('checkPermission.error.deviceNotFound'),
-              message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-              mode: AlertMode.Error,
-            });
-            setCameraPermission('blocked');
-          });
       }
+      navigator.mediaDevices
+        .getUserMedia({audio: false, video: true})
+        .then(result => {
+          if (result.active) {
+            setCameraPermission('granted');
+            const mediaStreamTracks = result.getTracks();
+            mediaStreamTracks.forEach(track => {
+              track.stop();
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error, 'error');
+          showAlert({
+            title: t('checkPermission.error.deviceNotFound'),
+            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+            mode: AlertMode.Error,
+          });
+          setCameraPermission('blocked');
+        });
     },
     [browserPlatform, t],
   );
