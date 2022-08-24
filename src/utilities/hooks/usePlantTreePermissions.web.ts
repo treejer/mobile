@@ -195,14 +195,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         ?.query({name: 'geolocation'})
         .then(async ({state}) => {
           setLocationPermission(state === 'granted' ? state : 'blocked');
-          if (state === 'granted') {
-            await checkUserLocation();
-          } else {
-            setUserLocation({
-              latitude: 0,
-              longitude: 0,
-            });
-          }
+          await checkUserLocation();
         })
         .catch(err => {
           console.log(err, 'error request permissions web');
