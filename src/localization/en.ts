@@ -308,7 +308,7 @@ export const en = {
       GPS: 'GPS',
     },
     error: {
-      deviceNotFound: 'Camera Device Not Found',
+      deviceNotFound: 'Camera Device Not Found \n ({{message}})',
       siteSettings: 'Go to site settings',
       '1': 'Please allow location permission for this site in your browser site settings',
       '2': '{{message}}',

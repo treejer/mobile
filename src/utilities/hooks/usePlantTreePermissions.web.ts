@@ -20,7 +20,6 @@ export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined
           }
         },
         function (err) {
-          console.log(err, 'error is here');
           reject(err);
         },
         {maximumAge: 999999999, timeout: 6000, enableHighAccuracy: true},
@@ -54,13 +53,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         intervalRef.current = setInterval(async () => {
           await checkPermission();
         }, 5000);
-      } catch (err) {
-        showAlert({
-          title: 'Error',
-          message: String(err),
-          mode: AlertMode.Error,
-        });
-      }
+      } catch (err) {}
     })();
 
     return () => {
@@ -69,19 +62,21 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [checked]);
 
   useEffect(() => {
     (async () => {
       try {
-        await checkPermission();
+        if (checked) {
+          await checkPermission();
+        }
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
       }
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appState]);
+  }, [appState, checked]);
 
   useRefocusEffect(() => {
     (async () => {
@@ -101,10 +96,12 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           position => {
             const {latitude, longitude} = position.coords;
             setUserLocation({latitude, longitude});
+            setLocationPermission('granted');
             resolve(position.coords);
           },
           err => {
             setUserLocation({latitude: 0, longitude: 0});
+            setLocationPermission('blocked');
             reject(err);
           },
           {
@@ -142,6 +139,14 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     }
   }, [t, userLocation]);
 
+  const watchUserLocation = useCallback(async () => {
+    try {
+      await watchCurrentPositionAsyncWeb();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [watchCurrentPositionAsyncWeb]);
+
   const checkPermission = useCallback(async () => {
     navigator.mediaDevices
       .getUserMedia({audio: false, video: true})
@@ -151,22 +156,14 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         }
       })
       .catch(error => {
-        console.log(error, 'error');
-        showAlert({
-          title: t('checkPermission.error.deviceNotFound'),
-          message: String(error),
-          mode: AlertMode.Error,
-        });
+        if (!checked) {
+          showAlert({
+            title: t('checkPermission.error.deviceNotFound'),
+            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+            mode: AlertMode.Error,
+          });
+        }
         setCameraPermission('blocked');
-      });
-    navigator.permissions
-      // @ts-ignore
-      .query({name: 'camera'})
-      .then(({state}) => {
-        setCameraPermission(state === 'granted' ? state : 'blocked');
-      })
-      .catch(err => {
-        console.log(err, 'error request permissions web');
       });
     getCurrentPositionAsyncWeb(t)
       .then(({latitude, longitude}) => {
@@ -176,13 +173,13 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
         setLocationPermission('granted');
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error, 'error in checkPermissions');
         setUserLocation({latitude: 0, longitude: 0});
         setLocationPermission('blocked');
       });
-    setLocationPermission('granted');
-    navigator.permissions
-      .query({name: 'geolocation'})
+    navigator?.permissions
+      ?.query({name: 'geolocation'})
       .then(async ({state}) => {
         setLocationPermission(state === 'granted' ? state : 'blocked');
         if (state === 'granted') {
@@ -199,11 +196,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       });
 
     setChecked(true);
-  }, [checkUserLocation, t]);
+  }, [checkUserLocation, checked, t]);
 
   const requestPermission = useCallback(async () => {
     try {
-      await checkPermission();
       navigator.mediaDevices
         .getUserMedia({audio: false, video: true})
         .then(result => {
@@ -219,19 +215,17 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         latitude,
         longitude,
       });
+      setLocationPermission('granted');
     } catch (err) {
       console.log(err);
+      setUserLocation({
+        latitude: 0,
+        longitude: 0,
+      });
+      setLocationPermission('blocked');
     }
     setRequested(true);
-  }, [checkPermission, t]);
-
-  const watchUserLocation = useCallback(async () => {
-    try {
-      await watchCurrentPositionAsyncWeb();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [watchCurrentPositionAsyncWeb]);
+  }, [t]);
 
   const requestCameraPermission = useCallback(
     (isGranted?: boolean) => {
@@ -249,7 +243,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           console.log(error, 'error');
           showAlert({
             title: t('checkPermission.error.deviceNotFound'),
-            message: String(error),
+            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
             mode: AlertMode.Error,
           });
           setCameraPermission('blocked');
@@ -264,7 +258,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         if (isGranted) {
           return;
         }
-        const state = (await navigator.permissions.query({name: 'geolocation'})).state;
+        const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
         if (state === 'granted') {
           const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
           setLocationPermission('granted');
@@ -303,11 +297,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         return;
       }
       try {
-        const state = (await navigator.permissions.query({name: 'geolocation'})).state;
+        const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
         if (state !== 'granted') {
-          throw {code: 1, message: 'geolcaiton denied'};
+          throw {code: 1, message: 'geolocation denied'};
         }
-        setLocationPermission('granted');
         await checkUserLocation();
       } catch (error: any) {
         console.log(error, 'errirrrrsrseresrseresres');
