@@ -52,6 +52,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
+        requestCameraPermission();
         intervalRef.current = setInterval(async () => {
           await checkPermission();
         }, 5000);
@@ -64,14 +65,14 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checked]);
+  }, []);
 
   useEffect(() => {
     (async () => {
       try {
         if (checked) {
           await checkPermission();
-          requestCameraPermission();
+          // requestCameraPermission();
         }
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
