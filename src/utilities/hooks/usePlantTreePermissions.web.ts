@@ -79,7 +79,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appState, checked]);
+  }, [appState]);
 
   useRefocusEffect(() => {
     (async () => {
@@ -206,7 +206,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
     }
     setChecked(true);
-  }, [browserPlatform, checkUserLocation, checked, t]);
+  }, [browserPlatform, checkUserLocation, t]);
 
   const requestPermission = useCallback(async () => {
     try {
@@ -246,28 +246,35 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       if (isGranted) {
         return;
       }
-      navigator.mediaDevices
-        .getUserMedia({audio: false, video: true})
-        .then(result => {
-          if (result.active) {
-            setCameraPermission('granted');
-            const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks.forEach(track => {
-              track.stop();
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error, 'error');
-          showAlert({
-            title: t('checkPermission.error.deviceNotFound'),
-            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-            mode: AlertMode.Error,
-          });
-          setCameraPermission('blocked');
+      if (browserPlatform === 'Android') {
+        // @ts-ignore
+        navigator.permissions.query({name: 'camera'}).then(({state}) => {
+          setCameraPermission(state === 'granted' ? state : 'blocked');
         });
+      } else {
+        navigator.mediaDevices
+          .getUserMedia({audio: false, video: true})
+          .then(result => {
+            if (result.active) {
+              setCameraPermission('granted');
+              const mediaStreamTracks = result.getTracks();
+              mediaStreamTracks.forEach(track => {
+                track.stop();
+              });
+            }
+          })
+          .catch(error => {
+            console.log(error, 'error');
+            showAlert({
+              title: t('checkPermission.error.deviceNotFound'),
+              message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+              mode: AlertMode.Error,
+            });
+            setCameraPermission('blocked');
+          });
+      }
     },
-    [t],
+    [browserPlatform, t],
   );
 
   const requestLocationPermission = useCallback(
