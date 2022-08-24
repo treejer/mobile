@@ -285,6 +285,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           });
         }
       } catch (error: any) {
+        console.log(error, 'error in last deploy');
         showAlert({
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
@@ -293,7 +294,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           mode: AlertMode.Info,
         });
         showAlert({
-          message: String(error),
+          message: String(error.message + error.message),
         });
         setLocationPermission('blocked');
         setUserLocation({
