@@ -155,6 +155,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       .then(result => {
         if (result.active) {
           setCameraPermission('granted');
+          const mediaStreamTracks = result.getTracks();
+          mediaStreamTracks[0].stop();
         }
       })
       .catch(error => {
@@ -167,38 +169,40 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         }
         setCameraPermission('blocked');
       });
-    getCurrentPositionAsyncWeb(t)
-      .then(({latitude, longitude}) => {
-        setUserLocation({
-          latitude,
-          longitude,
-        });
-        setLocationPermission('granted');
-      })
-      .catch(error => {
-        console.log(error, 'error in checkPermissions');
-        setUserLocation({latitude: 0, longitude: 0});
-        setLocationPermission('blocked');
-      });
-    navigator?.permissions
-      ?.query({name: 'geolocation'})
-      .then(async ({state}) => {
-        setLocationPermission(state === 'granted' ? state : 'blocked');
-        if (state === 'granted') {
-          await checkUserLocation();
-        } else {
+    if (browserPlatform === 'iOS') {
+      getCurrentPositionAsyncWeb(t)
+        .then(({latitude, longitude}) => {
           setUserLocation({
-            latitude: 0,
-            longitude: 0,
+            latitude,
+            longitude,
           });
-        }
-      })
-      .catch(err => {
-        console.log(err, 'error request permissions web');
-      });
-
+          setLocationPermission('granted');
+        })
+        .catch(error => {
+          console.log(error, 'error in checkPermissions');
+          setUserLocation({latitude: 0, longitude: 0});
+          setLocationPermission('blocked');
+        });
+    } else {
+      navigator?.permissions
+        ?.query({name: 'geolocation'})
+        .then(async ({state}) => {
+          setLocationPermission(state === 'granted' ? state : 'blocked');
+          if (state === 'granted') {
+            await checkUserLocation();
+          } else {
+            setUserLocation({
+              latitude: 0,
+              longitude: 0,
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err, 'error request permissions web');
+        });
+    }
     setChecked(true);
-  }, [checkUserLocation, checked, t]);
+  }, [browserPlatform, checkUserLocation, checked, t]);
 
   const requestPermission = useCallback(async () => {
     try {
@@ -208,9 +212,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           if (result.active) {
             setCameraPermission('granted');
             const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks.forEach(track => {
-              track.stop();
-            });
+            mediaStreamTracks[0].stop();
           }
         })
         .catch(e => {
@@ -244,9 +246,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           if (result.active) {
             setCameraPermission('granted');
             const mediaStreamTracks = result.getTracks();
-            mediaStreamTracks.forEach(track => {
-              track.stop();
-            });
+            mediaStreamTracks[0].stop();
           }
         })
         .catch(error => {
