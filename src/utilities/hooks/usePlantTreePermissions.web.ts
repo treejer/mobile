@@ -46,8 +46,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const {t} = useTranslation();
 
   useEffect(() => {
-    console.log({userLocation, locationPermission, cameraPermission}, 'userLocation is here');
-  }, [cameraPermission, locationPermission, userLocation]);
+    console.log({userLocation, locationPermission, cameraPermission, browserPlatform}, 'userLocation is here');
+  }, [cameraPermission, locationPermission, userLocation, browserPlatform]);
 
   useEffect(() => {
     (async () => {
@@ -140,7 +140,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         mode: AlertMode.Info,
       });
       showAlert({
-        message: String(error.code + error.message),
+        message: error.code + error.message,
       });
       setUserLocation({latitude: 0, longitude: 0});
       setLocationPermission('blocked');
@@ -196,7 +196,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         ?.query({name: 'geolocation'})
         .then(async ({state}) => {
           setLocationPermission(state === 'granted' ? state : 'blocked');
-          if (state === 'granted' || !checked) {
+          if (state === 'granted' && !checked) {
             await checkUserLocation();
           } else {
             setUserLocation({latitude: 0, longitude: 0});
@@ -280,15 +280,16 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           });
           setCameraPermission('blocked');
         });
-      if (browserPlatform !== 'iOS') {
-        // @ts-ignore
-        navigator.permissions.query({name: 'camera'}).then(({state}) => {
-          console.log(state, 'state');
-          setCameraPermission(state === 'granted' ? state : 'blocked');
-        });
-      }
+      // @chichiye
+      // if (browserPlatform !== 'iOS') {
+      //   // @ts-ignore
+      //   navigator.permissions.query({name: 'camera'}).then(({state}) => {
+      //     console.log(state, 'state');
+      //     setCameraPermission(state === 'granted' ? state : 'blocked');
+      //   });
+      // }
     },
-    [browserPlatform, t],
+    [t],
   );
 
   const requestLocationPermission = useCallback(
@@ -415,5 +416,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     cantProceed,
     requested,
     isGranted,
+    showPermissionModal: !isGranted || isChecking,
   };
 }

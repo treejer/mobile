@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistance} from 'utilities/helpers/distance';
@@ -7,7 +6,7 @@ import {TUserLocation} from './usePlantTreePermissions';
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
 
-  const checkPickedPhoto = (
+  return (
     image64Base: string,
     userLocation: TUserLocation | null,
     successCallback: () => void,
@@ -47,6 +46,4 @@ export const useCheckTreePhoto = () => {
       }
     }
   };
-
-  return checkPickedPhoto;
 };

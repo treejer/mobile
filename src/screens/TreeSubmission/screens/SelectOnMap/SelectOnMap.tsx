@@ -19,10 +19,11 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
 
 function SelectOnMap(props: Props) {
   const {plantTreePermissions} = props;
-  const {isChecking, isGranted, hasLocation} = plantTreePermissions;
+  const {hasLocation, showPermissionModal} = plantTreePermissions;
+
   const isConnected = useNetInfoConnected();
 
-  if (!isGranted || isChecking || !hasLocation) {
+  if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 

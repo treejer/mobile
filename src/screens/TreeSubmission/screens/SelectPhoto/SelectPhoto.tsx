@@ -27,7 +27,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import {calcDistance, TPoint} from 'utilities/helpers/distance';
+import {TPoint} from 'utilities/helpers/distance';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
@@ -38,8 +38,9 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
 
 function SelectPhoto(props: Props) {
   const {navigation, plantTreePermissions} = props;
+  const {userLocation, showPermissionModal} = plantTreePermissions;
+
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation, userLocation} = plantTreePermissions;
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -324,7 +325,7 @@ function SelectPhoto(props: Props) {
     setNewJourney(newJourney);
   }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
 
-  if (!isGranted || isChecking || !hasLocation) {
+  if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 

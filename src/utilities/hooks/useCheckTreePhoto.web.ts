@@ -8,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
 
-  const checkPickedPhoto = useCallback(
+  return useCallback(
     async (image64Base: string, userLocation: TUserLocation, successCallback: () => void) => {
       try {
         const {latitude, longitude} = await exifr.parse(image64Base);
@@ -37,6 +37,12 @@ export const useCheckTreePhoto = () => {
               message: t('inValidImage.hasNoLocation'),
             });
           }
+        } else {
+          showAlert({
+            title: t('inValidImage.title'),
+            mode: AlertMode.Error,
+            message: t('inValidImage.hasNoLocation'),
+          });
         }
       } catch (error) {
         showAlert({
@@ -48,6 +54,4 @@ export const useCheckTreePhoto = () => {
     },
     [t],
   );
-
-  return checkPickedPhoto;
 };

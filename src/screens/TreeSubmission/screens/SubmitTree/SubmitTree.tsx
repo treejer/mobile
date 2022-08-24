@@ -1,16 +1,15 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
-import {CommonActions, RouteProp, useRoute} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {TreeSubmissionRouteParamList} from 'types';
 import {ContractType} from 'services/config';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import TreeDetailQuery, {
@@ -24,13 +23,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useSettings} from 'services/settings';
-import {
-  assignedTreeJSON,
-  canUpdateTreeLocation,
-  newTreeJSON,
-  photoToUpload,
-  updateTreeJSON,
-} from 'utilities/helpers/submitTree';
+import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -48,12 +41,9 @@ interface Props {
 
 function SubmitTree(props: Props) {
   const {navigation, plantTreePermissions} = props;
-  const {journey, clearJourney} = useCurrentJourney();
-  const {isChecking, isGranted, hasLocation} = plantTreePermissions;
+  const {showPermissionModal} = plantTreePermissions;
 
-  // const {
-  //   params: {journey},
-  // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  const {journey, clearJourney} = useCurrentJourney();
 
   const {t} = useTranslation();
 
@@ -88,12 +78,6 @@ function SubmitTree(props: Props) {
     variables: journey?.treeIdToPlant ? {id: journey?.treeIdToPlant} : undefined,
   });
   const assignedTreeData = assignedTreeQuery?.data?.tree;
-
-  // const treeListQuery = useQuery<TreesQueryQueryData, TreesQueryQueryData.Variables>(TempTreeDetail, {
-  //   variables: {
-  //     address: wallet.address,
-  //   },
-  // });
 
   const handleUploadToIpfs = useCallback(async () => {
     if (
@@ -312,7 +296,7 @@ function SubmitTree(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
 
-  if (!isGranted || isChecking || !hasLocation) {
+  if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 

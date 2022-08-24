@@ -48,7 +48,7 @@ function WebImagePickerCropper(props: WebCamProps) {
         <View style={{flex: 1}}>
           {image ? (
             <Cropper
-              image={`${image}`}
+              image={image.toString()}
               crop={crop}
               rotation={rotation}
               zoom={zoom}

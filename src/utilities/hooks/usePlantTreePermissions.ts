@@ -36,6 +36,7 @@ export type TUsePlantTreePermissions = {
   isGranted: boolean;
   cantProceed: boolean;
   requested: boolean;
+  showPermissionModal: boolean;
 };
 
 export type TUserLocation = {
@@ -285,5 +286,6 @@ export function usePlantTreePermissions(
     hasLocation,
     requested,
     isGPSEnabled,
+    showPermissionModal: isGranted && !isChecking && hasLocation,
   };
 }
