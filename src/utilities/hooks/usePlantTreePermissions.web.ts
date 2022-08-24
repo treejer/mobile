@@ -339,8 +339,8 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
   const isLocationBlocked = useMemo(() => locationPermission === 'blocked', [locationPermission]);
 
-  // const isCameraGranted = useMemo(() => cameraPermission === 'granted', [cameraPermission]);
-  const isCameraGranted = useMemo(() => true, []);
+  const isCameraGranted = useMemo(() => cameraPermission === 'granted', [cameraPermission]);
+  // const isCameraGranted = useMemo(() => true, []);
   const isLocationGranted = useMemo(() => locationPermission === 'granted', [locationPermission]);
   const hasLocation = useMemo(() => !!(userLocation?.latitude && userLocation?.longitude), [userLocation]);
 
