@@ -13,7 +13,7 @@ export const useCheckTreePhoto = () => {
       try {
         const {latitude, longitude} = await exifr.parse(image64Base);
         if (latitude > 0 && longitude > 0) {
-          let maxDistance = 5;
+          let maxDistance = 0.19369;
           if (userLocation) {
             const imageCoords: TPoint = {
               latitude,

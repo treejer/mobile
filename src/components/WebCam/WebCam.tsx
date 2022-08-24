@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from 'constants/values';
 import {Camera, CameraType} from 'react-camera-pro';
 import AntIcon from 'react-native-vector-icons/AntDesign';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const bottomSheetSpace = 80;
 
@@ -22,6 +23,7 @@ function WebCam(props: WebCamProps) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [crop, setCrop] = useState({x: 0, y: 0});
   const [rotation, setRotation] = useState(0);
+  const {top, bottom} = useSafeAreaInsets();
 
   const {t} = useTranslation();
 
@@ -51,7 +53,7 @@ function WebCam(props: WebCamProps) {
   );
 
   return (
-    <View style={{flex: 1, position: 'relative'}}>
+    <View style={{flex: 1, position: 'relative', paddingTop: top, paddingBottom: bottom}}>
       {image ? (
         <Cropper
           image={image}
