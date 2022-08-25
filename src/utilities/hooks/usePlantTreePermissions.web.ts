@@ -74,7 +74,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (() => {
       if (checked) {
-        // await checkPermission();
         checkCameraPermission();
       }
     })();
@@ -164,27 +163,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [watchCurrentPositionAsyncWeb]);
 
   const checkPermission = useCallback(async () => {
-    // navigator.mediaDevices
-    //   .getUserMedia({audio: false, video: true})
-    //   .then(result => {
-    //     if (result.active) {
-    //       setCameraPermission('granted');
-    //       const mediaStreamTracks = result.getTracks();
-    //       mediaStreamTracks.forEach(track => {
-    //         track.stop();
-    //       });
-    //     }
-    //   })
-    //   .catch(error => {
-    //     if (!checked) {
-    //       showAlert({
-    //         title: t('checkPermission.error.deviceNotFound'),
-    //         message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-    //         mode: AlertMode.Error,
-    //       });
-    //     }
-    //     setCameraPermission('blocked');
-    //   });
     if (browserPlatform === 'iOS' || (browserName === 'Firefox' && browserPlatform === 'Android')) {
       getCurrentPositionAsyncWeb(t)
         .then(({latitude, longitude}) => {
@@ -209,19 +187,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           } else {
             setUserLocation({latitude: 0, longitude: 0});
           }
-          // getCurrentPositionAsyncWeb(t)
-          //   .then(({latitude, longitude}) => {
-          //     setUserLocation({
-          //       latitude,
-          //       longitude,
-          //     });
-          //     setLocationPermission('granted');
-          //   })
-          //   .catch(error => {
-          //     console.log(error, 'error in checkPermissions');
-          //     setUserLocation({latitude: 0, longitude: 0});
-          //     setLocationPermission('blocked');
-          //   });
         })
         .catch(err => {
           console.log(err, 'error request permissions web');
@@ -288,14 +253,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           });
           setCameraPermission('blocked');
         });
-      // @chichiye
-      // if (browserPlatform !== 'iOS') {
-      //   // @ts-ignore
-      //   navigator.permissions.query({name: 'camera'}).then(({state}) => {
-      //     console.log(state, 'state');
-      //     setCameraPermission(state === 'granted' ? state : 'blocked');
-      //   });
-      // }
     },
     [t],
   );
