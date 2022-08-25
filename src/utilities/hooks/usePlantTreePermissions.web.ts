@@ -77,10 +77,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
-        // if (checked) {
-        // await checkPermission();
-        // requestCameraPermission();
-        // }
+        if (checked) {
+          // await checkPermission();
+          requestCameraPermission();
+        }
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
       }
@@ -342,7 +342,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
             ? browserName === 'Safari'
-              ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
+              ? t('checkPermission.error.turnOnGPS', {message: error.message})
               : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
@@ -374,7 +374,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         } else {
           showAlert({
             title: t('checkPermission.error.siteSettings'),
-            message: t(`checkPermission.error.1`),
+            message: t('checkPermission.error.1'),
             mode: AlertMode.Info,
           });
         }
