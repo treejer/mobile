@@ -11,7 +11,8 @@ export const useCheckTreePhoto = () => {
   return useCallback(
     async (image64Base: string, userLocation: TUserLocation, successCallback: () => void) => {
       try {
-        const {latitude, longitude} = await exifr.parse(image64Base);
+        const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
+        console.log({exif, latitude, longitude}, 'safariiiiii cordinated');
         if (latitude > 0 && longitude > 0) {
           let maxDistance = 0.19369;
           if (userLocation) {
