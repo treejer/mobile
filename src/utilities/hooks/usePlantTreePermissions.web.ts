@@ -142,17 +142,16 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       showAlert({
         title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
         message: error.code
-          ? t(`checkPermission.error.${error.code}`, {message: error.message})
+          ? browserName === 'Safari'
+            ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
+            : t(`checkPermission.error.${error.code}`, {message: error.message})
           : t('checkPermission.error.unknownError'),
         mode: AlertMode.Info,
-      });
-      showAlert({
-        message: error.code + error.message,
       });
       setUserLocation({latitude: 0, longitude: 0});
       setLocationPermission('blocked');
     }
-  }, [t, userLocation]);
+  }, [browserName, t, userLocation]);
 
   const watchUserLocation = useCallback(async () => {
     try {
