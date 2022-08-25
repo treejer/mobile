@@ -5,6 +5,7 @@ import {useAppState} from 'utilities/hooks/useAppState';
 import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {useBrowserName} from 'utilities/hooks/useBrowserName';
 
 export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined>) => {
   return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
@@ -41,7 +42,13 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const [checked, setChecked] = useState(false);
 
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
+
   const browserPlatform = useBrowserPlatform();
+  const browserName = useBrowserName();
+
+  useEffect(() => {
+    console.log(browserName, 'browser name is here');
+  }, [browserName]);
 
   const {t} = useTranslation();
 
@@ -315,12 +322,20 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             });
           }
         } else {
-          const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
-          setLocationPermission('granted');
-          setUserLocation({
-            latitude,
-            longitude,
-          });
+          if (browserName !== 'Chrome') {
+            const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
+            setLocationPermission('granted');
+            setUserLocation({
+              latitude,
+              longitude,
+            });
+          } else {
+            showAlert({
+              title: t('checkPermission.error.siteSettings'),
+              message: t('checkPermission.error.turnOnGPS'),
+              mode: AlertMode.Info,
+            });
+          }
         }
       } catch (error: any) {
         console.log(error, 'error in last deploy');
@@ -338,7 +353,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
       }
     },
-    [browserPlatform, t],
+    [browserName, browserPlatform, t],
   );
 
   const openGpsRequest = useCallback(
@@ -353,7 +368,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             throw {code: 1, message: 'geolocation denied'};
           }
         }
-        await checkUserLocation();
+        if (browserName !== 'Chrome') {
+          await checkUserLocation();
+        } else {
+          showAlert({
+            title: t('checkPermission.error.siteSettings'),
+            message: t(`checkPermission.error.1`),
+            mode: AlertMode.Info,
+          });
+        }
       } catch (error: any) {
         console.log(error, 'errirrrrsrseresrseresres');
         showAlert({
@@ -368,7 +391,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
       }
     },
-    [browserPlatform, checkUserLocation, t],
+    [browserName, browserPlatform, checkUserLocation, t],
   );
 
   const isCameraBlocked = useMemo(() => cameraPermission === 'blocked', [cameraPermission]);
