@@ -70,10 +70,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
-        if (checked) {
-          await checkPermission();
-          // requestCameraPermission();
-        }
+        // if (checked) {
+        // await checkPermission();
+        // requestCameraPermission();
+        // }
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
       }
