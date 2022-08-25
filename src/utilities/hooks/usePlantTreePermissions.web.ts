@@ -185,7 +185,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     //     }
     //     setCameraPermission('blocked');
     //   });
-    if (browserPlatform === 'iOS') {
+    if (browserPlatform === 'iOS' || (browserName === 'Firefox' && browserPlatform === 'Android')) {
       getCurrentPositionAsyncWeb(t)
         .then(({latitude, longitude}) => {
           setUserLocation({
@@ -228,7 +228,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         });
     }
     setChecked(true);
-  }, [browserPlatform, checkUserLocation, checked, t]);
+  }, [browserName, browserPlatform, checkUserLocation, checked, t]);
 
   const requestPermission = useCallback(async () => {
     try {
