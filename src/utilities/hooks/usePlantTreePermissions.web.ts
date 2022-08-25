@@ -6,6 +6,7 @@ import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantT
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {useBrowserName} from 'utilities/hooks/useBrowserName';
+import {stat} from 'react-native-fs';
 
 export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined>) => {
   return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
@@ -46,10 +47,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const browserPlatform = useBrowserPlatform();
   const browserName = useBrowserName();
 
-  useEffect(() => {
-    console.log(browserName, 'browser name is here');
-  }, [browserName]);
-
   const {t} = useTranslation();
 
   useEffect(() => {
@@ -75,14 +72,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        if (checked) {
-          // await checkPermission();
-          requestCameraPermission();
-        }
-      } catch (e) {
-        console.log(e, 'e inside useEffect AppState change usePlantTreePermissoin web');
+    (() => {
+      if (checked) {
+        // await checkPermission();
+        checkCameraPermission();
       }
     })();
 
@@ -100,6 +93,15 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       }
     })();
   });
+
+  const checkCameraPermission = useCallback(() => {
+    if (browserPlatform !== 'iOS') {
+      // @ts-ignore
+      navigator.permissions.query({name: 'camera'}).then(({state}) => {
+        setCameraPermission(state === 'granted' ? state : 'blocked');
+      });
+    }
+  }, [browserPlatform]);
 
   const watchCurrentPositionAsyncWeb = useCallback(async () => {
     return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
