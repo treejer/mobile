@@ -342,7 +342,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         showAlert({
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
-            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            ? browserName === 'Safari'
+              ? t(`checkPermission.GPS.error.${error.code}`, {message: error.message})
+              : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
         });
@@ -382,7 +384,9 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         showAlert({
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
-            ? t(`checkPermission.error.${error.code}`, {message: error.message})
+            ? browserName === 'Safari'
+              ? t(`checkPermission.GPS.error.${error.code}`, {message: error.message})
+              : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
         });

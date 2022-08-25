@@ -319,6 +319,7 @@ export const en = {
         '1Title': 'Grant location permission',
         '3Title': 'Geolocation information',
         '1': 'First you need to grant location permission \n({{message}})',
+        '2': "We can't access to GPS yet, please wait...",
         '3': 'Geolocation information was not obtained \n({{message}})',
       },
       unknownError: 'Unknown error',
