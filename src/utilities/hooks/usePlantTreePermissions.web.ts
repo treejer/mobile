@@ -343,7 +343,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
             ? browserName === 'Safari'
-              ? t(`checkPermission.GPS.error.${error.code}`, {message: error.message})
+              ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
               : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
@@ -385,13 +385,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
             ? browserName === 'Safari'
-              ? t(`checkPermission.GPS.error.${error.code}`, {message: error.message})
+              ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
               : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
           mode: AlertMode.Info,
-        });
-        showAlert({
-          message: String(error.code + error.message),
         });
       }
     },
