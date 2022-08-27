@@ -114,7 +114,6 @@ export function usePlantTreePermissions(
   useRefocusEffect(() => {
     (async () => {
       await checkUserLocation();
-      console.log('again ereresfsa');
     })();
   });
 
@@ -146,13 +145,18 @@ export function usePlantTreePermissions(
   const checkPermission = useCallback(async () => {
     try {
       const res = await Permissions.checkMultiple(treejerPermissions);
-
+      console.log(res, 'result in check permissions');
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
       } else {
+        const location =
+          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED ||
+          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED
+            ? RESULTS.GRANTED
+            : RESULTS.BLOCKED;
         setCameraPermission(res['ios.permission.CAMERA']);
-        setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
+        setLocationPermission(location);
       }
 
       setChecked(true);
@@ -171,8 +175,13 @@ export function usePlantTreePermissions(
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
       } else {
+        const location =
+          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED ||
+          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED
+            ? RESULTS.GRANTED
+            : RESULTS.BLOCKED;
         setCameraPermission(res['ios.permission.CAMERA']);
-        setLocationPermission(res['ios.permission.LOCATION_ALWAYS'] || res['ios.permission.LOCATION_WHEN_IN_USE']);
+        setLocationPermission(location);
       }
       setRequested(true);
       return Promise.resolve(res);
