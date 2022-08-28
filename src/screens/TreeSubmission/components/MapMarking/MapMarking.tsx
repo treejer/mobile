@@ -18,6 +18,7 @@ import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
+import {calcDistance} from 'utilities/helpers/distance';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -103,71 +104,93 @@ export default function MapMarking(props: IMapMarkingProps) {
   const handleSubmit = useCallback(() => {
     if (verifyProfile && location) {
       onSubmit?.(location);
-    } else if (journey && location) {
-      const newJourney = {
-        ...journey,
-        location: {
+    } else if (journey && journey.photoLocation && location) {
+      const distance = calcDistance(
+        {
           latitude: location?.coords?.latitude,
           longitude: location?.coords?.longitude,
         },
-      };
-      if (isConnected) {
-        navigation.navigate(Routes.SubmitTree);
-        setNewJourney(newJourney);
-      } else {
-        console.log(newJourney, 'newJourney offline tree');
-        if (newJourney.isSingle === true) {
-          dispatchAddOfflineTree(newJourney);
-          clearJourney();
-          showAlert({
-            title: t('myProfile.attention'),
-            message: t('myProfile.offlineTreeAdd'),
-            mode: AlertMode.Info,
-          });
-        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-          const offlineTrees: TreeJourney[] = [];
-          for (let i = 0; i < newJourney.nurseryCount; i++) {
-            offlineTrees.push({
-              ...newJourney,
-              offlineId: (Date.now() + i * 1000).toString(),
+        {
+          latitude: journey?.photoLocation?.latitude,
+          longitude: journey?.photoLocation?.longitude,
+        },
+      );
+      const maxDistance = 0.0000056831373562600602;
+      console.log('====================================');
+      console.log({distance, maxDistance}, 'distances');
+      console.log('====================================');
+      if (distance < maxDistance) {
+        const newJourney = {
+          ...journey,
+          location: {
+            latitude: location?.coords?.latitude,
+            longitude: location?.coords?.longitude,
+          },
+        };
+        if (isConnected) {
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney(newJourney);
+        } else {
+          console.log(newJourney, 'newJourney offline tree');
+          if (newJourney.isSingle === true) {
+            dispatchAddOfflineTree(newJourney);
+            clearJourney();
+            showAlert({
+              title: t('myProfile.attention'),
+              message: t('myProfile.offlineTreeAdd'),
+              mode: AlertMode.Info,
             });
+          } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
+            const offlineTrees: TreeJourney[] = [];
+            for (let i = 0; i < newJourney.nurseryCount; i++) {
+              offlineTrees.push({
+                ...newJourney,
+                offlineId: (Date.now() + i * 1000).toString(),
+              });
+            }
+            dispatchAddOfflineTrees(offlineTrees);
+            clearJourney();
+            showAlert({
+              title: t('myProfile.attention'),
+              message: t('myProfile.offlineNurseryAdd'),
+              mode: AlertMode.Info,
+            });
+          } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
+            const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+              mode: AlertMode.Info,
+            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.MyProfile}],
+              }),
+            );
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+            return;
           }
-          dispatchAddOfflineTrees(offlineTrees);
-          clearJourney();
-          showAlert({
-            title: t('myProfile.attention'),
-            message: t('myProfile.offlineNurseryAdd'),
-            mode: AlertMode.Info,
-          });
-        } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-            mode: AlertMode.Info,
-          });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
               routes: [{name: Routes.MyProfile}],
             }),
           );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
           clearJourney();
-          return;
         }
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: Routes.MyProfile}],
-          }),
-        );
-        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
-        clearJourney();
+      } else {
+        showAlert({
+          title: t('inValidImage.title'),
+          mode: AlertMode.Error,
+          message: t('inValidImage.longDistance'),
+        });
       }
     } else {
       if (location) {

@@ -102,13 +102,14 @@ function SelectPhoto(props: Props) {
             checkTreePhoto(
               '',
               userLocation,
-              () => {
+              imageLocation => {
                 handleAfterSelectPhoto({
                   selectedPhoto,
                   setPhoto,
                   isUpdate,
                   isNursery,
                   canUpdate,
+                  imageLocation,
                 });
               },
               imageCoords,
@@ -170,13 +171,14 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setShowWebCam(false);
 
-      checkTreePhoto(image, userLocation, () => {
+      checkTreePhoto(image, userLocation, imageLocation => {
         handleAfterSelectPhoto({
           selectedPhoto: file,
           setPhoto,
           isUpdate,
           isNursery,
           canUpdate,
+          imageLocation,
         });
       });
 
@@ -224,13 +226,14 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setPickedImage(null);
 
-      checkTreePhoto(image, userLocation, () => {
+      checkTreePhoto(image, userLocation, imageLocation => {
         handleAfterSelectPhoto({
           selectedPhoto: file,
           setPhoto,
           isUpdate,
           isNursery,
           canUpdate,
+          imageLocation,
         });
       });
 

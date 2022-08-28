@@ -1,9 +1,11 @@
+import {TPoint} from 'utilities/helpers/distance';
 import {Image} from 'react-native-image-crop-picker';
 import {Tree} from 'types';
 
 export interface TreeJourney {
   treeIdToUpdate?: string | null;
   photo?: Image | File;
+  photoLocation?: TPoint;
   location?: {
     latitude: number;
     longitude: number;

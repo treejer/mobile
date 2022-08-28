@@ -13,6 +13,7 @@ import {useCallback} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -274,6 +275,7 @@ export type AfterSelectPhotoHandler = {
   isNursery: boolean;
   canUpdate: boolean;
   setPhoto?: (photo: File | Image) => void;
+  imageLocation: TUserLocation;
 };
 
 export function useAfterSelectPhotoHandler() {
@@ -289,11 +291,12 @@ export function useAfterSelectPhotoHandler() {
 
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
-      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto, imageLocation} = options;
 
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,
+        photoLocation: imageLocation,
       };
 
       if (isConnected) {

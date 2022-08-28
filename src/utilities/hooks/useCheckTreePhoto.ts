@@ -9,19 +9,20 @@ export const useCheckTreePhoto = () => {
   return (
     image64Base: string,
     userLocation: TUserLocation | null,
-    successCallback: () => void,
+    successCallback: (imageLocation: TUserLocation) => void,
     imageLocation?: TUserLocation,
     fromGallery?: boolean,
   ) => {
     if (imageLocation?.latitude && imageLocation?.longitude) {
       // @here
       let maxDistance = 0.19369;
+
       if (userLocation) {
         const distance = calcDistance(imageLocation, userLocation);
         console.log({userLocation, imageLocation, distance});
 
         if (distance < maxDistance) {
-          successCallback();
+          successCallback(imageLocation);
         } else {
           showAlert({
             title: t('inValidImage.title'),
