@@ -4,15 +4,13 @@ import {takeEvery, put} from 'redux-saga/effects';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
-import {UserNonceRes} from 'services/types';
+import {UserNonceForm, UserNonceRes} from 'services/types';
 
-const UserNonce = new ReduxFetchState<UserNonceRes, {wallet: string}, string>('userNonce');
+const UserNonce = new ReduxFetchState<UserNonceRes, UserNonceForm, string>('userNonce');
 
 export type TUserNonceAction = {
   type: string;
-  payload: {
-    wallet: string;
-  };
+  payload: UserNonceForm;
 };
 
 export type TUserNonceSuccessAction = {
@@ -22,8 +20,20 @@ export type TUserNonceSuccessAction = {
 
 export function* watchUserNonce(action: TUserNonceAction) {
   try {
-    const {wallet} = action.payload;
-    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/user/nonce?publicAddress=${wallet}`);
+    const {wallet, magicToken, loginData} = action.payload;
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('publicAddress', wallet);
+    searchParams.set('token', magicToken);
+
+    if (loginData?.email) {
+      searchParams.set('email', loginData.email);
+    }
+    if (loginData?.mobile && loginData?.country) {
+      searchParams.set('mobile', loginData.mobile);
+      searchParams.set('country', loginData.country);
+    }
+    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/user/nonce?${searchParams.toString()}`);
     console.log('====================================');
     console.log(res, 'result in user nonce');
     console.log('====================================');

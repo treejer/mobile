@@ -6,7 +6,6 @@ import {useSettings} from 'utilities/hooks/useSettings';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
 import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
@@ -15,6 +14,7 @@ import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+import {useProfile, UserStatus} from '../redux/modules/user/user';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -67,15 +67,9 @@ export enum Routes {
 export function RootNavigation() {
   const {loading, magic} = useUserWeb3();
   const {locale, onBoardingDone} = useSettings();
-  // const {createWeb3} = useUserWeb3();
-  const {
-    data: {user},
-    status,
-  } = useCurrentUser();
+
+  const {profile, status} = useProfile();
   //
-  // useEffect(() => {
-  //   createWeb3();
-  // }, []);
 
   const isVerified = status === UserStatus.Verified;
 
@@ -101,18 +95,18 @@ export function RootNavigation() {
             component={OnboardingSlides}
           />
         ) : null}
-        {locale && onBoardingDone && !user ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
-        {locale && onBoardingDone && user && !isVerified ? (
+        {locale && onBoardingDone && !profile ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
+        {locale && onBoardingDone && profile && !isVerified ? (
           <>
             <RootStack.Screen name={Routes.UnVerifiedProfileStack} component={UnVerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onBoardingDone && user && isVerified ? (
+        {locale && onBoardingDone && profile && isVerified ? (
           <>
             <RootStack.Screen name={Routes.VerifiedProfileTab} component={VerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onBoardingDone && user ? (
+        {locale && onBoardingDone && profile ? (
           <>
             {isWeb() ? null : (
               <>

@@ -7,7 +7,7 @@ import {defaultNetwork, storageKeys} from 'services/config';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useTranslation} from 'react-i18next';
 
-export enum UserStatus {
+enum UserStatus {
   Loading,
   Unverified,
   Pending,

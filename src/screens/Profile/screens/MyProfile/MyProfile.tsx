@@ -8,7 +8,6 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
@@ -26,6 +25,7 @@ import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
+import {UserStatus, useProfile} from '../../../../redux/modules/user/user';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -40,8 +40,8 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
-  const user = useCurrentUser();
-  console.log(user, 'user>++');
+  // const user = useCurrentUser();
+  // console.log(user, 'user>++');
 
   const {referrer, organization, hasRefer} = useRefer();
 
@@ -57,11 +57,13 @@ function MyProfile(props: MyProfileProps) {
         console.log(e, 'e inside get minWithdrawable');
         setMinBalance(requiredBalance);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const web3 = useWalletWeb3();
@@ -70,8 +72,9 @@ function MyProfile(props: MyProfileProps) {
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
-  const isVerified = data?.user?.isVerified;
+  // const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
+  const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
+  const isVerified = profile?.isVerified;
 
   const isConnected = useNetInfoConnected();
 
@@ -124,6 +127,7 @@ function MyProfile(props: MyProfileProps) {
     // if (wallet && isConnected) {
     getPlanter().then(() => {});
     // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [submitting, setSubmitting] = useState(false);
@@ -203,7 +207,7 @@ function MyProfile(props: MyProfileProps) {
       setTimeout(() => {
         (async function () {
           await getPlanter();
-          await refetchUser();
+          await dispatchProfile();
         })();
         resolve();
       }, 700);
@@ -213,7 +217,7 @@ function MyProfile(props: MyProfileProps) {
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const profileLoading = loading || !data?.user;
+  const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
@@ -280,9 +284,9 @@ function MyProfile(props: MyProfileProps) {
             ) : null}
             {!profileLoading && (
               <>
-                {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
+                {profile?.firstName ? <Text style={globalStyles.h4}>{profile.firstName}</Text> : null}
 
-                {data?.user?.firstName ? <Spacer times={4} /> : null}
+                {profile?.firstName ? <Spacer times={4} /> : null}
                 {wallet ? (
                   <TouchableOpacity onPress={handleCopyWalletAddress}>
                     <Text numberOfLines={1} style={styles.addressBox}>
@@ -343,7 +347,7 @@ function MyProfile(props: MyProfileProps) {
                         variant="tertiary"
                         onPress={() => {
                           sendEvent('get_verified');
-                          if (data?.user) {
+                          if (profile) {
                             // @ts-ignore
                             navigation.navigate(Routes.VerifyProfile);
                           }
@@ -359,7 +363,7 @@ function MyProfile(props: MyProfileProps) {
                         style={styles.getVerifiedRefer}
                         onPress={() => {
                           sendEvent('get_verified');
-                          if (data?.user) {
+                          if (profile) {
                             // @ts-ignore
                             navigation.navigate(Routes.VerifyProfile);
                           }

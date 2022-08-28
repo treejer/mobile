@@ -130,7 +130,7 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result);
+        await storeMagicToken(result, {email});
         // await refetchUser();
         console.log(result, 'result is here');
       } else {

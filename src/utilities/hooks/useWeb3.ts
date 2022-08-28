@@ -3,6 +3,7 @@ import {changeNetwork, createWeb3, resetWeb3Data, storeMagicToken} from '../../r
 import {BlockchainNetwork} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {Account} from 'web3-core';
+import {UserNonceForm} from 'services/types';
 
 export function useUserWeb3() {
   const web3 = useAppSelector(state => state.web3);
@@ -24,8 +25,8 @@ export function useUserWeb3() {
   }, [dispatch]);
 
   const handleStoreMagicToken = useCallback(
-    (magicToken: string) => {
-      dispatch(storeMagicToken({web3: web3.web3, magicToken}));
+    (magicToken: string, loginData?: UserNonceForm['loginData']) => {
+      dispatch(storeMagicToken({web3: web3.web3, magicToken, loginData}));
     },
     [dispatch, web3],
   );

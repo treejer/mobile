@@ -58,6 +58,7 @@ export function* sagaFetch<Data, Form = any>(
   _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
 ) {
   const {accessToken, userId} = yield select((state: TReduxState) => state.web3);
+  console.log(accessToken, 'accessToken');
   const config: NetworkConfig = yield selectConfig();
   let {configUrl, ...options} = _options;
   if (accessToken) {

@@ -10,6 +10,7 @@ import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {Action, Dispatch} from 'redux';
 import {profileActions} from '../../modules/user/user';
+import {UserNonceForm} from 'services/types';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -67,7 +68,7 @@ export type TWeb3Action = {
   storeMagicToken: {
     web3: Web3;
     magicToken: string;
-    dispatch: Dispatch<Action<any>>;
+    loginData?: UserNonceForm['loginData'];
   };
 };
 
@@ -99,7 +100,7 @@ export function updateWeb3Done() {
   return {type: UPDATE_WEB3_DONE};
 }
 export const STORE_MAGIC_TOKEN = 'STORE_MAGIC_TOKEN';
-export function storeMagicToken(payload: {web3: Web3; magicToken: string}) {
+export function storeMagicToken(payload: TWeb3Action['storeMagicToken']) {
   return {type: STORE_MAGIC_TOKEN, storeMagicToken: payload};
 }
 
@@ -149,10 +150,9 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
       };
     }
     case STORE_MAGIC_TOKEN: {
-      const {dispatch, ...storeMagicToken} = action.storeMagicToken;
       return {
         ...state,
-        ...storeMagicToken,
+        ...action.storeMagicToken,
         loading: true,
       };
     }
@@ -211,7 +211,7 @@ export function* watchChangeNetwork(action: TWeb3Action) {
 
 export function* watchStoreMagicToken(store, action: TWeb3Action) {
   try {
-    const {web3, magicToken} = action.storeMagicToken;
+    const {web3, magicToken, loginData} = action.storeMagicToken;
     const config = yield selectConfig();
     console.log('[[[try]]]');
     let web3Accounts;
@@ -228,7 +228,7 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
     const wallet = web3Accounts[0];
     const isConnect = yield selectNetInfo();
     if (isConnect) {
-      yield put(userNonceActions.load({wallet}));
+      yield put(userNonceActions.load({wallet, magicToken, loginData}));
       const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
 
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
@@ -242,9 +242,11 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
       });
       const credentials = yield response.json();
       console.log(credentials, 'credentials');
+
       //? yield put(userSignActions.load({wallet, signature}));
       //? const {payload: userSignPayload}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
       //? console.log(userSwalletignPayload, 'credentials in web3'); //
+
       web3Accounts = [wallet];
 
       yield web3.eth.getAccounts(async (error, accounts) => {
