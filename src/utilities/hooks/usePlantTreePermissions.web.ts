@@ -245,16 +245,18 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           }
         })
         .catch(error => {
+          if (browserPlatform && browserPlatform !== 'iOS') {
+            showAlert({
+              title: t('checkPermission.error.deviceNotFound'),
+              message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
+              mode: AlertMode.Error,
+            });
+          }
           console.log(error, 'error');
-          showAlert({
-            title: t('checkPermission.error.deviceNotFound'),
-            message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
-            mode: AlertMode.Error,
-          });
           setCameraPermission('blocked');
         });
     },
-    [t],
+    [browserPlatform, t],
   );
 
   const requestLocationPermission = useCallback(
@@ -398,6 +400,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     cantProceed,
     requested,
     isGranted,
-    showPermissionModal: !isGranted || isChecking,
+    showPermissionModal: (!isGranted || isChecking) && browserPlatform !== 'iOS',
   };
 }
