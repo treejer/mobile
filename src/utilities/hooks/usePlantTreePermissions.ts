@@ -1,12 +1,12 @@
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import Permissions, {PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import {useAppState} from 'utilities/hooks/useAppState';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {useTranslation} from 'react-i18next';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 

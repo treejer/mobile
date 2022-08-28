@@ -1,12 +1,12 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
+
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useAppState} from 'utilities/hooks/useAppState';
 import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {useBrowserName} from 'utilities/hooks/useBrowserName';
-import {stat} from 'react-native-fs';
 
 export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined>) => {
   return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
