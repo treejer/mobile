@@ -83,14 +83,11 @@ export function usePlantTreePermissions(
   const {t} = useTranslation();
 
   useEffect(() => {
-    console.log({userLocation}, 'userLocation');
-  }, [userLocation, locationPermission]);
-
-  useEffect(() => {
     (async () => {
       try {
         if (didMount) {
-          await checkPermission();
+          // await checkPermission();
+          await requestPermission();
         }
       } catch (e) {}
     })();
@@ -151,8 +148,8 @@ export function usePlantTreePermissions(
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
       } else {
         const location =
-          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED ||
-          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED
+          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED ||
+          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED
             ? RESULTS.GRANTED
             : RESULTS.BLOCKED;
         setCameraPermission(res['ios.permission.CAMERA']);
@@ -170,14 +167,14 @@ export function usePlantTreePermissions(
     try {
       await checkPermission();
       const res = await Permissions.requestMultiple(treejerPermissions);
-      // console.log(res, 'res is here permission');
+      console.log(res, 'res is request permission');
       if (Platform.OS === 'android') {
         setCameraPermission(res['android.permission.CAMERA']);
         setLocationPermission(res['android.permission.ACCESS_FINE_LOCATION']);
       } else {
         const location =
-          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED ||
-          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED
+          res['ios.permission.LOCATION_ALWAYS'] === RESULTS.GRANTED ||
+          res['ios.permission.LOCATION_WHEN_IN_USE'] === RESULTS.GRANTED
             ? RESULTS.GRANTED
             : RESULTS.BLOCKED;
         setCameraPermission(res['ios.permission.CAMERA']);
@@ -295,6 +292,6 @@ export function usePlantTreePermissions(
     hasLocation,
     requested,
     isGPSEnabled,
-    showPermissionModal: isGranted && !isChecking && hasLocation,
+    showPermissionModal: !isGranted || isChecking,
   };
 }
