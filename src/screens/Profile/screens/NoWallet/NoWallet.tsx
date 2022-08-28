@@ -5,7 +5,7 @@ import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {useConfig, useMagic, usePrivateKeyStorage} from 'services/web3';
+import {useConfig, useMagic, useUserWeb3} from 'utilities/hooks/useWeb3';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -15,7 +15,6 @@ import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {colors} from 'constants/values';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
-import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -29,14 +28,14 @@ export type NoWalletProps = RootNavigationProp<Routes.Login>;
 function NoWallet(props: NoWalletProps) {
   const {navigation} = props;
 
-  const {storeMagicToken} = usePrivateKeyStorage();
+  const {storeMagicToken, accessToken, userId} = useUserWeb3();
   const [loading, setLoading] = useState(false);
   const [isEmail, setIsEmail] = useState<boolean>(true);
 
   const config = useConfig();
   const magic = useMagic();
 
-  const {refetchUser} = useCurrentUser();
+  // const {refetchUser} = useCurrentUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -70,6 +69,14 @@ function NoWallet(props: NoWalletProps) {
     })();
   }, []);
 
+  // useEffect(() => {
+  //   if (userId && accessToken) {
+  //     (async function () {
+  // fetchUserRequest({userId, accessToken});
+  //     })();
+  //   }
+  // }, [userId, accessToken, fetchUserRequest]);
+
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
   }, [config.learnMoreLink]);
@@ -93,7 +100,7 @@ function NoWallet(props: NoWalletProps) {
         } catch (e) {
           throw e;
         }
-        await refetchUser();
+        // await refetchUser();
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -123,8 +130,8 @@ function NoWallet(props: NoWalletProps) {
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result, {email});
-        await refetchUser();
+        await storeMagicToken(result);
+        // await refetchUser();
         console.log(result, 'result is here');
       } else {
         showAlert({

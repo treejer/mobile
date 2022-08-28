@@ -18,7 +18,7 @@ import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/Use
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useUserId} from 'services/web3';
+import {useConfig, useUserId} from 'utilities/hooks/useWeb3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';
@@ -53,7 +53,7 @@ const radioItems = [
 
 function VerifyProfile(props: Props) {
   const {navigation, route} = props;
-  const {status} = useCurrentUser({didMount: true});
+  const {status} = useCurrentUser();
 
   const {openCameraHook, openLibraryHook} = useCamera();
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
@@ -307,6 +307,7 @@ function VerifyProfile(props: Props) {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {

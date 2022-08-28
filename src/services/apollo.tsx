@@ -14,7 +14,7 @@ import camelCase from 'lodash/camelCase';
 import Web3 from 'services/Magic';
 
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from './web3';
+import {useAccessToken, useConfig, useUserId, useWeb3} from 'utilities/hooks/useWeb3';
 
 function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {

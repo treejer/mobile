@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image as NativeImage} from 'react-native';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import {isWeb} from 'utilities/helpers/web';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import {

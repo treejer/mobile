@@ -7,7 +7,7 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
@@ -16,7 +16,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
@@ -40,6 +40,8 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
+  const user = useCurrentUser();
+  console.log(user, 'user>++');
 
   const {referrer, organization, hasRefer} = useRefer();
 
@@ -68,7 +70,7 @@ function MyProfile(props: MyProfileProps) {
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
+  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
   const isVerified = data?.user?.isVerified;
 
   const isConnected = useNetInfoConnected();
@@ -124,7 +126,7 @@ function MyProfile(props: MyProfileProps) {
     // }
   }, []);
 
-  const [submiting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
     if (!isConnected) {
       showAlert({
@@ -320,7 +322,7 @@ function MyProfile(props: MyProfileProps) {
                         style={styles.button}
                         caption={t('withdraw')}
                         variant="tertiary"
-                        loading={submiting}
+                        loading={submitting}
                         onPress={handleWithdrawPlanterBalance}
                       />
                       <Spacer times={4} />

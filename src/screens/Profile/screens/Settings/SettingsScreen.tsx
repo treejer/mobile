@@ -7,10 +7,10 @@ import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyles from 'constants/styles';
 import Spacer from 'components/Spacer/Spacer';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import Icon from 'react-native-vector-icons/Octicons';
 import {colors} from 'constants/values';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
 import {ChevronLeft} from 'components/Icons';
 
@@ -25,7 +25,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
 
   const [ether, setEther] = useState<string>('');
 
-  const {useGSN, changeUseGsn} = useSettings();
+  const {useGSN, changeUseGSN} = useSettings();
   const web3 = useWeb3();
   const walletAccount = useWalletAccount();
   const config = useConfig();
@@ -40,7 +40,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   };
 
   const handleChangeUseGSN = value => {
-    changeUseGsn(value);
+    changeUseGSN(value);
   };
 
   useEffect(() => {

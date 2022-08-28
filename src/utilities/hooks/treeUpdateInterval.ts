@@ -1,4 +1,4 @@
-import {useTreeFactory} from 'services/web3';
+import {useTreeFactory} from 'utilities/hooks/useWeb3';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {storageKeys} from 'services/config';
