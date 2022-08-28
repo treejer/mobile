@@ -131,7 +131,6 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
-
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
