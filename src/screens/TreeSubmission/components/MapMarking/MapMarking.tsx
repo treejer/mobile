@@ -103,94 +103,100 @@ export default function MapMarking(props: IMapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(() => {
+    let distance;
+    console.log('====================================');
+    console.log(journey, 'journey is here');
+    console.log('====================================');
     if (verifyProfile && location) {
+      console.log('====================================');
+      console.log({distance, maxDistanceInMeters}, 'distances');
+      console.log('====================================');
       onSubmit?.(location);
-    } else if (journey && journey.photoLocation && location) {
-      const distance = calcDistanceInMeters(
+    } else if (journey && journey?.photoLocation && location) {
+      console.log('mamadad');
+
+      distance = calcDistanceInMeters(
         {
-          latitude: location?.coords?.latitude,
-          longitude: location?.coords?.longitude,
+          latitude: location?.coords?.latitude || 0,
+          longitude: location?.coords?.longitude || 0,
         },
         {
           latitude: journey?.photoLocation?.latitude,
           longitude: journey?.photoLocation?.longitude,
         },
       );
-      console.log('====================================');
-      console.log({distance, maxDistanceInMeters}, 'distances');
-      console.log('====================================');
-      if (distance < maxDistanceInMeters) {
-        const newJourney = {
-          ...journey,
-          location: {
-            latitude: location?.coords?.latitude,
-            longitude: location?.coords?.longitude,
-          },
-        };
-        if (isConnected) {
+      const newJourney = {
+        ...journey,
+        location: {
+          latitude: location?.coords?.latitude,
+          longitude: location?.coords?.longitude,
+        },
+      };
+      if (isConnected) {
+        if (distance < maxDistanceInMeters || journey.isSingle === false) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {
-          console.log(newJourney, 'newJourney offline tree');
-          if (newJourney.isSingle === true) {
-            dispatchAddOfflineTree(newJourney);
-            clearJourney();
-            showAlert({
-              title: t('myProfile.attention'),
-              message: t('myProfile.offlineTreeAdd'),
-              mode: AlertMode.Info,
-            });
-          } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-            const offlineTrees: TreeJourney[] = [];
-            for (let i = 0; i < newJourney.nurseryCount; i++) {
-              offlineTrees.push({
-                ...newJourney,
-                offlineId: (Date.now() + i * 1000).toString(),
-              });
-            }
-            dispatchAddOfflineTrees(offlineTrees);
-            clearJourney();
-            showAlert({
-              title: t('myProfile.attention'),
-              message: t('myProfile.offlineNurseryAdd'),
-              mode: AlertMode.Info,
-            });
-          } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-            const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-            dispatchAddOfflineUpdateTree({
+          showAlert({
+            title: t('map.newTree.errTitle'),
+            mode: AlertMode.Error,
+            message: t('map.newTree.errMessage'),
+          });
+        }
+      } else {
+        console.log(newJourney, 'newJourney offline tree');
+        if (newJourney.isSingle === true) {
+          dispatchAddOfflineTree(newJourney);
+          clearJourney();
+          showAlert({
+            title: t('myProfile.attention'),
+            message: t('myProfile.offlineTreeAdd'),
+            mode: AlertMode.Info,
+          });
+        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
+          const offlineTrees: TreeJourney[] = [];
+          for (let i = 0; i < newJourney.nurseryCount; i++) {
+            offlineTrees.push({
               ...newJourney,
-              tree: updatedTree,
+              offlineId: (Date.now() + i * 1000).toString(),
             });
-            showAlert({
-              title: t('treeInventory.updateTitle'),
-              message: t('submitWhenOnline'),
-              mode: AlertMode.Info,
-            });
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: Routes.MyProfile}],
-              }),
-            );
-            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-            clearJourney();
-            return;
           }
+          dispatchAddOfflineTrees(offlineTrees);
+          clearJourney();
+          showAlert({
+            title: t('myProfile.attention'),
+            message: t('myProfile.offlineNurseryAdd'),
+            mode: AlertMode.Info,
+          });
+        } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
+          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+          dispatchAddOfflineUpdateTree({
+            ...newJourney,
+            tree: updatedTree,
+          });
+          showAlert({
+            title: t('treeInventory.updateTitle'),
+            message: t('submitWhenOnline'),
+            mode: AlertMode.Info,
+          });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
               routes: [{name: Routes.MyProfile}],
             }),
           );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
+          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
           clearJourney();
+          return;
         }
-      } else {
-        showAlert({
-          title: t('map.newTree.errTitle'),
-          mode: AlertMode.Error,
-          message: t('map.newTree.errMessage'),
-        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
+        clearJourney();
       }
     } else {
       if (location) {

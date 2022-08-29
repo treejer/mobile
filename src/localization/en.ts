@@ -346,7 +346,7 @@ export const en = {
     },
     updateSingleTree: {
       errTitle: 'The selected photo location is not match with the last submitted location',
-      errMessage: 'The location of the selected photo is not near to the submitted location of this tree',
+      errMessage: 'The location of the selected photo is not near to the submitted location of this {{plantType}}',
     },
   },
 };

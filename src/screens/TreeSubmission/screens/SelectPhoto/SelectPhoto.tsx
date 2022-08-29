@@ -27,10 +27,11 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import {TPoint} from 'utilities/helpers/distanceInMeters';
+import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
+import {maxDistanceInMeters} from 'services/config';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -51,6 +52,7 @@ function SelectPhoto(props: Props) {
   const [photo, setPhoto] = useState<any>();
   const [showWebCam, setShowWebCam] = useState<boolean>(false);
   const [pickedImage, setPickedImage] = useState<File | null>(null);
+  const [photoLocation, setPhotoLocation] = useState<TPoint | null>(null);
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
   const checkTreePhoto = useCheckTreePhoto();
@@ -111,6 +113,7 @@ function SelectPhoto(props: Props) {
                   canUpdate,
                   imageLocation,
                 });
+                setPhotoLocation(imageLocation);
               },
               imageCoords,
               fromGallery,
@@ -142,6 +145,7 @@ function SelectPhoto(props: Props) {
           canUpdate,
           imageLocation,
         });
+        setPhotoLocation(imageLocation);
       });
     },
     [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, userLocation],
@@ -162,6 +166,7 @@ function SelectPhoto(props: Props) {
           canUpdate,
           imageLocation,
         });
+        setPhotoLocation(imageLocation);
       });
     },
     [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage?.name, userLocation],
@@ -170,12 +175,30 @@ function SelectPhoto(props: Props) {
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
     if (isConnected) {
-      navigation.navigate(Routes.SubmitTree);
-      setNewJourney({
-        ...journey,
-        photo,
-        nurseryContinuedUpdatingLocation: true,
-      });
+      const distance = calcDistanceInMeters(
+        {
+          latitude: journey?.photoLocation?.latitude || 0,
+          longitude: journey?.photoLocation?.longitude || 0,
+        },
+        {
+          latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+          longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        },
+      );
+      if (distance < maxDistanceInMeters) {
+        navigation.navigate(Routes.SubmitTree);
+        setNewJourney({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+        });
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery'}),
+        });
+      }
     } else {
       const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
       dispatchAddOfflineUpdateTree({
@@ -215,11 +238,12 @@ function SelectPhoto(props: Props) {
     const newJourney = {
       ...journey,
       photo,
+      photoLocation,
       tree: updatedTree,
     };
     navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
     setNewJourney(newJourney);
-  }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
+  }, [journey, navigation, persistedPlantedTrees, photo, photoLocation, setNewJourney]);
 
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;

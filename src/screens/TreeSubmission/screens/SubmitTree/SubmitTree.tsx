@@ -258,7 +258,7 @@ function SubmitTree(props: Props) {
           showAlert({
             title: t('map.updateSingleTree.errTitle'),
             mode: AlertMode.Error,
-            message: t('map.updateSingleTree.errMessage'),
+            message: t('map.updateSingleTree.errMessage', {plantType: journey.isSingle ? 'tree' : 'nursery'}),
           });
         }
       } else {
@@ -299,6 +299,7 @@ function SubmitTree(props: Props) {
     journey?.photoLocation?.longitude,
     journey?.tree?.treeSpecsEntity?.latitude,
     journey?.tree?.treeSpecsEntity?.longitude,
+    journey.isSingle,
     sendEvent,
     metaDataHash,
     handleSendUpdateTransaction,
