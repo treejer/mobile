@@ -1,10 +1,11 @@
-import {calcDistance, TPoint} from 'utilities/helpers/distance';
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {useCallback} from 'react';
 import exifr from 'exifr';
 import {TUserLocation} from './usePlantTreePermissions';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
@@ -20,15 +21,16 @@ export const useCheckTreePhoto = () => {
         const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
         console.log({exif, latitude, longitude}, 'safariiiiii cordinated');
         if (latitude > 0 && longitude > 0) {
-          let maxDistance = 0.19369;
+          let maxDistance = 200;
           if (userLocation) {
             const imageCoords: TPoint = {
               latitude,
               longitude,
             };
-            const distance = calcDistance(imageCoords, userLocation);
+            const distance = calcDistanceInMeters(imageCoords, userLocation);
+            const distanceInKiloMeters = distance / 1000;
             console.log({userLocation, imageCoords, distance});
-            if (distance < maxDistance) {
+            if (distanceInKiloMeters < maxDistance) {
               successCallback();
             } else {
               showAlert({

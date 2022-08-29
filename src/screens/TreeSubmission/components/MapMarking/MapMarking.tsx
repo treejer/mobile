@@ -18,7 +18,7 @@ import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
-import {calcDistance} from 'utilities/helpers/distance';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -105,7 +105,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     if (verifyProfile && location) {
       onSubmit?.(location);
     } else if (journey && journey.photoLocation && location) {
-      const distance = calcDistance(
+      const distance = calcDistanceInMeters(
         {
           latitude: location?.coords?.latitude,
           longitude: location?.coords?.longitude,
@@ -115,7 +115,7 @@ export default function MapMarking(props: IMapMarkingProps) {
           longitude: journey?.photoLocation?.longitude,
         },
       );
-      const maxDistance = 0.0000056831373562600602;
+      const maxDistance = 15;
       console.log('====================================');
       console.log({distance, maxDistance}, 'distances');
       console.log('====================================');
@@ -187,9 +187,9 @@ export default function MapMarking(props: IMapMarkingProps) {
         }
       } else {
         showAlert({
-          title: t('inValidImage.title'),
+          title: t('map.newTree.errTitle'),
           mode: AlertMode.Error,
-          message: t('inValidImage.longDistance'),
+          message: t('map.newTree.errMessage'),
         });
       }
     } else {
