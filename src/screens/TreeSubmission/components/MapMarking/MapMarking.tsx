@@ -19,6 +19,7 @@ import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {maxDistanceInMeters} from 'services/config';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -115,11 +116,10 @@ export default function MapMarking(props: IMapMarkingProps) {
           longitude: journey?.photoLocation?.longitude,
         },
       );
-      const maxDistance = 15;
       console.log('====================================');
-      console.log({distance, maxDistance}, 'distances');
+      console.log({distance, maxDistanceInMeters}, 'distances');
       console.log('====================================');
-      if (distance < maxDistance) {
+      if (distance < maxDistanceInMeters) {
         const newJourney = {
           ...journey,
           location: {

@@ -34,6 +34,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {maxDistanceInMeters} from 'services/config';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -225,7 +226,6 @@ function SubmitTree(props: Props) {
       if (journey.treeIdToUpdate) {
         sendEvent('update_tree_confirm');
         console.log(metaDataHash, '====> metaDataHash <====');
-        const maxDistance = 15;
         const distance = calcDistanceInMeters(
           {
             latitude: journey?.photoLocation?.latitude || 0,
@@ -237,9 +237,9 @@ function SubmitTree(props: Props) {
           },
         );
 
-        console.log({maxDistance, distance}, 'distance in meters');
+        console.log({maxDistanceInMeters, distance}, 'distance in meters');
 
-        if (distance < maxDistance) {
+        if (distance < maxDistanceInMeters) {
           transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
           showAlert({

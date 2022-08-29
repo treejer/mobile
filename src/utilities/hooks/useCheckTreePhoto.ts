@@ -1,4 +1,5 @@
 import {useTranslation} from 'react-i18next';
+import {maxDistanceInKiloMeters} from 'services/config';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {TUserLocation} from './usePlantTreePermissions';
@@ -15,7 +16,6 @@ export const useCheckTreePhoto = () => {
   ) => {
     if (imageLocation?.latitude && imageLocation?.longitude) {
       // @here
-      let maxDistance = 200;
 
       if (userLocation) {
         const distance = calcDistanceInMeters(imageLocation, userLocation);
@@ -24,7 +24,7 @@ export const useCheckTreePhoto = () => {
 
         console.log({userLocation, imageLocation, distance, distanceInKiloMeters});
 
-        if (distanceInKiloMeters < maxDistance) {
+        if (distanceInKiloMeters < maxDistanceInKiloMeters) {
           successCallback(imageLocation);
         } else {
           showAlert({

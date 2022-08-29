@@ -6,6 +6,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {maxDistanceInKiloMeters} from 'services/config';
 
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
@@ -21,7 +22,6 @@ export const useCheckTreePhoto = () => {
         const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
         console.log({exif, latitude, longitude}, 'safariiiiii cordinated');
         if (latitude > 0 && longitude > 0) {
-          let maxDistance = 200;
           if (userLocation) {
             const imageCoords: TPoint = {
               latitude,
@@ -30,7 +30,7 @@ export const useCheckTreePhoto = () => {
             const distance = calcDistanceInMeters(imageCoords, userLocation);
             const distanceInKiloMeters = distance / 1000;
             console.log({userLocation, imageCoords, distance});
-            if (distanceInKiloMeters < maxDistance) {
+            if (distanceInKiloMeters < maxDistanceInKiloMeters) {
               successCallback();
             } else {
               showAlert({

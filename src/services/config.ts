@@ -256,3 +256,6 @@ export const networks: Networks = {
 };
 
 export default config;
+
+export const maxDistanceInKiloMeters = 200;
+export const maxDistanceInMeters = 15;
