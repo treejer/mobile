@@ -22,7 +22,7 @@ export async function getUserNonce(
 
   try {
     const response = await fetch(`${treejerApiUrl}/user/nonce?${searchParams.toString()}`, {
-      method: 'POST',
+      method: 'GET',
     });
 
     const {message, userId} = await response.json();
