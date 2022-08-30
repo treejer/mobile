@@ -174,17 +174,17 @@ function SelectPhoto(props: Props) {
 
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
+    const distance = calcDistanceInMeters(
+      {
+        latitude: journey?.photoLocation?.latitude || 0,
+        longitude: journey?.photoLocation?.longitude || 0,
+      },
+      {
+        latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+      },
+    );
     if (isConnected) {
-      const distance = calcDistanceInMeters(
-        {
-          latitude: journey?.photoLocation?.latitude || 0,
-          longitude: journey?.photoLocation?.longitude || 0,
-        },
-        {
-          latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-          longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-        },
-      );
       if (distance < maxDistanceInMeters) {
         navigation.navigate(Routes.SubmitTree);
         setNewJourney({
@@ -200,26 +200,34 @@ function SelectPhoto(props: Props) {
         });
       }
     } else {
-      const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-      dispatchAddOfflineUpdateTree({
-        ...journey,
-        photo,
-        nurseryContinuedUpdatingLocation: true,
-        tree: updatedTree,
-      });
-      showAlert({
-        title: t('treeInventory.updateTitle'),
-        message: t('submitWhenOnline'),
-        mode: AlertMode.Info,
-      });
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: Routes.MyProfile}],
-        }),
-      );
-      navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-      clearJourney();
+      if (distance < maxDistanceInMeters) {
+        const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+        dispatchAddOfflineUpdateTree({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+          tree: updatedTree,
+        });
+        showAlert({
+          title: t('treeInventory.updateTitle'),
+          message: t('submitWhenOnline'),
+          mode: AlertMode.Info,
+        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+        clearJourney();
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery '}),
+        });
+      }
     }
   }, [
     clearJourney,

@@ -1,5 +1,5 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {CommonActions, NavigationContainer, useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -35,7 +35,7 @@ export default function MapMarking(props: IMapMarkingProps) {
   const [isInitial, setIsInitial] = useState(true);
   const [location, setLocation] = useState<GeoPosition>();
   const isConnected = useNetInfoConnected();
-  const {dispatchAddOfflineTree, dispatchAddOfflineTrees} = useOfflineTrees();
+  const {dispatchAddOfflineTree, dispatchAddOfflineTrees, dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const {t} = useTranslation();
 
   const camera = useRef<MapboxGL.Camera>(null);
@@ -45,7 +45,6 @@ export default function MapMarking(props: IMapMarkingProps) {
   const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
 
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
-  const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
 
   useEffect(() => {
     if (!!camera.current && !isCameraRefVisible) {
@@ -113,8 +112,6 @@ export default function MapMarking(props: IMapMarkingProps) {
       console.log('====================================');
       onSubmit?.(location);
     } else if (journey && journey?.photoLocation && location) {
-      console.log('mamadad');
-
       distance = calcDistanceInMeters(
         {
           latitude: location?.coords?.latitude || 0,
@@ -133,7 +130,9 @@ export default function MapMarking(props: IMapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (distance < maxDistanceInMeters || journey.isSingle === false) {
+        console.log(distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation, 'heyyyyyyyy');
+
+        if (distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {
@@ -146,55 +145,76 @@ export default function MapMarking(props: IMapMarkingProps) {
       } else {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
-          dispatchAddOfflineTree(newJourney);
-          clearJourney();
-          showAlert({
-            title: t('myProfile.attention'),
-            message: t('myProfile.offlineTreeAdd'),
-            mode: AlertMode.Info,
-          });
-        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-          const offlineTrees: TreeJourney[] = [];
-          for (let i = 0; i < newJourney.nurseryCount; i++) {
-            offlineTrees.push({
-              ...newJourney,
-              offlineId: (Date.now() + i * 1000).toString(),
+          if (distance < maxDistanceInMeters) {
+            dispatchAddOfflineTree(newJourney);
+            clearJourney();
+            showAlert({
+              title: t('myProfile.attention'),
+              message: t('myProfile.offlineTreeAdd'),
+              mode: AlertMode.Info,
             });
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage'),
+            });
+            return;
           }
-          dispatchAddOfflineTrees(offlineTrees);
-          clearJourney();
-          showAlert({
-            title: t('myProfile.attention'),
-            message: t('myProfile.offlineNurseryAdd'),
-            mode: AlertMode.Info,
-          });
+        } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
+          if (distance < maxDistanceInMeters) {
+            const offlineTrees: TreeJourney[] = [];
+            for (let i = 0; i < newJourney.nurseryCount; i++) {
+              offlineTrees.push({
+                ...newJourney,
+                offlineId: (Date.now() + i * 1000).toString(),
+              });
+            }
+            dispatchAddOfflineTrees(offlineTrees);
+            clearJourney();
+            showAlert({
+              title: t('myProfile.attention'),
+              message: t('myProfile.offlineNurseryAdd'),
+              mode: AlertMode.Info,
+            });
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage', {plantType: 'nursery'}),
+            });
+            return;
+          }
         } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-          const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-            mode: AlertMode.Info,
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.MyProfile}],
-            }),
-          );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          clearJourney();
-          return;
+          if (distance < maxDistanceInMeters) {
+            const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+              mode: AlertMode.Info,
+            });
+            navigation.goBack(3);
+            navigation.navigate(Routes.SelectPlantType);
+            navigation.navigate(Routes.MyProfile);
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+            return;
+          } else {
+            showAlert({
+              title: t('map.updateSingleTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.updateSingleTree.errMessage', {plantType: 'nursery'}),
+            });
+            return;
+          }
         }
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: Routes.MyProfile}],
-          }),
-        );
+        navigation.goBack(3);
+        navigation.navigate(Routes.SelectPlantType);
+        navigation.navigate(Routes.MyProfile);
         navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineCreate});
         clearJourney();
       }
