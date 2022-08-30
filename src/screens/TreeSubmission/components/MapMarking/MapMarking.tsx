@@ -102,17 +102,13 @@ export default function MapMarking(props: IMapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(() => {
-    let distance;
     console.log('====================================');
     console.log(journey, 'journey is here');
     console.log('====================================');
     if (verifyProfile && location) {
-      console.log('====================================');
-      console.log({distance, maxDistanceInMeters}, 'distances');
-      console.log('====================================');
       onSubmit?.(location);
     } else if (journey && journey?.photoLocation && location) {
-      distance = calcDistanceInMeters(
+      const distance = calcDistanceInMeters(
         {
           latitude: location?.coords?.latitude || 0,
           longitude: location?.coords?.longitude || 0,
@@ -129,6 +125,9 @@ export default function MapMarking(props: IMapMarkingProps) {
           longitude: location?.coords?.longitude,
         },
       };
+      console.log('====================================');
+      console.log({distance, maxDistanceInMeters}, 'distances');
+      console.log('====================================');
       if (isConnected) {
         console.log(distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation, 'heyyyyyyyy');
 

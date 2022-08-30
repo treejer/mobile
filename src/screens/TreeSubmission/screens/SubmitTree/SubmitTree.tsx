@@ -258,7 +258,7 @@ function SubmitTree(props: Props) {
           showAlert({
             title: t('map.updateSingleTree.errTitle'),
             mode: AlertMode.Error,
-            message: t('map.updateSingleTree.errMessage', {plantType: journey.isSingle ? 'tree' : 'nursery'}),
+            message: t('map.updateSingleTree.errMessage', {plantType: journey.isSingle ? t('tree') : t('nursery')}),
           });
         }
       } else {

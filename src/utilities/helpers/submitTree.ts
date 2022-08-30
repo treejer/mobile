@@ -314,16 +314,32 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate(Routes.SubmitTree);
-          setNewJourney({
-            ...newJourney,
-            nurseryContinuedUpdatingLocation: true,
-          });
+          if (distance < maxDistanceInMeters) {
+            navigation.navigate(Routes.SubmitTree);
+            setNewJourney({
+              ...newJourney,
+              nurseryContinuedUpdatingLocation: true,
+            });
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage', {plantType: t('nursery')}),
+            });
+          }
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          navigation.navigate(Routes.SubmitTree);
+          if (distance < maxDistanceInMeters) {
+            navigation.navigate(Routes.SubmitTree);
+          } else {
+            showAlert({
+              title: t('map.updateSingleTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.updateSingleTree.errMessage', {plantType: t('tree')}),
+            });
+          }
           setNewJourney(newJourney);
         } else if (!isUpdate) {
           navigation.navigate(Routes.SelectOnMap);
@@ -337,6 +353,7 @@ export function useAfterSelectPhotoHandler() {
         console.log(imageLocation, 'image location');
 
         console.log(distance, 'distance is hereeee');
+
         if (isUpdate && isNursery && !canUpdate) {
           if (distance < maxDistanceInMeters) {
             dispatchAddOfflineUpdateTree({
@@ -358,9 +375,9 @@ export function useAfterSelectPhotoHandler() {
             clearJourney();
           } else {
             showAlert({
-              title: t('map.newTree.errTitle'),
+              title: t('map.updateSingleTree.errTitle'),
               mode: AlertMode.Error,
-              message: t('map.newTree.errMessage'),
+              message: t('map.updateSingleTree.errMessage', {plantType: t('nursery')}),
             });
           }
         } else if (isUpdate && isNursery) {
@@ -386,9 +403,9 @@ export function useAfterSelectPhotoHandler() {
             clearJourney();
           } else {
             showAlert({
-              title: t('map.newTree.errTitle'),
+              title: t('map.updateSingleTree.errTitle'),
               mode: AlertMode.Error,
-              message: t('map.newTree.errMessage'),
+              message: t('map.updateSingleTree.errMessage', {plantType: t('tree')}),
             });
           }
         } else if (!isUpdate) {

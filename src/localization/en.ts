@@ -341,7 +341,7 @@ export const en = {
   },
   map: {
     newTree: {
-      errTitle: 'You are not near to the location of you selected photo',
+      errTitle: 'You are not near to the location of your selected photo',
       errMessage: 'This location you are submitting must be near the selected photo location',
     },
     updateSingleTree: {
@@ -349,4 +349,6 @@ export const en = {
       errMessage: 'The location of the selected photo is not near to the submitted location of this {{plantType}}',
     },
   },
+  tree: 'tree',
+  nursery: 'nursery',
 };

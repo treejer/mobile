@@ -9,9 +9,10 @@ import {colors} from 'constants/values';
 import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
 import {useTranslation} from 'react-i18next';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {TreeJourney} from 'screens/TreeSubmission/types';
 import {Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {maxDistanceInMeters} from 'services/config';
 
 export type locationType = {
   lng: number;
@@ -48,7 +49,17 @@ export default function MapMarking(props: MapMarkingProps) {
           longitude: location.lng,
         } as GeoCoordinates,
       });
-    } else if (journey && location) {
+    } else if (journey && journey.photoLocation && location) {
+      const distance = calcDistanceInMeters(
+        {
+          latitude: location?.lat || 0,
+          longitude: location?.lng || 0,
+        },
+        {
+          latitude: journey?.photoLocation?.latitude,
+          longitude: journey?.photoLocation?.longitude,
+        },
+      );
       const newJourney = {
         ...journey,
         location: {
@@ -57,8 +68,16 @@ export default function MapMarking(props: MapMarkingProps) {
         },
       };
       if (isConnected) {
-        navigation.navigate(Routes.SubmitTree);
-        setNewJourney(newJourney);
+        if (distance < maxDistanceInMeters) {
+          navigation.navigate(Routes.SubmitTree);
+          setNewJourney(newJourney);
+        } else {
+          showAlert({
+            title: t('map.newTree.errTitle'),
+            mode: AlertMode.Error,
+            message: t('map.newTree.errMessage', {plantType: journey.isSingle ? t('tree') : t('journey')}),
+          });
+        }
       } else {
         showAlert({message: `${t('offlineMap.notSupported')}`, mode: AlertMode.Error});
       }
