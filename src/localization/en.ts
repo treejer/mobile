@@ -339,4 +339,16 @@ export const en = {
     cantProceedDesc:
       'To plant a tree and nursery or upload a tree we need location, camera, and media permissions to acuurateyour activities and detect fraud.',
   },
+  map: {
+    newTree: {
+      errTitle: 'You are not near to the location of your selected photo',
+      errMessage: 'This location you are submitting must be near the selected photo location',
+    },
+    updateSingleTree: {
+      errTitle: 'The selected photo location is not match with the last submitted location',
+      errMessage: 'The location of the selected photo is not near to the submitted location of this {{plantType}}',
+    },
+  },
+  tree: 'tree',
+  nursery: 'nursery',
 };
