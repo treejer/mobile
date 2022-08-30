@@ -16,6 +16,8 @@ import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {calcDistanceInMeters} from './distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {isWeb} from './web';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -286,6 +288,7 @@ export function useAfterSelectPhotoHandler() {
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
+  const browserPlatform = useBrowserPlatform();
 
   const {t} = useTranslation();
 
@@ -314,7 +317,7 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
             navigation.navigate(Routes.SubmitTree);
             setNewJourney({
               ...newJourney,
@@ -324,14 +327,14 @@ export function useAfterSelectPhotoHandler() {
             showAlert({
               title: t('map.newTree.errTitle'),
               mode: AlertMode.Error,
-              message: t('map.newTree.errMessage', {plantType: t('nursery')}),
+              message: t('map.newTree.errMessage'),
             });
           }
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
             navigation.navigate(Routes.SubmitTree);
           } else {
             showAlert({
@@ -355,7 +358,7 @@ export function useAfterSelectPhotoHandler() {
         console.log(distance, 'distance is hereeee');
 
         if (isUpdate && isNursery && !canUpdate) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -384,7 +387,7 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -415,6 +418,7 @@ export function useAfterSelectPhotoHandler() {
       }
     },
     [
+      browserPlatform,
       clearJourney,
       dispatchAddOfflineUpdateTree,
       isConnected,

@@ -35,6 +35,8 @@ import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions'
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
+import {isWeb} from 'utilities/helpers/web';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -58,6 +60,7 @@ function SubmitTree(props: Props) {
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
   const isConnected = useNetInfoConnected();
+  const browserPlatform = useBrowserPlatform();
 
   const birthDay = currentTimestamp();
 
@@ -239,7 +242,7 @@ function SubmitTree(props: Props) {
 
         console.log({maxDistanceInMeters, distance}, 'distance in meters');
 
-        if (distance < maxDistanceInMeters) {
+        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
           transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
           showAlert({
@@ -302,6 +305,7 @@ function SubmitTree(props: Props) {
     journey.isSingle,
     sendEvent,
     metaDataHash,
+    browserPlatform,
     handleSendUpdateTransaction,
     navigation,
     clearJourney,

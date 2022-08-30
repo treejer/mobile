@@ -13,6 +13,8 @@ import {Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {isWeb} from 'utilities/helpers/web';
 
 export type locationType = {
   lng: number;
@@ -36,6 +38,7 @@ export default function MapMarking(props: MapMarkingProps) {
   // const [persistedPlantedTrees] = usePersistedPlantedTrees();
   // const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const isConnected = useNetInfoConnected();
+  const browserPlatform = useBrowserPlatform();
 
   const handleDismiss = useCallback(() => {
     navigation.goBack();
@@ -49,15 +52,15 @@ export default function MapMarking(props: MapMarkingProps) {
           longitude: location.lng,
         } as GeoCoordinates,
       });
-    } else if (journey && journey.photoLocation && location) {
+    } else if (journey && location) {
       const distance = calcDistanceInMeters(
         {
           latitude: location?.lat || 0,
           longitude: location?.lng || 0,
         },
         {
-          latitude: journey?.photoLocation?.latitude,
-          longitude: journey?.photoLocation?.longitude,
+          latitude: journey?.photoLocation?.latitude || 0,
+          longitude: journey?.photoLocation?.longitude || 0,
         },
       );
       const newJourney = {
@@ -68,7 +71,7 @@ export default function MapMarking(props: MapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (distance < maxDistanceInMeters) {
+        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {

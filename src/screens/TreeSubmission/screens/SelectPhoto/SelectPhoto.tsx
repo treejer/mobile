@@ -32,6 +32,7 @@ import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions'
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
 import {maxDistanceInMeters} from 'services/config';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -56,7 +57,7 @@ function SelectPhoto(props: Props) {
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
   const checkTreePhoto = useCheckTreePhoto();
-
+  const browserPlatform = useBrowserPlatform();
   const address = useWalletAccount();
 
   const {canPlant} = usePlanterStatusQuery(address);
@@ -185,7 +186,7 @@ function SelectPhoto(props: Props) {
       },
     );
     if (isConnected) {
-      if (distance < maxDistanceInMeters) {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
         navigation.navigate(Routes.SubmitTree);
         setNewJourney({
           ...journey,
@@ -200,7 +201,7 @@ function SelectPhoto(props: Props) {
         });
       }
     } else {
-      if (distance < maxDistanceInMeters) {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
         dispatchAddOfflineUpdateTree({
           ...journey,
@@ -230,6 +231,7 @@ function SelectPhoto(props: Props) {
       }
     }
   }, [
+    browserPlatform,
     clearJourney,
     dispatchAddOfflineUpdateTree,
     isConnected,

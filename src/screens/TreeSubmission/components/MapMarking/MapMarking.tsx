@@ -20,6 +20,8 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
+import {isWeb} from 'utilities/helpers/web';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -29,13 +31,14 @@ interface IMapMarkingProps {
 
 export default function MapMarking(props: IMapMarkingProps) {
   const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
-  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(!permissionHasLocation);
   const [isInitial, setIsInitial] = useState(true);
   const [location, setLocation] = useState<GeoPosition>();
   const isConnected = useNetInfoConnected();
   const {dispatchAddOfflineTree, dispatchAddOfflineTrees, dispatchAddOfflineUpdateTree} = useOfflineTrees();
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const browserPlatform = useBrowserPlatform();
   const {t} = useTranslation();
 
   const camera = useRef<MapboxGL.Camera>(null);
@@ -204,9 +207,9 @@ export default function MapMarking(props: IMapMarkingProps) {
             return;
           } else {
             showAlert({
-              title: t('map.updateSingleTree.errTitle'),
+              title: t('map.newTree.errTitle'),
               mode: AlertMode.Error,
-              message: t('map.updateSingleTree.errMessage', {plantType: 'nursery'}),
+              message: t('map.newTree.errMessage', {plantType: 'nursery'}),
             });
             return;
           }
@@ -223,16 +226,16 @@ export default function MapMarking(props: IMapMarkingProps) {
       }
     }
   }, [
+    journey,
     verifyProfile,
     location,
-    journey,
     onSubmit,
     isConnected,
     navigation,
     setNewJourney,
+    t,
     clearJourney,
     dispatchAddOfflineTree,
-    t,
     dispatchAddOfflineTrees,
     persistedPlantedTrees,
     dispatchAddOfflineUpdateTree,
