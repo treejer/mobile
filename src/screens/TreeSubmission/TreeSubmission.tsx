@@ -1,5 +1,3 @@
-import globalStyles from 'constants/styles';
-
 import React, {useEffect} from 'react';
 import {Route, NavigationProp} from '@react-navigation/native';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -16,7 +14,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
-import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -33,11 +31,10 @@ const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 interface Props {
   route: Route<any>;
   navigation: NavigationProp<any>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
-function TreeSubmission({route, navigation}: Props) {
-  const plantTreePermissions = usePlantTreePermissions();
-
+function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();

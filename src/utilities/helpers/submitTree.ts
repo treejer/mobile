@@ -10,9 +10,12 @@ import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
 import {Image} from 'react-native-image-crop-picker';
 import {useTranslation} from 'react-i18next';
 import {useCallback} from 'react';
-import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
+import {calcDistanceInMeters} from './distanceInMeters';
+import {maxDistanceInMeters} from 'services/config';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -274,6 +277,7 @@ export type AfterSelectPhotoHandler = {
   isNursery: boolean;
   canUpdate: boolean;
   setPhoto?: (photo: File | Image) => void;
+  imageLocation: TUserLocation;
 };
 
 export function useAfterSelectPhotoHandler() {
@@ -285,16 +289,28 @@ export function useAfterSelectPhotoHandler() {
 
   const {t} = useTranslation();
 
-  const isConnected = useNetInfo();
+  const isConnected = useNetInfoConnected();
 
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
-      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto, imageLocation} = options;
 
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,
+        photoLocation: imageLocation,
       };
+
+      const distance = calcDistanceInMeters(
+        {
+          latitude: Number(journey.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+          longitude: Number(journey.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        },
+        {
+          latitude: imageLocation?.latitude,
+          longitude: imageLocation?.longitude,
+        },
+      );
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
@@ -314,45 +330,67 @@ export function useAfterSelectPhotoHandler() {
           setNewJourney(newJourney);
         }
       } else {
+        // console.log('mamamamamamd');
+
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+
+        console.log(imageLocation, 'image location');
+
+        console.log(distance, 'distance is hereeee');
         if (isUpdate && isNursery && !canUpdate) {
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-            mode: AlertMode.Success,
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.MyProfile}],
-            }),
-          );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          clearJourney();
+          if (distance < maxDistanceInMeters) {
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+              mode: AlertMode.Success,
+            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.MyProfile}],
+              }),
+            );
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage'),
+            });
+          }
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.MyProfile}],
-            }),
-          );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          clearJourney();
+          if (distance < maxDistanceInMeters) {
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.MyProfile}],
+              }),
+            );
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage'),
+            });
+          }
         } else if (!isUpdate) {
           navigation.navigate(Routes.SelectOnMap);
           setNewJourney(newJourney);

@@ -27,10 +27,11 @@ import {useCurrentJourney} from 'services/currentJourney';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import {TPoint} from 'utilities/helpers/distance';
+import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
+import {maxDistanceInMeters} from 'services/config';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -51,6 +52,7 @@ function SelectPhoto(props: Props) {
   const [photo, setPhoto] = useState<any>();
   const [showWebCam, setShowWebCam] = useState<boolean>(false);
   const [pickedImage, setPickedImage] = useState<File | null>(null);
+  const [photoLocation, setPhotoLocation] = useState<TPoint | null>(null);
 
   const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
   const checkTreePhoto = useCheckTreePhoto();
@@ -102,56 +104,20 @@ function SelectPhoto(props: Props) {
             checkTreePhoto(
               '',
               userLocation,
-              () => {
+              imageLocation => {
                 handleAfterSelectPhoto({
                   selectedPhoto,
                   setPhoto,
                   isUpdate,
                   isNursery,
                   canUpdate,
+                  imageLocation,
                 });
+                setPhotoLocation(imageLocation);
               },
               imageCoords,
               fromGallery,
             );
-            // if (selectedPhoto?.exif.Latitude && selectedPhoto?.exif.Longitude) {
-            //   // @here
-            //   let maxDistance = 5;
-            //   if (userLocation) {
-            //     const distance = calcDistance(imageCoords, userLocation);
-            //     console.log({userLocation, imageCoords, distance});
-
-            //     if (distance < maxDistance) {
-            //       handleAfterSelectPhoto({
-            //         selectedPhoto,
-            //         setPhoto,
-            //         isUpdate,
-            //         isNursery,
-            //         canUpdate,
-            //       });
-            //     } else {
-            //       showAlert({
-            //         title: t('inValidImage.title'),
-            //         mode: AlertMode.Error,
-            //         message: t('inValidImage.longDistance'),
-            //       });
-            //     }
-            //   }
-            // } else {
-            //   if (fromGallery) {
-            //     showAlert({
-            //       title: t('inValidImage.title'),
-            //       mode: AlertMode.Error,
-            //       message: t('inValidImage.message'),
-            //     });
-            //   } else {
-            //     showAlert({
-            //       title: t('inValidImage.title'),
-            //       mode: AlertMode.Error,
-            //       message: t('inValidImage.hasNoLocation'),
-            //     });
-            //   }
-            // }
           }
         }
       }
@@ -170,50 +136,17 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setShowWebCam(false);
 
-      checkTreePhoto(image, userLocation, () => {
+      checkTreePhoto(image, userLocation, imageLocation => {
         handleAfterSelectPhoto({
           selectedPhoto: file,
           setPhoto,
           isUpdate,
           isNursery,
           canUpdate,
+          imageLocation,
         });
+        setPhotoLocation(imageLocation);
       });
-
-      // const {latitude, longitude} = await exifr.parse(image);
-      // if (latitude > 0 && longitude > 0) {
-      //   let maxDistance = 5;
-
-      //   if (userLocation) {
-      //     const imageCoords: TPoint = {
-      //       latitude,
-      //       longitude,
-      //     };
-      //     const distance = calcDistance(imageCoords, userLocation);
-      //     console.log({userLocation, imageCoords, distance});
-      //     if (distance < maxDistance) {
-      //       handleAfterSelectPhoto({
-      //         selectedPhoto: file,
-      //         setPhoto,
-      //         isUpdate,
-      //         isNursery,
-      //         canUpdate,
-      //       });
-      //     } else {
-      //       showAlert({
-      //         title: t('inValidImage.title'),
-      //         mode: AlertMode.Error,
-      //         message: t('inValidImage.longDistance'),
-      //       });
-      //     }
-      //   } else {
-      //     showAlert({
-      //       title: t('inValidImage.title'),
-      //       mode: AlertMode.Error,
-      //       message: t('inValidImage.hasNoLocation'),
-      //     });
-      //   }
-      // }
     },
     [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, userLocation],
   );
@@ -224,83 +157,77 @@ function SelectPhoto(props: Props) {
       setPhoto(file);
       setPickedImage(null);
 
-      checkTreePhoto(image, userLocation, () => {
+      checkTreePhoto(image, userLocation, imageLocation => {
         handleAfterSelectPhoto({
           selectedPhoto: file,
           setPhoto,
           isUpdate,
           isNursery,
           canUpdate,
+          imageLocation,
         });
+        setPhotoLocation(imageLocation);
       });
-
-      // const {latitude, longitude} = await exifr.parse(image);
-      // if (latitude > 0 && longitude > 0) {
-      //   let maxDistance = 5;
-      //   if (userLocation) {
-      //     const imageCoords: TPoint = {
-      //       latitude,
-      //       longitude,
-      //     };
-      //     const distance = calcDistance(imageCoords, userLocation);
-      //     console.log({userLocation, imageCoords, distance});
-      //     if (distance < maxDistance) {
-      //       handleAfterSelectPhoto({
-      //         selectedPhoto: file,
-      //         setPhoto,
-      //         isUpdate,
-      //         isNursery,
-      //         canUpdate,
-      //       });
-      //     } else {
-      //       showAlert({
-      //         title: t('inValidImage.title'),
-      //         mode: AlertMode.Error,
-      //         message: t('inValidImage.longDistance'),
-      //       });
-      //     }
-      //   } else {
-      //     showAlert({
-      //       title: t('inValidImage.title'),
-      //       mode: AlertMode.Error,
-      //       message: t('inValidImage.hasNoLocation'),
-      //     });
-      //   }
-      // }
     },
     [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage?.name, userLocation],
   );
 
   const handleContinue = useCallback(() => {
     console.log(journey, 'journey handleContinue');
+    const distance = calcDistanceInMeters(
+      {
+        latitude: journey?.photoLocation?.latitude || 0,
+        longitude: journey?.photoLocation?.longitude || 0,
+      },
+      {
+        latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+      },
+    );
     if (isConnected) {
-      navigation.navigate(Routes.SubmitTree);
-      setNewJourney({
-        ...journey,
-        photo,
-        nurseryContinuedUpdatingLocation: true,
-      });
+      if (distance < maxDistanceInMeters) {
+        navigation.navigate(Routes.SubmitTree);
+        setNewJourney({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+        });
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery'}),
+        });
+      }
     } else {
-      const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-      dispatchAddOfflineUpdateTree({
-        ...journey,
-        photo,
-        nurseryContinuedUpdatingLocation: true,
-        tree: updatedTree,
-      });
-      showAlert({
-        title: t('treeInventory.updateTitle'),
-        message: t('submitWhenOnline'),
-        mode: AlertMode.Info,
-      });
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: Routes.MyProfile}],
-        }),
-      );
-      navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-      clearJourney();
+      if (distance < maxDistanceInMeters) {
+        const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+        dispatchAddOfflineUpdateTree({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+          tree: updatedTree,
+        });
+        showAlert({
+          title: t('treeInventory.updateTitle'),
+          message: t('submitWhenOnline'),
+          mode: AlertMode.Info,
+        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+        clearJourney();
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery '}),
+        });
+      }
     }
   }, [
     clearJourney,
@@ -319,11 +246,12 @@ function SelectPhoto(props: Props) {
     const newJourney = {
       ...journey,
       photo,
+      photoLocation,
       tree: updatedTree,
     };
     navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
     setNewJourney(newJourney);
-  }, [journey, navigation, persistedPlantedTrees, photo, setNewJourney]);
+  }, [journey, navigation, persistedPlantedTrees, photo, photoLocation, setNewJourney]);
 
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
