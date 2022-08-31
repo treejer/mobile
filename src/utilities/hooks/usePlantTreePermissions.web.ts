@@ -56,6 +56,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   useEffect(() => {
     (async () => {
       try {
+        await checkUserLocation();
         requestCameraPermission();
         intervalRef.current = setInterval(async () => {
           await checkPermission();

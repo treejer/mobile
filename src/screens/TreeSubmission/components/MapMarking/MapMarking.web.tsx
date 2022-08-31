@@ -71,7 +71,7 @@ export default function MapMarking(props: MapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+        if (distance < maxDistanceInMeters + accuracyInMeters || (isWeb() && browserPlatform === 'iOS')) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {
