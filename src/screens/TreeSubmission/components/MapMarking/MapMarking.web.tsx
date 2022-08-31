@@ -78,6 +78,11 @@ export default function MapMarking(props: MapMarkingProps) {
           showAlert({
             title: t('map.newTree.errTitle'),
             mode: AlertMode.Error,
+            message: `${{distance, maxDistanceInMeters}}`,
+          });
+          showAlert({
+            title: t('map.newTree.errTitle'),
+            mode: AlertMode.Error,
             message: t('map.newTree.errMessage', {plantType: journey.isSingle ? t('tree') : t('journey')}),
           });
         }
