@@ -78,7 +78,7 @@ export default function MapMarking(props: MapMarkingProps) {
           showAlert({
             title: t('map.newTree.errTitle'),
             mode: AlertMode.Error,
-            message: `${{distance, maxDistanceInMeters}}`,
+            message: `{distance: ${distance}, maxDistanceInMeters: ${maxDistanceInMeters}}`,
           });
           showAlert({
             title: t('map.newTree.errTitle'),
