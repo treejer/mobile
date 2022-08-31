@@ -20,12 +20,12 @@ export const useCheckTreePhoto = () => {
       imageLocation: TUserLocation,
     ) => {
       try {
-        const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
-        console.log({exif, latitude, longitude}, 'cordinates');
         if (browserPlatform === 'iOS') {
           successCallback();
           return;
         }
+        const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
+        console.log({exif, latitude, longitude}, 'cordinates');
         if (latitude > 0 && longitude > 0) {
           if (userLocation) {
             const imageCoords: TPoint = {
