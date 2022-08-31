@@ -13,14 +13,19 @@ export const useCheckTreePhoto = () => {
   const browserPlatform = useBrowserPlatform();
 
   return useCallback(
-    async (image64Base: string, userLocation: TUserLocation, successCallback: () => void) => {
+    async (
+      image64Base: string,
+      userLocation: TUserLocation,
+      successCallback: (imageLocation?: TUserLocation) => void,
+      imageLocation: TUserLocation,
+    ) => {
       try {
         if (browserPlatform === 'iOS') {
           successCallback();
           return;
         }
         const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
-        console.log({exif, latitude, longitude}, 'safariiiiii cordinated');
+        console.log({exif, latitude, longitude}, 'cordinates');
         if (latitude > 0 && longitude > 0) {
           if (userLocation) {
             const imageCoords: TPoint = {
@@ -31,7 +36,7 @@ export const useCheckTreePhoto = () => {
             const distanceInKiloMeters = distance / 1000;
             console.log({userLocation, imageCoords, distance});
             if (distanceInKiloMeters < maxDistanceInKiloMeters) {
-              successCallback();
+              successCallback(imageLocation);
             } else {
               showAlert({
                 title: t('inValidImage.title'),

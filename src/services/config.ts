@@ -1,6 +1,7 @@
 /* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
 import {ImageURISource, Platform} from 'react-native';
+import {isWeb} from 'utilities/helpers/web';
 
 import {RinkebyLogo, MaticLogo} from '../../assets/images';
 
@@ -258,4 +259,4 @@ export const networks: Networks = {
 export default config;
 
 export const maxDistanceInKiloMeters = 200;
-export const maxDistanceInMeters = 15;
+export const maxDistanceInMeters = isWeb() ? 100 : 15;
