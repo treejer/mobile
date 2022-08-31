@@ -78,6 +78,16 @@ export default function MapMarking(props: MapMarkingProps) {
           showAlert({
             title: t('map.newTree.errTitle'),
             mode: AlertMode.Error,
+            message: `{location latitude: ${location.lat}, location longitude: ${location.lng}}`,
+          });
+          showAlert({
+            title: t('map.newTree.errTitle'),
+            mode: AlertMode.Error,
+            message: `{photo latitude: ${journey.photoLocation?.latitude}, photo longitude: ${journey.photoLocation?.longitude}}`,
+          });
+          showAlert({
+            title: t('map.newTree.errTitle'),
+            mode: AlertMode.Error,
             message: `{distance: ${distance}, maxDistanceInMeters: ${maxDistanceInMeters}}`,
           });
           showAlert({
