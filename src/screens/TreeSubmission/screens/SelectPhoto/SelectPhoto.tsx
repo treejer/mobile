@@ -134,7 +134,6 @@ function SelectPhoto(props: Props) {
   const handleSelectPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
       const file = await getCroppedImg(image, 'file.jpeg', croppedAreaPixels, rotation);
-      setPhoto(file);
       setShowWebCam(false);
 
       checkTreePhoto(image, userLocation, imageLocation => {
@@ -155,7 +154,6 @@ function SelectPhoto(props: Props) {
   const handleSelectLibraryPhotoWeb = useCallback(
     async (image, croppedAreaPixels, rotation) => {
       const file = await getCroppedImg(image, pickedImage?.name, croppedAreaPixels, rotation);
-      setPhoto(file);
       setPickedImage(null);
 
       checkTreePhoto(image, userLocation, imageLocation => {
