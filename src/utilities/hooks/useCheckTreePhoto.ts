@@ -24,8 +24,6 @@ export const useCheckTreePhoto = () => {
 
           const distanceInKiloMeters = distance / 1000;
 
-          console.log({userLocation, imageLocation, distance, distanceInKiloMeters});
-
           if (distanceInKiloMeters < maxDistanceInKiloMeters) {
             successCallback(imageLocation);
           } else {

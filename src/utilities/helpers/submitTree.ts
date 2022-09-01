@@ -298,10 +298,6 @@ export function useAfterSelectPhotoHandler() {
     (options: AfterSelectPhotoHandler) => {
       const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto, imageLocation} = options;
 
-      showAlert({
-        message: `latitude in after: ${imageLocation.latitude}, longitude in after: ${imageLocation.longitude}`,
-      });
-
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,

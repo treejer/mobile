@@ -34,9 +34,6 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
-import {maxDistanceInMeters} from 'services/config';
-import {isWeb} from 'utilities/helpers/web';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -60,7 +57,6 @@ function SubmitTree(props: Props) {
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
   const isConnected = useNetInfoConnected();
-  const browserPlatform = useBrowserPlatform();
 
   const birthDay = currentTimestamp();
 
@@ -240,30 +236,20 @@ function SubmitTree(props: Props) {
           },
         );
 
-        console.log({maxDistanceInMeters, distance}, 'distance in meters');
+        transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
-        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
-          transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
-
-          showAlert({
-            title: t('success'),
-            message: t('submitTree.updated'),
-            mode: AlertMode.Success,
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
-            }),
-          );
-          clearJourney();
-        } else {
-          showAlert({
-            title: t('map.updateSingleTree.errTitle'),
-            mode: AlertMode.Error,
-            message: t('map.updateSingleTree.errMessage', {plantType: journey.isSingle ? t('tree') : t('nursery')}),
-          });
-        }
+        showAlert({
+          title: t('success'),
+          message: t('submitTree.updated'),
+          mode: AlertMode.Success,
+        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.GreenBlock, params: {filter: TreeFilter.Temp}}],
+          }),
+        );
+        clearJourney();
       } else {
         sendEvent('add_tree_confirm');
         transaction = await handleSendCreateTransaction();
@@ -302,10 +288,8 @@ function SubmitTree(props: Props) {
     journey?.photoLocation?.longitude,
     journey?.tree?.treeSpecsEntity?.latitude,
     journey?.tree?.treeSpecsEntity?.longitude,
-    journey.isSingle,
     sendEvent,
     metaDataHash,
-    browserPlatform,
     handleSendUpdateTransaction,
     navigation,
     clearJourney,
