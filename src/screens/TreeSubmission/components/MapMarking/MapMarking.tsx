@@ -20,8 +20,6 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
-import {isWeb} from 'utilities/helpers/web';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -38,7 +36,6 @@ export default function MapMarking(props: IMapMarkingProps) {
   const isConnected = useNetInfoConnected();
   const {dispatchAddOfflineTree, dispatchAddOfflineTrees, dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
-  const browserPlatform = useBrowserPlatform();
   const {t} = useTranslation();
 
   const camera = useRef<MapboxGL.Camera>(null);
@@ -128,12 +125,7 @@ export default function MapMarking(props: IMapMarkingProps) {
           longitude: location?.coords?.longitude,
         },
       };
-      console.log('====================================');
-      console.log({distance, maxDistanceInMeters}, 'distances');
-      console.log('====================================');
       if (isConnected) {
-        console.log(distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation, 'heyyyyyyyy');
-
         if (distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);

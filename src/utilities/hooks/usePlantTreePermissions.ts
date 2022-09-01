@@ -86,8 +86,11 @@ export function usePlantTreePermissions(
     (async () => {
       try {
         if (didMount) {
-          // await checkPermission();
-          await requestPermission();
+          if (Platform.OS === 'android') {
+            await checkPermission();
+          } else {
+            await requestPermission();
+          }
         }
       } catch (e) {}
     })();

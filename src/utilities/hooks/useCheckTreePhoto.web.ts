@@ -21,7 +21,7 @@ export const useCheckTreePhoto = () => {
     ) => {
       try {
         if (browserPlatform === 'iOS') {
-          successCallback();
+          successCallback({latitude: 0, longitude: 0});
           return;
         }
         const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
