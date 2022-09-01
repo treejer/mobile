@@ -288,4 +288,67 @@ export const en = {
     accept: 'Accept',
     reject: 'Reject',
   },
+  gps: {
+    title: 'GPS',
+    message: 'If you want plant a tree you should turn on your GPS',
+  },
+  inValidImage: {
+    title: 'Image is not valid',
+    message:
+      "You can't upload this image because you didn't take this photo, or your GPS was off when you were taking that photo with the Camera.",
+    hasNoLocation:
+      "This image doesn't have location metadata please go to your camera settings and allow location permission. \nIf you still have trouble you can try to upload photo from gallery",
+    longDistance: "You can't upload this image because distance between your location and image are too far.",
+  },
+  checkPermission: {
+    permissions: {
+      location: 'Location',
+      camera: 'Camera',
+      media: 'Media',
+      GPS: 'GPS',
+    },
+    error: {
+      deviceNotFound: 'Camera Device Not Found \n ({{message}})',
+      siteSettings: 'Go to site settings',
+      '1': 'Please allow location permission for this site in your browser site settings',
+      '2': '{{message}}',
+      '3': "we could'nt access to Geolocation at this time \n({{message}})",
+      turnOnGPS: 'First you need to turn on your GPS',
+      cantSupportGop: 'This devices can"t support geolocation',
+      GPS: {
+        '1Title': 'Grant location permission',
+        '3Title': 'Geolocation information',
+        '5Title': 'Location permission is not satisfied',
+        '1': 'First you need to grant location permission. \n({{message}})',
+        '2': "We can't access to GPS yet, please wait...",
+        '3': 'Geolocation information was not obtained. \n({{message}})',
+        '5': 'For plant a tree you need to turn on your GPS. \n({{message}})',
+      },
+      unknownError: 'Unknown error',
+    },
+    enabled: 'Enabled',
+    turnOn: 'Turn ON!',
+    grantNow: 'Grant Now!',
+    toBeSure: 'We need to be sure, these permissions are granted.',
+    granted: 'Granted',
+    blocked: 'Blocked',
+    checking: 'Checking...',
+    wrong: "What's wrong?",
+    checkingTitle: 'We are checking permissions to continue...',
+    cantProceed: "We can't proceed",
+    cantProceedDesc:
+      'To plant a tree and nursery or upload a tree we need location, camera, and media permissions to acuurateyour activities and detect fraud.',
+  },
+  map: {
+    newTree: {
+      errTitle: 'You are not near to the location of your selected photo',
+      errMessage: 'This location you are submitting must be near the selected photo location',
+    },
+    updateSingleTree: {
+      errTitle: 'The selected photo location is not match with the last submitted location',
+      errMessage: 'The location of the selected photo is not near to the submitted location of this {{plantType}}',
+    },
+  },
+  tree: 'tree',
+  nursery: 'nursery',
 };

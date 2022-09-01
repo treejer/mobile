@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#  ==> USERNAME and SERVER_IP env variables are needed!!! <== 
+#  ==> USERNAME and SERVER_IP env variables are needed!!! <==
 
 echo "Start to build web production ..."
 
-yarn web:prod
+yarn web:build
 
 echo "web:prod is done"
 
