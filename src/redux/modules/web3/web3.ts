@@ -1,15 +1,15 @@
+import {Dispatch} from 'react';
 import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Contract} from 'web3-eth-contract';
 import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'services/config';
-import {put, select, take, takeEvery} from 'redux-saga/effects';
+import {put, select, take, takeEvery, call} from 'redux-saga/effects';
 import {t} from 'i18next';
 
 import {TReduxState, TStoreRedux} from '../../store';
 import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {Action, Dispatch} from 'redux';
-import {profileActions} from '../../modules/user/user';
+import {profileActions} from '../../modules/profile/profile';
 import {UserNonceForm} from 'services/types';
 
 export type TWeb3 = {
@@ -113,6 +113,11 @@ export function networkDisconnect() {
   return {type: NETWORK_DISCONNECT};
 }
 
+export const CLEAR_USER_NONCE = 'CLEAR_USER_NONCE';
+export function clearUserNonce() {
+  return {type: CLEAR_USER_NONCE};
+}
+
 export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): TWeb3 => {
   switch (action.type) {
     case CREATE_WEB3: {
@@ -150,9 +155,10 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
       };
     }
     case STORE_MAGIC_TOKEN: {
+      const {loginData, ...storeMagicToken} = action.storeMagicToken;
       return {
         ...state,
-        ...action.storeMagicToken,
+        ...storeMagicToken,
         loading: true,
       };
     }
@@ -169,6 +175,13 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
         ...state,
         loading: false,
         unlocked: true,
+      };
+    }
+    case CLEAR_USER_NONCE: {
+      return {
+        ...state,
+        userId: '',
+        accessToken: '',
       };
     }
     default: {
@@ -233,19 +246,21 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
 
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
       console.log(signature, 'signature in web3');
-      const response = yield fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({signature}),
-      });
+      const response = yield call(() =>
+        fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({signature}),
+        }),
+      );
       const credentials = yield response.json();
       console.log(credentials, 'credentials');
 
       //? yield put(userSignActions.load({wallet, signature}));
       //? const {payload: userSignPayload}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
-      //? console.log(userSwalletignPayload, 'credentials in web3'); //
+      //? console.log(userSwalletignPayload, 'credentials in web3');
 
       web3Accounts = [wallet];
 

@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {profileActions, TProfile} from '../redux/modules/user/user';
+import {profileActions, TProfile} from '../redux/modules/profile/profile';
 import {asyncAlert} from 'utilities/helpers/alert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {defaultNetwork, storageKeys} from 'services/config';

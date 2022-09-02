@@ -9,6 +9,7 @@ import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fe
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useUserWeb3} from 'utilities/hooks/useWeb3';
+import {clearUserNonce} from '../web3/web3';
 
 export type TProfile = {
   id: string;
@@ -135,6 +136,7 @@ export function useProfile(): TUseProfile {
           }
         }
         dispatch(Profile.actions.resetCache());
+        dispatch(clearUserNonce());
         // await resetWeb3Data();
         // @logout
         // dispatch(profileActions.resetCache());

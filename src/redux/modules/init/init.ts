@@ -9,7 +9,7 @@ import {version} from '../../../../package.json';
 import {startWatchConnection} from '../netInfo/netInfo';
 import {useCallback} from 'react';
 import {createWeb3, storeMagicToken, UPDATE_WEB3} from '../web3/web3';
-import {profileActionsTypes} from '../../modules/user/user';
+import {profileActions} from '../../modules/profile/profile';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -61,13 +61,15 @@ export function* watchInitApp() {
     yield put(createWeb3());
     yield take(UPDATE_WEB3);
     console.log('started');
-    const {accessToken, web3, magicToken}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
-    if (accessToken) {
-      yield put(storeMagicToken({magicToken, web3}));
-      yield take(profileActionsTypes.load);
+    const {accessToken, userId, web3, magicToken}: TReduxState['web3'] = yield select(
+      (state: TReduxState) => state.web3,
+    );
+    if (accessToken && userId) {
+      yield put(profileActions.load({accessToken, userId}));
       yield put(initAppCompleted());
     } else {
       console.log('going to end');
+      yield put(profileActions.resetCache());
       yield put(initAppCompleted());
     }
   } catch (e: any) {

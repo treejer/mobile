@@ -9,7 +9,7 @@ import {BlockchainNetwork} from 'services/config';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
 import RNRestart from 'react-native-restart';
-import {useCurrentUser} from 'services/currentUser';
+import {useProfile} from '../../redux/modules/profile/profile';
 import {isWeb} from 'utilities/helpers/web';
 
 export function SwitchNetwork() {
@@ -20,7 +20,7 @@ export function SwitchNetwork() {
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
   const {changeNetwork} = useUserWeb3();
 
-  const {handleLogout} = useCurrentUser();
+  const {handleLogout} = useProfile();
 
   const {t} = useTranslation();
 
@@ -43,9 +43,6 @@ export function SwitchNetwork() {
       setConfirming(null);
       setShowModal(false);
       handleLogout();
-      if (!isWeb()) {
-        RNRestart.Restart();
-      }
     },
     [changeNetwork, handleLogout],
   );

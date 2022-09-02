@@ -14,7 +14,7 @@ import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
-import {useProfile, UserStatus} from '../redux/modules/user/user';
+import {useProfile, UserStatus} from '../redux/modules/profile/profile';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -62,6 +62,7 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
+  CheckPermissions = 'CheckPermissions',
 }
 
 export function RootNavigation() {

@@ -7,7 +7,8 @@ import {TReduxState} from '../../redux/store';
 import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
 import {debugFetch, NetworkConfig} from 'services/config';
 import {selectSettings} from '../../redux/modules/settings/settings';
-import {selectConfig} from '../../redux/modules/web3/web3';
+import {clearUserNonce, selectConfig} from '../../redux/modules/web3/web3';
+import {profileActions} from '../../redux/modules/profile/profile';
 
 export type FetchResult<Data> = {
   result: Data;
@@ -103,6 +104,16 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
   const {showErrorAlert = true} = options;
   const {locale}: TReduxState['settings'] = yield selectSettings();
   const {message, status} = handleFetchError(e);
+
+  console.log('====================================');
+  console.log(status, 'statussssss');
+  console.log('====================================');
+  if (status === 401 || status === 403) {
+    // @logout
+    yield put(profileActions.resetCache());
+    yield put(clearUserNonce());
+    yield put(userLoggedIn(false));
+  }
   if (showErrorAlert && message && message?.length) {
     yield showSagaAlert({
       title: status ? i18next.t(`errors.${status}`, {lng: locale}) : undefined,
@@ -114,11 +125,5 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
         },
       ],
     });
-  }
-
-  if (status === 401) {
-    // @logout
-    // yield put(removeToken());
-    yield put(userLoggedIn(false));
   }
 }

@@ -3,14 +3,13 @@ import {colors} from 'constants/values';
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
-import {CommonActions, RouteProp, useRoute} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {useConfig, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {TreeSubmissionRouteParamList} from 'types';
 import {ContractType} from 'services/config';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import TreeDetailQuery, {
@@ -24,13 +23,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useSettings} from 'utilities/hooks/useSettings';
-import {
-  assignedTreeJSON,
-  canUpdateTreeLocation,
-  newTreeJSON,
-  photoToUpload,
-  updateTreeJSON,
-} from 'utilities/helpers/submitTree';
+import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -38,17 +31,20 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {useCurrentJourney} from 'services/currentJourney';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 function SubmitTree(props: Props) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
+  const {showPermissionModal} = plantTreePermissions;
+
   const {journey, clearJourney} = useCurrentJourney();
-  // const {
-  //   params: {journey},
-  // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
 
   const {t} = useTranslation();
 
@@ -84,11 +80,6 @@ function SubmitTree(props: Props) {
   });
   const assignedTreeData = assignedTreeQuery?.data?.tree;
 
-  // const treeListQuery = useQuery<TreesQueryQueryData, TreesQueryQueryData.Variables>(TempTreeDetail, {
-  //   variables: {
-  //     address: wallet.address,
-  //   },
-  // });
   const handleUploadToIpfs = useCallback(async () => {
     if (
       isUpdate &&
@@ -234,6 +225,17 @@ function SubmitTree(props: Props) {
       if (journey.treeIdToUpdate) {
         sendEvent('update_tree_confirm');
         console.log(metaDataHash, '====> metaDataHash <====');
+        const distance = calcDistanceInMeters(
+          {
+            latitude: journey?.photoLocation?.latitude || 0,
+            longitude: journey?.photoLocation?.longitude || 0,
+          },
+          {
+            latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+            longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+          },
+        );
+
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
         showAlert({
@@ -282,6 +284,10 @@ function SubmitTree(props: Props) {
     wallet,
     t,
     journey.treeIdToUpdate,
+    journey?.photoLocation?.latitude,
+    journey?.photoLocation?.longitude,
+    journey?.tree?.treeSpecsEntity?.latitude,
+    journey?.tree?.treeSpecsEntity?.longitude,
     sendEvent,
     metaDataHash,
     handleSendUpdateTransaction,
@@ -303,7 +309,12 @@ function SubmitTree(props: Props) {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper currentStep={4}>

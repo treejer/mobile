@@ -12,7 +12,6 @@ import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'utilities/hooks/useSettings';
@@ -25,7 +24,9 @@ import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
-import {UserStatus, useProfile} from '../../../../redux/modules/user/user';
+import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
+import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
+import Card from 'components/Card';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -251,16 +252,6 @@ function MyProfile(props: MyProfileProps) {
     navigation.navigate(Routes.Settings);
   };
 
-  const handleCopyWalletAddress = useCallback(() => {
-    if (wallet) {
-      Clipboard.setString(wallet);
-      showAlert({
-        message: t('myProfile.copied'),
-        mode: AlertMode.Success,
-      });
-    }
-  }, [t, wallet]);
-
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <PullToRefresh onRefresh={onRefetch}>
@@ -287,17 +278,10 @@ function MyProfile(props: MyProfileProps) {
                 {profile?.firstName ? <Text style={globalStyles.h4}>{profile.firstName}</Text> : null}
 
                 {profile?.firstName ? <Spacer times={4} /> : null}
-                {wallet ? (
-                  <TouchableOpacity onPress={handleCopyWalletAddress}>
-                    <Text numberOfLines={1} style={styles.addressBox}>
-                      {wallet.slice(0, 15)}...
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
                 <Spacer times={4} />
 
                 {planterData && (
-                  <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                  <Card style={[globalStyles.horizontalStack, styles.statsContainer]}>
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
                       <Text style={styles.statLabel}>{t('balance')}</Text>
@@ -316,8 +300,12 @@ function MyProfile(props: MyProfileProps) {
                     {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
                     {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
                     {/*</View>*/}
-                  </View>
+                  </Card>
                 )}
+                <Spacer times={4} />
+
+                {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
+                <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
                   {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
@@ -445,18 +433,6 @@ function MyProfile(props: MyProfileProps) {
 }
 
 const styles = StyleSheet.create({
-  addressBox: {
-    backgroundColor: colors.khakiDark,
-    textAlign: 'center',
-    borderColor: 'white',
-    overflow: 'hidden',
-    width: 180,
-    borderWidth: 2,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
   button: {
     width: 180,
   },
@@ -482,6 +458,8 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
+    maxWidth: 300,
+    justifyContent: 'center',
   },
   getVerifiedRefer: {
     width: 280,
