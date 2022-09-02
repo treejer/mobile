@@ -11,6 +11,7 @@ export enum ContractType {
   Paymaster = 'Paymaster',
   Planter = 'Planter',
   PlanterFund = 'PlanterFund',
+  DAI = 'Dai',
 }
 
 export interface ConfigContract {
@@ -42,10 +43,7 @@ export enum BlockchainNetwork {
 
 export interface NetworkConfig {
   contracts: {
-    [ContractType.TreeFactory]: ConfigContract;
-    [ContractType.Paymaster]: ConfigContract;
-    [ContractType.Planter]: ConfigContract;
-    [ContractType.PlanterFund]: ConfigContract;
+    [key in ContractType]: ConfigContract;
   };
   networkId: number;
   isMainnet: boolean;
@@ -96,6 +94,10 @@ const config: Config = {
         address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
+      Dai: {
+        address: '0xaD6Db97C844Ec7Bb4c0641d436AA0D395fDD3f45',
+        abi: require('../abis/Dai.json'),
+      },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_MAIN_WEB3_NETWORK_ID || 3),
     isMainnet: true,
@@ -132,6 +134,10 @@ const config: Config = {
         address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
+      Dai: {
+        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        abi: require('../abis/Dai.json'),
+      },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_TEST_WEB3_NETWORK_ID || 3),
     isMainnet: false,
@@ -167,6 +173,10 @@ const config: Config = {
       PlanterFund: {
         address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
+      },
+      Dai: {
+        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        abi: require('../abis/Dai.json'),
       },
     },
     networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),

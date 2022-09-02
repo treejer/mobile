@@ -351,4 +351,8 @@ export const en = {
   },
   tree: 'tree',
   nursery: 'nursery',
+  magicWallet: {
+    title: 'Magic Wallet',
+    daiBalance: 'DAI Balance:',
+  },
 };
