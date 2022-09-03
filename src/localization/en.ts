@@ -355,4 +355,18 @@ export const en = {
     title: 'Magic Wallet',
     daiBalance: 'DAI Balance:',
   },
+  dai: 'Dai',
+  transfer: {
+    treejerDescription: 'Withdrawable blocked DAI on Treejer Protocol',
+    stablecoinDescription: 'Withdrawable DAI in Magic wallet',
+    form: {
+      from: 'From',
+      to: 'To',
+      amount: 'Amount',
+      max: 'Max',
+      paste: 'Paste',
+      toHolder: 'Recipient Address',
+      amountHolder: 'DAI Amount',
+    },
+  },
 };

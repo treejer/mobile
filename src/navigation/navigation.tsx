@@ -15,6 +15,7 @@ import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+import {TestScreen} from 'screens/TestScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
