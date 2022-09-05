@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,13 +13,14 @@ export type TTransferInputProps = {
   disabled?: boolean;
   value: string;
   onChangeText: (text: string) => void;
-  openQRReader: () => void;
+  openQRReader?: () => void;
   preview?: string | number;
-  calcMax: () => void;
+  calcMax?: () => void;
 };
 
 export function TransferInput(props: TTransferInputProps) {
   const {label, disabled, placeholder, value, onChangeText, preview, calcMax, openQRReader} = props;
+
   const {t} = useTranslation();
 
   return (

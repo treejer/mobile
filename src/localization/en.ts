@@ -368,6 +368,7 @@ export const en = {
       toHolder: 'Recipient Address',
       amountHolder: 'DAI Amount',
       transfer: 'Transfer',
+      history: 'History',
       confirm: {
         title: 'Transaction Details',
         alert: 'By clicking confirm you have no way back, double check the Recipient Address and lorem ipsum',

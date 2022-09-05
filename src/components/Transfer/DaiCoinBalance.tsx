@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   imageStandard: {
     width: 56,
-    heigh: 56,
+    height: 56,
   },
   details: {
     flex: 1,
