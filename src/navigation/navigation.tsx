@@ -82,6 +82,8 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
+        <RootStack.Screen name="Test" component={TestScreen} />
+
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

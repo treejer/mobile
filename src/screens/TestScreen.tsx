@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 import globalStyles from 'constants/styles';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
+import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
 import Spacer from 'components/Spacer';
-import {TransferInput} from 'components/Withdraw/TransferInput';
+import {TransferInput} from 'components/Transfer/TransferInput';
 import {useTranslation} from 'react-i18next';
-import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
+import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
+import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
@@ -41,6 +42,10 @@ export function TestScreen() {
         <Spacer />
         <TransferInput label="amount" value="" placeholder={t('transfer.form.amountHolder')} preview="0.00" />
         <TransferInput label="amount" value="" placeholder={t('transfer.form.amountHolder')} preview="0.00" disabled />
+        <Spacer times={10} />
+        <SubmitTransfer disabled={true} />
+        <Spacer />
+        <SubmitTransfer disabled={false} />
       </View>
     </SafeAreaView>
   );
