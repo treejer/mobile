@@ -1,8 +1,9 @@
-import {colors} from 'constants/values';
 import React from 'react';
 import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useTranslation} from 'react-i18next';
+
+import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 
 export type TSubmitTransferProps = {

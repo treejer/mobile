@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import globalStyles from 'constants/styles';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native;';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import globalStyles from 'constants/styles';
 import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
 import Spacer from 'components/Spacer';
 import {TransferInput} from 'components/Transfer/TransferInput';
-import {useTranslation} from 'react-i18next';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
@@ -17,16 +18,9 @@ export function TestScreen() {
   const [goalWallet, setGoalWallet] = useState('');
   const [amount, setAmount] = useState('');
 
-  const handlePasteClipboard = () => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const text = await Clipboard.getString();
-        setGoalWallet(text);
-        resolve(text);
-      } catch (e) {
-        reject(e);
-      }
-    });
+  const handlePasteClipboard = async () => {
+    const text = await Clipboard.getString();
+    setGoalWallet(text);
   };
 
   const handleSubmit = () => {

@@ -1,9 +1,10 @@
 import React from 'react';
 import {Modal, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {colors} from 'constants/values';
-import Card from 'components/Card';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+import {colors} from 'constants/values';
+import Card from 'components/Card';
 import Button from 'components/Button';
 
 export type TTransferConfirmationModalProps = {

@@ -9,15 +9,15 @@ import Spacer from 'components/Spacer';
 
 export type TTransferInputProps = {
   label: string;
-  placeholder?: string;
-  disabled?: boolean;
+  error: string;
   value: string;
   onChangeText: (text: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
   openQRReader?: () => void;
-  onPaste?: () => Promise<string>;
+  onPaste?: () => void;
   preview?: string | number;
   calcMax?: () => void;
-  error: string;
 };
 
 export function TransferInput(props: TTransferInputProps) {
@@ -45,14 +45,6 @@ export function TransferInput(props: TTransferInputProps) {
     setIsTyping(true);
   };
 
-  const handlePaste = async () => {
-    try {
-      await onPaste?.();
-    } catch (e) {
-      console.log(e, 'paste error');
-    }
-  };
-
   return (
     <View>
       <Text style={styles.label}>{t(`transfer.form.${label}`)}</Text>
@@ -74,7 +66,7 @@ export function TransferInput(props: TTransferInputProps) {
         )}
         {!disabled && openQRReader && (
           <View style={styles.optionsContainer}>
-            <TouchableOpacity onPress={handlePaste}>
+            <TouchableOpacity onPress={onPaste}>
               <Text style={styles.label}>{t('transfer.form.paste')}</Text>
             </TouchableOpacity>
             <Spacer />
