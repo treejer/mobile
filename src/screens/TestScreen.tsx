@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import globalStyles from 'constants/styles';
 import {StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -6,12 +6,22 @@ import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
 import Spacer from 'components/Spacer';
 import {TransferInput} from 'components/Withdraw/TransferInput';
 import {useTranslation} from 'react-i18next';
+import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 
 export function TestScreen() {
+  const [confirming, setConfirming] = useState(true);
   const {t} = useTranslation();
 
   return (
     <SafeAreaView style={globalStyles.fill}>
+      {confirming && (
+        <TransferConfirmationModal
+          onCancel={() => setConfirming(false)}
+          onConfirm={() => setConfirming(false)}
+          address="sfdfdsafsdafsadfadsfasdfsdffsdfdasfadsfasdffasfsd"
+          amount="5.34 DAI"
+        />
+      )}
       <View style={[globalStyles.fill, globalStyles.screenView, globalStyles.pt3, globalStyles.p1]}>
         <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description />
         <Spacer />
