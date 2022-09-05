@@ -8,12 +8,37 @@ import {TransferInput} from 'components/Transfer/TransferInput';
 import {useTranslation} from 'react-i18next';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
   const {t} = useTranslation();
-  const [value, setValue] = useState('');
+  const [myWallet, setMyWallet] = useState('asdfdsfdsfdsafsdafdasfadsfsdassfsdfsdArmin');
+  const [goalWallet, setGoalWallet] = useState('');
   const [amount, setAmount] = useState('');
+
+  const handlePasteClipboard = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const text = await Clipboard.getString();
+        setGoalWallet(text);
+        resolve(text);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log(
+      {
+        myWallet,
+        goalWallet,
+        amount,
+      },
+      'form data is here',
+    );
+  };
 
   return (
     <SafeAreaView style={globalStyles.fill}>
@@ -34,12 +59,18 @@ export function TestScreen() {
           <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description open={false} />
           <Spacer />
           <DaiCoinBalance name="stablecoin" balance="10" basePrice="1.00" open={false} />
-          <TransferInput label="from" value="asdfdsfdsfdsafsdafdasfadsfsdassfsdfsdArmin" disabled />
+          <TransferInput
+            label="from"
+            value={`${myWallet.slice(0, 10)}...${myWallet.slice(myWallet.length - 3)}`}
+            onChangeText={setMyWallet}
+            disabled
+          />
           <Spacer />
           <TransferInput
             label="to"
-            value={value}
-            onChangeText={setValue}
+            value={goalWallet}
+            onChangeText={setGoalWallet}
+            onPaste={handlePasteClipboard}
             placeholder={t('transfer.form.toHolder')}
             openQRReader={() => console.log('open QR reader')}
           />
@@ -79,7 +110,7 @@ export function TestScreen() {
             disabled={false}
             hasHistory={true}
             onHistory={() => console.log('history pressed')}
-            onSubmit={() => console.log('submit pressed')}
+            onSubmit={handleSubmit}
             onCancel={() => console.log('cancel pressed')}
           />
         </View>

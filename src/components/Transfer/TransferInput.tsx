@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,14 +14,44 @@ export type TTransferInputProps = {
   value: string;
   onChangeText: (text: string) => void;
   openQRReader?: () => void;
+  onPaste?: () => Promise<string>;
   preview?: string | number;
   calcMax?: () => void;
+  error: string;
 };
 
 export function TransferInput(props: TTransferInputProps) {
-  const {label, disabled, placeholder, value, onChangeText, preview, calcMax, openQRReader} = props;
+  const {label, disabled, error, placeholder, value, onChangeText, preview, calcMax, openQRReader, onPaste} = props;
+  const [inputValue, setInputValue] = useState(value || '');
+  const [isTyping, setIsTyping] = useState(false);
 
   const {t} = useTranslation();
+
+  useEffect(() => {
+    if (isTyping) {
+      setInputValue(value);
+    } else {
+      setInputValue(value.length > 20 ? `${value.slice(0, 10)}...${value.slice(value.length - 3)}` : value);
+    }
+  }, [value]);
+
+  const handleBlurInput = () => {
+    setIsTyping(false);
+    setInputValue(value.length > 20 ? `${value.slice(0, 10)}...${value.slice(value.length - 3)}` : value);
+  };
+
+  const handleFocusInput = () => {
+    setInputValue(value);
+    setIsTyping(true);
+  };
+
+  const handlePaste = async () => {
+    try {
+      await onPaste?.();
+    } catch (e) {
+      console.log(e, 'paste error');
+    }
+  };
 
   return (
     <View>
@@ -31,7 +61,10 @@ export function TransferInput(props: TTransferInputProps) {
           style={[styles.input, disabled && styles.disableInput]}
           editable={!disabled}
           placeholder={placeholder || '...'}
-          value={value}
+          value={inputValue}
+          keyboardType={preview ? 'numeric' : undefined}
+          onFocus={!preview ? handleFocusInput : undefined}
+          onBlur={!preview ? handleBlurInput : undefined}
           onChangeText={onChangeText}
         />
         {!disabled && preview && (
@@ -41,7 +74,7 @@ export function TransferInput(props: TTransferInputProps) {
         )}
         {!disabled && openQRReader && (
           <View style={styles.optionsContainer}>
-            <TouchableOpacity onPress={() => console.log('paste')}>
+            <TouchableOpacity onPress={handlePaste}>
               <Text style={styles.label}>{t('transfer.form.paste')}</Text>
             </TouchableOpacity>
             <Spacer />
@@ -53,7 +86,8 @@ export function TransferInput(props: TTransferInputProps) {
           </View>
         )}
       </Card>
-      {!disabled && preview && <Text style={styles.preview}>= ${preview}</Text>}
+      {error && <Text style={styles.errorMessage}>{error}</Text>}
+      {!disabled && !error && preview && <Text style={styles.preview}>= ${preview}</Text>}
     </View>
   );
 }
@@ -87,5 +121,11 @@ const styles = StyleSheet.create({
   preview: {
     marginStart: 8,
     color: colors.gray,
+  },
+  errorMessage: {
+    color: colors.red,
+    marginLeft: 8,
+    marginTop: 4,
+    fontSize: 10,
   },
 });
