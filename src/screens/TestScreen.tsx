@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native;';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -10,6 +10,34 @@ import Spacer from 'components/Spacer';
 import {TransferInput} from 'components/Transfer/TransferInput';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
+import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
+
+const history: TWithdrawHistory[] = [
+  {
+    id: '1',
+    amount: '20.00000000000',
+    date: new Date().toDateString(),
+    txHash: '001213213213',
+  },
+  {
+    id: '2',
+    amount: '20.00',
+    date: new Date().toDateString(),
+    txHash: '001213213213',
+  },
+  {
+    id: '3',
+    amount: '20.00',
+    date: new Date().toDateString(),
+    txHash: '001213213213',
+  },
+  {
+    id: '4',
+    amount: '20.00',
+    date: new Date().toDateString(),
+    txHash: '00121321321adfsdfdsafsadfsdfads3',
+  },
+];
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
@@ -45,7 +73,7 @@ export function TestScreen() {
             amount="5.34 DAI"
           />
         )}
-        <View style={[globalStyles.fill, globalStyles.screenView, globalStyles.pt3, globalStyles.p1]}>
+        <View style={[globalStyles.fill, globalStyles.screenView, globalStyles.pt3, globalStyles.alignItemsCenter]}>
           <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description />
           <Spacer />
           <DaiCoinBalance name="stablecoin" balance="10" basePrice="1.00" description />
@@ -53,6 +81,8 @@ export function TestScreen() {
           <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description open={false} />
           <Spacer />
           <DaiCoinBalance name="stablecoin" balance="10" basePrice="1.00" open={false} />
+          <Spacer />
+          <WithdrawHistory withdrawHistory={history} />
           <TransferInput
             label="from"
             value={`${myWallet.slice(0, 10)}...${myWallet.slice(myWallet.length - 3)}`}

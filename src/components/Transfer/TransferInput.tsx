@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    color: colors.black,
   },
   disableInput: {
     backgroundColor: colors.khakiDark,

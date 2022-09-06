@@ -359,6 +359,10 @@ export const en = {
   transfer: {
     treejerDescription: 'Withdrawable blocked DAI on Treejer Protocol',
     stablecoinDescription: 'Withdrawable DAI in Magic wallet',
+    withdrawHistory: 'Withdraw History',
+    date: 'Date',
+    txHash: 'Tx Hash',
+    id: '#',
     form: {
       from: 'From',
       to: 'To',
