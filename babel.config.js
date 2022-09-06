@@ -6,9 +6,6 @@ module.exports = function (api) {
     presets: [process.env.REACT_APP_WEB ? 'babel-preset-expo' : 'module:metro-react-native-babel-preset'],
     plugins: [
       'inline-dotenv',
-      {
-        globals: ['__scanCodes'],
-      },
       [
         'module-resolver',
         {

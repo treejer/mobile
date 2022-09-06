@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -11,7 +11,7 @@ import {TransferInput} from 'components/Transfer/TransferInput';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
 import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
-import {QrReader} from 'components/Transfer/QrReader';
+import {QrReader} from 'components/QrReader/QrReader';
 
 const history: TWithdrawHistory[] = [
   {
@@ -46,12 +46,18 @@ export function TestScreen() {
   const [myWallet, setMyWallet] = useState('asdfdsfdsfdsafsdafdasfadsfsdassfsdfsdArmin');
   const [goalWallet, setGoalWallet] = useState('');
   const [amount, setAmount] = useState('');
-  const [showQrReader, setShowQrReader] = useState(true);
+  const [showQrReader, setShowQrReader] = useState(false);
+
+  useEffect(() => {
+    console.log({showQrReader});
+  }, [showQrReader]);
 
   const handlePasteClipboard = async () => {
     const text = await Clipboard.getString();
     setGoalWallet(text);
   };
+
+  const handleShowQrReader = () => setShowQrReader(true);
 
   const handleSubmit = () => {
     console.log(
@@ -64,12 +70,16 @@ export function TestScreen() {
     );
   };
 
-  const handleShowQrReader = () => {
-    setShowQrReader(true);
+  const handleScanQrCode = data => {
+    console.log(data, 'qrCode data is here');
+    // setGoalWallet(data.bounds.data);
+    setShowQrReader(false);
   };
 
+  const handleCloseQrCode = () => setShowQrReader(false);
+
   if (showQrReader) {
-    return <QrReader />;
+    return <QrReader handleScan={handleScanQrCode} handleDismiss={handleCloseQrCode} />;
   }
 
   return (

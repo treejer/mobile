@@ -12,6 +12,7 @@ import EastWoodMessage from './eastwood-message-sent-1.png';
 import SingUp from './sign-up.png';
 import StableDaiCoin from './stableCoin.png';
 import TreejerDaiCoin from './treejerCoin.png';
+import QrFrame from './qrFrame.png';
 
 export {
   MaticLogo,
@@ -27,4 +28,5 @@ export {
   SingUp,
   StableDaiCoin,
   TreejerDaiCoin,
+  QrFrame,
 };
