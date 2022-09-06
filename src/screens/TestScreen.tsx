@@ -10,8 +10,8 @@ import Spacer from 'components/Spacer';
 import {TransferInput} from 'components/Transfer/TransferInput';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
-<<<<<<< Updated upstream
 import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
+import {QrReader} from 'components/Transfer/QrReader';
 
 const history: TWithdrawHistory[] = [
   {
@@ -39,9 +39,6 @@ const history: TWithdrawHistory[] = [
     txHash: '00121321321adfsdfdsafsadfsdfads3',
   },
 ];
-=======
-import {QrReader} from 'components/Transfer/QrReader';
->>>>>>> Stashed changes
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
