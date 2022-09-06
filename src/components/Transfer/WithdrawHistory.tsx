@@ -1,10 +1,11 @@
-import Card from 'components/Card';
 import React, {Fragment, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {StyleSheet, Text, View} from 'react-native';
+
+import Card from 'components/Card';
+import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
-import Spacer from 'components/Spacer';
 
 export type TWithdrawHistory = {
   id: string | number;

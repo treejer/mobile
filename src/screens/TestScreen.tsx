@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -12,6 +12,9 @@ import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmatio
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
 import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
 import {QrReader} from 'components/QrReader/QrReader';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {AboutWithdraw} from 'components/Transfer/AboutWithdraw';
+import Button from 'components/Button';
 
 const history: TWithdrawHistory[] = [
   {
@@ -94,7 +97,16 @@ export function TestScreen() {
           />
         )}
         <View style={[globalStyles.fill, globalStyles.screenView, globalStyles.pt3, globalStyles.alignItemsCenter]}>
+          <AboutWithdraw />
+          <Spacer />
           <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description />
+          <Spacer />
+          <Button
+            style={globalStyles.alignItemsCenter}
+            variant="secondary"
+            caption={t('transfer.redeem')}
+            icon={() => <Icon name="level-down-alt" color="#FFF" />}
+          />
           <Spacer />
           <DaiCoinBalance name="stablecoin" balance="10" basePrice="1.00" description />
           <Spacer />
@@ -162,5 +174,3 @@ export function TestScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({});
