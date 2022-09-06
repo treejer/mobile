@@ -10,6 +10,7 @@ import Spacer from 'components/Spacer';
 import {TransferInput} from 'components/Transfer/TransferInput';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
+<<<<<<< Updated upstream
 import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
 
 const history: TWithdrawHistory[] = [
@@ -38,6 +39,9 @@ const history: TWithdrawHistory[] = [
     txHash: '00121321321adfsdfdsafsadfsdfads3',
   },
 ];
+=======
+import {QrReader} from 'components/Transfer/QrReader';
+>>>>>>> Stashed changes
 
 export function TestScreen() {
   const [confirming, setConfirming] = useState(true);
@@ -45,6 +49,7 @@ export function TestScreen() {
   const [myWallet, setMyWallet] = useState('asdfdsfdsfdsafsdafdasfadsfsdassfsdfsdArmin');
   const [goalWallet, setGoalWallet] = useState('');
   const [amount, setAmount] = useState('');
+  const [showQrReader, setShowQrReader] = useState(true);
 
   const handlePasteClipboard = async () => {
     const text = await Clipboard.getString();
@@ -61,6 +66,14 @@ export function TestScreen() {
       'form data is here',
     );
   };
+
+  const handleShowQrReader = () => {
+    setShowQrReader(true);
+  };
+
+  if (showQrReader) {
+    return <QrReader />;
+  }
 
   return (
     <SafeAreaView style={globalStyles.fill}>
@@ -96,7 +109,7 @@ export function TestScreen() {
             onChangeText={setGoalWallet}
             onPaste={handlePasteClipboard}
             placeholder={t('transfer.form.toHolder')}
-            openQRReader={() => console.log('open QR reader')}
+            openQRReader={handleShowQrReader}
           />
           <Spacer />
           <TransferInput
