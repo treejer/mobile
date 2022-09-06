@@ -72,7 +72,7 @@ export function TestScreen() {
 
   const handleScanQrCode = data => {
     console.log(data, 'qrCode data is here');
-    // setGoalWallet(data.bounds.data);
+    setGoalWallet(data.data);
     setShowQrReader(false);
   };
 

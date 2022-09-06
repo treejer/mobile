@@ -19,11 +19,10 @@ export function QrReader(props: TQrReaderProps) {
   return (
     <Modal>
       <QRCodeScanner
-        cameraStyle={{height: '100%'}}
+        cameraStyle={styles.scanner}
         onRead={handleScan}
         flashMode={RNCamera.Constants.FlashMode.auto}
-        // showMarker
-        fadeIn
+        fadeIn={false}
       />
       <View style={styles.areaContainer}>
         <View style={globalStyles.fill}>
@@ -41,6 +40,9 @@ export function QrReader(props: TQrReaderProps) {
 }
 
 const styles = StyleSheet.create({
+  scanner: {
+    height: '100%',
+  },
   areaContainer: {
     position: 'absolute',
     width: '100%',
