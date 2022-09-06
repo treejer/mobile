@@ -21,8 +21,9 @@ export type TUserSignSuccessAction = {
 };
 
 export function* watchUserSign(action: TUserSignAction) {
-  const {signature, wallet} = action.payload;
   try {
+    const {signature, wallet} = action.payload;
+
     const options = {
       configUrl: 'treejerApiUrl' as keyof NetworkConfig,
       method: 'PATCH' as Method,
@@ -31,7 +32,7 @@ export function* watchUserSign(action: TUserSignAction) {
       },
       body: JSON.stringify({signature}),
     };
-    console.log(options);
+
     const res: FetchResult<UserSignRes> = yield sagaFetch<UserSignRes>(`/user/sign?publicAddress=${wallet}`, options);
     console.log(res, 'response in user sign');
     yield put(UserSign.actions.loadSuccess(res.result));

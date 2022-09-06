@@ -5,12 +5,13 @@ import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'service
 import {put, select, take, takeEvery, call} from 'redux-saga/effects';
 import {t} from 'i18next';
 
+import {UserNonceForm} from 'services/types';
+import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {TReduxState, TStoreRedux} from '../../store';
 import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
 import {selectNetInfo} from '../netInfo/netInfo';
-import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {profileActions} from '../../modules/profile/profile';
-import {UserNonceForm} from 'services/types';
+import {profileActions} from '../profile/profile';
+import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -259,8 +260,8 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
       console.log(credentials, 'credentials');
 
       //? yield put(userSignActions.load({wallet, signature}));
-      //? const {payload: userSignPayload}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
-      //? console.log(userSwalletignPayload, 'credentials in web3');
+      //? const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
+      //? console.log(credentials, 'credentials in web3');
 
       web3Accounts = [wallet];
 
