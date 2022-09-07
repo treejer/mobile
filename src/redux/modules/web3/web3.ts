@@ -247,21 +247,22 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
 
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
       console.log(signature, 'signature in web3');
-      const response = yield call(() =>
-        fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({signature}),
-        }),
-      );
-      const credentials = yield response.json();
-      console.log(credentials, 'credentials');
 
-      //? yield put(userSignActions.load({wallet, signature}));
-      //? const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
-      //? console.log(credentials, 'credentials in web3');
+      // const response = yield call(() =>
+      //   fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
+      //     method: 'PATCH',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({signature}),
+      //   }),
+      // );
+      // const credentials = yield response.json();
+      // console.log(credentials, 'credentials');
+
+      yield put(userSignActions.load({wallet, signature}));
+      const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
+      console.log(credentials, 'credentials in web3');
 
       web3Accounts = [wallet];
 

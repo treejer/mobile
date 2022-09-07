@@ -1,12 +1,13 @@
 import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
-import {takeEvery, put} from 'redux-saga/effects';
-import {Method} from 'axios';
+import {takeEvery, put, call} from 'redux-saga/effects';
+import axios, {Method} from 'axios';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {UserSignForm, UserSignRes} from 'services/types';
 import {NetworkConfig} from 'services/config';
+import {selectConfig} from '../web3/web3';
 
 const UserSign = new ReduxFetchState<UserSignRes, UserSignForm, string>('userSign');
 
@@ -23,9 +24,10 @@ export type TUserSignSuccessAction = {
 export function* watchUserSign(action: TUserSignAction) {
   try {
     const {signature, wallet} = action.payload;
+    const {treejerApiUrl} = yield selectConfig();
 
     const options = {
-      configUrl: 'treejerApiUrl' as keyof NetworkConfig,
+      // configUrl: 'treejerApiUrl' as keyof NetworkConfig,
       method: 'PATCH' as Method,
       headers: {
         'Content-Type': 'application/json',
@@ -33,9 +35,9 @@ export function* watchUserSign(action: TUserSignAction) {
       body: JSON.stringify({signature}),
     };
 
-    const res: FetchResult<UserSignRes> = yield sagaFetch<UserSignRes>(`/user/sign?publicAddress=${wallet}`, options);
-    console.log(res, 'response in user sign');
-    yield put(UserSign.actions.loadSuccess(res.result));
+    const res = yield call(() => fetch(`${treejerApiUrl}/user/sign?publicAddress=${wallet}`, options));
+    const data = yield res.json();
+    yield put(UserSign.actions.loadSuccess(data));
   } catch (e: any) {
     yield put(UserSign.actions.loadFailure(e));
     yield handleSagaFetchError(e);
