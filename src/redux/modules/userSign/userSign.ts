@@ -24,7 +24,7 @@ export type TUserSignSuccessAction = {
 export function* watchUserSign(action: TUserSignAction) {
   try {
     const {signature, wallet} = action.payload;
-    const {treejerApiUrl} = yield selectConfig();
+    const {treejerApiUrl}: NetworkConfig = yield selectConfig();
 
     const options = {
       // configUrl: 'treejerApiUrl' as keyof NetworkConfig,
