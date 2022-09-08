@@ -252,6 +252,11 @@ function MyProfile(props: MyProfileProps) {
     navigation.navigate(Routes.Settings);
   };
 
+  const handleNavigateWithdraw = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Withdraw);
+  };
+
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <PullToRefresh onRefresh={onRefetch}>
@@ -308,18 +313,15 @@ function MyProfile(props: MyProfileProps) {
                 <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
-                    <>
-                      <Button
-                        style={styles.button}
-                        caption={t('withdraw')}
-                        variant="tertiary"
-                        loading={submitting}
-                        onPress={handleWithdrawPlanterBalance}
-                      />
-                      <Spacer times={4} />
-                    </>
-                  )}
+                  <>
+                    <Button
+                      style={styles.button}
+                      caption={t('withdraw')}
+                      variant="tertiary"
+                      onPress={handleNavigateWithdraw}
+                    />
+                    <Spacer times={4} />
+                  </>
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>

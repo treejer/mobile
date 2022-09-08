@@ -63,6 +63,8 @@ export enum Routes {
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
   CheckPermissions = 'CheckPermissions',
+  Withdraw = 'Withdraw',
+  Transfer = 'Transfer',
 }
 
 export function RootNavigation() {

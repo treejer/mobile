@@ -9,16 +9,17 @@ import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {useCurrentUser} from 'services/currentUser';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import Button from 'components/Button';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import globalStyles from 'constants/styles';
+import {useProfile} from '../../../../redux/modules/profile/profile';
+import {WithdrawSection} from 'components/Transfer/WithdrawSection';
 
 export function Transfer() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -37,8 +38,8 @@ export function Transfer() {
   const isConnected = useNetInfoConnected();
   const config = useConfig();
   const {useGSN} = useSettings();
-  const {data} = useCurrentUser({didMount: true});
-  const isVerified = data?.user?.isVerified;
+  const {profile} = useProfile();
+  const isVerified = profile?.isVerified;
 
   const skipStats = !wallet || !isVerified;
 
@@ -181,35 +182,11 @@ export function Transfer() {
       <ScreenTitle title={t('withdraw')} goBack />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[styles.container]}>
-          {!planterWithdrawableBalance && !dai && <AboutWithdraw />}
-          <Spacer times={4} />
-          <DaiCoinBalance
-            name="treejer"
-            description
-            basePrice="1.00"
-            balance={planterWithdrawableBalance}
-            open={!!planterWithdrawableBalance}
-          />
-          <Spacer times={planterWithdrawableBalance ? 6 : undefined} />
-          {!!planterWithdrawableBalance && (
-            <>
-              <Button
-                style={globalStyles.alignItemsCenter}
-                onPress={handleWithdrawPlanterBalance}
-                variant="secondary"
-                loading={submitting}
-                caption={t('transfer.redeem')}
-                icon={() => (submitting ? null : <Icon name="level-down-alt" color="#FFF" />)}
-              />
-              <Spacer times={6} />
-            </>
-          )}
-          <DaiCoinBalance
-            name="stablecoin"
-            description
-            basePrice="1.00"
-            balance={dai}
-            open={!!planterWithdrawableBalance || !!dai}
+          <WithdrawSection
+            handleWithdraw={handleWithdrawPlanterBalance}
+            planterWithdrawableBalance={planterWithdrawableBalance}
+            dai={dai}
+            submitting={submitting}
           />
         </View>
       </ScrollView>
