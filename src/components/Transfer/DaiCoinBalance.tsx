@@ -11,18 +11,19 @@ import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
   basePrice: string | number;
-  balance: string;
+  balance: string | number | null;
   description?: boolean;
   open?: boolean;
+  loading?: boolean;
 };
 
 export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
-  const {name, balance, description, basePrice, open = true} = props;
+  const {name, balance, description, basePrice, open = true, loading} = props;
 
   const {t} = useTranslation();
 
   return (
-    <Card style={[globalStyles.alignItemsCenter, open ? styles.container : styles.containerSmall]}>
+    <Card style={[globalStyles.justifyContentCenter, open ? styles.container : styles.containerSmall]}>
       <View>
         <Image
           style={open ? styles.imageStandard : styles.imageSmall}
@@ -41,8 +42,8 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
           )}
         </View>
         <View style={open ? styles.justifyBetween : [globalStyles.justifyContentCenter]}>
-          {open && <Text style={styles.coinName}>{balance} DAI</Text>}
-          <Text style={styles.mute}>${balance}</Text>
+          {open && <Text style={styles.coinName}>{!loading ? `${Number(balance).toFixed(2)} DAI` : '...'}</Text>}
+          <Text style={styles.mute}>{!loading ? `$${Number(balance).toFixed(2)}` : '...'}</Text>
         </View>
       </View>
     </Card>

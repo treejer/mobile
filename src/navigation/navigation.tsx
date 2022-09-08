@@ -64,6 +64,8 @@ export enum Routes {
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
   CheckPermissions = 'CheckPermissions',
+  Withdraw = 'Withdraw',
+  Transfer = 'Transfer',
 }
 
 export function RootNavigation() {
@@ -82,7 +84,6 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
-        <RootStack.Screen name="Test" component={TestScreen} />
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

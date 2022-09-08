@@ -197,6 +197,11 @@ function MyProfile(props: MyProfileProps) {
     useGSN,
   ]);
 
+  const handleNavigateToWithdraw = useCallback(() => {
+    // @ts-ignore
+    navigation.navigate(Routes.Withdraw);
+  }, [navigation]);
+
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
       setTimeout(() => {
@@ -302,18 +307,17 @@ function MyProfile(props: MyProfileProps) {
                 <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
-                    <>
-                      <Button
-                        style={styles.button}
-                        caption={t('withdraw')}
-                        variant="tertiary"
-                        loading={submiting}
-                        onPress={handleWithdrawPlanterBalance}
-                      />
-                      <Spacer times={4} />
-                    </>
-                  )}
+                  {/*{planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (*/}
+                  <>
+                    <Button
+                      style={styles.button}
+                      caption={t('withdraw')}
+                      variant="tertiary"
+                      onPress={handleNavigateToWithdraw}
+                    />
+                    <Spacer times={4} />
+                  </>
+                  {/* )}*/}
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
