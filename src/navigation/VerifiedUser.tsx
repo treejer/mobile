@@ -7,6 +7,7 @@ import TreeSubmission from 'screens/TreeSubmission';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {Withdraw} from 'screens/Withdraw/Withdraw';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -15,6 +16,7 @@ export type VerifiedUserNavigationParamList = {
   };
   [Routes.TreeSubmission]: undefined;
   [Routes.GreenBlock]: undefined;
+  [Routes.Withdraw]: undefined;
 };
 
 export type VerifiedUserNavigationProp<ScreenName extends keyof VerifiedUserNavigationParamList> = LibraryProp<
@@ -37,6 +39,7 @@ export function VerifiedUserNavigation() {
         {props => <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />}
       </VerifiedUserStack.Screen>
       <VerifiedUserStack.Screen name={Routes.GreenBlock} component={GreenBlock} />
+      <VerifiedUserStack.Screen name={Routes.Withdraw} component={Withdraw} />
     </VerifiedUserStack.Navigator>
   );
 }
