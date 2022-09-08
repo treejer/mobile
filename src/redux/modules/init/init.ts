@@ -9,7 +9,8 @@ import {version} from '../../../../package.json';
 import {startWatchConnection} from '../netInfo/netInfo';
 import {useCallback} from 'react';
 import {createWeb3, storeMagicToken, UPDATE_WEB3} from '../web3/web3';
-import {profileActions} from '../../modules/profile/profile';
+import {profileActions} from '../profile/profile';
+import {getBalance} from '../contracts/contracts';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -66,6 +67,7 @@ export function* watchInitApp() {
     );
     if (accessToken && userId) {
       yield put(profileActions.load({accessToken, userId}));
+      yield put(getBalance());
       yield put(initAppCompleted());
     } else {
       console.log('going to end');

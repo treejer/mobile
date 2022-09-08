@@ -9,6 +9,7 @@ import {userNonceReducer} from './modules/userNonce/userNonce';
 import {netInfoReducer} from './modules/netInfo/netInfo';
 import {userReducer} from './modules/profile/_user';
 import {profileReducer} from './modules/profile/profile';
+import {contractsReducer} from './modules/contracts/contracts';
 
 const appReducer = combineReducers({
   clientAuth,
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
   web3: web3Reducer,
   user: userReducer,
   profile: profileReducer,
+  contracts: contractsReducer,
 });
 
 export default appReducer;

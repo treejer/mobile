@@ -7,11 +7,12 @@ import globalStyles from 'constants/styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {View} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {TContract} from '../../../redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {
   handleWithdraw: () => void;
-  planterWithdrawableBalance: string | number;
-  dai: string | number | null;
+  planterWithdrawableBalance: TContract | undefined;
+  dai: TContract | undefined;
   submitting: boolean;
 };
 

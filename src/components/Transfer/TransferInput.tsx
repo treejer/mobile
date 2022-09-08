@@ -8,10 +8,11 @@ import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 
 export type TTransferInputProps = {
+  name: string;
   label: string;
-  error: string;
+  error?: string;
   value: string;
-  onChangeText: (text: string) => void;
+  onChangeText: (name: string, text: string) => void;
   placeholder?: string;
   disabled?: boolean;
   openQRReader?: () => void;
@@ -21,7 +22,8 @@ export type TTransferInputProps = {
 };
 
 export function TransferInput(props: TTransferInputProps) {
-  const {label, disabled, error, placeholder, value, onChangeText, preview, calcMax, openQRReader, onPaste} = props;
+  const {label, disabled, error, placeholder, value, name, onChangeText, preview, calcMax, openQRReader, onPaste} =
+    props;
   const [inputValue, setInputValue] = useState(value || '');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -52,12 +54,12 @@ export function TransferInput(props: TTransferInputProps) {
         <TextInput
           style={[styles.input, disabled && styles.disableInput]}
           editable={!disabled}
-          placeholder={placeholder || '...'}
+          placeholder={placeholder}
           value={inputValue}
           keyboardType={preview ? 'numeric' : undefined}
           onFocus={!preview ? handleFocusInput : undefined}
           onBlur={!preview ? handleBlurInput : undefined}
-          onChangeText={onChangeText}
+          onChangeText={text => onChangeText(name, text)}
         />
         {!disabled && preview && (
           <TouchableOpacity onPress={calcMax}>

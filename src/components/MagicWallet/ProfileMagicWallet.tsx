@@ -9,6 +9,7 @@ import globalStyles from 'constants/styles';
 import Spacer from 'components/Spacer';
 import {useConfig, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
+import {useContracts} from '../../redux/modules/contracts/contracts';
 
 export type ProfileMagicWalletProps = {
   wallet: string;
@@ -17,35 +18,11 @@ export type ProfileMagicWalletProps = {
 export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const {wallet} = props;
 
-  const [ether, setEther] = useState<string | null>(null);
-  const [dai, setDai] = useState<string | null>(null);
+  const {dai, ether} = useContracts();
 
-  const web3 = useWalletWeb3();
   const config = useConfig();
 
   const {t} = useTranslation();
-
-  const handleGetBalance = useCallback(async () => {
-    setDai(null);
-    setEther(null);
-    try {
-      const contract = config.contracts.Dai;
-      const ethContract = new web3.eth.Contract(contract.abi as any, contract.address);
-      const walletBalance = await ethContract.methods.balanceOf(wallet).call();
-      setDai(web3.utils.fromWei(walletBalance));
-      const balance = await web3.eth.getBalance(wallet);
-      setEther(web3.utils.fromWei(balance));
-    } catch (e) {
-      console.log(e, 'error handleGetBalance');
-    }
-  }, [config.contracts.Dai, wallet, web3.eth, web3.utils]);
-
-  useEffect(() => {
-    (async () => {
-      await handleGetBalance();
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {

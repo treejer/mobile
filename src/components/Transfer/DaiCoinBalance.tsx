@@ -7,11 +7,12 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
+import {TContract} from 'redux/modules/contracts/contracts';
 
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
   basePrice: string | number;
-  balance: string | number | null;
+  balance: TContract | undefined;
   description?: boolean;
   open?: boolean;
   loading?: boolean;

@@ -41,6 +41,7 @@ export function SubmitTransfer(props: TSubmitTransferProps) {
         style={[styles.btn, disabled ? styles.disabledBtn : styles.submitBtn]}
         onPress={onSubmit}
         activeOpacity={+disabled}
+        disabled={disabled}
       >
         <Text style={disabled ? styles.muteText : styles.whiteText}>{t('transfer.form.transfer')}</Text>
       </TouchableOpacity>

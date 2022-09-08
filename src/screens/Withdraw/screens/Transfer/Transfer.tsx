@@ -1,46 +1,43 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import {ScrollView, View, Text} from 'react-native';
+import {ScrollView, View} from 'react-native';
 
-import {AboutWithdraw} from 'components/Transfer/AboutWithdraw';
-import Spacer from 'components/Spacer';
-import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {ContractType} from 'services/config';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'utilities/hooks/useSettings';
-import Button from 'components/Button';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import globalStyles from 'constants/styles';
+import {ContractType} from 'services/config';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
+import {TransferForm} from 'screens/Withdraw/components/TransferForm';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useSettings} from 'utilities/hooks/useSettings';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {useProfile} from '../../../../redux/modules/profile/profile';
-import {WithdrawSection} from 'components/Transfer/WithdrawSection';
+import {useContracts} from '../../../../redux/modules/contracts/contracts';
 
 export function Transfer() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
 
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
-  const [dai, setDai] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const {t} = useTranslation();
 
+  const {dai, getBalance} = useContracts();
   const {sendEvent} = useAnalytics();
+  const {useGSN} = useSettings();
+  const {profile} = useProfile();
+
   const planterFundContract = usePlanterFund();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
   const isConnected = useNetInfoConnected();
   const config = useConfig();
-  const {useGSN} = useSettings();
-  const {profile} = useProfile();
-  const isVerified = profile?.isVerified;
 
+  const isVerified = profile?.isVerified;
   const skipStats = !wallet || !isVerified;
 
   const {
@@ -71,26 +68,9 @@ export function Transfer() {
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
-  const handleGetBalance = useCallback(async () => {
-    setDai(null);
-    // setEther(null);
-    try {
-      const contract = config.contracts.Dai;
-      const ethContract = new web3.eth.Contract(contract.abi as any, contract.address);
-      const walletBalance = await ethContract.methods.balanceOf(wallet).call();
-      setDai(web3.utils.fromWei(walletBalance));
-      const balance = await web3.eth.getBalance(wallet);
-      // setEther(web3.utils.fromWei(balance));
-    } catch (e) {
-      console.log(e, 'error handleGetBalance');
-    }
-  }, [config.contracts.Dai, wallet, web3.eth, web3.utils]);
-
   useEffect(() => {
     (async () => {
       await getMinBalance();
-      await handleGetBalance();
-      setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -121,6 +101,8 @@ export function Transfer() {
             [planterData?.balance.toString()],
             useGSN,
           );
+
+          getBalance();
 
           console.log('transaction', transaction);
           showAlert({
@@ -166,17 +148,6 @@ export function Transfer() {
     useGSN,
   ]);
 
-  if (loading) {
-    return (
-      <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
-        <ScreenTitle title={t('withdraw')} goBack />
-        <View style={globalStyles.alignItemsCenter}>
-          <Text>loading...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <ScreenTitle title={t('withdraw')} goBack />
@@ -188,6 +159,7 @@ export function Transfer() {
             dai={dai}
             submitting={submitting}
           />
+          {dai ? <TransferForm userWallet={wallet} /> : null}
         </View>
       </ScrollView>
     </SafeAreaView>

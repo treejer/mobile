@@ -12,6 +12,7 @@ import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce'
 import {selectNetInfo} from '../netInfo/netInfo';
 import {profileActions} from '../profile/profile';
 import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
+import {getBalance} from '../contracts/contracts';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -33,7 +34,7 @@ const defaultConfig = configs[defaultNetwork];
 const defaultMagic = magicGenerator(configs[defaultNetwork]);
 const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider);
 
-export const initialState: TWeb3 = {
+const initialState: TWeb3 = {
   wallet: '',
   accessToken: '',
   magicToken: '',
@@ -218,6 +219,8 @@ export function* watchChangeNetwork(action: TWeb3Action) {
 
   try {
     yield put(createWeb3(newNetwork));
+    yield take(CREATE_WEB3);
+    yield put(getBalance());
   } catch (error) {
     console.log(error, 'update web3 error');
   }
@@ -284,6 +287,7 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
             }),
           );
           store.dispatch(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
+          store.dispatch(getBalance());
         }
       });
     } else {
@@ -311,6 +315,10 @@ export function* web3Sagas(store: TStoreRedux) {
 
 export function* selectConfig() {
   return yield select((state: TReduxState) => state.web3.config);
+}
+
+export function* selectWeb3() {
+  return yield select((state: TReduxState) => state.web3.web3);
 }
 
 export function* selectWallet() {

@@ -27,6 +27,7 @@ import useRefer from 'utilities/hooks/useDeepLinking';
 import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
 import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
 import Card from 'components/Card';
+import {useContracts} from '../../../../redux/modules/contracts/contracts';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -41,6 +42,8 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
+  const {getBalance} = useContracts();
+
   // const user = useCurrentUser();
   // console.log(user, 'user>++');
 
@@ -209,6 +212,7 @@ function MyProfile(props: MyProfileProps) {
         (async function () {
           await getPlanter();
           await dispatchProfile();
+          getBalance();
         })();
         resolve();
       }, 700);
