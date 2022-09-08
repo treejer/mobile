@@ -1,11 +1,9 @@
-import React from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-
-import {colors} from 'constants/values';
+import React, {useCallback} from 'react';
+import QRCodeScanner from 'react-qr-scanner';
+import {Image, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import globalStyles from 'constants/styles';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {colors} from 'constants/values';
 import {QrFrame} from '../../../assets/images';
 
 export type TQrReaderProps = {
@@ -13,17 +11,23 @@ export type TQrReaderProps = {
   handleDismiss: () => void;
 };
 
+const videoStyles = {height: '100%', width: '100%', objectFit: 'cover', backgroundColor: colors.black};
+
 export function QrReader(props: TQrReaderProps) {
   const {handleScan, handleDismiss} = props;
 
   return (
     <Modal>
       <QRCodeScanner
-        cameraStyle={styles.scanner}
-        onRead={result => handleScan(result.data)}
-        flashMode={RNCamera.Constants.FlashMode.auto}
-        fadeIn={false}
+        onScan={result => (result ? handleScan(result.text) : undefined)}
+        onError={error => {
+          console.log(error, 'error message');
+        }}
+        facingMode="rear"
+        delay={500}
+        style={videoStyles}
       />
+
       <View style={styles.areaContainer}>
         <View style={[styles.darkArea, globalStyles.fill]}>
           <TouchableOpacity style={styles.close} onPress={handleDismiss}>

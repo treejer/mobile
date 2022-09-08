@@ -73,9 +73,9 @@ export function TestScreen() {
     );
   };
 
-  const handleScanQrCode = data => {
+  const handleScanQrCode = (data: string) => {
     console.log(data, 'qrCode data is here');
-    setGoalWallet(data.data);
+    setGoalWallet(data);
     setShowQrReader(false);
   };
 
@@ -86,17 +86,17 @@ export function TestScreen() {
   }
 
   return (
-    <SafeAreaView style={globalStyles.fill}>
-      <ScrollView>
-        {confirming && (
-          <TransferConfirmationModal
-            onCancel={() => setConfirming(false)}
-            onConfirm={() => setConfirming(false)}
-            address="sfdfdsafsdafsadfadsfasdfsdffsdfdasfadsfasdffasf"
-            amount="5.34 DAI"
-          />
-        )}
-        <View style={[globalStyles.fill, globalStyles.screenView, globalStyles.pt3, globalStyles.alignItemsCenter]}>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
+      <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+        <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
+          {confirming && (
+            <TransferConfirmationModal
+              onCancel={() => setConfirming(false)}
+              onConfirm={() => setConfirming(false)}
+              address="sfdfdsafsdafsadfadsfasdfsdffsdfdasfadsfasdffasf"
+              amount="5.34 DAI"
+            />
+          )}
           <AboutWithdraw />
           <Spacer />
           <DaiCoinBalance name="treejer" balance="30" basePrice="1.00" description />

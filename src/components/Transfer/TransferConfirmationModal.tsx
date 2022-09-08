@@ -33,7 +33,9 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
           <View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.form.toHolder')}</Text>
-              <Text style={[styles.detail, styles.values]}>{address}</Text>
+              <Text style={[styles.detail, styles.values]} numberOfLines={3}>
+                {address}
+              </Text>
             </View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.form.amount')}</Text>
@@ -63,7 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#00000066',
-    //? backgroundColor: colors.grayOpacity,
   },
   row: {
     flexDirection: 'row',
