@@ -5,15 +5,19 @@ import {ScrollView, View} from 'react-native';
 
 import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
+import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {isWeb} from 'utilities/helpers/web';
 import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {useProfile} from '../../../../redux/modules/profile/profile';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
@@ -26,7 +30,7 @@ export function Transfer() {
 
   const {t} = useTranslation();
 
-  const {dai, getBalance} = useContracts();
+  const {dai, getBalance, loading: contractsLoading} = useContracts();
   const {sendEvent} = useAnalytics();
   const {useGSN} = useSettings();
   const {profile} = useProfile();
@@ -34,8 +38,8 @@ export function Transfer() {
   const planterFundContract = usePlanterFund();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
-  const isConnected = useNetInfoConnected();
   const config = useConfig();
+  const isConnected = useNetInfoConnected();
 
   const isVerified = profile?.isVerified;
   const skipStats = !wallet || !isVerified;
@@ -60,13 +64,29 @@ export function Transfer() {
       });
   }, []);
 
+  const getPlanter = useCallback(async () => {
+    if (!isConnected) {
+      return;
+    }
+    try {
+      await planterRefetch();
+      await getMinBalance();
+    } catch (e) {
+      console.log(e, 'e is hereeeeee getPlanter');
+    }
+  }, [getMinBalance, isConnected, planterRefetch]);
+
   const parseBalance = useCallback(
     (balance: string, fixed = 5) => parseFloat(web3?.utils?.fromWei(balance))?.toFixed(fixed),
     [web3?.utils],
   );
 
-  const planterWithdrawableBalance =
-    Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
+  const planterWithdrawableBalance = useMemo(
+    () => (Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0),
+    [planterData, parseBalance],
+  );
+
+  console.log(planterWithdrawableBalance, 'planterWithdrawableBalance is hereeee');
 
   useEffect(() => {
     (async () => {
@@ -103,6 +123,7 @@ export function Transfer() {
           );
 
           getBalance();
+          await getPlanter();
 
           console.log('transaction', transaction);
           showAlert({
@@ -148,20 +169,43 @@ export function Transfer() {
     useGSN,
   ]);
 
+  const handleRefetch = useCallback(
+    () =>
+      new Promise((resolve: any, reject: any) => {
+        return (async () => {
+          await getPlanter();
+          await getBalance();
+          resolve();
+        })();
+      }),
+    [getPlanter, getBalance],
+  );
+
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <ScreenTitle title={t('withdraw')} goBack />
-      <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-        <View style={[styles.container]}>
-          <WithdrawSection
-            handleWithdraw={handleWithdrawPlanterBalance}
-            planterWithdrawableBalance={planterWithdrawableBalance}
-            dai={dai}
-            submitting={submitting}
-          />
-          {dai ? <TransferForm userWallet={wallet} /> : null}
-        </View>
-      </ScrollView>
+      <PullToRefresh onRefresh={handleRefetch}>
+        <ScrollView
+          style={[globalStyles.screenView, globalStyles.fill]}
+          refreshControl={
+            isWeb() ? undefined : (
+              <RefreshControl refreshing={contractsLoading || refetching} onRefresh={handleRefetch} />
+            )
+          }
+        >
+          {isWeb() && <Spacer times={4} />}
+          <View style={[styles.container]}>
+            <WithdrawSection
+              handleWithdraw={handleWithdrawPlanterBalance}
+              planterWithdrawableBalance={planterWithdrawableBalance}
+              dai={dai}
+              submitting={submitting}
+            />
+            {dai ? <TransferForm userWallet={wallet} /> : null}
+            <Spacer times={8} />
+          </View>
+        </ScrollView>
+      </PullToRefresh>
     </SafeAreaView>
   );
 }

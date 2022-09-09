@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   description: {
-    marginTop: -3,
+    marginTop: -2,
     fontSize: 10,
     color: colors.grayLight,
   },

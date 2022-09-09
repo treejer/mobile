@@ -208,14 +208,12 @@ function MyProfile(props: MyProfileProps) {
 
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        (async function () {
-          await getPlanter();
-          await dispatchProfile();
-          getBalance();
-        })();
+      return (async () => {
+        await getPlanter();
+        await dispatchProfile();
+        getBalance();
         resolve();
-      }, 700);
+      })();
     });
 
   const planterWithdrawableBalance =

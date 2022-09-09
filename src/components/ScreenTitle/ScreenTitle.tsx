@@ -20,7 +20,10 @@ export function ScreenTitle(props: TScreenTitle) {
   return (
     <View style={styles.container}>
       {goBack ? (
-        <TouchableOpacity style={[globalStyles.fill]} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={[globalStyles.fill]}
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : undefined)}
+        >
           <ChevronLeft />
         </TouchableOpacity>
       ) : (

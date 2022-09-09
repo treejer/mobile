@@ -1,12 +1,13 @@
 import React from 'react';
 import {AboutWithdraw} from 'components/Transfer/AboutWithdraw';
-import Spacer from 'components/Spacer';
-import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
+import {useTranslation} from 'react-i18next';
+import {View} from 'react-native';
+
 import Button from 'components/Button';
+import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {View} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
 import {TContract} from '../../../redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {
@@ -22,7 +23,7 @@ export function WithdrawSection(props: TWithdrawSectionProps) {
   const {t} = useTranslation();
 
   return (
-    <View>
+    <View style={globalStyles.alignItemsCenter}>
       {!planterWithdrawableBalance && !dai && <AboutWithdraw />}
       <Spacer times={4} />
       <DaiCoinBalance

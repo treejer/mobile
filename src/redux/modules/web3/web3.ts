@@ -1,18 +1,17 @@
-import {Dispatch} from 'react';
 import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Contract} from 'web3-eth-contract';
 import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'services/config';
-import {put, select, take, takeEvery, call} from 'redux-saga/effects';
+import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {t} from 'i18next';
 
 import {UserNonceForm} from 'services/types';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {TReduxState, TStoreRedux} from '../../store';
 import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
+import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
+import {getBalance, resetBalance} from '../contracts/contracts';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {profileActions} from '../profile/profile';
-import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
-import {getBalance} from '../contracts/contracts';
+import {TReduxState, TStoreRedux} from '../../store';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -230,6 +229,7 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
   try {
     const {web3, magicToken, loginData} = action.storeMagicToken;
     const config = yield selectConfig();
+    yield put(resetBalance());
     console.log('[[[try]]]');
     let web3Accounts;
     yield web3.eth.getAccounts((e, accounts) => {

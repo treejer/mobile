@@ -8,6 +8,7 @@ import {QrReader} from 'components/QrReader/QrReader';
 import Spacer from 'components/Spacer';
 import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
+import globalStyles from 'constants/styles';
 
 export type TTransferFormData = {
   userWallet: string;
@@ -83,7 +84,7 @@ export function TransferForm(props: TTransferFormProps) {
   }
 
   return (
-    <View>
+    <View style={globalStyles.alignItemsCenter}>
       {confirming && (
         <TransferConfirmationModal
           onConfirm={handleSubmitTransfer}

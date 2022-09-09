@@ -12,6 +12,7 @@ export type TContract = string | number | null;
 export type TContracts = {
   dai: TContract | undefined;
   ether: TContract | undefined;
+  loading: boolean;
 };
 
 type TAction = {
@@ -22,6 +23,7 @@ type TAction = {
 const initialState: TContracts = {
   dai: null,
   ether: null,
+  loading: false,
 };
 
 export const GET_BALANCE = 'GET_BALANCE';
@@ -34,13 +36,21 @@ export function setBalance(payload: TAction['payload']) {
   return {type: SET_BALANCE, payload};
 }
 
+export const RESET_BALANCE = 'RESET_BALANCE';
+export function resetBalance() {
+  return {type: RESET_BALANCE};
+}
+
 export function contractsReducer(state: TContracts = initialState, action: TAction): TContracts {
   switch (action.type) {
     case GET_BALANCE: {
-      return state;
+      return {...state, loading: true};
     }
     case SET_BALANCE: {
-      return action.payload;
+      return {...action.payload, loading: false};
+    }
+    case RESET_BALANCE: {
+      return initialState;
     }
     default: {
       return state;
@@ -57,7 +67,10 @@ export function* watchContracts() {
     const ethContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const walletBalance = yield ethContract.methods.balanceOf(wallet).call();
     const balance = yield web3.eth.getBalance(wallet);
-    const contracts: TContracts = {dai: web3.utils.fromWei(walletBalance), ether: web3.utils.fromWei(balance)};
+    const contracts: Omit<TContracts, 'loading'> = {
+      dai: web3.utils.fromWei(walletBalance),
+      ether: web3.utils.fromWei(balance),
+    };
     yield put(setBalance(contracts));
   } catch (e: any) {
     yield handleSagaFetchError(e);

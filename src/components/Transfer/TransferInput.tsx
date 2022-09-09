@@ -112,6 +112,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: colors.black,
+    paddingLeft: 4,
+    paddingBottom: 4,
   },
   preview: {
     marginStart: 8,
