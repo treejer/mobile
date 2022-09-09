@@ -1,5 +1,5 @@
 import React from 'react';
-import {AboutWithdraw} from 'components/Transfer/AboutWithdraw';
+import {AboutWithdraw} from 'components/Withdraw/AboutWithdraw';
 import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
 
@@ -7,7 +7,7 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
+import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
 import {TContract} from '../../../redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {

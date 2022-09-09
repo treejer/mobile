@@ -3,11 +3,12 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
-import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
-import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
+import globalStyles from 'constants/styles';
+import {capitalize} from 'utilities/helpers/capitalize';
 import {TContract} from 'redux/modules/contracts/contracts';
+import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
 
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
@@ -33,7 +34,7 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
       </View>
       <View style={styles.details}>
         <View style={globalStyles.fill}>
-          <Text style={open ? styles.coinName : styles.coinNameSmall}>{`${t('dai')} ${name}`}</Text>
+          <Text style={open ? styles.coinName : styles.coinNameSmall}>{`${t('dai')} ${capitalize(name)}`}</Text>
           {description && <Text style={styles.description}>{t(`transfer.${name}Description`)}</Text>}
           {open && (
             <>

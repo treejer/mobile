@@ -2,13 +2,16 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {useNavigation} from '@react-navigation/native';
 
-import {TransferInput} from 'components/Transfer/TransferInput';
+import {Routes} from 'navigation';
+import {TransferInput} from 'components/Withdraw/TransferInput';
 import {QrReader} from 'components/QrReader/QrReader';
 import Spacer from 'components/Spacer';
-import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
-import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
+import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
+import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
+import {useContracts} from '../../../redux/modules/contracts/contracts';
 
 export type TTransferFormData = {
   userWallet: string;
@@ -18,22 +21,25 @@ export type TTransferFormData = {
 
 export type TTransferFormProps = {
   userWallet: string;
+  handleSubmit: (data: TTransferFormData) => void;
 };
 
 export function TransferForm(props: TTransferFormProps) {
-  const {userWallet} = props;
+  const {userWallet, handleSubmit} = props;
 
   const [transferData, setTransferData] = useState<TTransferFormData>({userWallet, goalWallet: '', amount: ''});
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
   const [confirming, setConfirming] = useState(false);
 
   const {t} = useTranslation();
+  const navigation = useNavigation();
+  const {loading} = useContracts();
 
   const handleSubmitTransfer = useCallback(() => {
     console.log(transferData, 'transfer form data is here');
     setConfirming(false);
-    handleClearForm();
-  }, [transferData]);
+    handleSubmit(transferData);
+  }, [transferData, handleSubmit]);
 
   const handleChange = useCallback(
     (name: string, text: string) => {
@@ -73,6 +79,11 @@ export function TransferForm(props: TTransferFormProps) {
       goalWallet: '',
     });
   }, []);
+
+  const handleNavigateHistory = useCallback(() => {
+    // @ts-ignore
+    navigation.navigate(Routes.WithdrawHistory);
+  }, [navigation]);
 
   const disabled = useMemo(
     () => !transferData.goalWallet || !transferData.amount || !transferData.userWallet,
@@ -116,16 +127,18 @@ export function TransferForm(props: TTransferFormProps) {
         name="amount"
         placeholder={t('transfer.form.amountHolder')}
         label="amount"
+        preview={transferData.amount}
         value={transferData.amount}
         onChangeText={handleChange}
       />
-      <Spacer times={10} />
+      <Spacer times={8} />
       <SubmitTransfer
         disabled={disabled}
-        hasHistory={false}
+        hasHistory={true}
         onCancel={handleClearForm}
         onSubmit={() => setConfirming(true)}
-        onHistory={() => console.log('history button clicked')}
+        onHistory={handleNavigateHistory}
+        loading={!disabled && loading}
       />
     </View>
   );

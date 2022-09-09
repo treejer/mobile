@@ -57,7 +57,7 @@ export function WithdrawHistory(props: TWithdrawHistoryProps) {
                   <Text style={[styles.valueTxt, {paddingLeft: 2}]}>{withdrawAction.id}</Text>
                 </View>
                 <View style={styles.value}>
-                  <Text style={styles.valueTxt}>{withdrawAction.amount}</Text>
+                  <Text style={styles.valueTxt}>{Number(withdrawAction.amount).toFixed(2)}</Text>
                 </View>
                 <View style={styles.value}>
                   <Text style={styles.valueTxt}>{withdrawAction.date}</Text>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Text, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useTranslation} from 'react-i18next';
 
@@ -12,10 +12,11 @@ export type TSubmitTransferProps = {
   onCancel: () => void;
   onSubmit: () => void;
   onHistory: () => void;
+  loading?: boolean;
 };
 
 export function SubmitTransfer(props: TSubmitTransferProps) {
-  const {disabled = false, hasHistory = true, onCancel, onSubmit, onHistory} = props;
+  const {disabled = false, hasHistory = true, onCancel, onSubmit, onHistory, loading} = props;
 
   const {t} = useTranslation();
 
@@ -44,6 +45,7 @@ export function SubmitTransfer(props: TSubmitTransferProps) {
         disabled={disabled}
       >
         <Text style={disabled ? styles.muteText : styles.whiteText}>{t('transfer.form.transfer')}</Text>
+        {loading ? <ActivityIndicator style={{marginLeft: 8}} /> : null}
       </TouchableOpacity>
     </View>
   );
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     height: 48,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,

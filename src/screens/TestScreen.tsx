@@ -5,15 +5,15 @@ import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import globalStyles from 'constants/styles';
-import {DaiCoinBalance} from 'components/Transfer/DaiCoinBalance';
+import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
 import Spacer from 'components/Spacer';
-import {TransferInput} from 'components/Transfer/TransferInput';
-import {TransferConfirmationModal} from 'components/Transfer/TransferConfirmationModal';
-import {SubmitTransfer} from 'components/Transfer/SubmitTransfer';
-import {TWithdrawHistory, WithdrawHistory} from 'components/Transfer/WithdrawHistory';
+import {TransferInput} from 'components/Withdraw/TransferInput';
+import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
+import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
+import {TWithdrawHistory, WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
 import {QrReader} from 'components/QrReader/QrReader';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {AboutWithdraw} from 'components/Transfer/AboutWithdraw';
+import {AboutWithdraw} from 'components/Withdraw/AboutWithdraw';
 import Button from 'components/Button';
 
 const history: TWithdrawHistory[] = [

@@ -394,5 +394,11 @@ export const en = {
         confirm: 'Confirm',
       },
     },
+    success: {
+      title: 'Transaction successed',
+    },
+    error: {
+      title: 'An error occurred',
+    },
   },
 };

@@ -65,6 +65,7 @@ export enum Routes {
   CheckPermissions = 'CheckPermissions',
   Withdraw = 'Withdraw',
   Transfer = 'Transfer',
+  WithdrawHistory = 'WithdrawHistory',
 }
 
 export function RootNavigation() {

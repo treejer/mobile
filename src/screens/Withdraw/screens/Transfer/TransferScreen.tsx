@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 
 import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
@@ -10,7 +10,7 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
-import {TransferForm} from 'screens/Withdraw/components/TransferForm';
+import {TransferForm, TTransferFormData} from 'screens/Withdraw/components/TransferForm';
 import {isWeb} from 'utilities/helpers/web';
 import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -22,7 +22,7 @@ import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilit
 import {useProfile} from '../../../../redux/modules/profile/profile';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 
-export function Transfer() {
+export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
 
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
@@ -30,7 +30,7 @@ export function Transfer() {
 
   const {t} = useTranslation();
 
-  const {dai, getBalance, loading: contractsLoading} = useContracts();
+  const {dai, getBalance, loading: contractsLoading, submitTransaction} = useContracts();
   const {sendEvent} = useAnalytics();
   const {useGSN} = useSettings();
   const {profile} = useProfile();
@@ -169,6 +169,13 @@ export function Transfer() {
     useGSN,
   ]);
 
+  const handleSubmitTransaction = useCallback(
+    (data: TTransferFormData) => {
+      submitTransaction(data);
+    },
+    [submitTransaction],
+  );
+
   const handleRefetch = useCallback(
     () =>
       new Promise((resolve: any, reject: any) => {
@@ -181,27 +188,25 @@ export function Transfer() {
     [getPlanter, getBalance],
   );
 
+  // const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
+
   return (
-    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle title={t('withdraw')} goBack />
       <PullToRefresh onRefresh={handleRefetch}>
         <ScrollView
           style={[globalStyles.screenView, globalStyles.fill]}
-          refreshControl={
-            isWeb() ? undefined : (
-              <RefreshControl refreshing={contractsLoading || refetching} onRefresh={handleRefetch} />
-            )
-          }
+          refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={handleRefetch} />}
         >
           {isWeb() && <Spacer times={4} />}
-          <View style={[styles.container]}>
+          <View style={styles.container}>
             <WithdrawSection
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
               dai={dai}
               submitting={submitting}
             />
-            {dai ? <TransferForm userWallet={wallet} /> : null}
+            {dai ? <TransferForm userWallet={wallet} handleSubmit={handleSubmitTransaction} /> : null}
             <Spacer times={8} />
           </View>
         </ScrollView>
@@ -210,11 +215,11 @@ export function Transfer() {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     ...globalStyles.fill,
     ...globalStyles.screenView,
     ...globalStyles.alignItemsCenter,
     paddingBottom: 12,
   },
-};
+});

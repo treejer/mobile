@@ -6,24 +6,26 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Card from 'components/Card';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
+import {shortenedString} from 'utilities/helpers/shortenedString';
 
 export type TTransferInputProps = {
   name: string;
   label: string;
-  error?: string;
   value: string;
   onChangeText: (name: string, text: string) => void;
   placeholder?: string;
   disabled?: boolean;
   openQRReader?: () => void;
   onPaste?: () => void;
-  preview?: string | number;
   calcMax?: () => void;
+  error?: string;
+  preview?: string | number;
 };
 
 export function TransferInput(props: TTransferInputProps) {
   const {label, disabled, error, placeholder, value, name, onChangeText, preview, calcMax, openQRReader, onPaste} =
     props;
+
   const [inputValue, setInputValue] = useState(value || '');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -33,13 +35,13 @@ export function TransferInput(props: TTransferInputProps) {
     if (isTyping) {
       setInputValue(value);
     } else {
-      setInputValue(value.length > 20 ? `${value.slice(0, 10)}...${value.slice(value.length - 3)}` : value);
+      setInputValue(shortenedString(value, 15, 3));
     }
   }, [value]);
 
   const handleBlurInput = () => {
     setIsTyping(false);
-    setInputValue(value.length > 20 ? `${value.slice(0, 10)}...${value.slice(value.length - 3)}` : value);
+    setInputValue(shortenedString(value, 15, 3));
   };
 
   const handleFocusInput = () => {
@@ -61,12 +63,12 @@ export function TransferInput(props: TTransferInputProps) {
           onBlur={!preview ? handleBlurInput : undefined}
           onChangeText={text => onChangeText(name, text)}
         />
-        {!disabled && preview && (
+        {!disabled && preview ? (
           <TouchableOpacity onPress={calcMax}>
             <Text style={styles.label}>{t('transfer.form.max')}</Text>
           </TouchableOpacity>
-        )}
-        {!disabled && openQRReader && (
+        ) : null}
+        {!disabled && openQRReader ? (
           <View style={styles.optionsContainer}>
             <TouchableOpacity onPress={onPaste}>
               <Text style={styles.label}>{t('transfer.form.paste')}</Text>
@@ -78,10 +80,10 @@ export function TransferInput(props: TTransferInputProps) {
               </Text>
             </TouchableOpacity>
           </View>
-        )}
+        ) : null}
       </Card>
       {error && <Text style={styles.errorMessage}>{error}</Text>}
-      {!disabled && !error && preview && <Text style={styles.preview}>= ${preview}</Text>}
+      {!disabled && !error && preview ? <Text style={styles.preview}>= ${preview}</Text> : null}
     </View>
   );
 }
