@@ -30,7 +30,16 @@ export function TransferScreen() {
 
   const {t} = useTranslation();
 
-  const {dai, getBalance, loading: contractsLoading, submitTransaction} = useContracts();
+  const {
+    dai,
+    getBalance,
+    fee,
+    loading: contractsLoading,
+    submitTransaction,
+    estimateGasPrice,
+    cancelTransaction,
+    submitting: tranactionSubmitting,
+  } = useContracts();
   const {sendEvent} = useAnalytics();
   const {useGSN} = useSettings();
   const {profile} = useProfile();
@@ -176,6 +185,13 @@ export function TransferScreen() {
     [submitTransaction],
   );
 
+  const handleEstimateGasPrice = useCallback(
+    (data: TTransferFormData) => {
+      estimateGasPrice(data);
+    },
+    [estimateGasPrice],
+  );
+
   const handleRefetch = useCallback(
     () =>
       new Promise((resolve: any, reject: any) => {
@@ -206,7 +222,16 @@ export function TransferScreen() {
               dai={dai}
               submitting={submitting}
             />
-            {dai ? <TransferForm userWallet={wallet} handleSubmit={handleSubmitTransaction} /> : null}
+            {dai ? (
+              <TransferForm
+                userWallet={wallet}
+                fee={fee}
+                submitting={tranactionSubmitting}
+                handleSubmit={handleSubmitTransaction}
+                handleEstimateGasPrice={handleEstimateGasPrice}
+                handleCancelTransaction={cancelTransaction}
+              />
+            ) : null}
             <Spacer times={8} />
           </View>
         </ScrollView>

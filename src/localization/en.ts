@@ -377,6 +377,7 @@ export const en = {
     date: 'Date',
     txHash: 'Tx Hash',
     id: '#',
+    fee: 'Fee',
     form: {
       from: 'From',
       to: 'To',
@@ -399,6 +400,7 @@ export const en = {
     },
     error: {
       title: 'An error occurred',
+      fee: "you can't submit this transaction",
     },
   },
 };

@@ -16,6 +16,7 @@ export type TContract = string | number | null;
 export type TContracts = {
   dai: TContract | undefined;
   ether: TContract | undefined;
+  fee: string | number | null;
   loading: boolean;
   submitting: boolean;
 };
@@ -27,11 +28,13 @@ type TAction = {
     ether?: TContract | undefined;
   };
   transaction: TTransferFormData;
+  fee: {fee: string | number};
 };
 
 const initialState: TContracts = {
   dai: null,
   ether: null,
+  fee: null,
   loading: false,
   submitting: false,
 };
@@ -56,22 +59,57 @@ export function submitTransaction(payload: TAction['transaction']) {
   return {type: SUBMIT_TRANSACTION, transaction: payload};
 }
 
+export const ESTIMATE_GAS_PRICE = 'ESTIMATE_GAS_PRICE';
+export function estimateGasPrice(payload: TAction['transaction']) {
+  return {type: ESTIMATE_GAS_PRICE, transaction: payload};
+}
+
+export const TRANSACTION_FEE = 'TRANSACTION_FEE';
+export function transactionFee(payload: TAction['fee']) {
+  return {type: TRANSACTION_FEE, fee: payload};
+}
+
+export const CANCEL_TRANSACTION = 'CANCEL_TRANSACTION';
+export function cancelTransaction() {
+  return {type: CANCEL_TRANSACTION};
+}
+
 export function contractsReducer(state: TContracts = initialState, action: TAction): TContracts {
   switch (action.type) {
     case GET_BALANCE: {
-      return {...state, loading: true};
+      return {...state, loading: true, submitting: false};
     }
     case SET_BALANCE: {
-      console.log(action, 'action is hreee');
       return {
         ...state,
         ...action.setBalance,
         loading: false,
-        submitting: false,
       };
     }
     case SUBMIT_TRANSACTION: {
-      return {...state, submitting: true};
+      return {
+        ...state,
+        submitting: true,
+      };
+    }
+    case ESTIMATE_GAS_PRICE: {
+      return {
+        ...state,
+        fee: null,
+        submitting: true,
+      };
+    }
+    case TRANSACTION_FEE: {
+      return {
+        ...state,
+        ...action.fee,
+      };
+    }
+    case CANCEL_TRANSACTION: {
+      return {
+        ...state,
+        submitting: false,
+      };
     }
     case RESET_BALANCE: {
       return initialState;
@@ -133,6 +171,7 @@ export function* watchTransaction({transaction}: TAction) {
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const amountInEther = web3.utils.toWei(amount, 'ether');
     yield asyncTransferDai(daiContract, from, to, amountInEther);
+    yield put(cancelTransaction());
     yield put(getBalance());
     showAlert({
       title: i18next.t('transfer.success.title'),
@@ -149,9 +188,34 @@ export function* watchTransaction({transaction}: TAction) {
   }
 }
 
+export function* watchEstimateGasPrice({transaction}: TAction) {
+  try {
+    const {amount, from, to} = transaction;
+    console.log(transaction, 'dataaaaaa');
+    const config: NetworkConfig = yield selectConfig();
+    const web3: Web3 = yield selectWeb3();
+    const contract = config.contracts.Dai;
+    const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
+    const gasAmount = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
+    const gasPrice = yield web3.eth.getGasPrice();
+    const fee = gasAmount * gasPrice;
+    console.log(fee, 'feeeeeeeeeee');
+    if (fee > 0) {
+      yield put(transactionFee({fee}));
+    } else {
+      yield put(cancelTransaction());
+      showAlert({
+        title: i18next.t('transfer.error.fee'),
+        message: isWeb() ? i18next.t('transfer.error.fee') : '',
+      });
+    }
+  } catch (e: any) {}
+}
+
 export function* contractsSagas() {
   yield takeEvery(GET_BALANCE, watchContracts);
   yield takeEvery(SUBMIT_TRANSACTION, watchTransaction);
+  yield takeEvery(ESTIMATE_GAS_PRICE, watchEstimateGasPrice);
 }
 
 export type TUseContracts = {didMount?: boolean};
@@ -178,9 +242,22 @@ export function useContracts({didMount}: TUseContracts = {}) {
     [dispatch],
   );
 
+  const dispatchEstimateGasPrice = useCallback(
+    (data: TTransferFormData) => {
+      dispatch(estimateGasPrice(data));
+    },
+    [dispatch],
+  );
+
+  const dispatchCancelTransaction = useCallback(() => {
+    dispatch(cancelTransaction());
+  }, [dispatch]);
+
   return {
     ...contracts,
     getBalance: dispatchContracts,
     submitTransaction: dispatchTransaction,
+    estimateGasPrice: dispatchEstimateGasPrice,
+    cancelTransaction: dispatchCancelTransaction,
   };
 }

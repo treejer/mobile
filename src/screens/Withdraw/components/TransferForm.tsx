@@ -20,12 +20,16 @@ export type TTransferFormData = {
 };
 
 export type TTransferFormProps = {
+  fee: string | number | null;
   userWallet: string;
+  submitting: boolean;
   handleSubmit: (data: TTransferFormData) => void;
+  handleEstimateGasPrice: (data: TTransferFormData) => void;
+  handleCancelTransaction: () => void;
 };
 
 export function TransferForm(props: TTransferFormProps) {
-  const {userWallet, handleSubmit} = props;
+  const {userWallet, handleSubmit, fee, handleEstimateGasPrice, handleCancelTransaction, submitting} = props;
 
   const [transferData, setTransferData] = useState<TTransferFormData>({from: userWallet, to: '', amount: ''});
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
@@ -33,7 +37,6 @@ export function TransferForm(props: TTransferFormProps) {
 
   const {t} = useTranslation();
   const navigation = useNavigation();
-  const {submitting} = useContracts();
 
   const handleSubmitTransfer = useCallback(() => {
     console.log(transferData, 'transfer form data is here');
@@ -51,6 +54,11 @@ export function TransferForm(props: TTransferFormProps) {
     [transferData],
   );
 
+  const handlePasteClipboard = useCallback(async () => {
+    const text = await Clipboard.getString();
+    setTransferData({...transferData, to: text});
+  }, [transferData]);
+
   const handleScanQrCode = useCallback(
     (data: string) => {
       setTransferData({...transferData, to: data});
@@ -58,11 +66,6 @@ export function TransferForm(props: TTransferFormProps) {
     },
     [transferData],
   );
-
-  const handlePasteClipboard = useCallback(async () => {
-    const text = await Clipboard.getString();
-    setTransferData({...transferData, to: text});
-  }, [transferData]);
 
   const handleOpenQrReader = useCallback(() => {
     setShowQrReader(true);
@@ -78,6 +81,16 @@ export function TransferForm(props: TTransferFormProps) {
       amount: '',
       to: '',
     });
+  }, []);
+
+  const handleEstimate = useCallback(() => {
+    setConfirming(true);
+    handleEstimateGasPrice(transferData);
+  }, [handleEstimateGasPrice, transferData]);
+
+  const handleCloseConfirmModal = useCallback(() => {
+    setConfirming(false);
+    handleCancelTransaction();
   }, []);
 
   const handleNavigateHistory = useCallback(() => {
@@ -99,14 +112,15 @@ export function TransferForm(props: TTransferFormProps) {
 
   return (
     <View style={globalStyles.alignItemsCenter}>
-      {confirming && (
+      {confirming && fee ? (
         <TransferConfirmationModal
           onConfirm={handleSubmitTransfer}
-          onCancel={() => setConfirming(false)}
+          onCancel={handleCloseConfirmModal}
           amount={transferData.amount}
           address={transferData.to}
+          fee={fee}
         />
-      )}
+      ) : null}
       <Spacer times={4} />
       <TransferInput name="from" label="from" value={transferData.from} onChangeText={handleChange} disabled />
       <Spacer />
@@ -135,7 +149,7 @@ export function TransferForm(props: TTransferFormProps) {
         disabled={disabled}
         hasHistory={true}
         onCancel={handleClearForm}
-        onSubmit={() => setConfirming(true)}
+        onSubmit={handleEstimate}
         onHistory={handleNavigateHistory}
         loading={submitting}
       />

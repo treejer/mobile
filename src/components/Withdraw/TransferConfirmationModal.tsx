@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Modal, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -6,16 +6,22 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {colors} from 'constants/values';
 import Card from 'components/Card';
 import Button from 'components/Button';
+import Spacer from 'components/Spacer';
 
 export type TTransferConfirmationModalProps = {
   onConfirm: () => void;
   onCancel: () => void;
   amount: string;
   address: string;
+  fee: string | number | null;
 };
 
 export function TransferConfirmationModal(props: TTransferConfirmationModalProps) {
-  const {address, amount, onCancel, onConfirm} = props;
+  const {address, amount, onCancel, onConfirm, fee} = props;
+
+  useEffect(() => {
+    console.log(fee, 'fee is here');
+  }, [fee]);
 
   const {t} = useTranslation();
 
@@ -41,13 +47,19 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
               <Text style={styles.detail}>{t('transfer.form.amount')}</Text>
               <Text style={[styles.detail, styles.values]}>{amount}</Text>
             </View>
+            <View style={styles.row}>
+              <Text style={styles.detail}>{t('transfer.fee')}</Text>
+              <Text style={[styles.detail, styles.values]}>{fee ? fee : '...'}</Text>
+            </View>
           </View>
           <View style={styles.hr} />
           <Text style={styles.alert}>{t('transfer.form.confirm.alert')}</Text>
+          <Spacer />
           <View style={[styles.row, styles.btnContainer]}>
             <Button style={styles.btn} caption={t('transfer.form.confirm.cancel')} onPress={onCancel} />
             <Button
-              style={styles.btn}
+              disabled={!fee}
+              style={[styles.btn]}
               variant="success"
               caption={t('transfer.form.confirm.confirm')}
               onPress={onConfirm}
@@ -117,5 +129,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 0,
+  },
+  disabledBtn: {
+    backgroundColor: colors.khakiDark,
+    color: colors.gray,
   },
 });
