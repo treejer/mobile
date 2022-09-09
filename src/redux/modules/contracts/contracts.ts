@@ -17,6 +17,7 @@ export type TContracts = {
   dai: TContract | undefined;
   ether: TContract | undefined;
   loading: boolean;
+  submitting: boolean;
 };
 
 type TAction = {
@@ -32,6 +33,7 @@ const initialState: TContracts = {
   dai: null,
   ether: null,
   loading: false,
+  submitting: false,
 };
 
 export const GET_BALANCE = 'GET_BALANCE';
@@ -65,10 +67,11 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
         ...state,
         ...action.setBalance,
         loading: false,
+        submitting: false,
       };
     }
     case SUBMIT_TRANSACTION: {
-      return {...state, loading: true};
+      return {...state, submitting: true};
     }
     case RESET_BALANCE: {
       return initialState;
@@ -84,6 +87,11 @@ export function* watchContracts() {
     const config: NetworkConfig = yield selectConfig();
     const wallet: string = yield selectWallet();
     const web3: Web3 = yield selectWeb3();
+    //
+    // const gas = yield web3.eth.estimateGas({from: wallet});
+    // console.log('Gas estimated', gas);
+    //
+    // const gasPrice = yield web3.eth.getGasPrice();
 
     const contract = config.contracts.Dai;
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
@@ -118,13 +126,13 @@ export function asyncTransferDai(daiContract: Contract, from: string, to: string
 
 export function* watchTransaction({transaction}: TAction) {
   try {
-    const {amount, userWallet, goalWallet} = transaction;
+    const {amount, from, to} = transaction;
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
     const contract = config.contracts.Dai;
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const amountInEther = web3.utils.toWei(amount, 'ether');
-    yield asyncTransferDai(daiContract, userWallet, goalWallet, amountInEther);
+    yield asyncTransferDai(daiContract, from, to, amountInEther);
     yield put(getBalance());
     showAlert({
       title: i18next.t('transfer.success.title'),

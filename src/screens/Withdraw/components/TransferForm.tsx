@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -14,8 +14,8 @@ import globalStyles from 'constants/styles';
 import {useContracts} from '../../../redux/modules/contracts/contracts';
 
 export type TTransferFormData = {
-  userWallet: string;
-  goalWallet: string;
+  from: string;
+  to: string;
   amount: string;
 };
 
@@ -27,13 +27,13 @@ export type TTransferFormProps = {
 export function TransferForm(props: TTransferFormProps) {
   const {userWallet, handleSubmit} = props;
 
-  const [transferData, setTransferData] = useState<TTransferFormData>({userWallet, goalWallet: '', amount: ''});
+  const [transferData, setTransferData] = useState<TTransferFormData>({from: userWallet, to: '', amount: ''});
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
   const [confirming, setConfirming] = useState(false);
 
   const {t} = useTranslation();
   const navigation = useNavigation();
-  const {loading} = useContracts();
+  const {submitting} = useContracts();
 
   const handleSubmitTransfer = useCallback(() => {
     console.log(transferData, 'transfer form data is here');
@@ -53,7 +53,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handleScanQrCode = useCallback(
     (data: string) => {
-      setTransferData({...transferData, goalWallet: data});
+      setTransferData({...transferData, to: data});
       setShowQrReader(false);
     },
     [transferData],
@@ -61,7 +61,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handlePasteClipboard = useCallback(async () => {
     const text = await Clipboard.getString();
-    setTransferData({...transferData, goalWallet: text});
+    setTransferData({...transferData, to: text});
   }, [transferData]);
 
   const handleOpenQrReader = useCallback(() => {
@@ -76,7 +76,7 @@ export function TransferForm(props: TTransferFormProps) {
     setTransferData({
       ...transferData,
       amount: '',
-      goalWallet: '',
+      to: '',
     });
   }, []);
 
@@ -85,10 +85,13 @@ export function TransferForm(props: TTransferFormProps) {
     navigation.navigate(Routes.WithdrawHistory);
   }, [navigation]);
 
-  const disabled = useMemo(
-    () => !transferData.goalWallet || !transferData.amount || !transferData.userWallet,
-    [transferData],
-  );
+  const disabled = useMemo(() => !transferData.from || !transferData.amount || !transferData.to, [transferData]);
+
+  useEffect(() => {
+    if (!submitting && !disabled) {
+      handleClearForm();
+    }
+  }, [submitting]);
 
   if (showQrReader) {
     return <QrReader handleScan={handleScanQrCode} handleDismiss={handleCloseQrReader} />;
@@ -101,23 +104,18 @@ export function TransferForm(props: TTransferFormProps) {
           onConfirm={handleSubmitTransfer}
           onCancel={() => setConfirming(false)}
           amount={transferData.amount}
-          address={transferData.goalWallet}
+          address={transferData.to}
         />
       )}
       <Spacer times={4} />
-      <TransferInput
-        name="userWallet"
-        label="from"
-        value={transferData.userWallet}
-        onChangeText={handleChange}
-        disabled
-      />
+      <TransferInput name="from" label="from" value={transferData.from} onChangeText={handleChange} disabled />
       <Spacer />
       <TransferInput
-        name="goalWallet"
+        name="to"
         label="to"
+        disabled={submitting}
         placeholder={t('transfer.form.toHolder')}
-        value={transferData.goalWallet}
+        value={transferData.to}
         onChangeText={handleChange}
         onPaste={handlePasteClipboard}
         openQRReader={handleOpenQrReader}
@@ -125,8 +123,9 @@ export function TransferForm(props: TTransferFormProps) {
       <Spacer />
       <TransferInput
         name="amount"
-        placeholder={t('transfer.form.amountHolder')}
         label="amount"
+        disabled={submitting}
+        placeholder={t('transfer.form.amountHolder')}
         preview={transferData.amount}
         value={transferData.amount}
         onChangeText={handleChange}
@@ -138,7 +137,7 @@ export function TransferForm(props: TTransferFormProps) {
         onCancel={handleClearForm}
         onSubmit={() => setConfirming(true)}
         onHistory={handleNavigateHistory}
-        loading={!disabled && loading}
+        loading={submitting}
       />
     </View>
   );

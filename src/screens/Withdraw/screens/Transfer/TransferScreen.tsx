@@ -188,7 +188,7 @@ export function TransferScreen() {
     [getPlanter, getBalance],
   );
 
-  // const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
+  const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
@@ -196,7 +196,7 @@ export function TransferScreen() {
       <PullToRefresh onRefresh={handleRefetch}>
         <ScrollView
           style={[globalStyles.screenView, globalStyles.fill]}
-          refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={handleRefetch} />}
+          refreshControl={isWeb() ? undefined : <RefreshControl refreshing={loading} onRefresh={handleRefetch} />}
         >
           {isWeb() && <Spacer times={4} />}
           <View style={styles.container}>
