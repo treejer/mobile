@@ -11,12 +11,21 @@ import Spacer from 'components/Spacer';
 import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
-import {useContracts} from '../../../redux/modules/contracts/contracts';
 
 export type TTransferFormData = {
   from: string;
   to: string;
   amount: string;
+};
+
+export type TTransferFormError = {
+  to?: string;
+  amount?: string;
+};
+
+export type TTransferFormTouched = {
+  to?: boolean;
+  amount?: boolean;
 };
 
 export type TTransferFormProps = {
@@ -28,19 +37,37 @@ export type TTransferFormProps = {
   handleCancelTransaction: () => void;
 };
 
+function transferFormValidator(name: string, text: string) {
+  let error: TTransferFormError = {};
+  if (name === 'to') {
+    if (text.length < 42 || text.length > 64) {
+      error.to = 'wallet address is in valid';
+    }
+  }
+  if (name === 'amount') {
+    if (Number(text) <= 0) {
+      error.amount = 'amount value shold be bigger than one';
+    }
+  }
+
+  return error;
+}
+
 export function TransferForm(props: TTransferFormProps) {
   const {userWallet, handleSubmit, fee, handleEstimateGasPrice, handleCancelTransaction, submitting} = props;
 
   const [transferData, setTransferData] = useState<TTransferFormData>({from: userWallet, to: '', amount: ''});
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
-  const [confirming, setConfirming] = useState(false);
+  const [transferError, setTransferError] = useState<TTransferFormError>({});
+  const [transferTouched, setTransferTouched] = useState<TTransferFormTouched>({to: false, amount: false});
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const {t} = useTranslation();
   const navigation = useNavigation();
 
   const handleSubmitTransfer = useCallback(() => {
     console.log(transferData, 'transfer form data is here');
-    setConfirming(false);
+    setShowConfirmModal(false);
     handleSubmit(transferData);
   }, [transferData, handleSubmit]);
 
@@ -84,12 +111,12 @@ export function TransferForm(props: TTransferFormProps) {
   }, []);
 
   const handleEstimate = useCallback(() => {
-    setConfirming(true);
+    setShowConfirmModal(true);
     handleEstimateGasPrice(transferData);
   }, [handleEstimateGasPrice, transferData]);
 
   const handleCloseConfirmModal = useCallback(() => {
-    setConfirming(false);
+    setShowConfirmModal(false);
     handleCancelTransaction();
   }, []);
 
@@ -112,7 +139,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   return (
     <View style={globalStyles.alignItemsCenter}>
-      {confirming && fee ? (
+      {showConfirmModal && fee ? (
         <TransferConfirmationModal
           onConfirm={handleSubmitTransfer}
           onCancel={handleCloseConfirmModal}
@@ -146,12 +173,12 @@ export function TransferForm(props: TTransferFormProps) {
       />
       <Spacer times={8} />
       <SubmitTransfer
-        disabled={disabled}
         hasHistory={true}
+        disabled={disabled}
+        loading={submitting}
         onCancel={handleClearForm}
         onSubmit={handleEstimate}
         onHistory={handleNavigateHistory}
-        loading={submitting}
       />
     </View>
   );

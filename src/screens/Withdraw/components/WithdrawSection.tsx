@@ -14,11 +14,11 @@ export type TWithdrawSectionProps = {
   handleWithdraw: () => void;
   planterWithdrawableBalance: TContract | undefined;
   dai: TContract | undefined;
-  submitting: boolean;
+  redeeming: boolean;
 };
 
 export function WithdrawSection(props: TWithdrawSectionProps) {
-  const {planterWithdrawableBalance, dai, submitting, handleWithdraw} = props;
+  const {planterWithdrawableBalance, dai, redeeming, handleWithdraw} = props;
 
   const {t} = useTranslation();
 
@@ -40,9 +40,9 @@ export function WithdrawSection(props: TWithdrawSectionProps) {
             style={globalStyles.alignItemsCenter}
             onPress={handleWithdraw}
             variant="secondary"
-            loading={submitting}
+            loading={redeeming}
             caption={t('transfer.redeem')}
-            icon={() => (submitting ? null : <Icon name="level-down-alt" color="#FFF" />)}
+            icon={() => (!redeeming ? <Icon name="level-down-alt" color="#FFF" /> : null)}
           />
           <Spacer times={6} />
         </>

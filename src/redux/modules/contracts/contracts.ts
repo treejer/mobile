@@ -142,8 +142,6 @@ export function* watchContracts() {
       ether: web3.utils.fromWei(etherBalance),
     };
 
-    console.log(contracts, 'datais hreee');
-
     yield put(setBalance(contracts));
   } catch (e: any) {
     console.log(e, 'error is here');
