@@ -1,6 +1,7 @@
 import {useCallback, useEffect} from 'react';
-import {put, takeEvery} from 'redux-saga/effects';
 import Web3 from 'web3';
+import BN from 'bn.js';
+import {put, takeEvery} from 'redux-saga/effects';
 import {Contract} from 'web3-eth-contract';
 
 import {NetworkConfig} from 'services/config';
@@ -14,8 +15,8 @@ import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
 export type TContract = string | number | null;
 
 export type TContracts = {
-  dai: TContract | undefined;
-  ether: TContract | undefined;
+  dai: string | BN;
+  ether: string | BN;
   fee: string | number | null;
   loading: boolean;
   submitting: boolean;
@@ -24,16 +25,16 @@ export type TContracts = {
 type TAction = {
   type: string;
   setBalance: {
-    dai?: TContract | undefined;
-    ether?: TContract | undefined;
+    dai?: string | BN;
+    ether?: string | BN;
   };
   transaction: TTransferFormData;
   fee: {fee: string | number};
 };
 
 const initialState: TContracts = {
-  dai: null,
-  ether: null,
+  dai: '',
+  ether: '',
   fee: null,
   loading: false,
   submitting: false,
@@ -153,8 +154,8 @@ export function* watchContracts() {
     const etherBalance = yield web3.eth.getBalance(wallet);
 
     const contracts: TAction['setBalance'] = {
-      dai: web3.utils.fromWei(daiBalance),
-      ether: web3.utils.fromWei(etherBalance),
+      dai: daiBalance,
+      ether: etherBalance,
     };
 
     // console.log(contracts, 'contracts');

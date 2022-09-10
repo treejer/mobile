@@ -201,6 +201,8 @@ export function TransferScreen() {
     });
   }, [refetching, contractsLoading, loading]);
 
+  const daiBalance = useMemo(() => web3.utils.fromWei(dai), [dai]);
+
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle title={t('withdraw')} goBack />
@@ -215,15 +217,16 @@ export function TransferScreen() {
               loading={loading}
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
-              dai={dai}
+              daiBalance={daiBalance}
               redeeming={redeeming}
             />
             {dai ? (
               <TransferForm
+                daiBalance={dai}
                 userWallet={wallet}
                 fee={fee}
                 submitting={submitting}
-                handleSubmit={submitTransaction}
+                handleSubmitTransaction={submitTransaction}
                 handleEstimateGasPrice={estimateGasPrice}
                 handleCancelTransaction={cancelTransaction}
               />

@@ -1,19 +1,21 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import BN from 'bn.js';
 
 import Card from 'components/Card';
-import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {capitalize} from 'utilities/helpers/capitalize';
-import {TContract} from 'redux/modules/contracts/contracts';
+import {useWeb3} from 'utilities/hooks/useWeb3';
 import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
+import {TContract} from '../../redux/modules/contracts/contracts';
 
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
   basePrice: string | number;
-  balance: TContract | undefined;
+  balance: TContract | undefined | string | BN;
   description?: boolean;
   open?: boolean;
   loading?: boolean;
@@ -22,7 +24,11 @@ export type TDaiCoinBalanceProps = {
 export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
   const {name, balance, description, basePrice, open = true, loading} = props;
 
+  const web3 = useWeb3();
+
   const {t} = useTranslation();
+
+  const daiBalance = useMemo(() => (balance instanceof BN ? web3.utils.fromWei(balance) : balance), [balance]);
 
   return (
     <Card style={[globalStyles.justifyContentCenter, open ? styles.container : styles.containerSmall]}>
@@ -44,8 +50,8 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
           )}
         </View>
         <View style={open ? styles.justifyBetween : [globalStyles.justifyContentCenter]}>
-          {open && <Text style={styles.coinName}>{loading ? '...' : `${Number(balance).toFixed(2)} DAI`}</Text>}
-          <Text style={styles.mute}>{loading ? '...' : `$${Number(balance).toFixed(2)}`}</Text>
+          {open && <Text style={styles.coinName}>{loading ? '...' : `${Number(daiBalance).toFixed(2)} DAI`}</Text>}
+          <Text style={styles.mute}>{loading ? '...' : `$${Number(daiBalance).toFixed(2)}`}</Text>
         </View>
       </View>
     </Card>

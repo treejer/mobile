@@ -1,16 +1,16 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
-import {colors} from 'constants/values';
-import Card from 'components/Card';
-import globalStyles from 'constants/styles';
-import Spacer from 'components/Spacer';
-import {useConfig, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
-import {useContracts} from '../../redux/modules/contracts/contracts';
+import Card from 'components/Card';
+import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
 import {shortenedString} from 'utilities/helpers/shortenedString';
+import {useConfig, useWeb3} from 'utilities/hooks/useWeb3';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useContracts} from '../../redux/modules/contracts/contracts';
 
 export type ProfileMagicWalletProps = {
   wallet: string;
@@ -20,6 +20,10 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const {wallet} = props;
 
   const {dai, ether, loading} = useContracts();
+  const web3 = useWeb3();
+
+  const daiBalance = useMemo(() => web3.utils.fromWei(dai), [dai]);
+  const etherBalance = useMemo(() => web3.utils.fromWei(ether), [dai]);
 
   const config = useConfig();
 
@@ -50,13 +54,13 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
       <View style={styles.walletWrapper}>
         <Text>{t('magicWallet.daiBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{loading || !dai ? '...' : Number(dai).toFixed(8)}</Text>
+        <Text style={styles.balance}>{loading || !dai ? '...' : Number(daiBalance).toFixed(8)}</Text>
       </View>
       <Spacer times={1} />
       <View style={styles.walletWrapper}>
         <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{loading || !dai ? '...' : Number(ether).toFixed(8)}</Text>
+        <Text style={styles.balance}>{loading || !dai ? '...' : Number(etherBalance).toFixed(8)}</Text>
       </View>
       <Spacer times={4} />
       <Text>How to add this wallet to metamask?</Text>
