@@ -26,9 +26,10 @@ export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
 
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
-  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [redeeming, setRedeeming] = useState<boolean>(false);
 
   const {t} = useTranslation();
+  const {sendEvent} = useAnalytics();
 
   const {
     dai,
@@ -38,16 +39,16 @@ export function TransferScreen() {
     submitTransaction,
     estimateGasPrice,
     cancelTransaction,
-    submitting: tranactionSubmitting,
-  } = useContracts();
-  const {sendEvent} = useAnalytics();
-  const {useGSN} = useSettings();
-  const {profile} = useProfile();
+    submitting,
+  } = useContracts({didMount: true});
 
-  const planterFundContract = usePlanterFund();
+  const {useGSN} = useSettings();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
   const config = useConfig();
+  const {profile} = useProfile();
+  const planterFundContract = usePlanterFund();
+
   const isConnected = useNetInfoConnected();
 
   const isVerified = profile?.isVerified;
@@ -95,8 +96,6 @@ export function TransferScreen() {
     [planterData, parseBalance],
   );
 
-  console.log(planterWithdrawableBalance, 'planterWithdrawableBalance is hereeee');
-
   useEffect(() => {
     (async () => {
       await getMinBalance();
@@ -113,7 +112,7 @@ export function TransferScreen() {
       });
       return;
     }
-    setSubmitting(true);
+    setRedeeming(true);
     sendEvent('withdraw');
     try {
       // balance
@@ -162,7 +161,7 @@ export function TransferScreen() {
       });
       console.warn('Error', error);
     } finally {
-      setSubmitting(false);
+      setRedeeming(false);
     }
   }, [
     isConnected,
@@ -178,23 +177,9 @@ export function TransferScreen() {
     useGSN,
   ]);
 
-  const handleSubmitTransaction = useCallback(
-    (data: TTransferFormData) => {
-      submitTransaction(data);
-    },
-    [submitTransaction],
-  );
-
-  const handleEstimateGasPrice = useCallback(
-    (data: TTransferFormData) => {
-      estimateGasPrice(data);
-    },
-    [estimateGasPrice],
-  );
-
   const handleRefetch = useCallback(
     () =>
-      new Promise((resolve: any, reject: any) => {
+      new Promise((resolve: any) => {
         return (async () => {
           await getPlanter();
           await getBalance();
@@ -205,6 +190,14 @@ export function TransferScreen() {
   );
 
   const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
+
+  useEffect(() => {
+    console.log({
+      contractsLoading,
+      refetching,
+      loading,
+    });
+  }, [refetching, contractsLoading, loading]);
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
@@ -220,15 +213,15 @@ export function TransferScreen() {
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
               dai={dai}
-              submitting={submitting}
+              redeeming={redeeming}
             />
             {dai ? (
               <TransferForm
                 userWallet={wallet}
                 fee={fee}
-                submitting={tranactionSubmitting}
-                handleSubmit={handleSubmitTransaction}
-                handleEstimateGasPrice={handleEstimateGasPrice}
+                submitting={submitting}
+                handleSubmit={submitTransaction}
+                handleEstimateGasPrice={estimateGasPrice}
                 handleCancelTransaction={cancelTransaction}
               />
             ) : null}

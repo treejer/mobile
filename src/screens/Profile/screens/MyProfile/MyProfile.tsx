@@ -42,7 +42,7 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
-  const {getBalance} = useContracts();
+  const {getBalance, loading: contractsLoading} = useContracts({didMount: true});
 
   // const user = useCurrentUser();
   // console.log(user, 'user>++');
@@ -265,7 +265,9 @@ function MyProfile(props: MyProfileProps) {
         <ScrollView
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={
-            isWeb() ? undefined : <RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />
+            isWeb() ? undefined : (
+              <RefreshControl refreshing={profileLoading || refetching || contractsLoading} onRefresh={onRefetch} />
+            )
           }
         >
           <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>

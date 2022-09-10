@@ -82,7 +82,7 @@ export function TransferInput(props: TTransferInputProps) {
           </View>
         ) : null}
       </Card>
-      {error && <Text style={styles.errorMessage}>{error}</Text>}
+      {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
       {!disabled && !error && preview ? <Text style={styles.preview}>= ${preview}</Text> : null}
     </View>
   );
