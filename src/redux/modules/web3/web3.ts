@@ -10,7 +10,7 @@ import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce'
 import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
 import {getBalance, resetBalance} from '../contracts/contracts';
 import {selectNetInfo} from '../netInfo/netInfo';
-import {profileActions} from '../profile/profile';
+import {profileActions, selectProfile} from '../profile/profile';
 import {TReduxState, TStoreRedux} from '../../store';
 
 export type TWeb3 = {
@@ -199,6 +199,7 @@ function contractGenerator(web3: Web3, {abi, address}: ConfigContract): Contract
 export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
   try {
     let config = yield selectConfig();
+    const profile = yield selectProfile();
     const isConnected = yield selectNetInfo();
     if (newNetwork) {
       yield put(resetWeb3Data());
@@ -210,8 +211,8 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
     yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
-    console.log(isConnected, 'isConnected mammad');
-    if (isConnected) {
+    console.log(isConnected, profile, 'isConnected, profile is hereeee');
+    if (isConnected && profile) {
       yield put(getBalance());
     }
   } catch (error) {
@@ -252,7 +253,6 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
     }
     const wallet = web3Accounts[0];
     const isConnect = yield selectNetInfo();
-    console.log(isConnect, 'isConnectisConnectisConnectisConnectisConnectisConnectisConnect');
     if (isConnect) {
       yield put(userNonceActions.load({wallet, magicToken, loginData}));
       const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);

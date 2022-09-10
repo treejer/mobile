@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import ReduxFetchState from 'redux-fetch-state';
-import {takeEvery, put} from 'redux-saga/effects';
+import {takeEvery, put, select} from 'redux-saga/effects';
 
 import {defaultNetwork, storageKeys} from 'services/config';
 import {asyncAlert} from 'utilities/helpers/alert';
@@ -11,6 +11,7 @@ import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useUserWeb3} from 'utilities/hooks/useWeb3';
 import {clearUserNonce} from '../web3/web3';
+import {TReduxState} from '../../store';
 
 export type TProfile = {
   id: string;
@@ -159,3 +160,7 @@ export function useProfile(): TUseProfile {
 }
 
 export const {actionTypes: profileActionsTypes, actions: profileActions, reducer: profileReducer} = Profile;
+
+export function* selectProfile() {
+  return yield select((state: TReduxState) => state.profile.data);
+}

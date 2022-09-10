@@ -58,7 +58,7 @@ export function TransferInput(props: TTransferInputProps) {
           editable={!disabled}
           placeholder={placeholder}
           value={inputValue}
-          keyboardType={preview ? 'numeric' : undefined}
+          keyboardType={preview || calcMax ? 'numeric' : undefined}
           onFocus={!preview ? handleFocusInput : undefined}
           onBlur={!preview ? handleBlurInput : undefined}
           onChangeText={text => onChangeText(name, text)}

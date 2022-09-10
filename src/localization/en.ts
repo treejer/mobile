@@ -399,6 +399,7 @@ export const en = {
       title: 'Transaction successed',
     },
     error: {
+      contractsFailed: 'Get dai and ether balance failed',
       title: 'An error occurred',
       fee: "you can't submit this transaction",
     },

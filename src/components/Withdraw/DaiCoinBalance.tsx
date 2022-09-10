@@ -44,8 +44,8 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
           )}
         </View>
         <View style={open ? styles.justifyBetween : [globalStyles.justifyContentCenter]}>
-          {open && <Text style={styles.coinName}>{!loading ? `${Number(balance).toFixed(2)} DAI` : '...'}</Text>}
-          <Text style={styles.mute}>{!loading ? `$${Number(balance).toFixed(2)}` : '...'}</Text>
+          {open && <Text style={styles.coinName}>{loading ? '...' : `${Number(balance).toFixed(2)} DAI`}</Text>}
+          <Text style={styles.mute}>{loading ? '...' : `$${Number(balance).toFixed(2)}`}</Text>
         </View>
       </View>
     </Card>

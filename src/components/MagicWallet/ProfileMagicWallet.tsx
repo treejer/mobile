@@ -19,7 +19,7 @@ export type ProfileMagicWalletProps = {
 export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const {wallet} = props;
 
-  const {dai, ether} = useContracts();
+  const {dai, ether, loading} = useContracts();
 
   const config = useConfig();
 
@@ -50,13 +50,13 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
       <View style={styles.walletWrapper}>
         <Text>{t('magicWallet.daiBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{dai ? Number(dai).toFixed(8) : '...'}</Text>
+        <Text style={styles.balance}>{loading || !dai ? '...' : Number(dai).toFixed(8)}</Text>
       </View>
       <Spacer times={1} />
       <View style={styles.walletWrapper}>
         <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{ether ? Number(ether).toFixed(8) : '...'}</Text>
+        <Text style={styles.balance}>{loading || !dai ? '...' : Number(ether).toFixed(8)}</Text>
       </View>
       <Spacer times={4} />
       <Text>How to add this wallet to metamask?</Text>

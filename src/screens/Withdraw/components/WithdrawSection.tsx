@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {AboutWithdraw} from 'components/Withdraw/AboutWithdraw';
 import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
@@ -6,7 +7,6 @@ import {View} from 'react-native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
 import {TContract} from '../../../redux/modules/contracts/contracts';
 
@@ -15,10 +15,11 @@ export type TWithdrawSectionProps = {
   planterWithdrawableBalance: TContract | undefined;
   dai: TContract | undefined;
   redeeming: boolean;
+  loading: boolean;
 };
 
 export function WithdrawSection(props: TWithdrawSectionProps) {
-  const {planterWithdrawableBalance, dai, redeeming, handleWithdraw} = props;
+  const {planterWithdrawableBalance, dai, redeeming, handleWithdraw, loading} = props;
 
   const {t} = useTranslation();
 
@@ -32,6 +33,7 @@ export function WithdrawSection(props: TWithdrawSectionProps) {
         basePrice="1.00"
         balance={planterWithdrawableBalance}
         open={!!planterWithdrawableBalance}
+        loading={loading}
       />
       <Spacer times={planterWithdrawableBalance ? 6 : undefined} />
       {!!planterWithdrawableBalance && (
@@ -53,6 +55,7 @@ export function WithdrawSection(props: TWithdrawSectionProps) {
         basePrice="1.00"
         balance={dai}
         open={!!planterWithdrawableBalance || !!dai}
+        loading={loading}
       />
     </View>
   );

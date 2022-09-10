@@ -10,7 +10,7 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
-import {TransferForm, TTransferFormData} from 'screens/Withdraw/components/TransferForm';
+import {TransferForm} from 'screens/Withdraw/components/TransferForm';
 import {isWeb} from 'utilities/helpers/web';
 import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -212,6 +212,7 @@ export function TransferScreen() {
           {isWeb() && <Spacer times={4} />}
           <View style={styles.container}>
             <WithdrawSection
+              loading={loading}
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
               dai={dai}

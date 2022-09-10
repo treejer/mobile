@@ -317,15 +317,17 @@ function MyProfile(props: MyProfileProps) {
                 <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  <>
-                    <Button
-                      style={styles.button}
-                      caption={t('withdraw')}
-                      variant="tertiary"
-                      onPress={handleNavigateWithdraw}
-                    />
-                    <Spacer times={4} />
-                  </>
+                  {profile.isVerified ? (
+                    <>
+                      <Button
+                        style={styles.button}
+                        caption={t('withdraw')}
+                        variant="tertiary"
+                        onPress={handleNavigateWithdraw}
+                      />
+                      <Spacer times={4} />
+                    </>
+                  ) : null}
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>

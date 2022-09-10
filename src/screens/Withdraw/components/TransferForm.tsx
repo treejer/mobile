@@ -102,6 +102,8 @@ export function TransferForm(props: TTransferFormProps) {
     setShowQrReader(false);
   }, []);
 
+  const handleCalcMacAmount = useCallback(() => {}, []);
+
   const handleClearForm = useCallback(() => {
     setTransferData({
       ...transferData,
@@ -170,6 +172,7 @@ export function TransferForm(props: TTransferFormProps) {
         preview={transferData.amount}
         value={transferData.amount}
         onChangeText={handleChange}
+        calcMax={handleCalcMacAmount}
       />
       <Spacer times={8} />
       <SubmitTransfer

@@ -39,6 +39,11 @@ const initialState: TContracts = {
   submitting: false,
 };
 
+export const GET_BALANCE_FAILED = 'GET_BALANCE_FAILED';
+export function getBalanceFailed() {
+  return {type: GET_BALANCE_FAILED};
+}
+
 export const GET_BALANCE = 'GET_BALANCE';
 export function getBalance() {
   return {type: GET_BALANCE};
@@ -115,6 +120,12 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
         submitting: false,
       };
     }
+    case GET_BALANCE_FAILED: {
+      return {
+        ...state,
+        loading: false,
+      };
+    }
     case RESET_BALANCE: {
       return initialState;
     }
@@ -146,8 +157,15 @@ export function* watchContracts() {
       ether: web3.utils.fromWei(etherBalance),
     };
 
+    // console.log(contracts, 'contracts');
+
     yield put(setBalance(contracts));
   } catch (e: any) {
+    showAlert({
+      title: i18next.t('transfer.error.title'),
+      message: i18next.t('transfer.error.contractsFailed'),
+    });
+    yield put(getBalanceFailed());
     console.log(e, 'error is here');
   }
 }
