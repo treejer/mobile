@@ -16,7 +16,7 @@ export enum ContractType {
 
 export interface ConfigContract {
   address: string;
-  abi: AbiDefinition;
+  abi: AbiDefinition['abi'];
 }
 
 export interface StorageKeys {
@@ -259,7 +259,7 @@ export const networks: Networks = {
 };
 
 export const debugFetch = true;
-export const reduxLogger = false;
+export const reduxLogger = true;
 
 export default config;
 

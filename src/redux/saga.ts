@@ -5,7 +5,6 @@ import {initSagas} from './modules/init/init';
 import {userNonceSagas} from './modules/userNonce/userNonce';
 import {userSignSagas} from './modules/userSign/userSign';
 import {netInfoSagas} from './modules/netInfo/netInfo';
-import {userSagas} from './modules/profile/_user';
 import {profileSagas} from './modules/profile/profile';
 import {contractsSagas} from './modules/contracts/contracts';
 
@@ -16,7 +15,6 @@ export default function* root(store: TStoreRedux) {
     userNonceSagas(),
     userSignSagas(),
     netInfoSagas(store),
-    userSagas(),
     profileSagas(),
     contractsSagas(),
   ]);

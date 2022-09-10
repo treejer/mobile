@@ -18,7 +18,7 @@ import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/Use
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useConfig, useUserId} from 'utilities/hooks/useWeb3';
+import {useUserId} from 'utilities/hooks/useWeb3';
 import {useCurrentUser, UserStatus} from 'services/currentUser';
 import RadioButton from 'components/RadioButton/RadioButton';
 import {ChevronLeft} from 'components/Icons';

@@ -42,7 +42,7 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const config = useConfig();
   useTreeUpdateInterval();
-  const {getBalance, loading: contractsLoading} = useContracts({didMount: true});
+  const {getBalance, loading: contractsLoading} = useContracts();
 
   // const user = useCurrentUser();
   // console.log(user, 'user>++');

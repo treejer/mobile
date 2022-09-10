@@ -1,6 +1,6 @@
 import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Contract} from 'web3-eth-contract';
-import configs, {BlockchainNetwork, defaultNetwork, NetworkConfig} from 'services/config';
+import configs, {BlockchainNetwork, ConfigContract, defaultNetwork, NetworkConfig} from 'services/config';
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {t} from 'i18next';
 
@@ -156,10 +156,11 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
       };
     }
     case STORE_MAGIC_TOKEN: {
-      const {loginData, ...storeMagicToken} = action.storeMagicToken;
+      const {loginData: _loginData, ...newStoreMagicToken} = action.storeMagicToken;
+
       return {
         ...state,
-        ...storeMagicToken,
+        ...newStoreMagicToken,
         loading: true,
       };
     }
@@ -191,13 +192,14 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
   }
 };
 
-function contractGenerator(web3: Web3, {abi, address}: {abi: any; address: string}): Contract {
+function contractGenerator(web3: Web3, {abi, address}: ConfigContract): Contract {
   return new web3.eth.Contract(abi, address);
 }
 
 export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
   try {
     let config = yield selectConfig();
+    const isConnected = yield selectNetInfo();
     if (newNetwork) {
       yield put(resetWeb3Data());
       config = configs[newNetwork];
@@ -208,6 +210,10 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
     yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
+    console.log(isConnected, 'isConnected mammad');
+    if (isConnected) {
+      yield put(getBalance());
+    }
   } catch (error) {
     console.log(error, 'update web3 error');
   }
@@ -218,32 +224,35 @@ export function* watchChangeNetwork(action: TWeb3Action) {
 
   try {
     yield put(createWeb3(newNetwork));
-    yield take(CREATE_WEB3);
-    yield put(getBalance());
   } catch (error) {
     console.log(error, 'update web3 error');
   }
 }
 
+export function asyncGetAccounts(web3: Web3) {
+  return new Promise((resolve, reject) => {
+    return web3.eth.getAccounts(async (error, accounts) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(accounts);
+    });
+  });
+}
+
 export function* watchStoreMagicToken(store, action: TWeb3Action) {
   try {
     const {web3, magicToken, loginData} = action.storeMagicToken;
-    const config = yield selectConfig();
     yield put(resetBalance());
     console.log('[[[try]]]');
-    let web3Accounts;
-    yield web3.eth.getAccounts((e, accounts) => {
-      if (e) {
-        console.log(e, 'e is here getAccounts eth');
-      }
-      web3Accounts = accounts;
-      console.log(accounts, 'accounts is here');
-    });
+    const web3Accounts = yield asyncGetAccounts(web3);
     if (!web3Accounts) {
       return Promise.reject(new Error('There is no web3 accounts'));
     }
     const wallet = web3Accounts[0];
     const isConnect = yield selectNetInfo();
+    console.log(isConnect, 'isConnectisConnectisConnectisConnectisConnectisConnectisConnect');
     if (isConnect) {
       yield put(userNonceActions.load({wallet, magicToken, loginData}));
       const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
@@ -251,45 +260,20 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
       console.log(signature, 'signature in web3');
 
-      // const response = yield call(() =>
-      //   fetch(`${config.treejerApiUrl}/user/sign?publicAddress=${wallet}`, {
-      //     method: 'PATCH',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({signature}),
-      //   }),
-      // );
-      // const credentials = yield response.json();
-      // console.log(credentials, 'credentials');
-
       yield put(userSignActions.load({wallet, signature}));
       const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
       console.log(credentials, 'credentials in web3');
 
-      web3Accounts = [wallet];
-
-      yield web3.eth.getAccounts(async (error, accounts) => {
-        if (error) {
-          console.log(error, 'e is here getAccounts eth');
-          store.dispatch(networkDisconnect());
-          web3Accounts = accounts;
-          return;
-        }
-        const account = web3Accounts[0];
-        if (account) {
-          store.dispatch(
-            updateMagicToken({
-              wallet: account,
-              accessToken: credentials.loginToken,
-              userId: credentials.userId,
-              magicToken,
-            }),
-          );
-          store.dispatch(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
-          store.dispatch(getBalance());
-        }
-      });
+      yield put(
+        updateMagicToken({
+          wallet,
+          accessToken: credentials.loginToken,
+          userId: credentials.userId,
+          magicToken,
+        }),
+      );
+      yield put(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
+      yield put(getBalance());
     } else {
       yield put(networkDisconnect());
     }

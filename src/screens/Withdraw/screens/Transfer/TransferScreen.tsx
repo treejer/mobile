@@ -40,7 +40,7 @@ export function TransferScreen() {
     estimateGasPrice,
     cancelTransaction,
     submitting,
-  } = useContracts({didMount: true});
+  } = useContracts();
 
   const {useGSN} = useSettings();
   const wallet = useWalletAccount();
@@ -181,12 +181,14 @@ export function TransferScreen() {
     () =>
       new Promise((resolve: any) => {
         return (async () => {
-          await getPlanter();
-          await getBalance();
-          resolve();
+          if (isConnected) {
+            await getPlanter();
+            getBalance();
+            resolve();
+          }
         })();
       }),
-    [getPlanter, getBalance],
+    [getPlanter, getBalance, isConnected],
   );
 
   const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);

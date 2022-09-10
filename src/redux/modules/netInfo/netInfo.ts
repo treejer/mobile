@@ -47,9 +47,12 @@ export const netInfoReducer = (state: TNetInfo = initialState, action: TNetInfoA
 export function* watchStartWatchConnection(store) {
   try {
     const {dispatch} = store;
-    NetInfo.addEventListener((state: NetInfoState) => {
-      if (state.isConnected !== null && state.isInternetReachable !== null) {
-        dispatch(updateWatchConnection(state?.isConnected && state?.isInternetReachable));
+    const state = yield NetInfo.fetch();
+    dispatch(updateWatchConnection(state.isConnected));
+
+    NetInfo.addEventListener((newState: NetInfoState) => {
+      if (newState.isConnected !== null && newState.isInternetReachable !== null) {
+        dispatch(updateWatchConnection(newState.isConnected && newState.isInternetReachable));
       }
     });
   } catch (error) {

@@ -10,6 +10,7 @@ import Spacer from 'components/Spacer';
 import {useConfig, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
 import {useContracts} from '../../redux/modules/contracts/contracts';
+import {shortenedString} from 'utilities/helpers/shortenedString';
 
 export type ProfileMagicWalletProps = {
   wallet: string;
@@ -41,7 +42,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
         <Spacer />
         <TouchableOpacity onPress={handleCopyWalletAddress}>
           <Text numberOfLines={1} style={styles.addressBox}>
-            {wallet.slice(0, 15)}...
+            {shortenedString(wallet, 25, 15)}
           </Text>
         </TouchableOpacity>
       </View>
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray,
     borderStyle: 'solid',
-    borderRadius: 20,
+    borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 16,
     ...globalStyles.tiny,

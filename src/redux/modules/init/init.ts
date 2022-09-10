@@ -6,11 +6,10 @@ import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {Platform} from 'react-native';
 import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device-info';
 import {version} from '../../../../package.json';
-import {startWatchConnection} from '../netInfo/netInfo';
+import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
 import {useCallback} from 'react';
-import {createWeb3, storeMagicToken, UPDATE_WEB3} from '../web3/web3';
+import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {profileActions} from '../profile/profile';
-import {getBalance} from '../contracts/contracts';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -59,15 +58,13 @@ export function* initSagas() {
 export function* watchInitApp() {
   try {
     yield put(startWatchConnection());
+    yield take(UPDATE_WATCH_CONNECTION);
     yield put(createWeb3());
     yield take(UPDATE_WEB3);
     console.log('started');
-    const {accessToken, userId, web3, magicToken}: TReduxState['web3'] = yield select(
-      (state: TReduxState) => state.web3,
-    );
+    const {accessToken, userId}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
     if (accessToken && userId) {
       yield put(profileActions.load({accessToken, userId}));
-      yield put(getBalance());
       yield put(initAppCompleted());
     } else {
       console.log('going to end');

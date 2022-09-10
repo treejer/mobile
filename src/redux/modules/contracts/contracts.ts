@@ -77,7 +77,11 @@ export function cancelTransaction() {
 export function contractsReducer(state: TContracts = initialState, action: TAction): TContracts {
   switch (action.type) {
     case GET_BALANCE: {
-      return {...state, loading: true, submitting: false};
+      return {
+        ...state,
+        loading: true,
+        submitting: false,
+      };
     }
     case SET_BALANCE: {
       return {
@@ -216,18 +220,9 @@ export function* contractsSagas() {
   yield takeEvery(ESTIMATE_GAS_PRICE, watchEstimateGasPrice);
 }
 
-export type TUseContracts = {didMount?: boolean};
-
-export function useContracts({didMount}: TUseContracts = {}) {
+export function useContracts() {
   const contracts = useAppSelector(state => state.contracts);
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (didMount) {
-      console.log('fetched');
-      dispatch(getBalance());
-    }
-  }, []);
 
   const dispatchContracts = useCallback(() => {
     dispatch(getBalance());
