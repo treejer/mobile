@@ -182,8 +182,8 @@ export function TransferScreen() {
       new Promise((resolve: any) => {
         return (async () => {
           if (isConnected) {
-            await getPlanter();
             getBalance();
+            await getPlanter();
             resolve();
           }
         })();

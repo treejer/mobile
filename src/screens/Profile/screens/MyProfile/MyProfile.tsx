@@ -209,9 +209,9 @@ function MyProfile(props: MyProfileProps) {
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
       return (async () => {
+        getBalance();
         await getPlanter();
         await dispatchProfile();
-        getBalance();
         resolve();
       })();
     });
