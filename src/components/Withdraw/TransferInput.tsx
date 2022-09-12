@@ -14,8 +14,6 @@ export type TTransferInputProps = {
   control: Control<TTransferFormData>;
   name: keyof TTransferFormData;
   label: string;
-  value: string;
-  onChangeText: (name: string, text: string) => void;
   placeholder?: string;
   disabled?: boolean;
   openQRReader?: () => void;
@@ -26,42 +24,18 @@ export type TTransferInputProps = {
 };
 
 export function TransferInput(props: TTransferInputProps) {
-  const {
-    label,
-    disabled,
-    error,
-    placeholder,
-    value,
-    name,
-    onChangeText,
-    preview,
-    calcMax,
-    openQRReader,
-    onPaste,
-    control,
-  } = props;
+  const {label, disabled, error, placeholder, name, preview, calcMax, openQRReader, onPaste, control} = props;
 
-  const [inputValue, setInputValue] = useState(value || '');
   const [isTyping, setIsTyping] = useState(false);
 
   const {t} = useTranslation();
 
-  useEffect(() => {
-    if (isTyping) {
-      setInputValue(value);
-    } else {
-      setInputValue(shortenedString(value, 15, 3));
-    }
-  }, [value]);
-
   const handleBlurInput = (onBlur: () => void) => {
     setIsTyping(false);
-    setInputValue(shortenedString(value, 15, 3));
     onBlur();
   };
 
   const handleFocusInput = () => {
-    setInputValue(value);
     setIsTyping(true);
   };
 
@@ -71,34 +45,20 @@ export function TransferInput(props: TTransferInputProps) {
       <Card style={[styles.inputContainer, disabled && styles.disableInput]}>
         <Controller
           control={control}
-          render={({field: {onChange, onBlur, value}, formState}) => {
-            return (
-              <>
-                <TextInput
-                  style={[styles.input, disabled && styles.disableInput]}
-                  editable={!disabled}
-                  placeholder={placeholder}
-                  value={value}
-                  keyboardType={calcMax ? 'numeric' : undefined}
-                  onFocus={!preview ? handleFocusInput : undefined}
-                  onBlur={() => handleBlurInput(onBlur)}
-                  onChangeText={onChange}
-                />
-              </>
-            );
-          }}
           name={name}
+          render={({field: {onChange, onBlur, value}, formState}) => (
+            <TextInput
+              style={[styles.input, disabled && styles.disableInput]}
+              editable={!disabled}
+              placeholder={placeholder}
+              value={calcMax || isTyping ? value : shortenedString(value, 15, 3)}
+              keyboardType={calcMax ? 'numeric' : undefined}
+              onFocus={handleFocusInput}
+              onBlur={() => handleBlurInput(onBlur)}
+              onChangeText={onChange}
+            />
+          )}
         />
-        {/*<TextInput*/}
-        {/*  style={[styles.input, disabled && styles.disableInput]}*/}
-        {/*  editable={!disabled}*/}
-        {/*  placeholder={placeholder}*/}
-        {/*  value={inputValue}*/}
-        {/*  keyboardType={preview || calcMax ? 'numeric' : undefined}*/}
-        {/*  onFocus={!preview ? handleFocusInput : undefined}*/}
-        {/*  onBlur={!preview ? handleBlurInput : undefined}*/}
-        {/*  onChangeText={text => onChangeText(name, text)}*/}
-        {/*/>*/}
         {!disabled && calcMax ? (
           <TouchableOpacity onPress={calcMax}>
             <Text style={styles.label}>{t('transfer.form.max')}</Text>

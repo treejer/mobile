@@ -15,7 +15,7 @@ import {TContract} from '../../redux/modules/contracts/contracts';
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
   basePrice: string | number;
-  balance: TContract | undefined | string | BN;
+  balance: TContract | string | BN | undefined;
   description?: boolean;
   open?: boolean;
   loading?: boolean;
@@ -50,8 +50,12 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
           )}
         </View>
         <View style={open ? styles.justifyBetween : [globalStyles.justifyContentCenter]}>
-          {open && <Text style={styles.coinName}>{loading ? '...' : `${Number(daiBalance).toFixed(2)} DAI`}</Text>}
-          <Text style={styles.mute}>{loading ? '...' : `$${Number(daiBalance).toFixed(2)}`}</Text>
+          {open && (
+            <Text style={styles.coinName}>
+              {loading ? '...' : `${Number(daiBalance).toFixed(daiBalance ? 6 : 0)} DAI`}
+            </Text>
+          )}
+          <Text style={styles.mute}>{loading ? '...' : `$${Number(daiBalance).toFixed(daiBalance ? 6 : 0)}`}</Text>
         </View>
       </View>
     </Card>

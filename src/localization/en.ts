@@ -398,6 +398,13 @@ export const en = {
     success: {
       title: 'Transaction successed',
     },
+    formError: {
+      length42: 'Recipient Address should be bigger than 41',
+      length60: 'Recipient Address should be lower than 61',
+      biggerThanDai: 'DAI Amount should be lower than your DAI balance',
+      lowerThanZero: 'DAI Amount should be bigger than 0',
+      required: '{{field}} field is required',
+    },
     error: {
       contractsFailed: 'Get dai and ether balance failed',
       title: 'An error occurred',

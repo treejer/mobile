@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useMemo} from 'react';
 import {Modal, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Web3 from 'web3';
 
 import {colors} from 'constants/values';
 import Card from 'components/Card';
@@ -19,11 +20,9 @@ export type TTransferConfirmationModalProps = {
 export function TransferConfirmationModal(props: TTransferConfirmationModalProps) {
   const {address, amount, onCancel, onConfirm, fee} = props;
 
-  useEffect(() => {
-    console.log(fee, 'fee is here');
-  }, [fee]);
-
   const {t} = useTranslation();
+
+  const transactionFee = useMemo(() => (fee ? Web3.utils.fromWei(fee.toString(), 'ether') : null), [fee]);
 
   return (
     <Modal transparent>
@@ -49,7 +48,7 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
             </View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.fee')}</Text>
-              <Text style={[styles.detail, styles.values]}>{fee ? fee : '...'}</Text>
+              <Text style={[styles.detail, styles.values]}>{transactionFee ? transactionFee : '...'}</Text>
             </View>
           </View>
           <View style={styles.hr} />
@@ -58,8 +57,8 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
           <View style={[styles.row, styles.btnContainer]}>
             <Button style={styles.btn} caption={t('transfer.form.confirm.cancel')} onPress={onCancel} />
             <Button
-              disabled={!fee}
-              style={[styles.btn]}
+              disabled={!transactionFee}
+              style={[styles.btn, !transactionFee && styles.disabledBtn]}
               variant="success"
               caption={t('transfer.form.confirm.confirm')}
               onPress={onConfirm}

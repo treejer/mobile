@@ -1,22 +1,21 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import {TFunction, useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 import * as Yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
+import BN from 'bn.js';
+import Web3 from 'web3';
 
-import {Routes} from 'navigation';
 import {TransferInput} from 'components/Withdraw/TransferInput';
 import {QrReader} from 'components/QrReader/QrReader';
 import Spacer from 'components/Spacer';
 import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
-import Web3 from 'web3';
-import {useWeb3} from 'utilities/hooks/useWeb3';
-import BN from 'bn.js';
+import {Routes} from 'navigation';
 
 export type TTransferFormData = {
   from: string;
@@ -44,19 +43,26 @@ export type TTransferFormProps = {
   handleCancelTransaction: () => void;
 };
 
-const schema = (maxAmount: string | BN, web3: Web3) =>
+const schema = (maxAmount: string | BN | number, t: TFunction<'translation', undefined>) =>
   Yup.object().shape({
     to: Yup.string()
-      .required('Recipient address field is required')
-      .min(42, 'Recipient address should be bigger than 41')
-      .max(64, 'Recipient address should be lower than 65'),
+      .required(t('transfer.formError.required', {field: t('transfer.form.toHolder')}))
+      .min(42, t('transfer.formError.length42'))
+      .max(60, t('transfer.formError.length60')),
     amount: Yup.string()
-      .required('Amount field is required')
-      .test('mamad', `mount should be lower than your dai balance`, (value: BN | string | undefined) => {
-        if (value === '0') {
-          value = web3.utils.toWei(value);
-          console.log(value, maxAmount, 'is hereeeeeeeee');
-          return value < maxAmount;
+      .required(t('transfer.formError.required', {field: t('transfer.form.amountHolder')}))
+      .test('bigger-than-dai', t('transfer.formError.lowerThanZero'), (value?: string | number) => {
+        if (!value) {
+          return false;
+        }
+        value = Number(Web3.utils.toWei(value as string));
+        return value > 0;
+      })
+      .test('lower-than-dai', t('transfer.formError.biggerThanDai'), (value?: string | number) => {
+        if (value && value !== '0') {
+          value = Number(Web3.utils.toWei(value as string));
+          maxAmount = Number(maxAmount);
+          return value <= maxAmount;
         } else {
           return false;
         }
@@ -74,62 +80,40 @@ export function TransferForm(props: TTransferFormProps) {
     submitting,
   } = props;
 
-  const [transferData, setTransferData] = useState<TTransferFormData>({from: userWallet, to: '', amount: ''});
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
-
-  const defaultValues = useMemo(() => ({from: userWallet, to: '', amount: ''}), []);
-
-  const web3 = useWeb3();
-
-  const {control, handleSubmit, formState, getValues, setValue} = useForm<TTransferFormData>({
-    mode: 'all',
-    reValidateMode: 'onChange',
-    resolver: yupResolver(schema(daiBalance.toString(), web3)),
-    defaultValues,
-  });
-
-  useEffect(() => {
-    console.log(formState.errors, 'error is here');
-    console.log(formState.touchedFields, 'touched is here');
-  }, [formState]);
 
   const {t} = useTranslation();
   const navigation = useNavigation();
 
-  const handleSubmitTransfer = useCallback(
-    data => {
-      console.log(data, 'transfer form data is mamadhere');
-      setShowConfirmModal(false);
-      // handleSubmitTransaction(transferData);
-    },
-    [transferData],
-  );
+  const defaultValues = useMemo(() => ({from: userWallet, to: '', amount: ''}), []);
 
-  const handleChange = useCallback(
-    (name: string, text: string) => {
-      setTransferData({
-        ...transferData,
-        [name]: text,
-      });
-    },
-    [transferData],
-  );
+  const {control, handleSubmit, formState, getValues, setValue, reset} = useForm<TTransferFormData>({
+    mode: 'all',
+    reValidateMode: 'onChange',
+    resolver: yupResolver(schema(daiBalance.toString(), t)),
+    defaultValues,
+  });
+
+  const handleSubmitTransfer = useCallback(data => {
+    console.log(data, 'transfer form data is here');
+    setShowConfirmModal(false);
+    handleSubmitTransaction(data);
+  }, []);
+
+  const handleResetForm = useCallback(() => {
+    reset(defaultValues);
+  }, []);
 
   const handlePasteClipboard = useCallback(async () => {
     const text = await Clipboard.getString();
-    setValue('to', text);
-    setTransferData({...transferData, to: text});
-  }, [transferData]);
+    setValue('to', text, {shouldTouch: true, shouldValidate: true});
+  }, []);
 
-  const handleScanQrCode = useCallback(
-    (data: string) => {
-      setValue('to', data);
-      setTransferData({...transferData, to: data});
-      setShowQrReader(false);
-    },
-    [transferData],
-  );
+  const handleScanQrCode = useCallback((data: string) => {
+    setValue('to', data, {shouldTouch: true, shouldValidate: true});
+    setShowQrReader(false);
+  }, []);
 
   const handleOpenQrReader = useCallback(() => {
     setShowQrReader(true);
@@ -140,21 +124,13 @@ export function TransferForm(props: TTransferFormProps) {
   }, []);
 
   const handleCalcMacAmount = useCallback(() => {
-    setValue('amount', web3.utils.fromWei(daiBalance));
-  }, []);
-
-  const handleClearForm = useCallback(() => {
-    setTransferData({
-      ...transferData,
-      amount: '',
-      to: '',
-    });
+    setValue('amount', Web3.utils.fromWei(daiBalance), {shouldTouch: true, shouldValidate: true});
   }, []);
 
   const handleEstimate = useCallback(() => {
     setShowConfirmModal(true);
-    // handleEstimateGasPrice(transferData);
-  }, [handleEstimateGasPrice, transferData]);
+    handleEstimateGasPrice(getValues());
+  }, [handleEstimateGasPrice]);
 
   const handleCloseConfirmModal = useCallback(() => {
     setShowConfirmModal(false);
@@ -166,11 +142,9 @@ export function TransferForm(props: TTransferFormProps) {
     navigation.navigate(Routes.WithdrawHistory);
   }, [navigation]);
 
-  const disabled = useMemo(() => !transferData.from || !transferData.amount || !transferData.to, [transferData]);
-
   useEffect(() => {
-    if (!submitting && !disabled) {
-      handleClearForm();
+    if (!submitting && formState.isValid) {
+      handleResetForm();
     }
   }, [submitting]);
 
@@ -184,20 +158,13 @@ export function TransferForm(props: TTransferFormProps) {
         <TransferConfirmationModal
           onConfirm={handleSubmit(handleSubmitTransfer)}
           onCancel={handleCloseConfirmModal}
-          amount={getValues().to}
-          address={getValues().amount}
+          amount={getValues().amount}
+          address={getValues().to}
           fee={fee}
         />
       ) : null}
       <Spacer times={4} />
-      <TransferInput
-        control={control}
-        name="from"
-        label="from"
-        value={transferData.from}
-        onChangeText={handleChange}
-        disabled
-      />
+      <TransferInput control={control} name="from" label="from" disabled />
       <Spacer />
       <TransferInput
         control={control}
@@ -205,8 +172,6 @@ export function TransferForm(props: TTransferFormProps) {
         label="to"
         disabled={submitting}
         placeholder={t('transfer.form.toHolder')}
-        value={transferData.to}
-        onChangeText={handleChange}
         onPaste={handlePasteClipboard}
         openQRReader={handleOpenQrReader}
         error={formState.touchedFields.to && formState.errors.to ? formState.errors.to.message : undefined}
@@ -218,9 +183,7 @@ export function TransferForm(props: TTransferFormProps) {
         label="amount"
         disabled={submitting}
         placeholder={t('transfer.form.amountHolder')}
-        preview={transferData.amount}
-        value={transferData.amount}
-        onChangeText={handleChange}
+        preview={getValues('amount')}
         calcMax={handleCalcMacAmount}
         error={formState.touchedFields.amount && formState.errors.amount ? formState.errors.amount.message : undefined}
       />
@@ -229,7 +192,7 @@ export function TransferForm(props: TTransferFormProps) {
         hasHistory={true}
         disabled={!formState.isValid}
         loading={submitting}
-        onCancel={handleClearForm}
+        onCancel={handleResetForm}
         onSubmit={handleEstimate}
         onHistory={handleNavigateHistory}
       />
