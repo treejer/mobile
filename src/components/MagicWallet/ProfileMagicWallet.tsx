@@ -1,15 +1,19 @@
 import React, {useCallback, useMemo} from 'react';
+import {useToast} from 'react-native-toast-notifications';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Web3 from 'web3';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useTranslation} from 'react-i18next';
+
 import {isMatic} from 'services/Magic';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {shortenedString} from 'utilities/helpers/shortenedString';
-import {useConfig, useWeb3} from 'utilities/hooks/useWeb3';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useConfig} from 'utilities/hooks/useWeb3';
+import {AlertMode} from 'utilities/helpers/alert';
 import {useContracts} from '../../redux/modules/contracts/contracts';
 
 export type ProfileMagicWalletProps = {
@@ -20,21 +24,24 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const {wallet} = props;
 
   const {dai, ether, loading} = useContracts();
-  const web3 = useWeb3();
-
-  const daiBalance = useMemo(() => web3.utils.fromWei(dai), [dai]);
-  const etherBalance = useMemo(() => web3.utils.fromWei(ether), [dai]);
-
   const config = useConfig();
 
   const {t} = useTranslation();
+  const toast = useToast();
+
+  const daiBalance = useMemo(() => Web3.utils.fromWei(dai), [dai]);
+  const etherBalance = useMemo(() => Web3.utils.fromWei(ether), [ether]);
 
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {
       Clipboard.setString(wallet);
-      showAlert({
-        message: t('myProfile.copied'),
-        mode: AlertMode.Success,
+      // showAlert({
+      //   message: t('myProfile.copied'),
+      //   mode: AlertMode.Success,
+      // });
+      toast.show(t('myProfile.copied'), {
+        type: AlertMode.Success,
+        icon: <Icon name="tree" size={20} color={colors.white} />,
       });
     }
   }, [t, wallet]);

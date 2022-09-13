@@ -7,7 +7,7 @@ import NetInfo from 'components/NetInfo';
 import {SwitchNetwork} from 'components/SwitchNetwork/SwitchNetwork';
 import PreLoadImage from 'components/PreloadImage/PreLoadImage';
 import {isWeb} from 'utilities/helpers/web';
-import {ToastContainer} from 'react-toastify';
+import {ToastContainer} from 'components/Toast/ToastContainer';
 import LandScapeModal from 'components/LandScapeModal/LandScapeModal';
 import UpdateModal from 'components/UpdateModal/UpdateModal';
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
@@ -102,9 +102,11 @@ export function InitNavigation() {
                 {isWeb() ? <ToastContainer /> : <></>}
                 {isWeb() ? <LandScapeModal /> : <></>}
                 {!isWeb() ? <UpdateModal /> : <></>}
-                <NavigationContainer linking={linking}>
-                  <RootNavigation />
-                </NavigationContainer>
+                <ToastContainer>
+                  <NavigationContainer linking={linking}>
+                    <RootNavigation />
+                  </NavigationContainer>
+                </ToastContainer>
               </CurrentJourneyProvider>
             </OfflineTreeProvider>
           </ApolloProvider>

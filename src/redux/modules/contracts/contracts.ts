@@ -1,8 +1,10 @@
 import {useCallback} from 'react';
-import Web3 from 'web3';
 import BN from 'bn.js';
-import {put, takeEvery} from 'redux-saga/effects';
+import Web3 from 'web3';
 import {Contract} from 'web3-eth-contract';
+import {put, takeEvery} from 'redux-saga/effects';
+import {useToast} from 'react-native-toast-notifications';
+import {ToastOptions} from 'react-native-toast-notifications/lib/typescript/toast';
 
 import {NetworkConfig} from 'services/config';
 import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
@@ -14,6 +16,8 @@ import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
 
 export type TContract = string | number | null;
 
+export type TShow = (message: string | JSX.Element, toastOptions?: ToastOptions | undefined) => string;
+
 export type TContracts = {
   dai: string | BN;
   ether: string | BN;
@@ -24,12 +28,19 @@ export type TContracts = {
 
 type TAction = {
   type: string;
+  getBalance?: {
+    show?: TShow;
+  };
   setBalance: {
     dai?: string | BN;
     ether?: string | BN;
+    show?: TShow;
   };
-  transaction: TTransferFormData;
-  fee: {fee: string | number};
+  transaction: {
+    form: TTransferFormData;
+    show: TShow;
+  };
+  fee: {fee: string | number; show?: TShow};
 };
 
 const initialState: TContracts = {
@@ -46,8 +57,8 @@ export function getBalanceFailed() {
 }
 
 export const GET_BALANCE = 'GET_BALANCE';
-export function getBalance() {
-  return {type: GET_BALANCE};
+export function getBalance(payload?: TAction['getBalance']) {
+  return {type: GET_BALANCE, getBalance: payload};
 }
 
 export const SET_BALANCE = 'SET_BALANCE';
@@ -136,7 +147,8 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
   }
 }
 
-export function* watchContracts() {
+export function* watchContracts({getBalance}: TAction) {
+  const show = getBalance?.show;
   try {
     const config: NetworkConfig = yield selectConfig();
     const wallet: string = yield selectWallet();
@@ -159,6 +171,9 @@ export function* watchContracts() {
       title: i18next.t('transfer.error.title'),
       message: i18next.t('transfer.error.contractsFailed'),
     });
+    show?.(i18next.t('transfer.error.contractsFailed'), {
+      type: AlertMode.Error,
+    });
     yield put(getBalanceFailed());
     console.log(e, 'error is here');
   }
@@ -177,8 +192,9 @@ export function asyncTransferDai(daiContract: Contract, from: string, to: string
 }
 
 export function* watchTransaction({transaction}: TAction) {
+  const {show, form} = transaction;
   try {
-    const {amount, from, to} = transaction;
+    const {amount, from, to} = form;
 
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
@@ -197,19 +213,23 @@ export function* watchTransaction({transaction}: TAction) {
       message: isWeb() ? i18next.t('transfer.success.title') : '',
       mode: AlertMode.Error,
     });
+    show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
   } catch (e: any) {
     showAlert({
       title: i18next.t('transfer.error.title'),
       message: e.message,
       mode: AlertMode.Error,
     });
-    console.log(e.message, 'error is heree');
+    show(e.message, {
+      type: AlertMode.Error,
+    });
   }
 }
 
 export function* watchEstimateGasPrice({transaction}: TAction) {
+  const {show, form} = transaction;
   try {
-    const {amount, from, to} = transaction;
+    const {amount, from, to} = form;
 
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
@@ -237,6 +257,7 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
       title: i18next.t('transfer.error.fee'),
       message: e.message,
     });
+    show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
     yield put(cancelTransaction());
   }
 }
@@ -250,21 +271,22 @@ export function* contractsSagas() {
 export function useContracts() {
   const contracts = useAppSelector(state => state.contracts);
   const dispatch = useAppDispatch();
+  const {show} = useToast();
 
   const dispatchContracts = useCallback(() => {
-    dispatch(getBalance());
+    dispatch(getBalance({show}));
   }, [dispatch]);
 
   const dispatchTransaction = useCallback(
     (data: TTransferFormData) => {
-      dispatch(submitTransaction(data));
+      dispatch(submitTransaction({form: data, show}));
     },
     [dispatch],
   );
 
   const dispatchEstimateGasPrice = useCallback(
     (data: TTransferFormData) => {
-      dispatch(estimateGasPrice(data));
+      dispatch(estimateGasPrice({form: data, show}));
     },
     [dispatch],
   );
