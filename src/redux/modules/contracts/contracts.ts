@@ -231,7 +231,14 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
         message: isWeb() ? i18next.t('transfer.error.fee') : '',
       });
     }
-  } catch (e: any) {}
+  } catch (e: any) {
+    console.log(e.message);
+    showAlert({
+      title: i18next.t('transfer.error.fee'),
+      message: e.message,
+    });
+    yield put(cancelTransaction());
+  }
 }
 
 export function* contractsSagas() {

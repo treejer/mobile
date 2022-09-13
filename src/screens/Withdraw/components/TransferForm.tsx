@@ -23,16 +23,6 @@ export type TTransferFormData = {
   amount: string;
 };
 
-export type TTransferFormError = {
-  to?: string;
-  amount?: string;
-};
-
-export type TTransferFormTouched = {
-  to?: boolean;
-  amount?: boolean;
-};
-
 export type TTransferFormProps = {
   fee: string | number | null;
   daiBalance: string | BN;
@@ -83,29 +73,28 @@ export function TransferForm(props: TTransferFormProps) {
   } = props;
 
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
-  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const {t} = useTranslation();
   const navigation = useNavigation();
 
   const defaultValues = useMemo(() => ({from: userWallet, to: '', amount: ''}), []);
 
-  const {control, handleSubmit, formState, getValues, setValue, reset} = useForm<TTransferFormData>({
-    mode: 'all',
-    reValidateMode: 'onChange',
-    resolver: yupResolver(schema(daiBalance.toString(), t)),
-    defaultValues,
-  });
+  const {control, handleSubmit, formState, getValues, getFieldState, setValue, watch, reset} =
+    useForm<TTransferFormData>({
+      mode: 'all',
+      reValidateMode: 'onChange',
+      resolver: yupResolver(schema(daiBalance.toString(), t)),
+      defaultValues,
+    });
 
   const handleSubmitTransfer = useCallback(data => {
     console.log(data, 'transfer form data is here');
-    setShowConfirmModal(false);
     handleSubmitTransaction(data);
   }, []);
 
   const handleResetForm = useCallback(() => {
     reset(defaultValues);
-  }, []);
+  }, [handleCancelTransaction]);
 
   const handlePasteClipboard = useCallback(async () => {
     const text = await Clipboard.getString();
@@ -131,12 +120,11 @@ export function TransferForm(props: TTransferFormProps) {
   }, []);
 
   const handleEstimate = useCallback(() => {
-    setShowConfirmModal(true);
     handleEstimateGasPrice(getValues());
   }, [handleEstimateGasPrice]);
 
   const handleCloseConfirmModal = useCallback(() => {
-    setShowConfirmModal(false);
+    reset(defaultValues);
     handleCancelTransaction();
   }, []);
 
@@ -157,7 +145,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   return (
     <View style={globalStyles.alignItemsCenter}>
-      {showConfirmModal ? (
+      {submitting ? (
         <TransferConfirmationModal
           onConfirm={handleSubmit(handleSubmitTransfer)}
           onCancel={handleCloseConfirmModal}
@@ -186,17 +174,17 @@ export function TransferForm(props: TTransferFormProps) {
         label="amount"
         disabled={submitting}
         placeholder={t('transfer.form.amountHolder')}
-        preview={getValues('amount')}
+        preview={getFieldState('amount').isTouched ? watch().amount : undefined}
         calcMax={handleCalcMacAmount}
         error={formState.touchedFields.amount && formState.errors.amount ? formState.errors.amount.message : undefined}
       />
       <Spacer times={8} />
       <SubmitTransfer
-        hasHistory={hasHistory}
-        disabled={!formState.isValid}
         loading={submitting}
-        onCancel={handleResetForm}
+        hasHistory={hasHistory}
         onSubmit={handleEstimate}
+        onCancel={handleResetForm}
+        disabled={!formState.isValid}
         onHistory={handleNavigateHistory}
       />
     </View>

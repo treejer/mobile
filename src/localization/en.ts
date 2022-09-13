@@ -364,7 +364,7 @@ export const en = {
     title: 'Magic Wallet',
     daiBalance: 'DAI Balance:',
   },
-  dai: 'Dai',
+  dai: 'DAI',
   transfer: {
     info: {
       title: 'Plant and Update to earn DAI',
@@ -396,7 +396,7 @@ export const en = {
       },
     },
     success: {
-      title: 'Transaction successed',
+      title: 'Transaction succeed',
     },
     formError: {
       length42: 'Recipient Address should be bigger than 41',
