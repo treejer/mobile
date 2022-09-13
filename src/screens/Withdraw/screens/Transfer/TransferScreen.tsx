@@ -8,6 +8,7 @@ import {ContractType} from 'services/config';
 import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
@@ -19,6 +20,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
+import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 import {useProfile} from '../../../../redux/modules/profile/profile';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 
@@ -201,7 +203,7 @@ export function TransferScreen() {
     });
   }, [refetching, contractsLoading, loading]);
 
-  const daiBalance = useMemo(() => web3.utils.fromWei(dai), [dai]);
+  const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai)), [dai]);
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
@@ -214,23 +216,34 @@ export function TransferScreen() {
           {isWeb() && <Spacer times={4} />}
           <View style={styles.container}>
             <WithdrawSection
+              history={history}
               loading={loading}
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
               daiBalance={daiBalance}
               redeeming={redeeming}
             />
-            {dai ? (
-              <TransferForm
-                daiBalance={dai}
-                userWallet={wallet}
-                fee={fee}
-                submitting={submitting}
-                handleSubmitTransaction={submitTransaction}
-                handleEstimateGasPrice={estimateGasPrice}
-                handleCancelTransaction={cancelTransaction}
-              />
-            ) : null}
+            {!daiBalance && !planterWithdrawableBalance ? (
+              history?.length ? (
+                <>
+                  <Spacer times={12} />
+                  <WithdrawHistory withdrawHistory={history} />
+                </>
+              ) : null
+            ) : (
+              !!daiBalance && (
+                <TransferForm
+                  hasHistory={!!history?.length}
+                  daiBalance={dai}
+                  userWallet={wallet}
+                  fee={fee}
+                  submitting={submitting}
+                  handleSubmitTransaction={submitTransaction}
+                  handleEstimateGasPrice={estimateGasPrice}
+                  handleCancelTransaction={cancelTransaction}
+                />
+              )
+            )}
             <Spacer times={8} />
           </View>
         </ScrollView>

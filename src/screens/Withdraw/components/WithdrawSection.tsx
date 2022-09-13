@@ -5,28 +5,30 @@ import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
 import BN from 'bn.js';
 
+import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import globalStyles from 'constants/styles';
 import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
+import {TWithdrawHistory} from 'components/Withdraw/WithdrawHistory';
 import {TContract} from '../../../redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {
+  history: TWithdrawHistory[] | null;
   handleWithdraw: () => void;
   planterWithdrawableBalance: TContract | undefined;
-  daiBalance: string | BN;
+  daiBalance: BN | string | number;
   redeeming: boolean;
   loading: boolean;
 };
 
 export function WithdrawSection(props: TWithdrawSectionProps) {
-  const {planterWithdrawableBalance, daiBalance, redeeming, handleWithdraw, loading} = props;
+  const {planterWithdrawableBalance, daiBalance, redeeming, loading, history, handleWithdraw} = props;
 
   const {t} = useTranslation();
 
   return (
     <View style={globalStyles.alignItemsCenter}>
-      {!planterWithdrawableBalance && !daiBalance && <AboutWithdraw />}
+      {!planterWithdrawableBalance && !daiBalance ? !history?.length && <AboutWithdraw /> : null}
       <Spacer times={4} />
       <DaiCoinBalance
         name="treejer"

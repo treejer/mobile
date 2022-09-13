@@ -38,6 +38,7 @@ export type TTransferFormProps = {
   daiBalance: string | BN;
   userWallet: string;
   submitting: boolean;
+  hasHistory: boolean;
   handleSubmitTransaction: (data: TTransferFormData) => void;
   handleEstimateGasPrice: (data: TTransferFormData) => void;
   handleCancelTransaction: () => void;
@@ -71,13 +72,14 @@ const schema = (maxAmount: string | BN | number, t: TFunction<'translation', und
 
 export function TransferForm(props: TTransferFormProps) {
   const {
-    userWallet,
     fee,
+    userWallet,
     daiBalance,
+    submitting,
+    hasHistory,
     handleSubmitTransaction,
     handleEstimateGasPrice,
     handleCancelTransaction,
-    submitting,
   } = props;
 
   const [showQrReader, setShowQrReader] = useState<boolean>(false);
@@ -107,6 +109,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handlePasteClipboard = useCallback(async () => {
     const text = await Clipboard.getString();
+    console.log(text);
     setValue('to', text, {shouldTouch: true, shouldValidate: true});
   }, []);
 
@@ -189,7 +192,7 @@ export function TransferForm(props: TTransferFormProps) {
       />
       <Spacer times={8} />
       <SubmitTransfer
-        hasHistory={true}
+        hasHistory={hasHistory}
         disabled={!formState.isValid}
         loading={submitting}
         onCancel={handleResetForm}

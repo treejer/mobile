@@ -1,4 +1,4 @@
-import {useCallback, useEffect} from 'react';
+import {useCallback} from 'react';
 import Web3 from 'web3';
 import BN from 'bn.js';
 import {put, takeEvery} from 'redux-saga/effects';
@@ -141,11 +141,6 @@ export function* watchContracts() {
     const config: NetworkConfig = yield selectConfig();
     const wallet: string = yield selectWallet();
     const web3: Web3 = yield selectWeb3();
-    //
-    // const gas = yield web3.eth.estimateGas({from: wallet});
-    // console.log('Gas estimated', gas);
-    //
-    // const gasPrice = yield web3.eth.getGasPrice();
 
     const contract = config.contracts.Dai;
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
@@ -157,8 +152,6 @@ export function* watchContracts() {
       dai: daiBalance,
       ether: etherBalance,
     };
-
-    // console.log(contracts, 'contracts');
 
     yield put(setBalance(contracts));
   } catch (e: any) {
@@ -186,14 +179,19 @@ export function asyncTransferDai(daiContract: Contract, from: string, to: string
 export function* watchTransaction({transaction}: TAction) {
   try {
     const {amount, from, to} = transaction;
+
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
+
     const contract = config.contracts.Dai;
+
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const amountInEther = web3.utils.toWei(amount, 'ether');
+
     yield asyncTransferDai(daiContract, from, to, amountInEther);
     yield put(cancelTransaction());
     yield put(getBalance());
+
     showAlert({
       title: i18next.t('transfer.success.title'),
       message: isWeb() ? i18next.t('transfer.success.title') : '',
@@ -212,14 +210,17 @@ export function* watchTransaction({transaction}: TAction) {
 export function* watchEstimateGasPrice({transaction}: TAction) {
   try {
     const {amount, from, to} = transaction;
-    console.log(transaction, 'dataaaaaa');
+
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
+
     const contract = config.contracts.Dai;
+
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const gasAmount = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
     const gasPrice = yield web3.eth.getGasPrice();
     const fee = gasAmount * gasPrice;
+
     console.log(fee, 'feeeeeeeeeee');
     if (fee > 0) {
       yield put(transactionFee({fee}));

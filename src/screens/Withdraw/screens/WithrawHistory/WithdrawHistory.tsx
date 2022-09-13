@@ -1,13 +1,13 @@
 import React from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {useTranslation} from 'react-i18next';
 import {TWithdrawHistory, WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
-import {SafeAreaView} from 'react-native-safe-area-context';
 
-const history: TWithdrawHistory[] = [
+export const history: TWithdrawHistory[] = [
   {
     id: '1',
     amount: '20.00000000000',
