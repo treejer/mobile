@@ -10,8 +10,8 @@ import {NetworkConfig} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {web3Error} from 'utilities/helpers/web3Error';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {i18next} from '../../../localization';
 import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
+import {i18next} from '../../../localization';
 import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
 
 export type TContract = string | number | null;

@@ -47,7 +47,7 @@ export enum AlertMode {
 }
 
 export function showAlert(options: ShowAlertOptions) {
-  const {message, title, mode = AlertMode.Info, buttons, alertOptions} = options;
+  const {message, title, mode = AlertMode.Info, buttons} = options;
 
   if (mode) {
     toast.show?.(message, {type: mode, title});

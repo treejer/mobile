@@ -16,7 +16,6 @@ import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
 import {Routes} from 'navigation';
-import {Logs} from 'expo';
 
 export type TTransferFormData = {
   from: string;

@@ -15,8 +15,6 @@ export type ToastContainerProps = {
 export function CustomToast(props: ToastContainerProps) {
   const {toastOptions, mode} = props;
 
-  console.log(toastOptions.icon, 'co');
-
   return (
     <View style={[styles.container, {backgroundColor: colors[mode]}]}>
       {toastOptions?.title && (
