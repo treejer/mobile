@@ -35,14 +35,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {
       Clipboard.setString(wallet);
-      // showAlert({
-      //   message: t('myProfile.copied'),
-      //   mode: AlertMode.Success,
-      // });
-      toast.show(t('myProfile.copied'), {
-        type: AlertMode.Success,
-        icon: <Icon name="tree" size={20} color={colors.white} />,
-      });
+      toast.show(t('myProfile.copied'), {type: AlertMode.Success});
     }
   }, [t, wallet]);
 
@@ -53,7 +46,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
         <Spacer />
         <TouchableOpacity onPress={handleCopyWalletAddress}>
           <Text numberOfLines={1} style={styles.addressBox}>
-            {shortenedString(wallet, 25, 15)}
+            {shortenedString(wallet, 16, 6)}
           </Text>
         </TouchableOpacity>
       </View>

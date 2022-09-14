@@ -40,6 +40,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props {}
 
@@ -164,6 +165,7 @@ function TreeDetails(_: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      <ScreenTitle goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={
@@ -174,14 +176,6 @@ function TreeDetails(_: Props) {
       >
         <PullToRefresh onRefresh={() => refetch()}>
           <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
-            <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
-              <TouchableOpacity style={{paddingHorizontal: 16, paddingVertical: 8}} onPress={() => navigation.goBack()}>
-                <ChevronLeft />
-              </TouchableOpacity>
-              <View style={globalStyles.fill} />
-              <Avatar size={40} type="active" />
-            </View>
-
             {treeDetails ? (
               <TreeImage
                 color={colors.green}

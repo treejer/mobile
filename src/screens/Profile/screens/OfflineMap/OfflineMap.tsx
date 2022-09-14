@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {Routes} from 'navigation';
 import {mapboxPrivateToken} from 'services/config';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 const OfflineMap = ({navigation}) => {
   const [isLoaderShow, setIsLoaderShow] = useState(false);
@@ -175,16 +176,9 @@ const OfflineMap = ({navigation}) => {
 
   return (
     <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom, {flex: 1}]}>
+      <ScreenTitle title={t('offlineMap.downloadArea')} goBack />
       <View style={styles.container}>
         <Spacer times={2} />
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
-            <ChevronLeft />
-          </TouchableOpacity>
-          <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>
-            {t('offlineMap.downloadArea')}
-          </Text>
-        </View>
         <View style={styles.mapViewContainer}>
           <Map
             onDidFinishRenderingMapFully={initialMapCamera}

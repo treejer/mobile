@@ -23,7 +23,13 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useSettings} from 'utilities/hooks/useSettings';
-import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
+import {
+  assignedTreeJSON,
+  canUpdateTreeLocation,
+  newTreeJSON,
+  photoToUpload,
+  updateTreeJSON,
+} from 'utilities/helpers/submitTree';
 import {Routes} from 'navigation';
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -34,6 +40,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -312,6 +319,19 @@ function SubmitTree(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
 
+  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
+
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
@@ -349,6 +369,7 @@ function SubmitTree(props: Props) {
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         {journey.isSingle === false && <SubmitTreeModal />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>

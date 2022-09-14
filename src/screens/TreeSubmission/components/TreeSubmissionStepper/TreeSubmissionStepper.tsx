@@ -10,6 +10,7 @@ import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 import {colors} from 'constants/values';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {isWeb} from 'utilities/helpers/web';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props {
   currentStep: number;
@@ -24,16 +25,6 @@ function TreeSubmissionStepper(props: Props) {
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
-  const isSingle = journey?.isSingle;
-  const count = journey?.nurseryCount;
-
-  const title = isSingle
-    ? 'submitTree.submitTree'
-    : isSingle === false
-    ? 'submitTree.nurseryCount'
-    : isUpdate
-    ? 'submitTree.updateTree'
-    : 'submitTree.submitTree';
 
   const imageSize = useMemo(
     () =>
@@ -43,11 +34,7 @@ function TreeSubmissionStepper(props: Props) {
 
   return (
     <>
-      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
-        <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-          {t(title, {count})} {isUpdate && `#${Hex2Dec(journey.tree?.id!)}`}
-        </Text>
-      </View>
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}></View>
       <Spacer times={10} />
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}

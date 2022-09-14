@@ -18,4 +18,5 @@ export const colors = {
   error: '#D04F45',
   warning: '#d9caa9',
   white: '#FFF',
+  info: '#424242',
 };

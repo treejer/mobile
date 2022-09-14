@@ -10,6 +10,7 @@ import {Provider} from 'react-redux';
 import {persistor, store} from './src/redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {InitNavigation} from './src/navigation/InitNavigation';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export default function App() {
   useInitialDeepLinking();
@@ -25,7 +26,9 @@ export default function App() {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <I18nextProvider i18n={i18next}>
-          <InitNavigation />
+          <SafeAreaProvider>
+            <InitNavigation />
+          </SafeAreaProvider>
         </I18nextProvider>
       </PersistGate>
     </Provider>

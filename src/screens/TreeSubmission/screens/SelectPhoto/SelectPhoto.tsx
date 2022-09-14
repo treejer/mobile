@@ -33,6 +33,8 @@ import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions
 import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
 import {maxDistanceInMeters} from 'services/config';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {Hex2Dec} from 'utilities/helpers/hex';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -285,9 +287,21 @@ function SelectPhoto(props: Props) {
     );
   }
 
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
+
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />

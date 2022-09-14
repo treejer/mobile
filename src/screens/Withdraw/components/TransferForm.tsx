@@ -40,17 +40,22 @@ const schema = (maxAmount: string | BN | number, t: TFunction<'translation', und
       .required(t('transfer.formError.required', {field: t('transfer.form.toHolder')}))
       .min(42, t('transfer.formError.length42'))
       .max(60, t('transfer.formError.length60')),
-    amount: Yup.string()
+    amount: Yup.number()
+      .typeError(t('transfer.formError.shouldBeNumber'))
       .required(t('transfer.formError.required', {field: t('transfer.form.amountHolder')}))
       .test('bigger-than-dai', t('transfer.formError.lowerThanZero'), (value?: string | number) => {
         if (!value) {
           return false;
         }
+        console.log(value, 'value is here');
+        value = value.toString();
         value = Number(Web3.utils.toWei(value as string));
         return value > 0;
       })
       .test('lower-than-dai', t('transfer.formError.biggerThanDai'), (value?: string | number) => {
         if (value && value !== '0') {
+          console.log(value, 'value is here');
+          value = value.toString();
           value = Number(Web3.utils.toWei(value as string));
           maxAmount = Number(maxAmount);
           return value <= maxAmount;

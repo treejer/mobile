@@ -16,6 +16,7 @@ import {colors} from 'constants/values';
 import {isMatic} from 'services/Magic';
 import {ProfileRouteParamList} from 'types';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -45,15 +46,16 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   };
 
   return (
-    <SafeAreaView style={[{flex: 1}, globalStyles.screenView, globalStyles.p1]}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>
-          <ChevronLeft />
-        </TouchableOpacity>
-        <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>
-      </View>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
+      {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+      {/*  <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>*/}
+      {/*    <ChevronLeft />*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>*/}
+      {/*</View>*/}
+      <ScreenTitle title={t('settings.title')} goBack />
       <Spacer times={4} />
-      <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 16}}>
+      <View style={[globalStyles.p1, {flex: 1, alignItems: 'center', paddingHorizontal: 16}]}>
         <Button style={{width: '100%'}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
         <Spacer times={4} />
         <View

@@ -7,12 +7,12 @@ import {useToast} from 'react-native-toast-notifications';
 import {ToastOptions} from 'react-native-toast-notifications/lib/typescript/toast';
 
 import {NetworkConfig} from 'services/config';
-import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {AlertMode} from 'utilities/helpers/alert';
+import {web3Error} from 'utilities/helpers/web3Error';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {isWeb} from 'utilities/helpers/web';
 import {i18next} from '../../../localization';
 import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
+import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
 
 export type TContract = string | number | null;
 
@@ -167,10 +167,6 @@ export function* watchContracts({getBalance}: TAction) {
 
     yield put(setBalance(contracts));
   } catch (e: any) {
-    showAlert({
-      title: i18next.t('transfer.error.title'),
-      message: i18next.t('transfer.error.contractsFailed'),
-    });
     show?.(i18next.t('transfer.error.contractsFailed'), {
       type: AlertMode.Error,
     });
@@ -208,18 +204,10 @@ export function* watchTransaction({transaction}: TAction) {
     yield put(cancelTransaction());
     yield put(getBalance());
 
-    showAlert({
-      title: i18next.t('transfer.success.title'),
-      message: isWeb() ? i18next.t('transfer.success.title') : '',
-      mode: AlertMode.Error,
-    });
     show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
   } catch (e: any) {
-    showAlert({
-      title: i18next.t('transfer.error.title'),
-      message: e.message,
-      mode: AlertMode.Error,
-    });
+    yield put(cancelTransaction());
+    yield put(getBalance());
     show(e.message, {
       type: AlertMode.Error,
     });
@@ -246,18 +234,11 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
       yield put(transactionFee({fee}));
     } else {
       yield put(cancelTransaction());
-      showAlert({
-        title: i18next.t('transfer.error.fee'),
-        message: isWeb() ? i18next.t('transfer.error.fee') : '',
-      });
+      show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
     }
   } catch (e: any) {
     console.log(e.message);
-    showAlert({
-      title: i18next.t('transfer.error.fee'),
-      message: e.message,
-    });
-    show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
+    show?.(i18next.t(`transfer.error.${web3Error(e).code}`), {type: AlertMode.Error});
     yield put(cancelTransaction());
   }
 }

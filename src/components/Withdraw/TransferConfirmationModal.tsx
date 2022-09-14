@@ -57,7 +57,9 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
             </View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.fee')}</Text>
-              <Text style={[styles.detail, styles.values]}>{transactionFee ? transactionFee : '...'}</Text>
+              <Text style={[styles.detail, styles.values]} numberOfLines={3}>
+                {transactionFee ? transactionFee : '...'}
+              </Text>
             </View>
           </View>
           <View style={styles.hr} />

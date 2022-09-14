@@ -41,8 +41,8 @@ function MyProfile(props: MyProfileProps) {
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const config = useConfig();
-  useTreeUpdateInterval();
   const {getBalance, loading: contractsLoading} = useContracts();
+  useTreeUpdateInterval();
 
   // const user = useCurrentUser();
   // console.log(user, 'user>++');

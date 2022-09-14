@@ -8,7 +8,7 @@ import {colors} from 'constants/values';
 
 export type TScreenTitle = {
   goBack?: boolean;
-  title: string;
+  title?: string;
   rightContent?: React.ReactElement;
 };
 
@@ -29,9 +29,11 @@ export function ScreenTitle(props: TScreenTitle) {
       ) : (
         <View style={globalStyles.fill} />
       )}
-      <View style={{flex: 3}}>
-        <Text style={[globalStyles.textCenter, styles.title]}>{title}</Text>
-      </View>
+      {title && (
+        <View style={{flex: 4}}>
+          <Text style={[globalStyles.textCenter, styles.title]}>{title}</Text>
+        </View>
+      )}
       {rightContent ? (
         <View style={[globalStyles.fill, globalStyles.justifyContentCenter, styles.alignItemsEnd]}>{rightContent}</View>
       ) : (
@@ -44,6 +46,7 @@ export function ScreenTitle(props: TScreenTitle) {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingTop: 28,
     flexDirection: 'row',
     alignItems: 'center',
   },

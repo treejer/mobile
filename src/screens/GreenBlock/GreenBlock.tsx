@@ -32,9 +32,7 @@ function GreenBlock({navigation, route}: Props) {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
-      <Stack.Screen name={Routes.TreeList} options={{title: screenTitle('Tree Inventory')}}>
-        {props => <TreeList {...props} filter={filter} />}
-      </Stack.Screen>
+      <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
       <Stack.Screen
         name={Routes.TreeDetails}
         component={TreeDetails}

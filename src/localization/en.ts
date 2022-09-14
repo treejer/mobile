@@ -404,11 +404,13 @@ export const en = {
       biggerThanDai: 'DAI Amount should be lower than your DAI balance',
       lowerThanZero: 'DAI Amount should be bigger than 0',
       required: '{{field}} field is required',
+      shouldBeNumber: 'DAI Amount should be number',
     },
     error: {
       contractsFailed: 'Get dai and ether balance failed',
       title: 'An error occurred',
       fee: "you can't submit this transaction",
+      INVALID_ARGUMENT: 'Recipient Address is invalid',
     },
   },
 };
