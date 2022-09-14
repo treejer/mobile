@@ -54,16 +54,16 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
       <View style={styles.walletWrapper}>
         <Text>{t('magicWallet.daiBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{loading || !dai ? '...' : Number(daiBalance).toFixed(8)}</Text>
+        <Text style={styles.balance}>{loading || !dai ? '...' : Number(daiBalance).toFixed(+dai ? 6 : 0)}</Text>
       </View>
       <Spacer times={1} />
       <View style={styles.walletWrapper}>
         <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
         <Spacer />
-        <Text style={styles.balance}>{loading || !dai ? '...' : Number(etherBalance).toFixed(8)}</Text>
+        <Text style={styles.balance}>{loading || !ether ? '...' : Number(etherBalance).toFixed(+ether ? 6 : 0)}</Text>
       </View>
-      <Spacer times={4} />
-      <Text>How to add this wallet to metamask?</Text>
+      {/*<Spacer times={4} />*/}
+      {/*<Text>How to add this wallet to metamask?</Text>*/}
     </Card>
   );
 }

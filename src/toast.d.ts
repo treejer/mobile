@@ -5,9 +5,9 @@ import {
 
 declare module 'react-native-toast-notifications/lib/typescript/toast' {
   interface ToastProps extends RNToastProps {
-    title: string;
+    title?: string;
   }
   interface ToastOptions extends RNToastOptions {
-    title: string;
+    title?: string;
   }
 }
