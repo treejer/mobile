@@ -16,6 +16,7 @@ import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
 import {Routes} from 'navigation';
+import {Logs} from 'expo';
 
 export type TTransferFormData = {
   from: string;
@@ -34,15 +35,19 @@ export type TTransferFormProps = {
   handleCancelTransaction: () => void;
 };
 
-const schema = (maxAmount: string | BN | number, t: TFunction<'translation', undefined>) =>
+const schema = (maxAmount: string | BN | number, t: TFunction<'translation', undefined>, from: string) =>
   Yup.object().shape({
     to: Yup.string()
       .required(t('transfer.formError.required', {field: t('transfer.form.toHolder')}))
       .min(42, t('transfer.formError.length42'))
-      .max(60, t('transfer.formError.length60')),
+      .max(60, t('transfer.formError.length60'))
+      .test('equal', t('transfer.formError.magicWallet'), (value?: string) => {
+        console.log(value !== from, 'is here');
+        return value !== from;
+      }),
     amount: Yup.number()
-      .typeError(t('transfer.formError.shouldBeNumber'))
       .required(t('transfer.formError.required', {field: t('transfer.form.amountHolder')}))
+      .typeError(t('transfer.formError.shouldBeNumber'))
       .test('bigger-than-dai', t('transfer.formError.lowerThanZero'), (value?: string | number) => {
         if (!value) {
           return false;
@@ -88,7 +93,7 @@ export function TransferForm(props: TTransferFormProps) {
     useForm<TTransferFormData>({
       mode: 'all',
       reValidateMode: 'onChange',
-      resolver: yupResolver(schema(daiBalance.toString(), t)),
+      resolver: yupResolver(schema(daiBalance.toString(), t, userWallet)),
       defaultValues,
     });
 

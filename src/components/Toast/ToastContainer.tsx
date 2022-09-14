@@ -26,6 +26,12 @@ export const toastProviderProps = {
         mode={AlertMode.Warning}
       />
     ),
+    [AlertMode.Info]: toastOptions => (
+      <CustomToast
+        toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="info" />}}
+        mode={AlertMode.Info}
+      />
+    ),
     normal: toastOptions => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="info" />}}

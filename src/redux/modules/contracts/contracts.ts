@@ -198,7 +198,7 @@ export function* watchTransaction({transaction}: TAction) {
     const contract = config.contracts.Dai;
 
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
-    const amountInEther = web3.utils.toWei(amount, 'ether');
+    const amountInEther = web3.utils.toWei(amount.toString(), 'ether');
 
     yield asyncTransferDai(daiContract, from, to, amountInEther);
     yield put(cancelTransaction());

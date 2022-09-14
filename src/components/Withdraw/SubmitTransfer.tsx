@@ -54,7 +54,7 @@ export function SubmitTransfer(props: TSubmitTransferProps) {
         disabled={disabled || loading}
       >
         <Text style={disabled ? styles.muteText : styles.whiteText}>{t('transfer.form.transfer')}</Text>
-        {loading ? <ActivityIndicator style={{marginLeft: 8}} /> : null}
+        {loading ? <ActivityIndicator color={colors.white} style={{marginLeft: 8}} /> : null}
       </TouchableOpacity>
     </View>
   );

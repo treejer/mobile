@@ -405,6 +405,7 @@ export const en = {
       lowerThanZero: 'DAI Amount should be bigger than 0',
       required: '{{field}} field is required',
       shouldBeNumber: 'DAI Amount should be number',
+      magicWallet: "You can't transfer DAI to your magic wallet, please try another one",
     },
     error: {
       contractsFailed: 'Get dai and ether balance failed',
