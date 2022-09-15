@@ -1,16 +1,15 @@
-import globalStyles from 'constants/styles';
-import TreeSymbol from 'components/TreeList/TreeSymbol';
 import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {useCurrentJourney} from 'services/currentJourney';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
-import {useTranslation} from 'react-i18next';
-import {useCurrentJourney} from 'services/currentJourney';
-import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
-import {colors} from 'constants/values';
-import {Hex2Dec} from 'utilities/helpers/hex';
+import TreeSymbol from 'components/TreeList/TreeSymbol';
 import {isWeb} from 'utilities/helpers/web';
-import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {
   currentStep: number;
@@ -19,6 +18,7 @@ interface Props {
 
 function TreeSubmissionStepper(props: Props) {
   const {currentStep, children} = props;
+
   const {t} = useTranslation();
   const {journey} = useCurrentJourney();
 
@@ -35,7 +35,6 @@ function TreeSubmissionStepper(props: Props) {
   return (
     <>
       <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}></View>
-      <Spacer times={10} />
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
         <Steps.Step step={1}>
