@@ -10,7 +10,7 @@ import {useCamera} from 'utilities/hooks';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';

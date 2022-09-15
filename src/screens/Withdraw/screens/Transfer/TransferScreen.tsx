@@ -254,9 +254,9 @@ export function TransferScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    ...globalStyles.fill,
-    ...globalStyles.screenView,
     ...globalStyles.alignItemsCenter,
+    ...globalStyles.screenView,
+    ...globalStyles.fill,
     paddingBottom: 12,
   },
 });
