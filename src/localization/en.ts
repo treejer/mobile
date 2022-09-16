@@ -364,7 +364,7 @@ export const en = {
     title: 'Magic Wallet',
     daiBalance: 'DAI Balance:',
   },
-  dai: 'Dai',
+  dai: 'DAI',
   transfer: {
     info: {
       title: 'Plant and Update to earn DAI',
@@ -396,12 +396,22 @@ export const en = {
       },
     },
     success: {
-      title: 'Transaction successed',
+      title: 'Transaction succeed',
+    },
+    formError: {
+      length42: 'Recipient Address should be bigger than 41',
+      length60: 'Recipient Address should be lower than 61',
+      biggerThanDai: 'DAI Amount should be lower than your DAI balance',
+      lowerThanZero: 'DAI Amount should be bigger than 0',
+      required: '{{field}} field is required',
+      shouldBeNumber: 'DAI Amount should be number',
+      magicWallet: "You can't transfer DAI to your magic wallet, please try another one",
     },
     error: {
       contractsFailed: 'Get dai and ether balance failed',
       title: 'An error occurred',
       fee: "you can't submit this transaction",
+      INVALID_ARGUMENT: 'Recipient Address is invalid',
     },
   },
 };

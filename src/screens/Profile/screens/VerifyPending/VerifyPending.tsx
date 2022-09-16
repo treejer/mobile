@@ -1,14 +1,15 @@
 import React from 'react';
 import {View, Text, Image} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
+
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Card from 'components/Card';
-import {useTranslation} from 'react-i18next';
-import {useCurrentUser} from 'services/currentUser';
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {EastWoodMessage} from '../../../../../assets/images';
+import {useProfile} from '../../../../redux/modules/profile/profile';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyPending> {}
 
@@ -17,10 +18,10 @@ function VerifyPending(props: Props) {
 
   const {t} = useTranslation();
 
-  const {refetchUser} = useCurrentUser();
+  const {dispatchProfile} = useProfile();
 
   const handleContinue = () => {
-    refetchUser();
+    dispatchProfile();
     navigation.navigate(Routes.MyProfile, {hideVerification: true});
   };
 

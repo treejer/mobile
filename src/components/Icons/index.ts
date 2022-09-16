@@ -5,4 +5,5 @@ export {default as GreenBlock} from './GreenBlock';
 export {default as ChevronLeft} from './ChevronLeft';
 export {default as ChevronRight} from './ChevronRight';
 export {default as Check} from './Check';
+export {default as ToastIcon} from './Toast';
 export {default as Plus} from './Plus';

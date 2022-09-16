@@ -49,27 +49,29 @@ export function WithdrawHistory(props: TWithdrawHistoryProps) {
       </View>
       <Spacer />
       <View>
-        {withdrawHistory.map((withdrawAction, index) => {
-          return (
-            <Fragment key={withdrawAction.id}>
-              <View style={[styles.row]}>
-                <View style={globalStyles.fill}>
-                  <Text style={[styles.valueTxt, {paddingLeft: 2}]}>{withdrawAction.id}</Text>
-                </View>
-                <View style={styles.value}>
-                  <Text style={styles.valueTxt}>{Number(withdrawAction.amount).toFixed(2)}</Text>
-                </View>
-                <View style={styles.value}>
-                  <Text style={styles.valueTxt}>{withdrawAction.date}</Text>
-                </View>
-                <View style={styles.value}>
-                  <Text style={styles.valueTxt}>{withdrawAction.txHash.slice(0, 15)}...</Text>
-                </View>
-              </View>
-              {index !== withdrawHistory.length - 1 && <Spacer times={4} />}
-            </Fragment>
-          );
-        })}
+        {withdrawHistory.length > 0
+          ? withdrawHistory.map((withdrawAction, index) => {
+              return (
+                <Fragment key={withdrawAction.id}>
+                  <View style={[styles.row]}>
+                    <View style={globalStyles.fill}>
+                      <Text style={[styles.valueTxt, {paddingLeft: 2}]}>{withdrawAction.id}</Text>
+                    </View>
+                    <View style={styles.value}>
+                      <Text style={styles.valueTxt}>{Number(withdrawAction.amount).toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.value}>
+                      <Text style={styles.valueTxt}>{withdrawAction.date}</Text>
+                    </View>
+                    <View style={styles.value}>
+                      <Text style={styles.valueTxt}>{withdrawAction.txHash.slice(0, 15)}...</Text>
+                    </View>
+                  </View>
+                  {index !== withdrawHistory.length - 1 && <Spacer times={4} />}
+                </Fragment>
+              );
+            })
+          : null}
       </View>
     </Card>
   );

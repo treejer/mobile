@@ -1,21 +1,26 @@
-import {useCallback, useEffect} from 'react';
-import {put, takeEvery} from 'redux-saga/effects';
+import {useCallback} from 'react';
+import BN from 'bn.js';
 import Web3 from 'web3';
 import {Contract} from 'web3-eth-contract';
+import {put, takeEvery} from 'redux-saga/effects';
+import {useToast} from 'react-native-toast-notifications';
+import {ToastOptions} from 'react-native-toast-notifications/lib/typescript/toast';
 
 import {NetworkConfig} from 'services/config';
-import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {AlertMode} from 'utilities/helpers/alert';
+import {web3Error} from 'utilities/helpers/web3Error';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {isWeb} from 'utilities/helpers/web';
-import {i18next} from '../../../localization';
 import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
+import {i18next} from '../../../localization';
+import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
 
 export type TContract = string | number | null;
 
+export type TShow = (message: string | JSX.Element, toastOptions?: ToastOptions | undefined) => string;
+
 export type TContracts = {
-  dai: TContract | undefined;
-  ether: TContract | undefined;
+  dai: string | BN;
+  ether: string | BN;
   fee: string | number | null;
   loading: boolean;
   submitting: boolean;
@@ -23,17 +28,24 @@ export type TContracts = {
 
 type TAction = {
   type: string;
-  setBalance: {
-    dai?: TContract | undefined;
-    ether?: TContract | undefined;
+  getBalance?: {
+    show?: TShow;
   };
-  transaction: TTransferFormData;
-  fee: {fee: string | number};
+  setBalance: {
+    dai?: string | BN;
+    ether?: string | BN;
+    show?: TShow;
+  };
+  transaction: {
+    form: TTransferFormData;
+    show: TShow;
+  };
+  fee: {fee: string | number; show?: TShow};
 };
 
 const initialState: TContracts = {
-  dai: null,
-  ether: null,
+  dai: '',
+  ether: '',
   fee: null,
   loading: false,
   submitting: false,
@@ -45,8 +57,8 @@ export function getBalanceFailed() {
 }
 
 export const GET_BALANCE = 'GET_BALANCE';
-export function getBalance() {
-  return {type: GET_BALANCE};
+export function getBalance(payload?: TAction['getBalance']) {
+  return {type: GET_BALANCE, getBalance: payload};
 }
 
 export const SET_BALANCE = 'SET_BALANCE';
@@ -135,16 +147,12 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
   }
 }
 
-export function* watchContracts() {
+export function* watchContracts({getBalance}: TAction) {
+  const show = getBalance?.show;
   try {
     const config: NetworkConfig = yield selectConfig();
     const wallet: string = yield selectWallet();
     const web3: Web3 = yield selectWeb3();
-    //
-    // const gas = yield web3.eth.estimateGas({from: wallet});
-    // console.log('Gas estimated', gas);
-    //
-    // const gasPrice = yield web3.eth.getGasPrice();
 
     const contract = config.contracts.Dai;
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
@@ -153,17 +161,14 @@ export function* watchContracts() {
     const etherBalance = yield web3.eth.getBalance(wallet);
 
     const contracts: TAction['setBalance'] = {
-      dai: web3.utils.fromWei(daiBalance),
-      ether: web3.utils.fromWei(etherBalance),
+      dai: daiBalance,
+      ether: etherBalance,
     };
-
-    // console.log(contracts, 'contracts');
 
     yield put(setBalance(contracts));
   } catch (e: any) {
-    showAlert({
-      title: i18next.t('transfer.error.title'),
-      message: i18next.t('transfer.error.contractsFailed'),
+    show?.(i18next.t('transfer.error.contractsFailed'), {
+      type: AlertMode.Error,
     });
     yield put(getBalanceFailed());
     console.log(e, 'error is here');
@@ -183,53 +188,59 @@ export function asyncTransferDai(daiContract: Contract, from: string, to: string
 }
 
 export function* watchTransaction({transaction}: TAction) {
+  const {show, form} = transaction;
   try {
-    const {amount, from, to} = transaction;
+    const {amount, from, to} = form;
+
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
+
     const contract = config.contracts.Dai;
+
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
-    const amountInEther = web3.utils.toWei(amount, 'ether');
+    const amountInEther = web3.utils.toWei(amount.toString(), 'ether');
+
     yield asyncTransferDai(daiContract, from, to, amountInEther);
     yield put(cancelTransaction());
     yield put(getBalance());
-    showAlert({
-      title: i18next.t('transfer.success.title'),
-      message: isWeb() ? i18next.t('transfer.success.title') : '',
-      mode: AlertMode.Error,
-    });
+
+    show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
   } catch (e: any) {
-    showAlert({
-      title: i18next.t('transfer.error.title'),
-      message: e.message,
-      mode: AlertMode.Error,
+    yield put(cancelTransaction());
+    yield put(getBalance());
+    show(e.message, {
+      type: AlertMode.Error,
     });
-    console.log(e.message, 'error is heree');
   }
 }
 
 export function* watchEstimateGasPrice({transaction}: TAction) {
+  const {show, form} = transaction;
   try {
-    const {amount, from, to} = transaction;
-    console.log(transaction, 'dataaaaaa');
+    const {amount, from, to} = form;
+
     const config: NetworkConfig = yield selectConfig();
     const web3: Web3 = yield selectWeb3();
+
     const contract = config.contracts.Dai;
+
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const gasAmount = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
     const gasPrice = yield web3.eth.getGasPrice();
     const fee = gasAmount * gasPrice;
+
     console.log(fee, 'feeeeeeeeeee');
     if (fee > 0) {
       yield put(transactionFee({fee}));
     } else {
       yield put(cancelTransaction());
-      showAlert({
-        title: i18next.t('transfer.error.fee'),
-        message: isWeb() ? i18next.t('transfer.error.fee') : '',
-      });
+      show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
     }
-  } catch (e: any) {}
+  } catch (e: any) {
+    console.log(e.message);
+    show?.(i18next.t(`transfer.error.${web3Error(e).code}`), {type: AlertMode.Error});
+    yield put(cancelTransaction());
+  }
 }
 
 export function* contractsSagas() {
@@ -241,21 +252,22 @@ export function* contractsSagas() {
 export function useContracts() {
   const contracts = useAppSelector(state => state.contracts);
   const dispatch = useAppDispatch();
+  const {show} = useToast();
 
   const dispatchContracts = useCallback(() => {
-    dispatch(getBalance());
+    dispatch(getBalance({show}));
   }, [dispatch]);
 
   const dispatchTransaction = useCallback(
     (data: TTransferFormData) => {
-      dispatch(submitTransaction(data));
+      dispatch(submitTransaction({form: data, show}));
     },
     [dispatch],
   );
 
   const dispatchEstimateGasPrice = useCallback(
     (data: TTransferFormData) => {
-      dispatch(estimateGasPrice(data));
+      dispatch(estimateGasPrice({form: data, show}));
     },
     [dispatch],
   );

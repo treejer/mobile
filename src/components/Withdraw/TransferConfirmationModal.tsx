@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {Modal, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Web3 from 'web3';
 
-import {colors} from 'constants/values';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
 
 export type TTransferConfirmationModalProps = {
   onConfirm: () => void;
@@ -19,13 +20,18 @@ export type TTransferConfirmationModalProps = {
 export function TransferConfirmationModal(props: TTransferConfirmationModalProps) {
   const {address, amount, onCancel, onConfirm, fee} = props;
 
-  useEffect(() => {
-    console.log(fee, 'fee is here');
-  }, [fee]);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const {t} = useTranslation();
 
-  return (
+  const transactionFee = useMemo(() => (fee ? Web3.utils.fromWei(fee.toString(), 'ether') : null), [fee]);
+
+  const handleConfirmAndClose = useCallback(() => {
+    onConfirm();
+    setIsConfirmed(true);
+  }, [onConfirm]);
+
+  return !isConfirmed ? (
     <Modal transparent>
       <View style={styles.container}>
         <Card style={styles.confirmBox}>
@@ -45,11 +51,15 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
             </View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.form.amount')}</Text>
-              <Text style={[styles.detail, styles.values]}>{amount}</Text>
+              <Text style={[styles.detail, styles.values]} numberOfLines={5}>
+                {amount} {t('dai')} ~ ${amount}
+              </Text>
             </View>
             <View style={styles.row}>
               <Text style={styles.detail}>{t('transfer.fee')}</Text>
-              <Text style={[styles.detail, styles.values]}>{fee ? fee : '...'}</Text>
+              <Text style={[styles.detail, styles.values]} numberOfLines={3}>
+                {transactionFee ? transactionFee : '...'}
+              </Text>
             </View>
           </View>
           <View style={styles.hr} />
@@ -58,17 +68,17 @@ export function TransferConfirmationModal(props: TTransferConfirmationModalProps
           <View style={[styles.row, styles.btnContainer]}>
             <Button style={styles.btn} caption={t('transfer.form.confirm.cancel')} onPress={onCancel} />
             <Button
-              disabled={!fee}
-              style={[styles.btn]}
+              disabled={!transactionFee}
+              style={[styles.btn, !transactionFee && styles.disabledBtn]}
               variant="success"
               caption={t('transfer.form.confirm.confirm')}
-              onPress={onConfirm}
+              onPress={handleConfirmAndClose}
             />
           </View>
         </Card>
       </View>
     </Modal>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
@@ -97,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.khaki,
   },
   hr: {
-    height: 2,
+    height: 1,
     backgroundColor: colors.gray,
     marginVertical: 8,
   },

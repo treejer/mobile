@@ -1,18 +1,22 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {ActivityIndicator, Dimensions, Switch, Text, TouchableOpacity, View} from 'react-native';
-import Button from 'components/Button';
 import {useTranslation} from 'react-i18next';
-import {ProfileRouteParamList} from 'types';
 import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import globalStyles from 'constants/styles';
+import Icon from 'react-native-vector-icons/Octicons';
+import Web3 from 'web3';
+
+import Button from 'components/Button';
+import {ChevronLeft} from 'components/Icons';
 import Spacer from 'components/Spacer/Spacer';
 import {useSettings} from 'utilities/hooks/useSettings';
-import Icon from 'react-native-vector-icons/Octicons';
+import {useConfig} from 'utilities/hooks/useWeb3';
+import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
 import {isMatic} from 'services/Magic';
-import {ChevronLeft} from 'components/Icons';
+import {ProfileRouteParamList} from 'types';
+import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -23,17 +27,15 @@ const {width} = Dimensions.get('window');
 export default function SettingsScreen(props: SettingsScreenProps) {
   const {navigation} = props;
 
-  const [ether, setEther] = useState<string>('');
-
-  const {useGSN, changeUseGSN} = useSettings();
-  const web3 = useWeb3();
-  const walletAccount = useWalletAccount();
   const config = useConfig();
+  const {ether} = useContracts();
+  const {useGSN, changeUseGSN} = useSettings();
 
   console.log(useGSN, 'useGsn');
 
-  const fullWidth = useMemo(() => width - 80, []);
   const {t} = useTranslation();
+
+  const etherBalance = useMemo(() => Web3.utils.fromWei(ether), [ether]);
 
   const handleSelectLanguage = () => {
     navigation.navigate('SelectLanguage', {back: true});
@@ -43,28 +45,17 @@ export default function SettingsScreen(props: SettingsScreenProps) {
     changeUseGSN(value);
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const balance = await web3.eth.getBalance(walletAccount);
-        const _balance = web3.utils.fromWei(balance);
-        setEther(_balance);
-      } catch (e) {
-        console.log(e, 'e inside getBalance');
-      }
-    })();
-  }, []);
-
   return (
-    <SafeAreaView style={[{flex: 1}, globalStyles.screenView, globalStyles.p1]}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>
-          <ChevronLeft />
-        </TouchableOpacity>
-        <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>
-      </View>
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
+      {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+      {/*  <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>*/}
+      {/*    <ChevronLeft />*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>*/}
+      {/*</View>*/}
+      <ScreenTitle title={t('settings.title')} goBack />
       <Spacer times={4} />
-      <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 16}}>
+      <View style={[globalStyles.p1, {flex: 1, alignItems: 'center', paddingHorizontal: 16}]}>
         <Button style={{width: '100%'}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
         <Spacer times={4} />
         <View
@@ -105,7 +96,11 @@ export default function SettingsScreen(props: SettingsScreenProps) {
             style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
           >
             <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
-            {ether ? <Text>{Number(ether).toFixed(7)}</Text> : <ActivityIndicator color={colors.gray} />}
+            {etherBalance ? (
+              <Text>{Number(etherBalance).toFixed(etherBalance ? 7 : 0)}</Text>
+            ) : (
+              <ActivityIndicator color={colors.gray} />
+            )}
           </View>
         </View>
       </View>
