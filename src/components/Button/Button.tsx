@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 type Props = {
-  caption: string;
-  variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary';
+  caption: string | null;
+  variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary' | 'fourth';
   icon?: React.ComponentType<any>;
   style?: TouchableOpacityProps['style'];
   textStyle?: TextProps['style'];

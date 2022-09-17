@@ -1,11 +1,11 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
+  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -13,9 +13,9 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
+import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
 import Button from '../Button';
@@ -29,39 +29,40 @@ import useTempTrees from 'utilities/hooks/useTempTrees';
 import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
 import {TreeImage} from 'components/TreeList/TreeImage';
-
-export enum TreeFilter {
-  All = 'All',
-  Submitted = 'Submitted',
-  Temp = 'Not Verified',
-  OfflineCreate = 'Planted Offline',
-  OfflineUpdate = 'Updated Offline',
-}
-
-export interface TreeFilterItem {
-  caption: TreeFilter;
-}
+import {Routes} from 'navigation';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
+import {isWeb} from 'utilities/helpers/web';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {useCurrentJourney} from 'services/currentJourney';
+import TreeSymbol from './TreeSymbol';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props {
-  route?: RouteProp<GreenBlockRouteParamList, 'TreeList'>;
+  route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
   navigation: NavigationProp<GreenBlockRouteParamList>;
   filter?: TreeFilter;
 }
 
 function Trees({route, navigation, filter}: Props) {
   // const navigation = useNavigation();
-  const [initialFilter, setInitialFilter] = useState(filter);
+  const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
+  const [treeColorsModalVisible, setTreeColorModalVisible] = useState<boolean>(false);
   const {t} = useTranslation();
   const filters = useMemo<TreeFilterItem[]>(() => {
-    return [
-      {caption: TreeFilter.Submitted},
-      {caption: TreeFilter.Temp},
-      {caption: TreeFilter.OfflineCreate},
-      {caption: TreeFilter.OfflineUpdate},
+    const offlineFilters = [
+      {caption: TreeFilter.OfflineCreate, offline: true},
+      {caption: TreeFilter.OfflineUpdate, offline: true},
     ];
+    return [{caption: TreeFilter.Submitted}, {caption: TreeFilter.Temp}, ...(isWeb() ? [] : offlineFilters)];
   }, []);
 
-  const [currentFilter, setCurrentFilter] = useState<TreeFilterItem>(null);
+  const [currentFilter, setCurrentFilter] = useState<TreeFilterItem | null>(null);
+  const {setNewJourney} = useCurrentJourney();
 
   useFocusEffect(
     useCallback(() => {
@@ -77,6 +78,8 @@ function Trees({route, navigation, filter}: Props) {
   const address = useWalletAccount();
 
   const isConnected = useNetInfoConnected();
+
+  const treeUpdateInterval = useTreeUpdateInterval();
 
   const {
     tempTreesQuery,
@@ -116,55 +119,81 @@ function Trees({route, navigation, filter}: Props) {
     if (tree.item?.treeStatus == 2) {
       const isTreePlantedOffline = offlineTrees?.planted?.find(item => item.treeIdToPlant === tree.item?.id);
       if (isTreePlantedOffline) {
-        Alert.alert(t('warning'), t('notVerifiedTree'));
+        showAlert({
+          title: t('warning'),
+          message: t('notVerifiedTree'),
+          mode: AlertMode.Warning,
+        });
       } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'TreeSubmission',
-              params: {
-                treeIdToPlant: tree.item.id,
-                tree: tree.item,
-                isSingle: true,
-                initialRouteName: 'SelectPhoto',
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: Routes.TreeSubmission,
+                params: {
+                  initialRouteName: Routes.SelectPhoto,
+                },
               },
-            },
-          ],
+            ],
+          }),
+        );
+        setNewJourney({
+          treeIdToPlant: tree.item.id,
+          tree: tree.item,
+          isSingle: true,
         });
       }
     } else if (tree.item?.treeStatus == 3) {
-      Alert.alert(t('warning'), t('notVerifiedTree'));
+      showAlert({
+        title: t('warning'),
+        message: t('notVerifiedTree'),
+        mode: AlertMode.Warning,
+      });
     } else {
-      navigation.navigate('TreeDetails', {tree: tree.item});
+      navigation.navigate(Routes.TreeDetails, {tree: tree.item, tree_id: Hex2Dec(tree.item.id).toString()});
     }
   };
-
-  useEffect(() => {
-    if (route?.params?.shouldNavigateToTreeDetails) {
-      refetchPlantedTrees();
-    }
-  }, [plantedRefetching, route.params, refetchPlantedTrees]);
 
   const handleRegSelectTree = () => {
-    Alert.alert(t('warning'), t('notVerifiedTree'));
+    showAlert({
+      title: t('warning'),
+      message: t('notVerifiedTree'),
+      mode: AlertMode.Warning,
+    });
+
+    return;
   };
 
-  const renderFilters = () =>
-    filters.map(filter => {
-      const {caption} = filter;
-      const variant = currentFilter.caption === caption ? 'secondary' : 'primary';
+  const renderFilters = () => {
+    const offlineFilters = filters.filter(item => item.offline);
+    const onlineFilters = filters.filter(item => !item.offline);
 
-      return (
-        <Button
-          key={caption}
-          caption={t(caption)}
-          variant={variant}
-          style={{marginHorizontal: 8, marginBottom: 8}}
-          onPress={() => setCurrentFilter(filter)}
-        />
-      );
-    });
+    return (
+      <View style={styles.filterContainer}>
+        <View style={styles.filterWrapper}>
+          {onlineFilters.map(item => (
+            <TreeFilterButton
+              key={item.caption}
+              item={item}
+              currentFilter={currentFilter}
+              onPress={() => setCurrentFilter(item)}
+            />
+          ))}
+        </View>
+        <View style={styles.filterWrapper}>
+          {offlineFilters.map(item => (
+            <TreeFilterButton
+              key={item.caption}
+              item={item}
+              currentFilter={currentFilter}
+              onPress={() => setCurrentFilter(item)}
+            />
+          ))}
+        </View>
+      </View>
+    );
+  };
 
   const renderFilterComponent = () => {
     switch (currentFilter?.caption) {
@@ -195,36 +224,52 @@ function Trees({route, navigation, filter}: Props) {
     const style = !imageFs ? {marginTop: 8} : {};
 
     return (
-      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleSelectTree(tree)}>
-        <TreeImage tree={tree.item} tint size={size} style={style} />
-        <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
-      </TouchableOpacity>
+      <TreeSymbol
+        tree={tree.item}
+        size={size}
+        style={style}
+        treeUpdateInterval={treeUpdateInterval}
+        handlePress={() => handleSelectTree(tree)}
+      />
     );
   };
 
   const tempRenderItem = tree => {
     return (
-      <TouchableOpacity key={tree.item.id} style={styles.tree} onPress={() => handleRegSelectTree(tree)}>
-        <TreeImage tree={tree.item} size={60} tint color={colors.yellow} />
-        <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree.item.id)}</Text>
-      </TouchableOpacity>
+      <TreeSymbol
+        tree={tree.item}
+        treeUpdateInterval={treeUpdateInterval}
+        handlePress={handleRegSelectTree}
+        color={colors.yellow}
+        size={48}
+        style={{marginTop: 8}}
+      />
     );
   };
 
-  const tempEmptyContent = () => {
-    if (tempTrees?.length === 0 && plantedTrees?.length > 0) {
-      return null;
-    }
+  const TempEmptyContent = () => {
+    const hasTree = plantedTrees?.length || tempTrees?.length;
+    const plantText = hasTree ? 'plantTree' : 'plantFirstTree';
+
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
-        <Spacer times={20} />
-        <Text>{t('noPlantedTrees')}</Text>
+        {!hasTree && (
+          <>
+            <Spacer times={20} />
+            <Text>{t('noPlantedTrees')}</Text>
+          </>
+        )}
         <Spacer times={5} />
         <Button
-          caption={t('plantFirstTree')}
+          caption={t(plantText)}
           variant="cta"
           onPress={() => {
-            navigation.navigate('TreeSubmission');
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.TreeSubmission}],
+              }),
+            );
           }}
         />
       </View>
@@ -240,41 +285,71 @@ function Trees({route, navigation, filter}: Props) {
   };
 
   const EmptyContent = () => {
+    const hasTree = plantedTrees?.length || tempTrees?.length;
+    const plantText = hasTree ? 'plantTree' : 'plantFirstTree';
+
     return (
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill, {paddingVertical: 25}]}>
         <Spacer times={20} />
-        <Text>{t('noAssigned')}</Text>
+        <Text>{t('noAssignedOrVerified')}</Text>
+        <Spacer times={5} />
+        <Button
+          caption={t(plantText)}
+          variant="cta"
+          onPress={() => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.TreeSubmission}],
+              }),
+            );
+          }}
+        />
       </View>
     );
   };
 
   const calcTreeColumnNumber = () => {
-    if (dim?.width >= 414) {
-      return 6;
+    if (isWeb()) {
+      return 5;
+    } else {
+      if (dim?.width >= 414) {
+        return 6;
+      }
+      return 5;
     }
-    return 5;
   };
 
   const renderSubmittedTrees = () => {
     return (
       <View style={{flex: 1}}>
-        <Text style={styles.treeLabel}>{t('submittedTrees')}</Text>
-        <FlatList
-          // @ts-ignore
-          data={plantedTrees}
-          initialNumToRender={20}
-          onEndReachedThreshold={0.1}
-          renderItem={RenderItem}
-          keyExtractor={item => item.id}
-          ListEmptyComponent={isConnected ? EmptyContent : NoInternetTrees}
-          style={{flex: 1}}
-          refreshing
-          onEndReached={plantedLoadMore}
-          onRefresh={refetchPlantedTrees}
-          numColumns={calcTreeColumnNumber()}
-          contentContainerStyle={styles.listScrollWrapper}
-          refreshControl={<RefreshControl refreshing={plantedRefetching} onRefresh={refetchPlantedTrees} />}
-        />
+        <Pressable onPress={() => setTreeColorModalVisible(true)}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
+            <Text style={styles.treeLabel}>{t('submittedTrees')}</Text>
+            <Icon name="info-circle" size={20} color={colors.grayLight} style={{marginHorizontal: 8}} />
+          </View>
+        </Pressable>
+        <PullToRefresh onRefresh={refetchPlantedTrees}>
+          <FlatList
+            // @ts-ignore
+            data={plantedTrees}
+            initialNumToRender={20}
+            onEndReachedThreshold={0.1}
+            renderItem={RenderItem}
+            keyExtractor={(_, i) => i.toString()}
+            ListEmptyComponent={EmptyContent}
+            style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
+            refreshing
+            onEndReached={plantedLoadMore}
+            onRefresh={refetchPlantedTrees}
+            numColumns={calcTreeColumnNumber()}
+            contentContainerStyle={styles.listScrollWrapper}
+            refreshControl={
+              isWeb() ? undefined : <RefreshControl refreshing={plantedRefetching} onRefresh={refetchPlantedTrees} />
+            }
+          />
+        </PullToRefresh>
+        <TreeColorsInfoModal visible={treeColorsModalVisible} onClose={() => setTreeColorModalVisible(false)} />
       </View>
     );
   };
@@ -282,23 +357,27 @@ function Trees({route, navigation, filter}: Props) {
   const renderNotVerifiedTrees = () => {
     return (
       <View style={{flex: 1}}>
-        <Text style={styles.treeLabel}>{t('notSubmittedTrees')}</Text>
-        <FlatList
-          // @ts-ignore
-          data={tempTrees}
-          renderItem={tempRenderItem}
-          initialNumToRender={20}
-          onEndReachedThreshold={0.1}
-          onEndReached={tempLoadMore}
-          keyExtractor={item => item.id}
-          ListEmptyComponent={isConnected ? tempEmptyContent : NoInternetTrees}
-          style={{flex: 1}}
-          refreshing
-          onRefresh={refetchTempTrees}
-          numColumns={calcTreeColumnNumber()}
-          contentContainerStyle={styles.listScrollWrapper}
-          refreshControl={<RefreshControl refreshing={tempTreesRefetching} onRefresh={refetchTempTrees} />}
-        />
+        <Text style={[styles.treeLabel, {marginVertical: 20}]}>{t('notSubmittedTrees')}</Text>
+        <PullToRefresh onRefresh={refetchTempTrees}>
+          <FlatList
+            // @ts-ignore
+            data={tempTrees}
+            renderItem={tempRenderItem}
+            initialNumToRender={20}
+            onEndReachedThreshold={0.1}
+            onEndReached={tempLoadMore}
+            keyExtractor={(_, i) => i.toString()}
+            ListEmptyComponent={TempEmptyContent}
+            style={{flex: 1, backgroundColor: colors.khaki, minHeight: 300}}
+            refreshing
+            onRefresh={refetchTempTrees}
+            numColumns={calcTreeColumnNumber()}
+            contentContainerStyle={styles.listScrollWrapper}
+            refreshControl={
+              isWeb() ? undefined : <RefreshControl refreshing={tempTreesRefetching} onRefresh={refetchTempTrees} />
+            }
+          />
+        </PullToRefresh>
       </View>
     );
   };
@@ -307,14 +386,20 @@ function Trees({route, navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
+      console.log(item, '<===');
+
       const isAssignedTree = item.treeIdToPlant;
-      const id = isPlanted ? (isAssignedTree ? Hex2Dec(isAssignedTree) : index + 1) : Hex2Dec(item.treeIdToUpdate);
+      const id = isPlanted
+        ? isAssignedTree
+          ? Hex2Dec(isAssignedTree)
+          : index + 1
+        : Hex2Dec(item.treeIdToUpdate || '');
       const submitLoading = offlineLoadings.find(
         offlineId => offlineId === item.offlineId || offlineId === item.treeIdToPlant,
       );
       const updateLoading = offlineUpdateLoadings.find(offlineId => offlineId === item.treeIdToUpdate);
 
-      const loading = isPlanted ? submitLoading : updateLoading;
+      const loading = isPlanted ? !!submitLoading : !!updateLoading;
       const disabled = isPlanted ? offlineLoadings.length > 0 : offlineUpdateLoadings.length > 0;
 
       const caption = loading ? null : 'Send';
@@ -327,7 +412,14 @@ function Trees({route, navigation, filter}: Props) {
 
       return (
         <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree} disabled={disabled}>
-          <TreeImage tree={item.tree} tint size={60} isNursery={item.isSingle === false} color={colors.yellow} />
+          <TreeImage
+            tree={item.tree}
+            tint
+            size={60}
+            isNursery={item.isSingle === false}
+            color={colors.yellow}
+            treeUpdateInterval={treeUpdateInterval}
+          />
           <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{id}</Text>
           <Button
             variant="secondary"
@@ -342,7 +434,7 @@ function Trees({route, navigation, filter}: Props) {
             caption={caption}
             loading={loading}
             disabled={disabled}
-            onPress={!disabled && !loading && onPress}
+            onPress={!disabled && !loading ? onPress : undefined}
           />
         </TouchableOpacity>
       );
@@ -357,7 +449,7 @@ function Trees({route, navigation, filter}: Props) {
         <FlatList<TreeJourney>
           data={data}
           renderItem={renderItem}
-          keyExtractor={item => (isPlanted ? item.offlineId : item.treeIdToUpdate)}
+          keyExtractor={(_, i) => i.toString()}
           ListEmptyComponent={isConnected ? () => offlineEmpty(isPlanted) : NoInternetTrees}
           style={{flex: 1}}
           numColumns={calcTreeColumnNumber()}
@@ -375,7 +467,7 @@ function Trees({route, navigation, filter}: Props) {
             <Spacer times={2} />
           </>
         )}
-        {data?.length > 1 && !offlineLoading && (
+        {data && data?.length > 1 && !offlineLoading && (
           <Button
             caption={t('treeInventory.submitAll')}
             variant="tertiary"
@@ -416,42 +508,42 @@ function Trees({route, navigation, filter}: Props) {
 
   if (allLoading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <View style={[{flex: 1, alignItems: 'center', justifyContent: 'center'}, globalStyles.screenView]}>
         <ActivityIndicator />
       </View>
     );
   }
 
   return (
-    <View
-      style={[
-        globalStyles.screenView,
-        globalStyles.safeArea,
-        {
-          paddingBottom: 40,
-          paddingHorizontal: 12,
-          flex: 1,
-        },
-      ]}
-    >
-      {renderLoadingModal()}
-      <Spacer times={6} />
-      <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('treeInventory.title')}</Text>
-      <Spacer times={4} />
+    <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
+      <ScreenTitle title={t('treeInventory.title')} />
       <View
         style={[
-          globalStyles.horizontalStack,
+          globalStyles.screenView,
           {
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
+            paddingBottom: 40,
+            paddingHorizontal: 12,
+            flex: 1,
           },
         ]}
       >
-        {currentFilter && renderFilters()}
+        {renderLoadingModal()}
+        <Spacer times={4} />
+        <View
+          style={[
+            globalStyles.horizontalStack,
+            {
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          ]}
+        >
+          {currentFilter && renderFilters()}
+        </View>
+        {renderFilterComponent()}
       </View>
-      {renderFilterComponent()}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -461,19 +553,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   treeLabel: {
-    marginVertical: 20,
     alignSelf: 'center',
   },
-  tree: {
-    width: 60,
-    height: 80,
-    marginHorizontal: 5,
-    marginBottom: 15,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   offlineTree: {
-    width: 60,
+    width: 52,
     height: 100,
     marginHorizontal: 5,
     marginBottom: 15,
@@ -489,6 +572,12 @@ const styles = StyleSheet.create({
   },
   inactiveTree: {
     opacity: 0.3,
+  },
+  filterContainer: {
+    alignItems: 'center',
+  },
+  filterWrapper: {
+    flexDirection: 'row',
   },
 });
 

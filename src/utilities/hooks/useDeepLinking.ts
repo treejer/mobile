@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {rangerUrl} from 'services/config';
+import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
 
 export function useInitialDeepLinking() {
   useEffect(() => {
@@ -11,14 +11,7 @@ export function useInitialDeepLinking() {
         const initialUrl = await Linking.getInitialURL();
         console.log(initialUrl, 'initialUrl');
         if (initialUrl) {
-          const {action, value} = convertUrlParams(initialUrl);
-          if (action === 'organization') {
-            await AsyncStorage.setItem(deepLinkingKey('organization'), value);
-            await AsyncStorage.removeItem(deepLinkingKey('referrer'));
-          } else {
-            await AsyncStorage.setItem(deepLinkingKey('referrer'), value);
-            await AsyncStorage.removeItem(deepLinkingKey('organization'));
-          }
+          await updateStorage(initialUrl);
         }
       } catch (e) {
         console.log(e, 'useInitialDeepLinking');
@@ -36,24 +29,29 @@ export function useInitialDeepLinking() {
 
   const onReceiveURL = async ({url}) => {
     console.log(url, '<==============');
-    const {action, value} = convertUrlParams(url);
     try {
-      if (action === 'organization') {
-        await AsyncStorage.setItem(deepLinkingKey('organization'), value);
-        await AsyncStorage.removeItem(deepLinkingKey('referrer'));
-      } else {
-        await AsyncStorage.setItem(deepLinkingKey('referrer'), value);
-        await AsyncStorage.removeItem(deepLinkingKey('organization'));
-      }
+      await updateStorage(url);
     } catch (e) {
       console.log(e, 'e inside useDeepLinking');
+    }
+  };
+
+  const updateStorage = async url => {
+    const {action, value} = convertUrlParams(url);
+
+    if (action === 'organization') {
+      await AsyncStorage.setItem(deepLinkingKey('organization'), value);
+      await AsyncStorage.removeItem(deepLinkingKey('referrer'));
+    } else if (action === 'referrer') {
+      await AsyncStorage.setItem(deepLinkingKey('referrer'), value);
+      await AsyncStorage.removeItem(deepLinkingKey('organization'));
     }
   };
 }
 
 export default function useRefer() {
-  const [referrer, setReferrer] = useState(null);
-  const [organization, setOrganization] = useState(null);
+  const [referrer, setReferrer] = useState<string | null>(null);
+  const [organization, setOrganization] = useState<string | null>(null);
 
   useEffect(() => {
     (async function () {
@@ -78,18 +76,19 @@ export default function useRefer() {
   };
 
   const onReceiveURL = async ({url}) => {
-    console.log(url, 'onreceive url');
     const {action, value} = convertUrlParams(url);
     if (action === 'referrer') {
       setReferrer(value);
       setOrganization(null);
-    } else {
+    } else if (action === 'organization') {
       setOrganization(value);
       setReferrer(null);
     }
   };
 
-  return {referrer, organization};
+  const hasRefer = referrer || organization;
+
+  return {referrer, organization, hasRefer};
 }
 
 export function deepLinkingKey(action) {
@@ -97,18 +96,12 @@ export function deepLinkingKey(action) {
 }
 
 export function convertUrlParams(url: string) {
-  const baseUrl = Platform.OS === 'android' ? `${rangerUrl}/` : 'treejer-ranger://';
-  const [action, value] = url?.replace(baseUrl, '')?.split('/');
+  const baseUrl = Platform.select({
+    ios: 'treejer-ranger://',
+    android: rangerUrl,
+    web: isProd ? rangerUrl : rangerDevUrl,
+    default: rangerUrl,
+  });
+  const [_, action, value] = url?.replace(baseUrl, '')?.split('/');
   return {action, value};
-}
-
-export async function getDeepLikingValues(): Promise<{referrer?: string; organization?: string}> {
-  try {
-    const referrer = await AsyncStorage.getItem(deepLinkingKey('referrer'));
-    const organization = await AsyncStorage.getItem(deepLinkingKey('organization'));
-
-    return {referrer, organization};
-  } catch (e) {
-    console.log(e, 'e inside getDeepLikingValues');
-  }
 }

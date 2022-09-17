@@ -164,6 +164,8 @@ type Query {
   planter(id: String): planter
   tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
   trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
+
+  settings: Settings
 }
 
 #input ApplyInput {
@@ -204,3 +206,13 @@ type Mutation {
 
 scalar Web3Result
 scalar Any
+
+type ForceUpdateSetting {
+  version: String
+  force: Boolean
+}
+
+type Settings {
+  id: String
+  forceUpdate: ForceUpdateSetting
+}

@@ -2,9 +2,11 @@ import {NetworkStatus, useQuery} from '@apollo/client';
 import PlanterStatusQuery, {
   PlanterStatusQueryQueryData,
 } from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
-import {useCallback, useEffect, useState} from 'react';
+import {Dispatch, useCallback, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+
+type Planter = PlanterStatusQueryQueryData.Planter;
 
 export const planterStatusQueryStorageKey = 'planterStatusQuery';
 
@@ -23,10 +25,10 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
   useEffect(() => {
     (async function () {
       const queryPlanter = query.data;
-      if (queryPlanter !== undefined) {
-        setPlanter(queryPlanter);
+      if (queryPlanter?.planter !== undefined) {
+        setPlanter(queryPlanter.planter);
         try {
-          await AsyncStorage.setItem(planterStatusQueryStorageKey, JSON.stringify(queryPlanter));
+          await AsyncStorage.setItem(planterStatusQueryStorageKey, JSON.stringify(queryPlanter.planter));
         } catch (e) {
           console.log(e, 'Error inside ===> usePlanterStatusQuery set');
         }
@@ -41,8 +43,8 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
         skip: 0,
         first: 30,
       });
-      if (newQuery?.data) {
-        setPlanter(newQuery.data);
+      if (newQuery?.data?.planter) {
+        setPlanter(newQuery.data.planter);
       }
     } catch (e) {
       console.log(e, 'e inside refetchPlanterStatus');
@@ -51,14 +53,14 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
 
   const refetching = query.networkStatus === NetworkStatus.refetch;
   const canPlant = planter
-    ? Number(planter?.plantedCount) + (offlineTrees?.planted?.length || 0) <= Number(planter?.supplyCap)
+    ? Number(planter?.plantedCount || 0) + (offlineTrees?.planted?.length || 0) <= Number(planter?.supplyCap)
     : null;
 
   return {data: planter, planterQuery: query, refetchPlanterStatus, refetching, canPlant};
 }
 
-export function usePlanterStatusQueryPersisted() {
-  const [planterState, setPlanter] = useState(null);
+export function usePlanterStatusQueryPersisted(): [Planter | null, Dispatch<Planter | null>] {
+  const [planterState, setPlanter] = useState<Planter | null>(null);
 
   useEffect(() => {
     (async function () {
@@ -66,8 +68,9 @@ export function usePlanterStatusQueryPersisted() {
         let planter = await AsyncStorage.getItem(planterStatusQueryStorageKey);
 
         if (planter) {
-          planter = JSON.parse(planter);
-          setPlanter(planter);
+          const _planter = JSON.parse(planter);
+
+          setPlanter(_planter || null);
         }
       } catch (e) {
         console.log(e, 'Error inside ===> usePlanterStatusQuery get');
@@ -75,5 +78,5 @@ export function usePlanterStatusQueryPersisted() {
     })();
   }, []);
 
-  return [planterState?.planter, setPlanter];
+  return [planterState, setPlanter];
 }

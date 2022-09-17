@@ -22,7 +22,7 @@ export function ConfirmationNetwork(props: ConfirmationNetworkProps) {
   return (
     <View style={{flex: 1}}>
       <View style={{width: '100%', backgroundColor: 'white', alignItems: 'center', borderRadius: 8}}>
-        <Image source={networkInfos.logo} style={{height: 100, width: '85%'}} />
+        <Image source={networkInfos.logo} style={{height: 100, width: 200}} />
       </View>
       <Spacer times={4} />
       <Text style={[{alignSelf: 'center'}, globalStyles.h5]}>{networkInfos.title}</Text>

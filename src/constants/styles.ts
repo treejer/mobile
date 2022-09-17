@@ -26,7 +26,7 @@ export const fontLight: TextStyle = {
   ...fontDefaultColor,
 };
 
-const space = [0, 20, 25, 30];
+export const space = [0, 20, 25, 30];
 
 const globalStyles = StyleSheet.create({
   fill: {

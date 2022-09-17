@@ -2,73 +2,26 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
 import {BottomTabBarProps, BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {StyleSheet, TouchableOpacity, TouchableOpacityProps, View} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import Animated, {useValue, Easing, timing, interpolate} from 'react-native-reanimated';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {analyticsTabEvents, Routes} from 'navigation';
 
-interface Props extends BottomTabBarProps {
-  tabsVisible: boolean;
-}
+interface Props extends BottomTabBarProps {}
 
-const analyticsEvents = {
-  Profile: 'my_profile',
-  GreenBlock: 'tree_list',
-  TreeSubmission: 'add_tree',
-};
-
-function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
-  const mounted = useRef(false);
-  const timeout = useRef<Animated.BackwardCompatibleWrapper | undefined>();
-
+function TabBar({state, descriptors, navigation}: Props) {
   const {sendEvent} = useAnalytics();
 
-  const visibilityAnimatedValue = useValue(tabsVisible ? 1 : 0);
-
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-
-    timeout.current = timing(visibilityAnimatedValue, {
-      duration: 500,
-      toValue: tabsVisible ? 1 : 0,
-      easing: Easing.inOut(Easing.ease),
-    });
-
-    timeout.current.start();
-
-    return () => {
-      timeout.current?.stop();
-    };
-  }, [visibilityAnimatedValue, tabsVisible]);
-
-  const translateY = interpolate(visibilityAnimatedValue, {
-    inputRange: [0, 1],
-    outputRange: [100, 0],
-  });
-
-  const maxHeight = interpolate(visibilityAnimatedValue, {
-    inputRange: [0, 1],
-    outputRange: [0, 80],
-  });
-
   return (
-    <Animated.View
+    <View
       style={[
         styles.wrapper,
         globalStyles.horizontalStack,
         globalStyles.justifyContentEvenly,
         globalStyles.alignItemsCenter,
-        {
-          transform: [{translateY}],
-          opacity: visibilityAnimatedValue,
-          maxHeight,
-        },
       ]}
     >
       {state.routes.map((route, index) => {
@@ -84,11 +37,10 @@ function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            sendEvent(analyticsEvents[route.name]);
-            navigation.reset({
-              index: 0,
-              routes: [{name: route.name, params: {initialRouteName: 'SelectPlantType'}}],
-            });
+            sendEvent(analyticsTabEvents[route.name]);
+            const params =
+              route.name === Routes.TreeSubmission ? {initialRouteName: Routes.SelectPlantType} : undefined;
+            navigation.navigate(route.name, params);
           }
         };
 
@@ -101,13 +53,15 @@ function TabBar({state, descriptors, navigation, tabsVisible}: Props) {
 
         return renderTabItem({
           isFocused,
+          // @ts-ignore
           onLongPress,
+          // @ts-ignore
           onPress,
           options,
           index,
         });
       })}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -124,13 +78,15 @@ function renderTabItem({isFocused, onLongPress, onPress, options, index}: Render
     case 0:
     case 2:
       return (
+        // @ts-ignore
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={options.tabBarAccessibilityLabel}
           testID={options.tabBarTestID}
           onPress={onPress}
           onLongPress={onLongPress}
-          style={{padding: 30}}
+          style={styles.button}
+          hitSlop={{top: 32, right: 32, bottom: 32, left: 32}}
           key={index}
         >
           {React.createElement(index === 0 ? User : GreenBlock, {
@@ -143,6 +99,7 @@ function renderTabItem({isFocused, onLongPress, onPress, options, index}: Render
         <View key={index} style={styles.middleTabWrapper}>
           {renderCirclePath(false)}
           <View style={styles.middleButtonWrapper}>
+            {/* @ts-ignore */}
             <TouchableOpacity
               accessibilityRole="button"
               accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -170,8 +127,9 @@ function renderCirclePath(flip = false) {
       viewBox="0 0 25 56"
       fill="none"
       style={{
-        [flip ? 'marginLeft' : 'marginRight']: -4,
+        [flip ? 'marginLeft' : 'marginRight']: -5,
         transform: flip ? [{scaleX: -1}] : [],
+        marginBottom: -2,
       }}
     >
       <Path
@@ -192,6 +150,7 @@ const styles = StyleSheet.create({
   middleTabWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: -56,
     width: 96,
   },
@@ -207,6 +166,13 @@ const styles = StyleSheet.create({
     borderRadius: 27,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    alignSelf: 'stretch',
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
   },
 });
 

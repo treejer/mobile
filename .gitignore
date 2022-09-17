@@ -4,6 +4,8 @@
 
 # Xcode
 #
+web-build/
+web-build-*.tar.gz
 build/
 *.pbxuser
 !default.pbxuser
@@ -69,3 +71,7 @@ buck-out/
 *.hprof
 
 .env
+
+.expo
+
+.nginx-config

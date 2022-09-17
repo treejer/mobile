@@ -9,9 +9,10 @@ import globalStyles, {fontBold, fontMedium} from 'constants/styles';
 import {ChevronLeft} from 'components/Icons';
 import Spacer from 'components/Spacer';
 import {useTranslation} from 'react-i18next';
+import {Routes} from 'navigation';
 
 const SavedAreas = ({navigation}) => {
-  const [areas, setAreas] = useState(null);
+  const [areas, setAreas] = useState<any>(null);
 
   const {t} = useTranslation();
 
@@ -33,7 +34,7 @@ const SavedAreas = ({navigation}) => {
   };
 
   const onPressAddArea = () => {
-    navigation.navigate('OfflineMap');
+    navigation.navigate(Routes.OfflineMap);
   };
 
   const renderSavedAreaItem = ({item}) => {
@@ -66,9 +67,9 @@ const SavedAreas = ({navigation}) => {
           </Text>
         </View>
         <View style={styles.areaListContainer}>
-          {areas && areas.length ? (
+          {areas && areas?.length ? (
             <FlatList data={areas} renderItem={renderSavedAreaItem} keyExtractor={(_, i) => i.toString()} />
-          ) : areas && areas.length == 0 ? (
+          ) : areas && areas?.length === 0 ? (
             <Text style={{alignSelf: 'center', textAlignVertical: 'center', margin: 20}}>
               {t('offlineMap.noOfflineArea')}
             </Text>

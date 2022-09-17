@@ -4,12 +4,13 @@ import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, Vie
 import {colors} from 'constants/values';
 import Card from 'components/Card/Card';
 import {useTranslation} from 'react-i18next';
-import {useChangeNetwork, useConfig} from 'services/web3';
+import {useUserWeb3, useConfig} from 'utilities/hooks/useWeb3';
 import {BlockchainNetwork} from 'services/config';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
 import RNRestart from 'react-native-restart';
-import {useCurrentUser} from 'services/currentUser';
+import {useProfile} from '../../redux/modules/profile/profile';
+import {isWeb} from 'utilities/helpers/web';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -17,9 +18,9 @@ export function SwitchNetwork() {
 
   const config = useConfig();
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
-  const changeNetwork = useChangeNetwork();
+  const {changeNetwork} = useUserWeb3();
 
-  const {handleLogout} = useCurrentUser();
+  const {handleLogout} = useProfile();
 
   const {t} = useTranslation();
 
@@ -42,7 +43,6 @@ export function SwitchNetwork() {
       setConfirming(null);
       setShowModal(false);
       handleLogout();
-      RNRestart.Restart();
     },
     [changeNetwork, handleLogout],
   );
@@ -77,7 +77,7 @@ export function SwitchNetwork() {
       <TouchableOpacity
         activeOpacity={0.7}
         hitSlop={{top: 8, right: 32, bottom: 8, left: 32}}
-        style={[styles.container, {top: insets.top + 4, right: insets.right + 40}]}
+        style={[styles.container, {top: insets.top + 4, right: insets.right + 44}]}
         onPress={handleOpenModal}
       >
         <Card style={[styles.card]}>

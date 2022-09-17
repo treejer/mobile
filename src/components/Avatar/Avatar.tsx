@@ -2,7 +2,7 @@ import {colors} from 'constants/values';
 
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
-import {useConfig, useWalletAccount} from 'services/web3';
+import {useConfig, useWalletAccount} from 'utilities/hooks/useWeb3';
 
 interface Props {
   size?: number;

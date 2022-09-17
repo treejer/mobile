@@ -14,14 +14,14 @@ import camelCase from 'lodash/camelCase';
 import Web3 from 'services/Magic';
 
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from './web3';
+import {useAccessToken, useConfig, useUserId, useWeb3} from 'utilities/hooks/useWeb3';
 
-function createRestLink(config: NetworkConfig, accessToken?: string, userId?: string) {
-  console.log(config, 'config is ejre');
+function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
     console.log(`[Network error]:`, networkError ? JSON.parse(JSON.stringify(networkError)) : response);
     // console.log(`[graphQLErrors error]:`, graphQLErrors);
     if (graphQLErrors) {
+      // @ts-ignore
       response.errors = null;
     }
   });
@@ -79,13 +79,13 @@ function createRestLink(config: NetworkConfig, accessToken?: string, userId?: st
 function createEthereumLink(config: NetworkConfig, web3?: Web3) {
   const abiMapping = new AbiMapping();
   Object.entries(config.contracts).map(([name, contract]) => {
-    abiMapping.addAbi(name, contract.abi);
+    abiMapping.addAbi(name, contract.abi as unknown as any);
     abiMapping.addAddress(name, config.networkId, contract.address);
   });
 
   const resolver = new Web3JSResolver(abiMapping, web3);
   const originalCall = resolver.resolve;
-  const newCall = async (...args: any[]) => {
+  const newCall = async args => {
     const result = await originalCall.apply(resolver, args);
     if (typeof result === 'object' && result != null) {
       return Object.entries(result).reduce(
@@ -103,7 +103,7 @@ function createEthereumLink(config: NetworkConfig, web3?: Web3) {
   return new EthereumLink(resolver);
 }
 
-function createApolloClient(config: NetworkConfig, accessToken?: string, userId?: string, web3?: Web3) {
+function createApolloClient(config: NetworkConfig, web3: Web3, accessToken: string, userId: string) {
   const restLink = createRestLink(config, accessToken, userId);
   const ethereumLink = createEthereumLink(config, web3);
 
@@ -111,6 +111,7 @@ function createApolloClient(config: NetworkConfig, accessToken?: string, userId?
   const graphqlLink = new HttpLink({uri});
 
   return new ApolloClient({
+    // @ts-ignore
     link: ApolloLink.from([restLink, ethereumLink, graphqlLink]),
     cache: new InMemoryCache({
       typePolicies: {
@@ -141,14 +142,12 @@ interface Props {
 
 function ApolloProvider({children}: Props) {
   const accessToken = useAccessToken();
-  console.log(accessToken, 'accessToken');
   const userId = useUserId();
-  console.log(userId, 'userId');
   const web3 = useWeb3();
   const config = useConfig();
 
   const client = useMemo(
-    () => createApolloClient(config, accessToken, userId, web3),
+    () => createApolloClient(config, web3, accessToken, userId),
     [config, accessToken, userId, web3],
   );
 

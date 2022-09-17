@@ -1,7 +1,8 @@
 import React from 'react';
 import {colors} from 'constants/values';
-import {Alert, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 
 export interface SocialLoginButtonProps {
   name: 'Apple' | 'Google' | 'Twitter';
@@ -24,7 +25,13 @@ export function SocialLoginButton(props: SocialLoginButtonProps) {
         borderStyle: 'solid',
         borderWidth: 1,
       }}
-      onPress={() => Alert.alert('Not Implemented', 'We are developing...')}
+      onPress={() =>
+        showAlert({
+          title: 'Not Implemented',
+          message: 'We are developing...',
+          mode: AlertMode.Info,
+        })
+      }
       disabled={disabled}
     >
       <Icon name={name.toLowerCase()} size={24} color={color} />

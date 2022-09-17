@@ -1,29 +1,50 @@
 import globalStyles from 'constants/styles';
 
-import React, {useCallback, useState} from 'react';
-import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {CommonActions} from '@react-navigation/native';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {View, Text, Alert, ScrollView} from 'react-native';
+import {ScrollView, Text, View, Modal} from 'react-native';
 import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {TreeSubmissionRouteParamList} from 'types';
 import {useCamera} from 'utilities/hooks';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
-import {TreeFilter} from 'components/TreeList/TreeList';
-import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
+import {Routes} from 'navigation';
+import {isWeb} from 'utilities/helpers/web';
+import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import WebCam from 'components/WebCam/WebCam';
+import getCroppedImg from 'utilities/hooks/cropImage';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {useCurrentJourney} from 'services/currentJourney';
+import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
+import SelectPhotoButton from './SelectPhotoButton';
+import {PickImageButton} from './PickImageButton';
+import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
+import {maxDistanceInMeters} from 'services/config';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {Hex2Dec} from 'utilities/helpers/hex';
 
-interface Props {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
+  plantTreePermissions: TUsePlantTreePermissions;
+}
 
-function SelectPhoto(_: Props) {
-  const navigation = useNavigation<NavigationProp<TreeSubmissionRouteParamList>>();
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+function SelectPhoto(props: Props) {
+  const {navigation, plantTreePermissions} = props;
+  const {userLocation, showPermissionModal} = plantTreePermissions;
+
+  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
   const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
@@ -32,154 +53,211 @@ function SelectPhoto(_: Props) {
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
 
   const [photo, setPhoto] = useState<any>();
+  const [showWebCam, setShowWebCam] = useState<boolean>(false);
+  const [pickedImage, setPickedImage] = useState<File | null>(null);
+  const [photoLocation, setPhotoLocation] = useState<TPoint | null>(null);
 
+  const handleAfterSelectPhoto = useAfterSelectPhotoHandler();
+  const checkTreePhoto = useCheckTreePhoto();
+  const browserPlatform = useBrowserPlatform();
   const address = useWalletAccount();
 
   const {canPlant} = usePlanterStatusQuery(address);
 
-  const {openCameraHook} = useCamera();
+  const {openCameraHook, openLibraryHook} = useCamera();
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   // @here
   const canUpdate = canUpdateTreeLocation(journey, isNursery);
-  console.log(journey?.tree?.treeSpecsEntity?.locations, 'journey?.tree?.treeSpecsEntity?.locations', isNursery);
 
-  const handleSelectPhoto = useCallback(async () => {
-    const selectedPhoto = await openCameraHook();
-    console.log(selectedPhoto);
-    if (selectedPhoto.path) {
-      const newJourney = {
-        ...(journey ?? {}),
-        photo: selectedPhoto,
-      };
-
-      if (isConnected) {
-        if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate('SubmitTree', {
-            journey: {
-              ...newJourney,
-              nurseryContinuedUpdatingLocation: true,
-            },
-          });
-        } else if (isUpdate && isNursery) {
-          setPhoto(selectedPhoto);
-        } else if (isUpdate && !isNursery) {
-          navigation.navigate('SubmitTree', {
-            journey: newJourney,
-          });
-        } else if (!isUpdate) {
-          navigation.navigate('Profile', {
-            screen: 'MainProfile',
-            params: {
-              screen: 'SelectOnMap',
-              params: {
-                journey: newJourney,
-              },
-            },
-          });
-        }
-      } else {
-        if (isUpdate && isNursery && !canUpdate) {
-          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'Profile'}],
-            }),
-          );
-          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-        } else if (isUpdate && isNursery) {
-          setPhoto(selectedPhoto);
-        } else if (isUpdate && !isNursery) {
-          const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: 'Profile'}],
-            }),
-          );
-          navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
-        } else if (!isUpdate) {
-          navigation.navigate('Profile', {
-            screen: 'MainProfile',
-            params: {
-              screen: 'SelectOnMap',
-              params: {
-                journey: newJourney,
-              },
-            },
-          });
-        }
-      }
-    }
-  }, [
-    openCameraHook,
-    journey,
-    isUpdate,
-    isConnected,
-    persistedPlantedTrees,
-    dispatchAddOfflineUpdateTree,
-    t,
-    navigation,
-    isNursery,
-  ]);
-
-  const handleContinue = useCallback(() => {
-    console.log(journey, 'journey handleContinue');
-    if (isConnected) {
-      navigation.navigate('SubmitTree', {
-        journey: {
-          ...journey,
-          photo,
-          nurseryContinuedUpdatingLocation: true,
-        },
-      });
-    } else {
-      const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-      dispatchAddOfflineUpdateTree({
-        ...journey,
-        photo,
-        nurseryContinuedUpdatingLocation: true,
-        tree: updatedTree,
-      });
-      Alert.alert(t('treeInventory.updateTitle'), t('submitWhenOnline'));
+  useEffect(() => {
+    if (typeof journey.isSingle === 'undefined' && !isUpdate) {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'Profile'}],
+          routes: [{name: Routes.SelectPlantType}],
         }),
       );
-      navigation.navigate('GreenBlock', {filter: TreeFilter.OfflineUpdate});
     }
-  }, [dispatchAddOfflineUpdateTree, isConnected, journey, navigation, persistedPlantedTrees, photo, t]);
+    return () => {
+      setShowWebCam(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSelectPhoto = useCallback(
+    async (fromGallery: boolean) => {
+      if (isWeb()) {
+        setShowWebCam(true);
+      } else {
+        let selectedPhoto;
+        if (fromGallery) {
+          selectedPhoto = await openLibraryHook();
+        } else {
+          selectedPhoto = await openCameraHook();
+        }
+
+        const imageCoords: TPoint = {
+          latitude: selectedPhoto?.exif.Latitude,
+          longitude: selectedPhoto?.exif.Longitude,
+        };
+
+        if (selectedPhoto) {
+          if (selectedPhoto.path) {
+            checkTreePhoto(
+              '',
+              userLocation,
+              imageLocation => {
+                handleAfterSelectPhoto({
+                  selectedPhoto,
+                  setPhoto,
+                  isUpdate,
+                  isNursery,
+                  canUpdate,
+                  imageLocation,
+                });
+                setPhotoLocation(imageLocation);
+              },
+              imageCoords,
+              fromGallery,
+            );
+          }
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
+  );
+
+  const handlePickPhotoWeb = e => {
+    setPickedImage(e.target.files[0]);
+  };
+
+  const handleSelectPhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const file = await getCroppedImg(image, 'file.jpeg', croppedAreaPixels, rotation);
+      setShowWebCam(false);
+
+      checkTreePhoto(image, userLocation, imageLocation => {
+        handleAfterSelectPhoto({
+          selectedPhoto: file,
+          setPhoto,
+          isUpdate,
+          isNursery,
+          canUpdate,
+          imageLocation,
+        });
+        setPhotoLocation(imageLocation);
+      });
+    },
+    [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, userLocation],
+  );
+
+  const handleSelectLibraryPhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const file = await getCroppedImg(image, pickedImage?.name, croppedAreaPixels, rotation);
+      setPickedImage(null);
+
+      checkTreePhoto(image, userLocation, imageLocation => {
+        handleAfterSelectPhoto({
+          selectedPhoto: file,
+          setPhoto,
+          isUpdate,
+          isNursery,
+          canUpdate,
+          imageLocation,
+        });
+        setPhotoLocation(imageLocation);
+      });
+    },
+    [canUpdate, checkTreePhoto, handleAfterSelectPhoto, isNursery, isUpdate, pickedImage?.name, userLocation],
+  );
+
+  const handleContinue = useCallback(() => {
+    console.log(journey, 'journey handleContinue');
+    const distance = calcDistanceInMeters(
+      {
+        latitude: journey?.photoLocation?.latitude || 0,
+        longitude: journey?.photoLocation?.longitude || 0,
+      },
+      {
+        latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+      },
+    );
+    if (isConnected) {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+        navigation.navigate(Routes.SubmitTree);
+        setNewJourney({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+        });
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery'}),
+        });
+      }
+    } else {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+        const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+        dispatchAddOfflineUpdateTree({
+          ...journey,
+          photo,
+          nurseryContinuedUpdatingLocation: true,
+          tree: updatedTree,
+        });
+        showAlert({
+          title: t('treeInventory.updateTitle'),
+          message: t('submitWhenOnline'),
+          mode: AlertMode.Info,
+        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+        clearJourney();
+      } else {
+        showAlert({
+          title: t('map.updateSingleTree.errTitle'),
+          mode: AlertMode.Error,
+          message: t('map.updateSingleTree.errMessage', {plantType: 'nursery '}),
+        });
+      }
+    }
+  }, [
+    browserPlatform,
+    clearJourney,
+    dispatchAddOfflineUpdateTree,
+    isConnected,
+    journey,
+    navigation,
+    persistedPlantedTrees,
+    photo,
+    setNewJourney,
+    t,
+  ]);
 
   const handleUpdateLocation = useCallback(() => {
-    const updatedTree = persistedPlantedTrees.find(item => item.id === journey.treeIdToUpdate);
-    navigation.navigate('Profile', {
-      screen: 'MainProfile',
-      params: {
-        screen: 'SelectOnMap',
-        params: {
-          journey: {
-            ...journey,
-            photo,
-            ...updatedTree,
-            tree: updatedTree,
-          },
-        },
-      },
-    });
-  }, [journey, navigation, photo]);
+    const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+    const newJourney = {
+      ...journey,
+      photo,
+      photoLocation,
+      tree: updatedTree,
+    };
+    navigation.navigate(Routes.SelectOnMap, {journey: newJourney});
+    setNewJourney(newJourney);
+  }, [journey, navigation, persistedPlantedTrees, photo, photoLocation, setNewJourney]);
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   if (canPlant === false) {
     return (
@@ -189,35 +267,71 @@ function SelectPhoto(_: Props) {
     );
   }
 
+  if (showWebCam) {
+    return (
+      <Modal visible>
+        <WebCam handleDone={handleSelectPhotoWeb} handleDismiss={() => setShowWebCam(false)} />
+      </Modal>
+    );
+  }
+
+  if (pickedImage) {
+    return (
+      <Modal visible transparent style={{flex: 1}}>
+        <WebImagePickerCropper
+          imageData={pickedImage}
+          handleDone={handleSelectLibraryPhotoWeb}
+          handleDismiss={() => setPickedImage(null)}
+        />
+      </Modal>
+    );
+  }
+
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
+
   return (
-    <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-      <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-        <Spacer times={10} />
-        <TreeSubmissionStepper
-          isUpdate={isUpdate}
-          currentStep={canUpdate && photo ? 2 : 1}
-          isSingle={journey?.isSingle}
-          count={journey?.nurseryCount}
-          canUpdateLocation={canUpdate}
-        >
-          <Spacer times={4} />
-          {/* @here */}
-          {!!(canUpdate && photo) ? (
-            <View style={{flexDirection: 'row'}}>
-              <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
-              <Button
-                variant="primary"
-                style={{justifyContent: 'center', marginHorizontal: 8}}
-                onPress={handleContinue}
-                caption={t('submitTree.continue')}
-              />
-            </View>
-          ) : (
-            <Button variant="secondary" onPress={handleSelectPhoto} caption={t('openCamera')} />
-          )}
-        </TreeSubmissionStepper>
-      </View>
-    </ScrollView>
+    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
+      <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
+        <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
+          <Spacer times={10} />
+          <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>
+            <Spacer times={4} />
+            {/* @here */}
+            {canUpdate && photo ? (
+              <View style={{flexDirection: 'row'}}>
+                <Button variant="secondary" onPress={handleUpdateLocation} caption={t('submitTree.update')} />
+                <Button
+                  variant="primary"
+                  style={{justifyContent: 'center', marginHorizontal: 8}}
+                  onPress={handleContinue}
+                  caption={t('submitTree.continue')}
+                />
+              </View>
+            ) : (
+              <View style={{flexDirection: 'row'}}>
+                <SelectPhotoButton onPress={() => handleSelectPhoto(false)} icon="camera" caption={t('openCamera')} />
+                <PickImageButton
+                  icon="images"
+                  onPress={isWeb() ? handlePickPhotoWeb : () => handleSelectPhoto(true)}
+                  caption={t('openGallery')}
+                />
+              </View>
+            )}
+          </TreeSubmissionStepper>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

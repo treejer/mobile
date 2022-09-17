@@ -1,26 +1,42 @@
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {TreeSubmissionRouteParamList} from 'types';
-import MapMarking from 'screens/TreeSubmission/components/MapMarking';
+import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
+import {Routes} from 'navigation';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
+import {MapMarker} from '../../../../../assets/icons/index';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
-interface Props {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
+  plantTreePermissions: TUsePlantTreePermissions;
+}
 
-function SelectOnMap(_: Props) {
-  const {
-    params: {journey},
-  } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+function SelectOnMap(props: Props) {
+  const {plantTreePermissions} = props;
+  const {hasLocation, showPermissionModal} = plantTreePermissions;
+
+  const isConnected = useNetInfoConnected();
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   return (
-    <View style={globalStyles.fill}>
-      <MapMarking journey={journey} />
-      <View pointerEvents="none" style={styles.mapMarkerWrapper}>
-        <Image style={styles.mapMarker} source={require('../../../../../assets/icons/map-marker.png')} />
+    <SafeAreaView style={globalStyles.fill}>
+      {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <View style={globalStyles.fill}>
+        <MapMarking permissionHasLocation={hasLocation} />
+        <View pointerEvents="none" style={styles.mapMarkerWrapper}>
+          <Image style={styles.mapMarker} source={MapMarker} />
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  <string>Location permission</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>when in use</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -90,5 +94,9 @@
 	</array>
   <key>NSCameraUsageDescription</key>
   <string>Treejer Ranger needs to access your camera!</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Your message to user when the photo library is accessed for the first time</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Your message to user when the microsphone is accessed for the first time</string>
 </dict>
 </plist>

@@ -13,4 +13,10 @@ export const colors = {
   pink: '#D893BA',
   claimed: '#72B791',
   yellow: '#d9caa9',
+  black: '#1a1a1a',
+  success: '#66B28A',
+  error: '#D04F45',
+  warning: '#d9caa9',
+  white: '#FFF',
+  info: '#424242',
 };

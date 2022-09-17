@@ -7,8 +7,10 @@ import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
 import Button from 'components/Button';
 import {Tree} from 'components/Icons';
 import ProgressCircles from 'components/ProgressCircles';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
 
@@ -26,24 +28,24 @@ function OnboardingScreen() {
   const {t} = useTranslation();
   const onboardingData: OnboardingData[] = [
     {
-      image: require('../../../../../assets/images/onboarding-1.png'),
+      image: onBoardingOne,
       heading: t('onBoarding.first.title'),
       content: t('onBoarding.first.details'),
     },
     {
-      image: require('../../../../../assets/images/onboarding-2.png'),
+      image: onBoardingTwo,
       heading: t('onBoarding.second.title'),
       content: t('onBoarding.second.details'),
     },
     {
-      image: require('../../../../../assets/images/onboarding-3.png'),
+      image: onBoardingThree,
       heading: t('onBoarding.third.title'),
       content: t('onBoarding.third.details'),
     },
   ];
   const isEnd = currentStep === onboardingData.length - 1;
   const currentStepForRenderItem = currentStep;
-  const {markOnboardingAsDone} = useSettings();
+  const {markOnBoardingDone} = useSettings();
 
   const renderItem: ListRenderItem<OnboardingData> = useCallback(
     ({item, index}) => {
@@ -65,41 +67,43 @@ function OnboardingScreen() {
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
-      return markOnboardingAsDone();
+      return markOnBoardingDone();
     }
     carouselRef.current?.snapToNext();
-  }, [isEnd, markOnboardingAsDone]);
+  }, [isEnd, markOnBoardingDone]);
 
   const onSnapToItem = useCallback((newIndex: number) => {
     setCurrentStep(newIndex);
   }, []);
 
   return (
-    <View style={globalStyles.fill}>
-      <BackgroundEntropy />
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <View style={globalStyles.fill}>
-        <Carousel
-          ref={carouselRef}
-          data={onboardingData}
-          renderItem={renderItem}
-          sliderWidth={viewportWidth}
-          itemWidth={viewportWidth}
-          onSnapToItem={onSnapToItem}
-          importantForAccessibility="no"
-          accessible={false}
-          initialNumToRender={1}
-        />
-      </View>
-      <View style={[styles.bottomWrapper, globalStyles.alignItemsCenter]}>
-        <View style={globalStyles.pt3}>
-          <Button variant="cta" caption={t('next')} icon={Tree} onPress={nextItem} />
+        <BackgroundEntropy />
+        <View style={globalStyles.fill}>
+          <Carousel
+            ref={carouselRef}
+            data={onboardingData}
+            renderItem={renderItem}
+            sliderWidth={viewportWidth}
+            itemWidth={viewportWidth}
+            onSnapToItem={onSnapToItem}
+            importantForAccessibility="no"
+            accessible={false}
+            initialNumToRender={1}
+          />
         </View>
+        <View style={[styles.bottomWrapper, globalStyles.alignItemsCenter]}>
+          <View style={globalStyles.pt3}>
+            <Button variant="cta" caption={t('next')} icon={Tree} onPress={nextItem} />
+          </View>
 
-        <View style={globalStyles.pt3}>
-          <ProgressCircles numberOfSteps={onboardingData.length} activeStep={currentStep + 1} />
+          <View style={globalStyles.pt3}>
+            <ProgressCircles numberOfSteps={onboardingData.length} activeStep={currentStep + 1} />
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

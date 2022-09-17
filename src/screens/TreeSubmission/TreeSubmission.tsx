@@ -1,45 +1,49 @@
-import globalStyles from 'constants/styles';
-
-import React, {useEffect, useState} from 'react';
-import {createNativeStackNavigator, NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Route} from '@react-navigation/native';
-import {Tree, TreeSubmissionRouteParamList} from 'types';
+import React, {useEffect} from 'react';
+import {Route, NavigationProp} from '@react-navigation/native';
+import {TreeSubmissionRouteParamList} from 'types';
 import {useQuery} from '@apollo/client';
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 
 import SubmitTree from './screens/SubmitTree';
-import SelectPhoto from './screens/SelectPhoto';
+import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
+import {Routes} from 'navigation';
+import {useCurrentJourney} from 'services/currentJourney';
+import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
+import {screenTitle} from 'utilities/helpers/documentTitle';
+import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
-export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = NativeStackNavigationProp<
+export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
   T
 >;
 
-const Stack = createNativeStackNavigator<TreeSubmissionRouteParamList>();
+export type TreeSubmissionStackScreenProps<T extends keyof TreeSubmissionRouteParamList> = StackScreenProps<
+  TreeSubmissionRouteParamList,
+  T
+>;
+
+const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 
 interface Props {
-  route: Route<'TreeUpdate'>;
+  route: Route<any>;
+  navigation: NavigationProp<any>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
-function TreeSubmission({route}: Props) {
+function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
+  const {journey} = useCurrentJourney();
 
-  const [initialRouteName, setInitialRouteName] = useState(initRouteName);
-
-  const treeIdToUpdate =
-    route.params && 'treeIdToUpdate' in route.params ? ((route.params as any).treeIdToUpdate as string) : undefined;
-  const location = route.params && 'location' in route.params ? ((route.params as any).location as any) : undefined;
-  const treeIdToPlant =
-    route.params && 'treeIdToPlant' in route.params ? ((route.params as any).treeIdToPlant as string) : undefined;
-  const tree = route.params && 'tree' in route.params ? ((route.params as any).tree as Tree) : undefined;
-  const isSingle = route.params && 'isSingle' in route.params ? ((route.params as any).isSingle as boolean) : undefined;
+  const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
       variables: {
         id: treeIdToPlant, //todo fix it
@@ -48,43 +52,30 @@ function TreeSubmission({route}: Props) {
   }
 
   useEffect(() => {
-    setInitialRouteName(initRouteName);
-  }, [initRouteName]);
+    if (initRouteName && initRouteName !== Routes.SelectPlantType) {
+      navigation.navigate(initRouteName);
+    }
+  }, [initRouteName, navigation, route.params]);
 
   return (
     <Stack.Navigator
       screenOptions={{
-        contentStyle: globalStyles.screenView,
         headerShown: false,
+        animationEnabled: true,
       }}
-      initialRouteName={initialRouteName}
     >
-      <Stack.Screen
-        name="SelectPlantType"
-        component={SelectPlantType}
-        initialParams={{
-          journey: {
-            treeIdToUpdate,
-            location,
-            treeIdToPlant,
-            tree,
-          },
-        }}
-      />
-      <Stack.Screen
-        name="SelectPhoto"
-        component={SelectPhoto}
-        initialParams={{
-          journey: {
-            treeIdToUpdate,
-            location,
-            treeIdToPlant,
-            tree,
-            isSingle,
-          },
-        }}
-      />
-      <Stack.Screen name="SubmitTree" component={SubmitTree} />
+      <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
+        {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
+        {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectOnMap} options={{title: screenTitle('Location')}}>
+        {props => <SelectOnMap {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SubmitTree} options={{title: screenTitle('Submit Tree')}}>
+        {props => <SubmitTree {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

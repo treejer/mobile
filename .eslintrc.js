@@ -1,9 +1,9 @@
 module.exports = {
   extends: [
-    'plugin:@shopify/typescript',
-    'plugin:@shopify/graphql',
-    'plugin:@shopify/react',
-    'plugin:@shopify/prettier',
+    // 'plugin:@shopify/typescript',
+    // 'plugin:@shopify/graphql',
+    // 'plugin:@shopify/react',
+    // 'plugin:@shopify/prettier',
     '@react-native-community',
   ],
   plugins: ['unused-imports'],

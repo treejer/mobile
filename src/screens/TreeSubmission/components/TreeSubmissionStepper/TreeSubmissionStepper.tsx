@@ -1,38 +1,40 @@
-import globalStyles from 'constants/styles';
-
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {useCurrentJourney} from 'services/currentJourney';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
-import {useTranslation} from 'react-i18next';
+import TreeSymbol from 'components/TreeList/TreeSymbol';
+import {isWeb} from 'utilities/helpers/web';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {
   currentStep: number;
   children: React.ReactNode;
-  isUpdate?: boolean;
-  isSingle?: boolean;
-  count?: number;
-  canUpdateLocation?: boolean;
 }
 
 function TreeSubmissionStepper(props: Props) {
-  const {isUpdate, currentStep, children, isSingle, count, canUpdateLocation = true} = props;
+  const {currentStep, children} = props;
+
   const {t} = useTranslation();
+  const {journey} = useCurrentJourney();
 
-  const title = isSingle
-    ? 'submitTree.submitTree'
-    : isSingle === false
-    ? 'submitTree.nurseryCount'
-    : isUpdate
-    ? 'submitTree.updateTree'
-    : 'submitTree.submitTree';
+  const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
+  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
 
-  console.log(canUpdateLocation, 'canUpdateLocation inside TreeSubmisionStepper');
+  const imageSize = useMemo(
+    () =>
+      isWeb() ? (journey.tree?.treeSpecsEntity.imageFs ? 136 : 80) : journey.tree?.treeSpecsEntity.imageFs ? 200 : 120,
+    [journey.tree?.treeSpecsEntity.imageFs],
+  );
 
   return (
     <>
-      <Text style={[globalStyles.h5, globalStyles.textCenter]}>{t(title, {count})}</Text>
-      <Spacer times={10} />
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}></View>
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
         <Steps.Step step={1}>
@@ -44,7 +46,7 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 2 - Only for creation */}
-        {(!isUpdate || !!canUpdateLocation) && (
+        {(!isUpdate || Boolean(canUpdateLocation)) && (
           <Steps.Step step={2}>
             <View style={{alignItems: 'flex-start'}}>
               <Text style={globalStyles.h6}>
@@ -57,7 +59,7 @@ function TreeSubmissionStepper(props: Props) {
         )}
 
         {/* Step 3 */}
-        <Steps.Step step={3 - Number(!(!isUpdate || !!canUpdateLocation))}>
+        <Steps.Step step={3 - Number(!(!isUpdate || Boolean(canUpdateLocation)))}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.uploadPhoto')}</Text>
 
@@ -66,17 +68,30 @@ function TreeSubmissionStepper(props: Props) {
         </Steps.Step>
 
         {/* Step 4 */}
-        <Steps.Step step={4 - Number(!(!isUpdate || !!canUpdateLocation))} lastStep>
+        <Steps.Step step={4 - Number(!(!isUpdate || Boolean(canUpdateLocation)))} lastStep>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={globalStyles.h6}>{t('submitTree.signInWallet')}</Text>
             {renderChildrenIfCurrentStep(4)}
           </View>
         </Steps.Step>
       </Steps.Container>
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter, {marginTop: 16}]}>
+        {isUpdate && (
+          <TreeSymbol
+            tree={journey.tree}
+            tint={false}
+            treeUpdateInterval={1}
+            color={colors.green}
+            size={imageSize}
+            autoHeight
+            hideId
+          />
+        )}
+      </View>
     </>
   );
 
-  function renderChildrenIfCurrentStep(step: number, element?: JSX.Element) {
+  function renderChildrenIfCurrentStep(step: number) {
     if (step === currentStep) {
       return children;
     }

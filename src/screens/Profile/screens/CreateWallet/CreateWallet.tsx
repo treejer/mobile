@@ -10,7 +10,7 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
 import Steps from 'components/Steps';
-import {usePrivateKeyStorage, useWeb3} from 'services/web3';
+import {useWeb3} from 'utilities/hooks/useWeb3';
 import {useTranslation} from 'react-i18next';
 
 function CreateWallet() {

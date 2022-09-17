@@ -1,7 +1,20 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import Svg, {Path} from 'react-native-svg';
 
 function BackgroundEntropy() {
+  const styles = useMemo(() => {
+    return {
+      up: {
+        bottom: -30,
+        right: -100,
+      },
+      down: {
+        left: -10,
+        top: -50,
+      },
+    };
+  }, []);
+
   return (
     <>
       <Svg
@@ -10,8 +23,7 @@ function BackgroundEntropy() {
         viewBox="0 0 380 383"
         style={{
           position: 'absolute',
-          bottom: -30,
-          right: -100,
+          ...styles.up,
         }}
       >
         <Path
@@ -26,8 +38,7 @@ function BackgroundEntropy() {
         viewBox="0 0 380 383"
         style={{
           position: 'absolute',
-          left: -10,
-          top: -50,
+          ...styles.down,
         }}
       >
         <Path

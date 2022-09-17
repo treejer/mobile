@@ -4,19 +4,20 @@ import React, {memo} from 'react';
 import Animated from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
 import {useTransition} from 'utilities/hooks';
+import {isWeb} from 'utilities/helpers/web';
 
 interface Props {
-  color: string;
+  color?: string;
   fill?: boolean;
 }
-const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedPath = isWeb() ? Path : Animated.createAnimatedComponent(Path);
 
 Animated.addWhitelistedNativeProps({
   fillOpacity: true,
 });
 
 function User({color = colors.green, fill = false}: Props) {
-  const fillOpacity = useTransition(fill);
+  const fillOpacity = isWeb() ? Number(fill) : useTransition(fill);
 
   return (
     <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
