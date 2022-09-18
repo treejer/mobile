@@ -14,29 +14,16 @@
 
 # App.tsx
 
-> Wrapper, global components, and Routes title are in [App.tsx](./App.tsx)
+> Wrapper, global components, and init navigation are in [App.tsx](./App.tsx)
 
 ## components:
 
-- Contexts
+- InitNavigation: process state of the application, and global data providers
+- ### Contexts
   - Provider: react-redux provider for wrapping store around the application
+  - PersistGate: redux-persist wrapper
   - I18nextProvider: Multiple language
   - SafeAreaProvider: Safe area view for react-navigation
-  - [SettingsProvider](./src/services): setting data provider
-  - [Web3Provider](./src/services): wallet address, access token, user Id, magic token, blockchain network provider
-  - [OfflineTreeProvider](/src/utilities/hooks): offline tree data provider
-  - [ApolloProvider](./src/services): ------
-  - [CurrentUserProvider](./src/services): user data provider
-  - [CurrentJourneyProvide](./src/services)r: journey data provider
-  - NavigationContainer: react-navigation wrapper
-- [AppLoading](./src/components/AppLoading): loading content
-- [NetInfo](./src/components/NetInfo): internet status
-- [SwitchNetwork](./src/components/SwitchNetwork): switch network
-- [PreLoadImage](./src/components/PreloadImage): pre load images
-- ToastContainer: toast notification
-- [LandScapeModal](./src/components/LandScapeModal): rotate your phone message
-- [UpdateModal](./src/components/UpdateModal): check app version and update message in the mobile application.
-- [RootNavigation](./src/navigation/README.md): root stacks are here.
 
 # Build Setup
 
