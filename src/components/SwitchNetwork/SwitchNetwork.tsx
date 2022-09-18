@@ -4,12 +4,12 @@ import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, Vie
 import {colors} from 'constants/values';
 import Card from 'components/Card/Card';
 import {useTranslation} from 'react-i18next';
-import {useChangeNetwork, useConfig} from 'services/web3';
+import {useUserWeb3, useConfig} from 'utilities/hooks/useWeb3';
 import {BlockchainNetwork} from 'services/config';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
 import RNRestart from 'react-native-restart';
-import {useCurrentUser} from 'services/currentUser';
+import {useProfile} from '../../redux/modules/profile/profile';
 import {isWeb} from 'utilities/helpers/web';
 
 export function SwitchNetwork() {
@@ -18,9 +18,9 @@ export function SwitchNetwork() {
 
   const config = useConfig();
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
-  const changeNetwork = useChangeNetwork();
+  const {changeNetwork} = useUserWeb3();
 
-  const {handleLogout} = useCurrentUser();
+  const {handleLogout} = useProfile();
 
   const {t} = useTranslation();
 
@@ -43,9 +43,6 @@ export function SwitchNetwork() {
       setConfirming(null);
       setShowModal(false);
       handleLogout();
-      if (!isWeb()) {
-        RNRestart.Restart();
-      }
     },
     [changeNetwork, handleLogout],
   );

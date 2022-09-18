@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount} from 'services/web3';
+import {useWalletAccount} from 'utilities/hooks/useWeb3';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
 import Button from '../Button';
@@ -40,6 +40,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -515,6 +516,7 @@ function Trees({route, navigation, filter}: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
+      <ScreenTitle title={t('treeInventory.title')} />
       <View
         style={[
           globalStyles.screenView,
@@ -526,8 +528,6 @@ function Trees({route, navigation, filter}: Props) {
         ]}
       >
         {renderLoadingModal()}
-        <Spacer times={6} />
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('treeInventory.title')}</Text>
         <Spacer times={4} />
         <View
           style={[

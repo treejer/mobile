@@ -11,11 +11,12 @@ export enum ContractType {
   Paymaster = 'Paymaster',
   Planter = 'Planter',
   PlanterFund = 'PlanterFund',
+  DAI = 'Dai',
 }
 
 export interface ConfigContract {
   address: string;
-  abi: AbiDefinition;
+  abi: AbiDefinition['abi'];
 }
 
 export interface StorageKeys {
@@ -23,13 +24,10 @@ export interface StorageKeys {
   magicToken: string;
   magicWalletAddress: string;
   user: string;
-  onBoarding: string;
-  locale: string;
   userId: string;
   offlineTrees: string;
   offlineUpdatedTrees: string;
   accessToken: string;
-  useGSN: string;
   blockchainNetwork: string;
   treeUpdateInterval: string;
 }
@@ -42,10 +40,7 @@ export enum BlockchainNetwork {
 
 export interface NetworkConfig {
   contracts: {
-    [ContractType.TreeFactory]: ConfigContract;
-    [ContractType.Paymaster]: ConfigContract;
-    [ContractType.Planter]: ConfigContract;
-    [ContractType.PlanterFund]: ConfigContract;
+    [key in ContractType]: ConfigContract;
   };
   networkId: number;
   isMainnet: boolean;
@@ -96,6 +91,10 @@ const config: Config = {
         address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
+      Dai: {
+        address: '0xaD6Db97C844Ec7Bb4c0641d436AA0D395fDD3f45',
+        abi: require('../abis/Dai.json'),
+      },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_MAIN_WEB3_NETWORK_ID || 3),
     isMainnet: true,
@@ -131,6 +130,10 @@ const config: Config = {
       PlanterFund: {
         address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
+      },
+      Dai: {
+        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        abi: require('../abis/Dai.json'),
       },
     },
     networkId: Number(process.env.REACT_NATIVE_MATIC_TEST_WEB3_NETWORK_ID || 3),
@@ -168,18 +171,23 @@ const config: Config = {
         address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
+      Dai: {
+        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        abi: require('../abis/Dai.json'),
+      },
     },
     networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),
     isMainnet: false,
     web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER || '',
-    treejerApiUrl: formatUrl(
-      isProd
-        ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
-        : Platform.select({
-            android: 'http://10.0.2.2:3000/',
-            default: 'http://localhost:3000/',
-          }),
-    ),
+    // treejerApiUrl: formatUrl(
+    //   isProd
+    //     ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
+    //     : Platform.select({
+    //         android: 'http://10.0.2.2:3000/',
+    //         default: 'http://localhost:3000/',
+    //       }),
+    // ),
+    treejerApiUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),
@@ -200,13 +208,10 @@ export const storageKeys: StorageKeys = {
   magicToken: '__TREEJER_MAGIC_TOKEN',
   magicWalletAddress: '__TREEJER_MAGIC_WALLET_ADDRESS',
   user: '__TREEJER_CURRENT_USER',
-  onBoarding: '__TREEJER_ONBOARDING',
-  locale: '__TREEJER_LOCALE',
   userId: '__TREEJER_USER_ID',
   offlineTrees: '__TREEJER_OFFLINE_TREES',
   offlineUpdatedTrees: '__TREEJER_OFFLINE_UPDATED_TREES',
   accessToken: '__TREEJER_ACCESS_TOKEN',
-  useGSN: '__TREEJER_USE_GSN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
 };
@@ -253,4 +258,10 @@ export const networks: Networks = {
   },
 };
 
+export const debugFetch = true;
+export const reduxLogger = true;
+
 export default config;
+
+export const maxDistanceInKiloMeters = 200;
+export const maxDistanceInMeters = 15;

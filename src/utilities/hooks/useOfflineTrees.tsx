@@ -8,9 +8,9 @@ import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
 import {useTranslation} from 'react-i18next';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;

@@ -5,7 +5,7 @@ import {Image, Text, View} from 'react-native';
 import BackgroundEntropy from 'components/BackgroundEntropy';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import AppVersion from 'components/AppVersion';
 import {isWeb} from 'utilities/helpers/web';

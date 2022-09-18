@@ -1,13 +1,14 @@
 import React from 'react';
+import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+
 import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile';
 import VerifyProfile from 'screens/Profile/screens/VerifyProfile';
 import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyProfile';
 import VerifyPending from 'screens/Profile/screens/VerifyPending';
-import {PlanterJoinJourney} from 'types';
-import {GetMeQueryPartialData} from 'services/graphql/GetMeQuery.graphql';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+import {GetMeQueryPartialData} from 'services/graphql/GetMeQuery.graphql';
+import {PlanterJoinJourney} from 'types';
 
 export type UnVerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {

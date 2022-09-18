@@ -1,5 +1,3 @@
-import globalStyles from 'constants/styles';
-
 import React, {useEffect} from 'react';
 import {Route, NavigationProp} from '@react-navigation/native';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -16,6 +14,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -32,9 +31,10 @@ const Stack = createStackNavigator<TreeSubmissionRouteParamList>();
 interface Props {
   route: Route<any>;
   navigation: NavigationProp<any>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
-function TreeSubmission({route, navigation}: Props) {
+function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
@@ -43,6 +43,7 @@ function TreeSubmission({route, navigation}: Props) {
 
   // this if added to get query to assignedTree works well on submit tree
   if (typeof treeIdToPlant != 'undefined') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
       variables: {
         id: treeIdToPlant, //todo fix it
@@ -63,14 +64,18 @@ function TreeSubmission({route, navigation}: Props) {
         animationEnabled: true,
       }}
     >
-      <Stack.Screen
-        name={Routes.SelectPlantType}
-        component={SelectPlantType}
-        options={{title: screenTitle('Plant Type')}}
-      />
-      <Stack.Screen name={Routes.SelectPhoto} component={SelectPhoto} options={{title: screenTitle('Photo')}} />
-      <Stack.Screen name={Routes.SelectOnMap} component={SelectOnMap} options={{title: screenTitle('Location')}} />
-      <Stack.Screen name={Routes.SubmitTree} component={SubmitTree} options={{title: screenTitle('Submit Tree')}} />
+      <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
+        {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
+        {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectOnMap} options={{title: screenTitle('Location')}}>
+        {props => <SelectOnMap {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SubmitTree} options={{title: screenTitle('Submit Tree')}}>
+        {props => <SubmitTree {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

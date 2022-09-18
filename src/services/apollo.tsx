@@ -14,7 +14,7 @@ import camelCase from 'lodash/camelCase';
 import Web3 from 'services/Magic';
 
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from './web3';
+import {useAccessToken, useConfig, useUserId, useWeb3} from 'utilities/hooks/useWeb3';
 
 function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
@@ -79,7 +79,7 @@ function createRestLink(config: NetworkConfig, accessToken: string, userId: stri
 function createEthereumLink(config: NetworkConfig, web3?: Web3) {
   const abiMapping = new AbiMapping();
   Object.entries(config.contracts).map(([name, contract]) => {
-    abiMapping.addAbi(name, contract.abi);
+    abiMapping.addAbi(name, contract.abi as unknown as any);
     abiMapping.addAddress(name, config.networkId, contract.address);
   });
 

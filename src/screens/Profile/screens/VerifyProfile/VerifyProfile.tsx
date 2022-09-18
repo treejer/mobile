@@ -1,39 +1,43 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useForm} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import PhoneInput from 'react-native-phone-number-input';
 import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
+
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
+import RadioButton from 'components/RadioButton/RadioButton';
+import {ChevronLeft} from 'components/Icons';
+import WebCam from 'components/WebCam/WebCam';
 import TextField, {PhoneField} from 'components/TextField';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/UserApplyMutation.graphql';
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useUserId} from 'services/web3';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
-import RadioButton from 'components/RadioButton/RadioButton';
-import {ChevronLeft} from 'components/Icons';
-import useRefer from 'utilities/hooks/useDeepLinking';
-import {useTranslation} from 'react-i18next';
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
+import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
+import {useUserId} from 'utilities/hooks/useWeb3';
+import useRefer from 'utilities/hooks/useDeepLinking';
+import {restApiError} from 'utilities/helpers/error';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import WebCam from 'components/WebCam/WebCam';
+import {isWeb} from 'utilities/helpers/web';
 import getCroppedImg from 'utilities/helpers/cropImage';
-import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useProfile, UserStatus} from '../../../../redux/modules/profile/profile';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -50,19 +54,21 @@ const radioItems = [
 
 function VerifyProfile(props: Props) {
   const {navigation, route} = props;
-  const {status} = useCurrentUser({didMount: true});
+  const {status} = useProfile();
 
-  const {openCameraHook} = useCamera();
+  const {openCameraHook, openLibraryHook} = useCamera();
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
   const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
   const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
   const [verifyMobile, verifyMobileState] = useMutation(verifyMobileMutation);
-  const [requestedMobileVerification, setRequestedMobileVerification] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
+
   const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
   const phoneRef = useRef<PhoneInput>(null);
   const {data} = useQuery<GetMeQueryData>(getMeQuery);
   const {user} = data || {};
+
+  const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!user?.mobile);
+  const [phoneNumber, setPhoneNumber] = useState(user?.mobile || '');
 
   const {params} = route;
   const {journey} = params || {};
@@ -139,7 +145,8 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
-  console.log(updateMobileState.data, 'updateMobileState', updateMobileState.loading);
+  console.log(updateMobileState.data, 'updateMobileState.data');
+  console.log(updateMobileState.error, 'updateMobileState.error');
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
@@ -159,36 +166,29 @@ function VerifyProfile(props: Props) {
           },
         },
         errorPolicy: 'all',
-        onError: error => {
-          console.log(error, 'error is herererererererererererer');
-        },
       });
       setPhoneNumber(mobileNumber);
       setRequestedMobileVerification(true);
     } catch (e) {
-      console.log(e, 'e is hererere');
-      handleMutationAlert(e);
+      phoneNumberForm.setError('phoneNumber', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
-
-    // console.log(JSON.parse(JSON.stringify(error)), 'hererererer');
-    // if (error?.result?.error?.message) {
-    //   Alert.alert(t('error', error?.result?.error?.message));
-    // }
-    // phoneNumberForm.setError('phoneNumber', {
-    //   message: error?.networkError?.result?.error?.message || 'Unknown Error. Please contact customer support!',
-    // });
   });
 
   const resendCode = async () => {
     try {
       await requestSMS();
+      phoneNumberForm.clearErrors('verificationCode');
     } catch (e) {
-      handleMutationAlert(e);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
   };
 
   const handleMutationAlert = (error: any) => {
-    const message = error?.networkError?.result?.error?.message || t('unknownError');
+    const message = restApiError(error).message || t('unknownError');
     showAlert({
       title: t('error'),
       message,
@@ -220,7 +220,9 @@ function VerifyProfile(props: Props) {
         },
       });
     } catch (e) {
-      handleMutationAlert(e);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(e).message || t('unknownError'),
+      });
     }
   });
 
@@ -253,7 +255,9 @@ function VerifyProfile(props: Props) {
 
       navigation.navigate(Routes.VerifyPending);
     } catch (error) {
-      handleMutationAlert(error);
+      phoneNumberForm.setError('verificationCode', {
+        message: restApiError(error).message || t('unknownError'),
+      });
     }
   });
 
@@ -281,6 +285,31 @@ function VerifyProfile(props: Props) {
       setIsCameraVisible(true);
     }
   };
+
+  const handlePickPhotoWeb = e => {
+    setIdCardImageUri(e.target.files[0]);
+  };
+
+  const handleSelectPhoto = useCallback(async () => {
+    console.log('called');
+    const selectedPhoto = await openLibraryHook();
+    console.log(selectedPhoto, '<-====');
+    if (selectedPhoto) {
+      if (selectedPhoto?.path) {
+        if (/file:\//.test(selectedPhoto.path)) {
+          setIdCardImageUri(selectedPhoto.path);
+        } else {
+          urlToBlob(selectedPhoto.path).then(blob => {
+            // eslint-disable-next-line no-undef
+            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
+            setIdCardImageUri(fileOfBlob);
+            return blob;
+          });
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
     const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);
@@ -343,7 +372,9 @@ function VerifyProfile(props: Props) {
                 {/* Step 2 - Add phone */}
                 <Steps.Step step={2}>
                   <View style={{alignItems: 'flex-start'}}>
-                    <Text style={globalStyles.h6}>{t('addPhone')}</Text>
+                    <Text style={globalStyles.h6}>
+                      {t(user?.mobile && requestedMobileVerification ? 'verifyPhone' : 'addPhone')}
+                    </Text>
                     {renderAddPhone()}
                   </View>
                 </Steps.Step>
@@ -449,11 +480,6 @@ function VerifyProfile(props: Props) {
               placeholder="Phone #"
               onSubmitEditing={submitPhoneNumber}
             />
-            {phoneNumberForm.formState.errors.phoneNumber && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.phoneNumber?.message}
-              </Text>
-            )}
             <Spacer times={4} />
             <Button
               variant="success"
@@ -474,11 +500,6 @@ function VerifyProfile(props: Props) {
               name="verificationCode"
               onSubmitEditing={verifyPhone}
             />
-            {phoneNumberForm.formState.errors.verificationCode && (
-              <Text style={{...globalStyles.h6, paddingTop: 8, color: colors.red}}>
-                {phoneNumberForm.formState.errors.verificationCode?.message || t('errors.verificationCode')}
-              </Text>
-            )}
             <Spacer times={4} />
             <TouchableOpacity
               style={{marginVertical: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
@@ -541,7 +562,14 @@ function VerifyProfile(props: Props) {
         <>
           <Text style={[globalStyles.normal]}>{t('physicalLicense')}</Text>
           <Spacer times={4} />
-          <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
+          <View style={{flexDirection: 'row'}}>
+            <SelectPhotoButton onPress={pickImage} icon="camera" caption={t('openCamera')} />
+            <PickImageButton
+              icon="images"
+              onPress={isWeb() ? handlePickPhotoWeb : () => handleSelectPhoto()}
+              caption={t('openGallery')}
+            />
+          </View>
           <Spacer times={4} />
         </>
       )

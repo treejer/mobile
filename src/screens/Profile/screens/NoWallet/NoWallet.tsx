@@ -1,12 +1,11 @@
 import globalStyles from 'constants/styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {useConfig, useMagic, usePrivateKeyStorage} from 'services/web3';
-import {useCamera} from 'utilities/hooks';
+import {useConfig, useMagic, useUserWeb3} from 'utilities/hooks/useWeb3';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -16,7 +15,6 @@ import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {colors} from 'constants/values';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
-import {useCurrentUser} from 'services/currentUser';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -24,20 +22,22 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
+import {useProfile} from '../../../../redux/modules/profile/profile';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
 function NoWallet(props: NoWalletProps) {
   const {navigation} = props;
 
-  const {storeMagicToken} = usePrivateKeyStorage();
-  const [loading, setLoading] = useState(false);
+  const {storeMagicToken, loading: web3Loading} = useUserWeb3();
+  const {loading: profileLoading} = useProfile();
   const [isEmail, setIsEmail] = useState<boolean>(true);
+  const [loginPressed, setLoginPressed] = useState(false);
 
   const config = useConfig();
   const magic = useMagic();
 
-  const {refetchUser} = useCurrentUser();
+  // const {refetchUser} = useCurrentUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -61,22 +61,32 @@ function NoWallet(props: NoWalletProps) {
 
   const {t} = useTranslation();
 
-  const {requestCameraPermission} = useCamera();
-
   const {sendEvent} = useAnalytics();
+
+  const loading = useMemo(
+    () => loginPressed || web3Loading || profileLoading,
+    [loginPressed, profileLoading, web3Loading],
+  );
 
   useEffect(() => {
     (async () => {
       if (!isWeb()) {
-        await requestCameraPermission();
         await locationPermission();
       }
     })();
-  }, [requestCameraPermission]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (userId && accessToken) {
+  //     (async function () {
+  // fetchUserRequest({userId, accessToken});
+  //     })();
+  //   }
+  // }, [userId, accessToken, fetchUserRequest]);
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
-  }, []);
+  }, [config.learnMoreLink]);
 
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     Keyboard.dismiss();
@@ -87,14 +97,17 @@ function NoWallet(props: NoWalletProps) {
       });
       return;
     }
-    setLoading(true);
+    setLoginPressed(true);
     const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
     try {
       const result = await magic?.auth.loginWithSMS({phoneNumber: mobileNumber});
       if (result) {
-        await storeMagicToken(result);
-        await refetchUser();
-        console.log(result, 'result is here');
+        try {
+          storeMagicToken(result, {mobile: mobileNumber, country: phoneRef.current?.getCountryCode()});
+        } catch (e) {
+          throw e;
+        }
+        // await refetchUser();
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -109,7 +122,7 @@ function NoWallet(props: NoWalletProps) {
         mode: AlertMode.Error,
       });
     } finally {
-      setLoading(false);
+      setLoginPressed(false);
     }
   });
 
@@ -120,13 +133,12 @@ function NoWallet(props: NoWalletProps) {
     }
     Keyboard.dismiss();
     sendEvent('connect_wallet');
-    setLoading(true);
-    console.log(email, 'email');
+    setLoginPressed(true);
     try {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
-        await storeMagicToken(result);
-        await refetchUser();
+        storeMagicToken(result, {email});
+        // await refetchUser();
         console.log(result, 'result is here');
       } else {
         showAlert({
@@ -142,7 +154,7 @@ function NoWallet(props: NoWalletProps) {
         mode: AlertMode.Error,
       });
     } finally {
-      setLoading(false);
+      setLoginPressed(false);
     }
   });
 

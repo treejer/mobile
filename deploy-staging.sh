@@ -1,7 +1,7 @@
 # ** ==> USERNAME and SERVER_IP env variables are needed!!! <== **
 echo "Start deploying ranger treejer web"
 
-yarn web:prod
+yarn web:build
 
 echo "web:prod is done"
 

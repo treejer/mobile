@@ -1,12 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {AppLoading} from 'components/AppLoading/AppLoading';
-import {useWeb3Context} from 'services/web3';
+import {useUserWeb3} from 'utilities/hooks/useWeb3';
 import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
 import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
@@ -15,6 +14,7 @@ import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import PwaModal from 'components/PwaModal/PwaModal';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+import {useProfile, UserStatus} from '../redux/modules/profile/profile';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -62,15 +62,18 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
+  CheckPermissions = 'CheckPermissions',
+  Withdraw = 'Withdraw',
+  Transfer = 'Transfer',
+  WithdrawHistory = 'WithdrawHistory',
 }
 
 export function RootNavigation() {
-  const {loading, magic} = useWeb3Context();
-  const {locale, onboardingDone} = useSettings();
-  const {
-    data: {user},
-    status,
-  } = useCurrentUser();
+  const {loading, magic} = useUserWeb3();
+  const {locale, onBoardingDone} = useSettings();
+
+  const {profile, status} = useProfile();
+  //
 
   const isVerified = status === UserStatus.Verified;
 
@@ -89,25 +92,25 @@ export function RootNavigation() {
             component={SelectLanguage}
           />
         ) : null}
-        {!onboardingDone ? (
+        {!onBoardingDone ? (
           <RootStack.Screen
             name={Routes.Onboarding}
             options={{title: screenTitle('on-boarding')}}
             component={OnboardingSlides}
           />
         ) : null}
-        {locale && onboardingDone && !user ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
-        {locale && onboardingDone && user && !isVerified ? (
+        {locale && onBoardingDone && !profile ? <RootStack.Screen name={Routes.Login} component={NoWallet} /> : null}
+        {locale && onBoardingDone && profile && !isVerified ? (
           <>
             <RootStack.Screen name={Routes.UnVerifiedProfileStack} component={UnVerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onboardingDone && user && isVerified ? (
+        {locale && onBoardingDone && profile && isVerified ? (
           <>
             <RootStack.Screen name={Routes.VerifiedProfileTab} component={VerifiedUserNavigation} />
           </>
         ) : null}
-        {locale && onboardingDone && user ? (
+        {locale && onBoardingDone && profile ? (
           <>
             {isWeb() ? null : (
               <>

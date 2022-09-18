@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyles from 'constants/styles';
@@ -16,6 +16,8 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -23,10 +25,13 @@ type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.Selec
 export interface SelectPlantTypeProps {
   navigation: NavigationProps;
   route: RouteNavigationProps;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
+  const {showPermissionModal} = plantTreePermissions;
+
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const inputRef = useRef<TextInput>(null);
   const {t} = useTranslation();
@@ -94,6 +99,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>

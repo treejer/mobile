@@ -7,16 +7,14 @@ import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useTranslation} from 'react-i18next';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import Clipboard from '@react-native-clipboard/clipboard';
 import AppVersion from 'components/AppVersion';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'services/settings';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {ContractType} from 'services/config';
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
@@ -26,6 +24,10 @@ import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
+import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
+import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
+import Card from 'components/Card';
+import {useContracts} from '../../../../redux/modules/contracts/contracts';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -39,7 +41,11 @@ function MyProfile(props: MyProfileProps) {
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const config = useConfig();
+  const {getBalance, loading: contractsLoading} = useContracts();
   useTreeUpdateInterval();
+
+  // const user = useCurrentUser();
+  // console.log(user, 'user>++');
 
   const {referrer, organization, hasRefer} = useRefer();
 
@@ -55,11 +61,13 @@ function MyProfile(props: MyProfileProps) {
         console.log(e, 'e inside get minWithdrawable');
         setMinBalance(requiredBalance);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const web3 = useWalletWeb3();
@@ -68,8 +76,9 @@ function MyProfile(props: MyProfileProps) {
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
-  const isVerified = data?.user?.isVerified;
+  // const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
+  const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
+  const isVerified = profile?.isVerified;
 
   const isConnected = useNetInfoConnected();
 
@@ -122,9 +131,10 @@ function MyProfile(props: MyProfileProps) {
     // if (wallet && isConnected) {
     getPlanter().then(() => {});
     // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [submiting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const handleWithdrawPlanterBalance = useCallback(async () => {
     if (!isConnected) {
       showAlert({
@@ -198,20 +208,19 @@ function MyProfile(props: MyProfileProps) {
 
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        (async function () {
-          await getPlanter();
-          await refetchUser();
-        })();
+      return (async () => {
+        getBalance();
+        await getPlanter();
+        await dispatchProfile();
         resolve();
-      }, 700);
+      })();
     });
 
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const profileLoading = loading || !data?.user;
+  const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
@@ -245,15 +254,10 @@ function MyProfile(props: MyProfileProps) {
     navigation.navigate(Routes.Settings);
   };
 
-  const handleCopyWalletAddress = useCallback(() => {
-    if (wallet) {
-      Clipboard.setString(wallet);
-      showAlert({
-        message: t('myProfile.copied'),
-        mode: AlertMode.Success,
-      });
-    }
-  }, [t, wallet]);
+  const handleNavigateWithdraw = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Withdraw);
+  };
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
@@ -261,7 +265,9 @@ function MyProfile(props: MyProfileProps) {
         <ScrollView
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={
-            isWeb() ? undefined : <RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />
+            isWeb() ? undefined : (
+              <RefreshControl refreshing={profileLoading || refetching || contractsLoading} onRefresh={onRefetch} />
+            )
           }
         >
           <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
@@ -278,20 +284,13 @@ function MyProfile(props: MyProfileProps) {
             ) : null}
             {!profileLoading && (
               <>
-                {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
+                {profile?.firstName ? <Text style={globalStyles.h4}>{profile.firstName}</Text> : null}
 
-                {data?.user?.firstName ? <Spacer times={4} /> : null}
-                {wallet ? (
-                  <TouchableOpacity onPress={handleCopyWalletAddress}>
-                    <Text numberOfLines={1} style={styles.addressBox}>
-                      {wallet.slice(0, 15)}...
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
+                {profile?.firstName ? <Spacer times={4} /> : null}
                 <Spacer times={4} />
 
                 {planterData && (
-                  <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                  <Card style={[globalStyles.horizontalStack, styles.statsContainer]}>
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
                       <Text style={styles.statLabel}>{t('balance')}</Text>
@@ -310,22 +309,25 @@ function MyProfile(props: MyProfileProps) {
                     {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
                     {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
                     {/*</View>*/}
-                  </View>
+                  </Card>
                 )}
+                <Spacer times={4} />
+
+                {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
+                <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
+                  {profile.isVerified ? (
                     <>
                       <Button
                         style={styles.button}
                         caption={t('withdraw')}
                         variant="tertiary"
-                        loading={submiting}
-                        onPress={handleWithdrawPlanterBalance}
+                        onPress={handleNavigateWithdraw}
                       />
                       <Spacer times={4} />
                     </>
-                  )}
+                  ) : null}
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
@@ -341,7 +343,7 @@ function MyProfile(props: MyProfileProps) {
                         variant="tertiary"
                         onPress={() => {
                           sendEvent('get_verified');
-                          if (data?.user) {
+                          if (profile) {
                             // @ts-ignore
                             navigation.navigate(Routes.VerifyProfile);
                           }
@@ -357,7 +359,7 @@ function MyProfile(props: MyProfileProps) {
                         style={styles.getVerifiedRefer}
                         onPress={() => {
                           sendEvent('get_verified');
-                          if (data?.user) {
+                          if (profile) {
                             // @ts-ignore
                             navigation.navigate(Routes.VerifyProfile);
                           }
@@ -439,18 +441,6 @@ function MyProfile(props: MyProfileProps) {
 }
 
 const styles = StyleSheet.create({
-  addressBox: {
-    backgroundColor: colors.khakiDark,
-    textAlign: 'center',
-    borderColor: 'white',
-    overflow: 'hidden',
-    width: 180,
-    borderWidth: 2,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
   button: {
     width: 180,
   },
@@ -476,6 +466,8 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
+    maxWidth: 300,
+    justifyContent: 'center',
   },
   getVerifiedRefer: {
     width: 280,

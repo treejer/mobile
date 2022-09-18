@@ -1,6 +1,4 @@
 import {Alert, AlertButton, AlertOptions} from 'react-native';
-import {toast} from 'react-toastify';
-import {isWeb} from './web';
 
 export function asyncAlert(
   title: string,
@@ -45,14 +43,41 @@ export enum AlertMode {
 }
 
 export function showAlert(options: ShowAlertOptions) {
-  const {message, title = 'Alert', mode = AlertMode.Info, buttons, alertOptions} = options;
-  if (isWeb()) {
-    if (mode) {
-      toast[mode](message);
-    } else {
-      toast(message);
-    }
+  const {message, title, mode = AlertMode.Info, buttons} = options;
+
+  if (mode) {
+    toast.show?.(message, {type: mode, title});
   } else {
-    Alert.alert(title, message, buttons, alertOptions);
+    toast.show?.(message, {data: {title}});
   }
+  // * Alert.alert(title, message, buttons, alertOptions);
+}
+
+export function showSagaAlert(options: ShowAlertOptions) {
+  const {message, title = 'Alert', buttons, alertOptions, mode} = options;
+
+  return new Promise((resolve, reject) => {
+    const _buttons = buttons ?? [
+      {
+        text: 'OK',
+        onPress: () => {
+          resolve('ok');
+        },
+      },
+      {
+        text: 'Cancel',
+        onPress: () => {
+          reject();
+        },
+      },
+    ];
+
+    showAlert({
+      title,
+      message,
+      buttons: _buttons,
+      alertOptions: alertOptions ?? {cancelable: false},
+      mode,
+    });
+  });
 }
