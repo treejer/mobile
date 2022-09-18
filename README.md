@@ -10,6 +10,7 @@
 - ## [Localization](./src/localization)
 - ## [GlobalStyles](./src/constants)
 - ## [Services](./src/services)
+- ## [Redux](./src/redux)
 
 # App.tsx
 
@@ -18,6 +19,7 @@
 ## components:
 
 - Contexts
+  - Provider: react-redux provider for wrapping store around the application
   - I18nextProvider: Multiple language
   - SafeAreaProvider: Safe area view for react-navigation
   - [SettingsProvider](./src/services): setting data provider
