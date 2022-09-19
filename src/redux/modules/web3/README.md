@@ -1,7 +1,7 @@
 # Web3
 
 > Web3 and network config, change network, store magic token actions
-> >
+>
 > [Web3 hook](../../../utilities/hooks/useWeb3.ts) is in the hooks folder
 
 
