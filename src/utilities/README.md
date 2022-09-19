@@ -2,5 +2,5 @@
 
 > this directory stored helper functions and hooks
 
-- [helpers](./helpers)
-- [hooks](./hooks)
+- [helpers](./helpers): useful functions
+- [hooks](./hooks): custom hooks
