@@ -1,3 +1,5 @@
 # Setting screen
 
-> change language and change transaction fee type
+> Change language.
+> 
+> change the way transaction fee payment.

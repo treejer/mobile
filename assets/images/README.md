@@ -1,3 +1,3 @@
 # Images
 
-> static images are in this directory
+> static images are here

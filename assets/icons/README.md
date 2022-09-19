@@ -1,3 +1,3 @@
 ## Icons
 
-> Static icons are in this directory
+> Static icons are here

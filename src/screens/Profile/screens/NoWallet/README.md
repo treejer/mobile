@@ -1,4 +1,4 @@
 # NoWallet
 
 - NoWallet screen: Login and create wallet
-- SocialLoginButton component: social media button
+- SocialLoginButton component: social media button for login

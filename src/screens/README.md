@@ -1,8 +1,9 @@
 # Screens
 
-> all screens in the application are in this directory
+> All screens used in the application are in this directory
 
-- [GreenBlock](./GreenBlock) stack and screens
-- [OnBoarding](./Onboarding) screens
-- [Profile](./Profile) screens
-- [TreeSubmission](./TreeSubmission) stack and screens
+- [GreenBlock](./GreenBlock): tree list and tree detail stack and screens
+- [OnBoarding](./Onboarding): on boarding screens
+- [Profile](./Profile): verified, unverified profile, login, verification and offline map screens
+- [TreeSubmission](./TreeSubmission): tree submission stack and select plant type, select photo, select on map, and submit tree components and screens
+- [Withdraw](./Withdraw): withdraw stack, transfer, withdraw history components and screens

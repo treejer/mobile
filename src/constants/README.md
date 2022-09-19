@@ -1,3 +1,3 @@
 # StyleSheet
 
-> global styles and colors that used in this project
+> global styles and colors that used in the project are here

@@ -1,3 +1,3 @@
 # Localization
 
-> all different languages are in this directory.
+> All supported languages are in this directory

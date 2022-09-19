@@ -1,3 +1,3 @@
 # Fonts
 
-> Fonts are in this directory
+> Fonts are in here

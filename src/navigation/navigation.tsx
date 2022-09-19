@@ -62,7 +62,6 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
-  CheckPermissions = 'CheckPermissions',
   Withdraw = 'Withdraw',
   Transfer = 'Transfer',
   WithdrawHistory = 'WithdrawHistory',

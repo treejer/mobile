@@ -1,3 +1,3 @@
 # OfflineMap screen
 
-> Map for when internet is not connect.
+> Download map for use when the user can't access the internet
