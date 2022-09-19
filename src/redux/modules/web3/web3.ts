@@ -221,9 +221,8 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
 }
 
 export function* watchChangeNetwork(action: TWeb3Action) {
-  const {newNetwork} = action;
-
   try {
+    const {newNetwork} = action;
     yield put(createWeb3(newNetwork));
   } catch (error) {
     console.log(error, 'update web3 error');
