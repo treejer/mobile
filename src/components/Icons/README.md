@@ -1,12 +1,13 @@
 # Icons
 
-> Common icons are in this directory
+> Common icons are here
 
+- Check
 - ChevronLeft
 - ChevronRight
-- Tree
+- GreenBlock
 - Plus
 - Times
+- Toast
+- Tree
 - User
-- GreenBlock
-- Check

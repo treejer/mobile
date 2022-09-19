@@ -1,3 +1,3 @@
 # Card
 
-> This component is a simple View with some styles
+> This component does return the white card with default styles, and it's dynamic

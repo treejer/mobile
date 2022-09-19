@@ -1,3 +1,3 @@
 # BackgroundEntropy
 
-> This component does svg content around background
+> This component does return svg for background

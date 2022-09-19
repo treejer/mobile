@@ -1,3 +1,3 @@
 # Button
 
-> This component is the a button with different style
+> This component does return dynamic button with different style

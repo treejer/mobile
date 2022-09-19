@@ -1,3 +1,3 @@
 # AppLoading
 
-> This component does return loading content
+> This component does return loading content after lunch

@@ -1,3 +1,3 @@
 # Analytics
 
-> hello world
+> This component does return firebase logger button
