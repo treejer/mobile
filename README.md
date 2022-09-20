@@ -2,7 +2,7 @@
 
 > In a world full of indifference, a grand movement is rising to stand for the future. You might be the next link within this green chain. Adopt your unique tree and let locals plant it!
 
-![rangerTreejer](./assets/images/splash.png)
+<img src="./assets/images/splash.png" width="370px">
 
 - ## [Navigation](./src/navigation)
 - ## [Screens](./src/screens)
