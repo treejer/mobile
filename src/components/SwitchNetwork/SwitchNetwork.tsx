@@ -1,16 +1,15 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {colors} from 'constants/values';
-import Card from 'components/Card/Card';
 import {useTranslation} from 'react-i18next';
-import {useUserWeb3, useConfig} from 'utilities/hooks/useWeb3';
-import {BlockchainNetwork} from 'services/config';
+import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+
+import Card from 'components/Card/Card';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
-import RNRestart from 'react-native-restart';
+import {colors} from 'constants/values';
+import {BlockchainNetwork} from 'services/config';
 import {useProfile} from '../../redux/modules/profile/profile';
-import {isWeb} from 'utilities/helpers/web';
+import {useUserWeb3, useConfig} from '../../redux/modules/web3/web3';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);

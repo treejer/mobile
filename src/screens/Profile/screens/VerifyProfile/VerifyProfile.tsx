@@ -28,7 +28,6 @@ import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
 import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
 import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
-import {useUserId} from 'utilities/hooks/useWeb3';
 import useRefer from 'utilities/hooks/useDeepLinking';
 import {restApiError} from 'utilities/helpers/error';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -38,6 +37,7 @@ import {isWeb} from 'utilities/helpers/web';
 import getCroppedImg from 'utilities/helpers/cropImage';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useProfile, UserStatus} from '../../../../redux/modules/profile/profile';
+import {useUserId} from '../../../../redux/modules/web3/web3';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 

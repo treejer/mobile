@@ -7,16 +7,15 @@ import Icon from 'react-native-vector-icons/Octicons';
 import Web3 from 'web3';
 
 import Button from 'components/Button';
-import {ChevronLeft} from 'components/Icons';
 import Spacer from 'components/Spacer/Spacer';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useSettings} from 'utilities/hooks/useSettings';
-import {useConfig} from 'utilities/hooks/useWeb3';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import {isMatic} from 'services/Magic';
 import {ProfileRouteParamList} from 'types';
+import {useConfig} from '../../../../redux/modules/web3/web3';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
-import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;

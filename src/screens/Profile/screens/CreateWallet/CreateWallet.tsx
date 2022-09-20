@@ -1,17 +1,17 @@
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
-
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {colors} from 'constants/values';
 import {useForm} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
 import {Account} from 'web3-core';
+
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {ChevronLeft} from 'components/Icons';
 import Steps from 'components/Steps';
-import {useWeb3} from 'utilities/hooks/useWeb3';
-import {useTranslation} from 'react-i18next';
+import {ChevronLeft} from 'components/Icons';
+import {useWeb3} from '../../../../redux/modules/web3/web3';
+import globalStyles from 'constants/styles';
 
 function CreateWallet() {
   const navigation = useNavigation();

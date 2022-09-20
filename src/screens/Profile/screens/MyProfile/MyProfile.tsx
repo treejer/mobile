@@ -1,33 +1,34 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useTranslation} from 'react-i18next';
-import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import Card from 'components/Card';
 import AppVersion from 'components/AppVersion';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
+import {ContractType} from 'services/config';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useSettings} from 'utilities/hooks/useSettings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {ContractType} from 'services/config';
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {isWeb} from 'utilities/helpers/web';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
+import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
-import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
-import Card from 'components/Card';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>

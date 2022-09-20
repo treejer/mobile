@@ -1,27 +1,25 @@
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
-
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
 import {CommonActions} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
+import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {Routes} from 'navigation';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {ContractType} from 'services/config';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import TreeDetailQuery, {
-  TreeDetailQueryQueryData,
-} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
-import {Hex2Dec} from 'utilities/helpers/hex';
-import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {currentTimestamp} from 'utilities/helpers/date';
-import {useTranslation} from 'react-i18next';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {currentTimestamp} from 'utilities/helpers/date';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useSettings} from 'utilities/hooks/useSettings';
 import {
   assignedTreeJSON,
@@ -30,17 +28,19 @@ import {
   photoToUpload,
   updateTreeJSON,
 } from 'utilities/helpers/submitTree';
-import {Routes} from 'navigation';
-import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {useCurrentJourney} from 'services/currentJourney';
-import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
-import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {ContractType} from 'services/config';
+import TreeDetailQuery, {
+  TreeDetailQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
+import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
+import {useCurrentJourney} from 'services/currentJourney';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useConfig, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;

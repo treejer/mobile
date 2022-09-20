@@ -1,17 +1,18 @@
 import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
-import {TreeJourney} from 'screens/TreeSubmission/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContractType, storageKeys} from 'services/config';
-import {Tree} from 'types';
+import {useTranslation} from 'react-i18next';
 import {Alert} from 'react-native';
+
+import {Tree} from 'types';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {ContractType, storageKeys} from 'services/config';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
-import {useTranslation} from 'react-i18next';
 import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useConfig, useWalletAccount, useWeb3} from '../../redux/modules/web3/web3';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;
 export const offlineUpdatedTreesStorageKey = storageKeys.offlineUpdatedTrees;

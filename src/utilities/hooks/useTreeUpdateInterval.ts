@@ -1,7 +1,8 @@
-import {useTreeFactory} from 'utilities/hooks/useWeb3';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {storageKeys} from 'services/config';
+import {useTreeFactory} from '../../redux/modules/web3/web3';
 
 export function useTreeUpdateInterval() {
   const [treeUpdateInterval, setTreeUpdateInterval] = useState(0);

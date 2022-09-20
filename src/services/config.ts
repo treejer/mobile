@@ -259,7 +259,7 @@ export const networks: Networks = {
 };
 
 export const debugFetch = true;
-export const reduxLogger = true;
+export const reduxLogger = false;
 
 export default config;
 

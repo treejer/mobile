@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image as NativeImage} from 'react-native';
-import {useWalletAccount} from 'utilities/hooks/useWeb3';
+
 import {isWeb} from 'utilities/helpers/web';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import {
@@ -17,6 +17,7 @@ import {
   onBoardingTwo,
 } from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
+import {useWalletAccount} from '../../redux/modules/web3/web3';
 
 const staticImages = [
   MapMarker,

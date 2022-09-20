@@ -1,20 +1,21 @@
 import React, {useEffect} from 'react';
+import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+
 import {AppLoading} from 'components/AppLoading/AppLoading';
-import {useUserWeb3} from 'utilities/hooks/useWeb3';
-import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'utilities/hooks/useSettings';
+import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
-import {VerifiedUserNavigation} from './VerifiedUser';
-import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
-import PwaModal from 'components/PwaModal/PwaModal';
+import {isWeb} from 'utilities/helpers/web';
+import {useSettings} from 'utilities/hooks/useSettings';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
+import {VerifiedUserNavigation} from './VerifiedUser';
+import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useProfile, UserStatus} from '../redux/modules/profile/profile';
+import {useUserWeb3} from '../redux/modules/web3/web3';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;

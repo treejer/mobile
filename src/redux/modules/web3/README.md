@@ -1,8 +1,6 @@
 # Web3
 
 > Web3 and network config, change network, store magic token actions
->
-> [Web3 hook](../../../utilities/hooks/useWeb3.ts) is in the hooks folder
 
 
 ### web3 state type
@@ -97,6 +95,48 @@ function* watchStoreMagicToken(store, action: TWeb3Action) {
 }
 ```
 
+### web3 hooks
+
+```typescript
+type TUseUserWeb3 = TReduxState['web3'] & {
+  changeNetwork: (newNetwork: BlockchainNetwork) => void;
+  resetWeb3Data: () => void;
+  storeMagicToken: (magicToken: string, loginData?: UserNonceForm['loginData']) => void;
+  createWeb3: () => void;
+};
+function useUserWeb3() {
+  const web3 = useAppSelector(state => state.web3);
+  const dispatch = useAppDispatch();
+
+  // create web3
+  ...
+  // change network
+  ...
+  // reset web3 data 
+  ...
+  // store magictoken 
+  ...
+}
+
+const useWeb3 = () => useAppSelector(state => state.web3.web3);
+const useConfig = () => useAppSelector(state => state.web3.config);
+const useMagic = () => useAppSelector(state => state.web3.magic);
+const useWalletWeb3 = () => useAppSelector(state => state.web3.web3);
+const useTreeFactory = () => useAppSelector(state => state.web3.treeFactory);
+const usePlanter = () => useAppSelector(state => state.web3.planter);
+const usePlanterFund = () => useAppSelector(state => state.web3.planterFund);
+
+const useWalletAccount = (): string => {
+  return useAppSelector(state => state.web3.wallet);
+};
+const useWalletAccountTorus = (): Account | null => {
+  const web3 = useWeb3();
+  return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+};
+const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
+const useUserId = () => useAppSelector(state => state.web3.userId);
+
+```
 
 ### web3 saga selectors
 

@@ -13,34 +13,34 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
-import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount} from 'utilities/hooks/useWeb3';
-import {Hex2Dec} from 'utilities/helpers/hex';
 
-import Button from '../Button';
-import Spacer from '../Spacer';
-import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {TreeJourney} from 'screens/TreeSubmission/types';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {GreenBlockRouteParamList, Tree} from 'types';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
+import {TreeImage} from 'components/TreeList/TreeImage';
+import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {colors} from 'constants/values';
+import {Routes} from 'navigation';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import useTempTrees from 'utilities/hooks/useTempTrees';
-import {useTranslation} from 'react-i18next';
-import {colors} from 'constants/values';
-import {TreeImage} from 'components/TreeList/TreeImage';
-import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
-import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import Button from '../Button';
+import Spacer from '../Spacer';
+import {useWalletAccount} from '../../redux/modules/web3/web3';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;

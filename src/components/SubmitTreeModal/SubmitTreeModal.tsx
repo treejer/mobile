@@ -1,25 +1,26 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import {Routes} from 'navigation';
 import {colors} from 'constants/values';
-import Spacer from 'components/Spacer/Spacer';
-import {TreeJourney} from 'screens/TreeSubmission/types';
+import {ContractType} from 'services/config';
+import {useCurrentJourney} from 'services/currentJourney';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useTranslation} from 'react-i18next';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import Tree from 'components/Icons/Tree';
-import Button from 'components/Button/Button';
-import Clipboard from '@react-native-clipboard/clipboard';
 import {useSettings} from 'utilities/hooks/useSettings';
 import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
-import {ContractType} from 'services/config';
-import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney} from 'services/currentJourney';
+import Spacer from 'components/Spacer/Spacer';
+import Tree from 'components/Icons/Tree';
+import Button from 'components/Button/Button';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {useConfig, useWalletAccount, useWalletWeb3} from '../../redux/modules/web3/web3';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 

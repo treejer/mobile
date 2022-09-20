@@ -1,16 +1,16 @@
-import globalStyles from 'constants/styles';
-
 import React, {useCallback, useState} from 'react';
 import {Alert, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {CommonActions, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+
+import globalStyles from 'constants/styles';
+import {ContractType} from 'services/config';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
-import {useConfig, useWalletAccount, useWeb3} from 'utilities/hooks/useWeb3';
-import {GreenBlockRouteParamList} from 'types';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {ContractType} from 'services/config';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {GreenBlockRouteParamList} from 'types';
+import {useConfig, useWalletAccount, useWeb3} from '../../../../redux/modules/web3/web3';
 
 interface Props {}
 

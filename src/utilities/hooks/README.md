@@ -27,5 +27,4 @@
 - [useTimer](./useTimer.ts): dynamic timer
 - [useTransition](./useTransition.ts): ui animation
 - [useTreeUpdateInterval](./useTreeUpdateInterval.ts): it does return how much time is left to update the tree
-- [useWeb3](./useWeb3.ts) web3 redux module data and its actions
 - [useWindowSize](./useWindowSize.ts): it does return device screen size
