@@ -13,13 +13,13 @@ import {currentTimestamp} from 'utilities/helpers/date';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'utilities/hooks/useSettings';
 import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import Spacer from 'components/Spacer/Spacer';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import {useSettings} from '../../redux/modules/settings/settings';
 import {useConfig, useWalletAccount, useWalletWeb3} from '../../redux/modules/web3/web3';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];

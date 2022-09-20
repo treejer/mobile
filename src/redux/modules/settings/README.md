@@ -1,8 +1,6 @@
 # Settings
 
 > Language and useGSN, and actions for change them
-> 
-> [Settings hook](../../../utilities/hooks/useSettings.ts) is in the hooks folder
 
 ### settings state type
 
@@ -34,6 +32,30 @@ const initialState: TSettings = {
 };
 ```
 
+### settings hooks
+
+```typescript
+type TUseSettings = TReduxState['settings'] & {
+  updateLocale: (newLocale: string) => void;
+  markOnBoardingDone: () => void;
+  changeUseGSN: (useGSN: boolean) => void;
+  resetOnBoardingData: () => void;
+};
+
+function useSettings(): TUseSettings {
+  const settings = useAppSelector(state => state.settings);
+  const dispatch = useAppDispatch();
+  ...
+  // update locale
+  ...
+  // mark onboarding done
+  ... 
+  // change use gsn
+  ... 
+  // reset onboarding data
+  ...
+}
+```
 
 ### settings saga selectors 
 ```typescript

@@ -1,6 +1,7 @@
 import {select} from 'redux-saga/effects';
 import {TReduxState} from '../../store';
 import {defaultLocale} from 'services/config';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 export type TSettings = {
   onBoardingDone: boolean;
@@ -75,6 +76,42 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
     }
   }
 };
+
+export type TUseSettings = TReduxState['settings'] & {
+  updateLocale: (newLocale: string) => void;
+  markOnBoardingDone: () => void;
+  changeUseGSN: (useGSN: boolean) => void;
+  resetOnBoardingData: () => void;
+};
+
+export function useSettings(): TUseSettings {
+  const settings = useAppSelector(state => state.settings);
+  const dispatch = useAppDispatch();
+
+  const handleMarkOnBoardingDone = () => {
+    dispatch(markOnBoardingDone());
+  };
+
+  const handleResetOnBoarding = () => {
+    dispatch(resetOnBoardingData());
+  };
+
+  const handleChangeLocale = (newLocale: string) => {
+    dispatch(updateLocale(newLocale));
+  };
+
+  const handleChangeUseGSN = (useGSN: boolean) => {
+    dispatch(changeUseGSN(useGSN));
+  };
+
+  return {
+    ...settings,
+    updateLocale: handleChangeLocale,
+    markOnBoardingDone: handleMarkOnBoardingDone,
+    changeUseGSN: handleChangeUseGSN,
+    resetOnBoardingData: handleResetOnBoarding,
+  };
+}
 
 export function* selectSettings() {
   return yield select((state: TReduxState) => state.settings);

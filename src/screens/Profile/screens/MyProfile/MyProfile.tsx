@@ -19,15 +19,15 @@ import {colors} from 'constants/values';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'utilities/hooks/useSettings';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {isWeb} from 'utilities/helpers/web';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import useRefer from 'utilities/hooks/useDeepLinking';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 export type MyProfileProps =

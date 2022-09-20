@@ -20,7 +20,6 @@ import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {useSettings} from 'utilities/hooks/useSettings';
 import {
   assignedTreeJSON,
   canUpdateTreeLocation,
@@ -40,6 +39,7 @@ import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmiss
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useConfig, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 interface Props {

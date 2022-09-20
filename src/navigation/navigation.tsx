@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
 import {AppLoading} from 'components/AppLoading/AppLoading';
@@ -10,12 +10,12 @@ import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'utilities/hooks/useSettings';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
-import {useProfile, UserStatus} from '../redux/modules/profile/profile';
 import {useUserWeb3} from '../redux/modules/web3/web3';
+import {useSettings} from '../redux/modules/settings/settings';
+import {useProfile, UserStatus} from '../redux/modules/profile/profile';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;

@@ -14,13 +14,13 @@ import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
 import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {useProfile} from '../../../../redux/modules/profile/profile';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 

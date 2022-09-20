@@ -21,7 +21,6 @@
 - [usePlantTreePermissions](./usePlantTreePermissions.ts): check user's permissions for plant or update tree
 - [usePlantTreePermissions.web](./usePlantTreePermissions.web.ts): check user's permissions for plant or update tree on the web
 - [useRefocusEffect](./useRefocusEffect.ts): refocus on screens
-- [useSettings](./useSettings.ts): settings redux module data and its actions
 - [useStore](./useStore.ts): custom useAppSelector and useDispatch with store types
 - [useTempTrees](./useTempTrees.ts): list all the trees
 - [useTimer](./useTimer.ts): dynamic timer

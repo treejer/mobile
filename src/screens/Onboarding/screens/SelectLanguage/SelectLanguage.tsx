@@ -1,18 +1,18 @@
-import globalStyles from 'constants/styles';
-
 import React, {useMemo} from 'react';
 import {Image, Text, View} from 'react-native';
-import BackgroundEntropy from 'components/BackgroundEntropy';
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
-import {useSettings} from 'utilities/hooks/useSettings';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import AppVersion from 'components/AppVersion';
-import {isWeb} from 'utilities/helpers/web';
-import {RootNavigationProp, Routes} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {RootNavigationProp, Routes} from 'navigation';
+import Button from 'components/Button';
+import Spacer from 'components/Spacer';
+import AppVersion from 'components/AppVersion';
+import BackgroundEntropy from 'components/BackgroundEntropy';
+import {isWeb} from 'utilities/helpers/web';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import globalStyles from 'constants/styles';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {Welcome} from '../../../../../assets/images';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;

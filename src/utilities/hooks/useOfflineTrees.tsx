@@ -10,8 +10,8 @@ import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useSettings} from '../../redux/modules/settings/settings';
 import {useConfig, useWalletAccount, useWeb3} from '../../redux/modules/web3/web3';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;
