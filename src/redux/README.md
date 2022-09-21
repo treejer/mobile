@@ -20,7 +20,6 @@
 > - [saga](./saga.ts): root saga
 
 ## [Modules and Reducers](./modules)
- - auth
  - [contracts](./modules/contracts): save dai, ether, magic balances
  - [init](./modules/init): init application
  - [netInfo](./modules/netInfo): checking network connection and save it

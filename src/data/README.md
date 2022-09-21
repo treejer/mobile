@@ -1,3 +1,3 @@
 # Treejer data schema
 
-> Treejer data [schema](./schema) and graphQl are here
+> Treejer data [schema](./schema) and graphQl

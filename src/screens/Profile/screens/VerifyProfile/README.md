@@ -7,7 +7,7 @@
 - [Steps](../../../../components/Steps): Stepper component
 - [ReSendCodeButton](./ResendCodeButton.tsx): send code again
 
-## verification steps
+## verification steps:
 
 - verify phone number
 - user location
@@ -15,6 +15,6 @@
 - upload id card
 - verify user
 
-## query
+### query
 
 [Verification query](./graphql)

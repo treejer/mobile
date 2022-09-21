@@ -1,4 +1,4 @@
 # Graphql
 
-- GetMeQuery
-- SettingsQuery
+- [GetMeQuery](./GetMeQuery.graphql)
+- [SettingsQuery](./Settings.graphql)

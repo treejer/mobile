@@ -1,3 +1,3 @@
 ## Icons
 
-> Static icons are here
+> RangerTreejer specific icons

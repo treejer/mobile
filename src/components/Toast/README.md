@@ -1,6 +1,6 @@
 # Toast
 
-> Custom toast components are here
+> Custom toast components
 
-- CustomToast: this component does return custom toast
-- ToastContainer: this component does return ToastProvider with customization by the treejer [AlertMode](../../utilities/helpers/alert.ts)
+- [CustomToast](./CustomToast.tsx): this component does return custom toast
+- [ToastContainer](./ToastContainer.tsx): this component does return ToastProvider with customization by the treejer [AlertMode](../../utilities/helpers/alert.ts)

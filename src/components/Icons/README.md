@@ -1,6 +1,6 @@
 # Icons
 
-> Common icons are here
+> Common icons
 
 - Check
 - ChevronLeft

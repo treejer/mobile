@@ -1,6 +1,6 @@
 # SavedAreas screen
 
-> SavedAreas screen for show download areas for using in offline mode
+> Saved areas screen for show downloaded areas for using in offline mode
 
-- SavedAreas: downloaded areas list
-- SavedAreas.web: not supported on web
+- [SavedAreas](./SavedAreas.tsx): downloaded areas list
+- [SavedAreas.web](./SavedAreas.web.tsx): not supported on web

@@ -1,6 +1,6 @@
 # Withdraw
 
-> Withdraw and transfer components are here
+> Withdraw and transfer components
 
 - [AboutWithdraw](./AboutWithdraw.tsx): This component does return detail about [Transfer](../../screens/Withdraw/screens/Transfer) screen
 - [DoiCoinBalance](./DaiCoinBalance.tsx): this component does return balance of dai coin

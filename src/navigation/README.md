@@ -4,7 +4,7 @@
 > 
 > Screen and route path customization.
 > 
-> Init navigation, root navigation, unverified user, verified user stacks are here.
+> Init navigation, root navigation, unverified user, verified user stacks.
 
 ## components:
 - [InitNavigation](./InitNavigation.tsx): process state of the application, and global data providers

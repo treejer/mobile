@@ -1,8 +1,7 @@
 # Modules
 
-> RangerTreejer redux modules are here.
+> RangerTreejer redux modules.
 
-- auth
 - [contracts](./contracts): dai, ether, magic balances, transfer and estimate gas price actions
 - [init](./init): init application, dispatch actions by checking user and app conditions
 - [netInfo](./netInfo): checking network connection and save it

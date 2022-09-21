@@ -1,4 +1,4 @@
 # GraphQl
 
-- PlanterTree Query
-- TempTree Query
+- [PlanterTreeQuery](./PlanterTreesQuery.graphql)
+- [TempTreeQuery](./TempTreesQuery.graphql)

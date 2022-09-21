@@ -1,3 +1,3 @@
 # Images
 
-> static images are here
+> RangerTreejer specific images
