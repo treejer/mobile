@@ -1,6 +1,6 @@
 # Helpers
 
-> common and useful functions are in this directory
+> Common and useful functions for avoiding duplicate codes in multiple files.
 
 - [additionalData](./additionalData)
 - [migrations](./migrations)

@@ -1,9 +1,10 @@
 # Profile
 
+
+- ### [Profile screens](./screens)
 > Profile screens are in this directory
 >
-> Profile screens will give some information about user's account
+> Profile screens will inform about the user's account
 > 
-> Verification screens
+> Login and verification screens
 
-- ## [Profile screens](./screens)

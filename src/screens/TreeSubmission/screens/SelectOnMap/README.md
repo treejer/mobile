@@ -1,3 +1,3 @@
 # SelectOnMap screen
 
-> SelectOnMap screen will render MapMarking and map marker image
+> Select tree location step, one of tree submission steps

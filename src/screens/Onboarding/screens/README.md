@@ -1,4 +1,4 @@
 # Onboarding screens
 
-- [OnboardingSlides](./OnboardingSlides) screen
-- [SelectLanguage](./SelectLanguage) screen
+- [OnboardingSlides](./OnboardingSlides): RangerTreejer introduction slider
+- [SelectLanguage](./SelectLanguage): select the application language

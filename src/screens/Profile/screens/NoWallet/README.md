@@ -1,4 +1,4 @@
 # NoWallet
 
-- NoWallet screen: Login and create wallet
-- SocialLoginButton component: social media button for login
+> [NoWallet](./NoWallet.tsx) screen is for login and create wallet
+- [SocialLoginButton](./SocialLoginButton.tsx): social media button for login by using social

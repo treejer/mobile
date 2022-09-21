@@ -8,7 +8,7 @@
 
 ## components:
 - [InitNavigation](./InitNavigation.tsx): process state of the application, and global data providers
-- [RootNavigation](./navigation.tsx): root stack
+- [RootNavigation](./Navigation.tsx): root stack
 - [UnVerifiedUser](./UnVerifiedUser.tsx): unverified user stack
 - [VerifiedUser](./VerifiedUser.tsx): verified user stack
 

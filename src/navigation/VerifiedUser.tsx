@@ -1,13 +1,14 @@
 import React from 'react';
 import {BottomTabScreenProps as LibraryProp, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
+import {Routes} from './Navigation';
 import TabBar from 'components/TabBar/TabBar';
-import {Routes} from './navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile/MyProfile';
+import {Withdraw} from 'screens/Withdraw/Withdraw';
 import TreeSubmission from 'screens/TreeSubmission';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import {Withdraw} from 'screens/Withdraw/Withdraw';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {

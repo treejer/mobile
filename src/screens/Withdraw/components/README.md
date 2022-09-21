@@ -1,4 +1,4 @@
 # Withdraw components
 
-- [TransferForm](./TransferForm.tsx): to transfer dai to another wallet address
-- [WithdrawSection](./WithdrawSection.tsx): to see state of magic wallet and redeem recently earned dai
+- [TransferForm](./TransferForm.tsx): transfer DAI to another wallet address
+- [WithdrawSection](./WithdrawSection.tsx): DAI balances and redeem recently earned DAI

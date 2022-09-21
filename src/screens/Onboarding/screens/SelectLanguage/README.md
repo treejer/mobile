@@ -1,3 +1,3 @@
 # SelectLanguage screen
 
-> select application language
+> select the application language

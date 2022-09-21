@@ -1,3 +1,3 @@
 # Onboarding screens
 
-> Onboarding screens are in this directory
+> The onboarding screens

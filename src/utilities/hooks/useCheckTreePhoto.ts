@@ -1,6 +1,7 @@
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {maxDistanceInKiloMeters} from 'services/config';
+
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {TUserLocation} from './usePlantTreePermissions';

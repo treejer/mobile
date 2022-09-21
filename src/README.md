@@ -1,12 +1,12 @@
 # SRC
 
 - [abis](./abis): web3 abi contracts
-- [components](./components)
+- [components](./components): all reuseable components that used in RangerTreejer
 - [constants](./constants): global app stylesheet
-- [data](./data)
-- [localization](./localization)
-- [navigation](./navigation)
-- [screens](./screens)
+- [data](./data): RangerTreejer graphQl schema
+- [localization](./localization):all supported languages
+- [navigation](./navigation): navigation config, stacks, authorization stacks and screens
+- [screens](./screens): all RangerTreejer screens
 - [services](./services): project config
 - [utilities](./utilities): common and useful functions and react hooks
 - [types.ts](./types.ts): type of stacks params

@@ -1,3 +1,3 @@
 # SelectPlantType screen
 
-> SelectPlantType screen will render single tree and nursery buttons to choose planting type
+> Select the type of plating, tree or nursery

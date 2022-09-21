@@ -1,3 +1,3 @@
 # SelectOnMapVerifyProfile screen
 
-> Select user location for verification
+> Select the user's location for verification

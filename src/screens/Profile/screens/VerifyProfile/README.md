@@ -5,13 +5,13 @@
 ## components:
 
 - [Steps](../../../../components/Steps): Stepper component
-- ReSendCodeButton: send code again
+- [ReSendCodeButton](./ResendCodeButton.tsx): send code again
 
-## will get this data and the last step will verify the user
+## verification steps
 
 - verify phone number
 - user location
-- user name
+- username
 - upload id card
 - verify user
 

@@ -1,11 +1,12 @@
 # MyProfile
 
-- MyProfile screen: details about user account
+- [MyProfile](./MyProfile.tsx) screen: details about user account
 
-  - Balance
+  - Balances (DAI, ETH/MATIC, recently dai earned)
   - count of planted tree
   - Wallet address
   - Invite, Setting, Help, Logout buttons.
+  
 
-- [Invite](./Invite.tsx) component: copy invite link on web, open share dialog
+- [Invite](./Invite.tsx): copy invite link on web, open share dialog for invite the others to the RangerTreejer
 - [Planter](./graphql) query

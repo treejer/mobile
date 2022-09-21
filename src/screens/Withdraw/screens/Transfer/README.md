@@ -1,3 +1,3 @@
 # Transfer
 
-> Transfer form and redeem recently earned DAI to user's DAI token
+> Transfer form and redeem recently earned DAI to user's DAI

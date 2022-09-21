@@ -1,6 +1,6 @@
 # Hooks
 
-> custom hooks are here
+> Custom hooks for reusing them everywhere, to sharing logic to avoid duplicate codes
 
 
 - [useAnalytics](./useAnalytics.ts): firebase logger
@@ -10,11 +10,11 @@
 - [useBrowserPlatform](./useBrowserPlatform.ts): return OS name
 - [useCamera](./useCamera.ts): open camera and library in the mobile application
 - [useCamera.web](./useCamera.web.ts): it does not return anything, just because don't receive errors on the web
-- [useCheckTreePhoto](./useCheckTreePhoto.ts): check taken photo metadata for cheking location and distance between picture and submitted location on map
-- [useCheckTreePhoto.web](./useCheckTreePhoto.web.ts): check taken photo metadata for cheking location and distance between picture and submitted location on map on the web
+- [useCheckTreePhoto](./useCheckTreePhoto.ts): check taken photo metadata for checking location and distance between picture and submitted location on map
+- [useCheckTreePhoto.web](./useCheckTreePhoto.web.ts): check taken photo metadata for checking location and distance between picture and submitted location on map on the web
 - [useDeepLinking](./useDeepLinking.ts): deep linking for refer and organization
 - [useNetInfo](./useNetInfo.ts): check internet connection
-- [useOfflineTrees](./useOfflineTrees.ts): offline trees context, list of offline trees
+- [useOfflineTrees](./useOfflineTrees.tsx): offline trees context, list of offline trees
 - [useOrientation](./useOrientation.ts): check device rotation
 - [usePlantedTrees](./usePlantedTrees.ts): list of planted trees
 - [usePlanterStatusQuery](./usePlanterStatusQuery.ts): planter status query

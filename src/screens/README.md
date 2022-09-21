@@ -1,6 +1,6 @@
 # Screens
 
-> All screens used in the application are in this directory
+> All screens used in the RangerTreejer
 
 - [GreenBlock](./GreenBlock): tree list and tree detail stack and screens
 - [OnBoarding](./Onboarding): on boarding screens
