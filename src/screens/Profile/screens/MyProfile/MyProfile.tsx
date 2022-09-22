@@ -1,33 +1,31 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useTranslation} from 'react-i18next';
-import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import AppVersion from 'components/AppVersion';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'utilities/hooks/useSettings';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {ContractType} from 'services/config';
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {isWeb} from 'utilities/helpers/web';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
-import useRefer from 'utilities/hooks/useDeepLinking';
-import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
-import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
 import Card from 'components/Card';
+import AppVersion from 'components/AppVersion';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {isWeb} from 'utilities/helpers/web';
+import useRefer from 'utilities/hooks/useDeepLinking';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import Invite from 'screens/Profile/screens/MyProfile/Invite';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -135,76 +133,6 @@ function MyProfile(props: MyProfileProps) {
   }, []);
 
   const [submitting, setSubmitting] = useState(false);
-  const handleWithdrawPlanterBalance = useCallback(async () => {
-    if (!isConnected) {
-      showAlert({
-        title: t('netInfo.error'),
-        message: t('netInfo.details'),
-        mode: AlertMode.Error,
-      });
-      return;
-    }
-    setSubmitting(true);
-    sendEvent('withdraw');
-    try {
-      // balance
-      const balance = parseBalance(planterData?.balance?.toString() || '0');
-      const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
-      if (balance > bnMinBalance) {
-        try {
-          const transaction = await sendTransactionWithGSN(
-            config,
-            ContractType.PlanterFund,
-            web3,
-            wallet,
-            'withdrawBalance',
-            [planterData?.balance.toString()],
-            useGSN,
-          );
-
-          console.log('transaction', transaction);
-          showAlert({
-            title: t('success'),
-            message: t('myProfile.withdraw.success'),
-            mode: AlertMode.Success,
-          });
-        } catch (e: any) {
-          showAlert({
-            title: t('failure'),
-            message: e?.message || t('sthWrong'),
-            mode: AlertMode.Error,
-          });
-        }
-      } else {
-        showAlert({
-          title: t('myProfile.attention'),
-          message: t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
-          mode: AlertMode.Info,
-        });
-      }
-    } catch (error: any) {
-      showAlert({
-        title: t('error'),
-        message: error?.message,
-        mode: AlertMode.Error,
-      });
-      console.warn('Error', error);
-    } finally {
-      setSubmitting(false);
-    }
-  }, [
-    isConnected,
-    sendEvent,
-    t,
-    parseBalance,
-    planterData?.balance,
-    minBalance,
-    requiredBalance,
-    config,
-    web3,
-    wallet,
-    useGSN,
-  ]);
 
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
@@ -393,21 +321,6 @@ function MyProfile(props: MyProfileProps) {
                   {planterData?.planterType && !!wallet ? (
                     <Invite style={styles.button} address={wallet} planterType={Number(planterData?.planterType)} />
                   ) : null}
-
-                  {/* {!wallet && (
-                <>
-                  <Button
-                    style={styles.button}
-                    caption={t('createWallet.title')}
-                    variant="tertiary"
-                    onPress={() => {
-                      navigation.navigate('CreateWallet');
-                    }}
-                    disabled
-                  />
-                  <Spacer times={4} />
-                </>
-              )} */}
 
                   <Button
                     style={styles.button}

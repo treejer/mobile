@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import Toast from 'react-native-toast-notifications';
-import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 
 import ApolloProvider from 'services/apollo';
 import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
-import {RootNavigation, Routes} from 'navigation/navigation';
+import {RootNavigation, Routes} from 'navigation/Navigation';
 import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
 import {isWeb} from 'utilities/helpers/web';
 import {AppLoading} from 'components/AppLoading/AppLoading';
@@ -59,6 +59,12 @@ const config = {
     [Routes.Login]: 'login',
     [Routes.Onboarding]: 'on-boarding',
     [Routes.Organization]: 'organization',
+    [Routes.Withdraw]: {
+      screens: {
+        [Routes.Transfer]: 'withdraw/transfer',
+        [Routes.WithdrawHistory]: 'withdraw/history',
+      },
+    },
   },
 };
 

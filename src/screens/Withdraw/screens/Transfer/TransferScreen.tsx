@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, StyleSheet, View} from 'react-native';
 
 import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
@@ -12,17 +12,17 @@ import {WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
+import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 import {isWeb} from 'utilities/helpers/web';
-import {useSettings} from 'utilities/hooks/useSettings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'utilities/hooks/useWeb3';
-import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 import {useProfile} from '../../../../redux/modules/profile/profile';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);

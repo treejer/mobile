@@ -1,15 +1,15 @@
+import {useCallback} from 'react';
+import {Platform} from 'react-native';
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {TReduxState} from '../../store';
+import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device-info';
 
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
-import {Platform} from 'react-native';
-import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device-info';
+import {TReduxState} from '../../store';
+import {profileActions} from '../profile/profile';
+import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {version} from '../../../../package.json';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
-import {useCallback} from 'react';
-import {createWeb3, UPDATE_WEB3} from '../web3/web3';
-import {profileActions} from '../profile/profile';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({

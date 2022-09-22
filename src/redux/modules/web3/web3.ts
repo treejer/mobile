@@ -12,6 +12,9 @@ import {getBalance, resetBalance} from '../contracts/contracts';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {profileActions, selectProfile} from '../profile/profile';
 import {TReduxState, TStoreRedux} from '../../store';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
+import {useCallback} from 'react';
+import {Account} from 'web3-core';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -221,9 +224,8 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
 }
 
 export function* watchChangeNetwork(action: TWeb3Action) {
-  const {newNetwork} = action;
-
   try {
+    const {newNetwork} = action;
     yield put(createWeb3(newNetwork));
   } catch (error) {
     console.log(error, 'update web3 error');
@@ -296,6 +298,66 @@ export function* web3Sagas(store: TStoreRedux) {
   yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken, store);
   yield takeEvery(CREATE_WEB3, watchCreateWeb3);
 }
+
+export type TUseUserWeb3 = TReduxState['web3'] & {
+  changeNetwork: (newNetwork: BlockchainNetwork) => void;
+  resetWeb3Data: () => void;
+  storeMagicToken: (magicToken: string, loginData?: UserNonceForm['loginData']) => void;
+  createWeb3: () => void;
+};
+
+export function useUserWeb3(): TUseUserWeb3 {
+  const web3 = useAppSelector(state => state.web3);
+  const dispatch = useAppDispatch();
+
+  const handleCreateWeb3 = useCallback(() => {
+    dispatch(createWeb3());
+  }, [dispatch]);
+
+  const handleChangeNetwork = useCallback(
+    (newNetwork: BlockchainNetwork) => {
+      dispatch(changeNetwork(newNetwork));
+    },
+    [dispatch],
+  );
+
+  const handleResetWeb3Data = useCallback(() => {
+    dispatch(resetWeb3Data());
+  }, [dispatch]);
+
+  const handleStoreMagicToken = useCallback(
+    (magicToken: string, loginData?: UserNonceForm['loginData']) => {
+      dispatch(storeMagicToken({web3: web3.web3, magicToken, loginData}));
+    },
+    [dispatch, web3],
+  );
+
+  return {
+    ...web3,
+    changeNetwork: handleChangeNetwork,
+    resetWeb3Data: handleResetWeb3Data,
+    storeMagicToken: handleStoreMagicToken,
+    createWeb3: handleCreateWeb3,
+  };
+}
+
+export const useWeb3 = () => useAppSelector(state => state.web3.web3);
+export const useConfig = () => useAppSelector(state => state.web3.config);
+export const useMagic = () => useAppSelector(state => state.web3.magic);
+export const useWalletWeb3 = () => useAppSelector(state => state.web3.web3);
+export const useTreeFactory = () => useAppSelector(state => state.web3.treeFactory);
+export const usePlanter = () => useAppSelector(state => state.web3.planter);
+export const usePlanterFund = () => useAppSelector(state => state.web3.planterFund);
+
+export const useWalletAccount = (): string => {
+  return useAppSelector(state => state.web3.wallet);
+};
+export const useWalletAccountTorus = (): Account | null => {
+  const web3 = useWeb3();
+  return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+};
+export const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
+export const useUserId = () => useAppSelector(state => state.web3.userId);
 
 export function* selectConfig() {
   return yield select((state: TReduxState) => state.web3.config);

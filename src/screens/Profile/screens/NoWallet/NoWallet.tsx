@@ -5,7 +5,6 @@ import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {useConfig, useMagic, useUserWeb3} from 'utilities/hooks/useWeb3';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -23,6 +22,7 @@ import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
 import {useProfile} from '../../../../redux/modules/profile/profile';
+import {useConfig, useMagic, useUserWeb3} from '../../../../redux/modules/web3/web3';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 

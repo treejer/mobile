@@ -1,0 +1,3 @@
+# Localization
+
+> All supported languages

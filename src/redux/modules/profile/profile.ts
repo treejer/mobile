@@ -9,7 +9,7 @@ import {asyncAlert} from 'utilities/helpers/alert';
 import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {useUserWeb3} from 'utilities/hooks/useWeb3';
+import {useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  PullToRefresh as PullToRefreshContainer,
-  PullDownContent,
-  ReleaseContent,
-  RefreshContent,
-} from 'react-js-pull-to-refresh';
+import {PullToRefresh as PullToRefreshContainer, PullDownContent, RefreshContent} from 'react-js-pull-to-refresh';
 
 interface PullToRefreshProps {
   children: JSX.Element | JSX.Element[];

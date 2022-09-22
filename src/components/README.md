@@ -1,0 +1,39 @@
+# Components
+
+- [Analytics](./Analytics): firebase logger button
+- [AppLoading](./AppLoading): app loading after lunch
+- [AppVersion](./AppVersion): current app version
+- [Avatar](./Avatar): user avatar
+- [BackgroundEntropy](./BackgroundEntropy): svg around background in onboarding
+- [Button](./Button): button
+- [Card](./Card): white card with shadow
+- [CheckingPermissoins](./CheckingPermissions): Check permission screen components
+- [FileInput](./FileInput): image picker button (exactly on the web)
+- [Icons](./Icons): common icons in the project
+- [KeyboardDismiss](./KeyboardDismiss): keyboard dismiss component wrapper
+- [LandScapeModal](./LandScapeModal): rotate device modal (in landscape state)
+- [MagicWallet](./MagicWallet): wallet and contracts details
+- [Map](./Map): map component
+- [NetInfo](./NetInfo): network status
+- [PreloadImage](./PreloadImage): prefetch static images
+- [ProgressCircles](./ProgressCircles): circle progress bar
+- [PullToRefresh](./PullToRefresh): pull to refresh component on web
+- [PwaModal](./PwaModal): add to home screen modal (exactly on the web)
+- [QrReader](./QrReader): qr code scanner component
+- [RadioButton](./RadioButton): radio button
+- [RefreshControl](./RefreshControl): ScrollView and FlatList refresh controller
+- [ScreenTitle](./ScreenTitle): title and top section of screen
+- [ShimmerPlaceholder](./ShimmerPlaceholder): loading content
+- [Spacer](./Spacer): Space Creator
+- [Steps](./Steps): stepper and step content components
+- [SubmitTreeModal](./SubmitTreeModal): modal for submitting trees
+- [SubmitTreeOfflineWebModal](./SubmitTreeOfflineWebModal): modal for submitting trees when internet is not connect
+- [SwitchNetwork](./SwitchNetwork): modal for change network
+- [TabBar](./TabBar): custom tab bar in tab navigation
+- [TextField](./TextField): controlled TextInput
+- [Toast](./Toast): custom toast notification components
+- [TreeList](./TreeList): list of trees
+- [UpdateModal](./UpdateModal): modal for check app version and show update message
+- [UserCard](./UserCard): user avatar, name
+- [WebCam](./WebCam): open webcam and image cropper on the web
+- [Withdraw](./Withdraw): withdraw and transfer screen components

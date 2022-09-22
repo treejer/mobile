@@ -1,8 +1,8 @@
-import {colors} from 'constants/values';
-
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
-import {useConfig, useWalletAccount} from 'utilities/hooks/useWeb3';
+
+import {colors} from 'constants/values';
+import {useConfig, useWalletAccount} from '../../redux/modules/web3/web3';
 
 interface Props {
   size?: number;

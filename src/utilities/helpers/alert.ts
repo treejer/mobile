@@ -1,8 +1,4 @@
 import {Alert, AlertButton, AlertOptions} from 'react-native';
-// import {toast} from 'react-toastify';
-import {isWeb} from './web';
-import {ToastOptions} from 'react-native-toast-notifications/lib/typescript/toast';
-import {useToast} from 'react-native-toast-notifications';
 
 export function asyncAlert(
   title: string,

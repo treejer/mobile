@@ -4,7 +4,6 @@ import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {i18next} from '../../localization';
 import {put, select} from 'redux-saga/effects';
 import {TReduxState} from '../../redux/store';
-import {userLoggedIn} from '../../redux/modules/auth/clientAuth';
 import {debugFetch, NetworkConfig} from 'services/config';
 import {selectSettings} from '../../redux/modules/settings/settings';
 import {clearUserNonce, selectConfig} from '../../redux/modules/web3/web3';
@@ -114,7 +113,6 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
     // @logout
     yield put(profileActions.resetCache());
     yield put(clearUserNonce());
-    yield put(userLoggedIn(false));
   }
   if (showErrorAlert && message && message?.length) {
     yield showSagaAlert({

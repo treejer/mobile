@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
-import {Routes} from './navigation';
+import {Routes} from './Navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile';
 import VerifyProfile from 'screens/Profile/screens/VerifyProfile';
 import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyProfile';

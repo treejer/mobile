@@ -1,14 +1,14 @@
-import globalStyles from 'constants/styles';
-
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
-import Button from 'components/Button';
-import {Tree} from 'components/Icons';
-import ProgressCircles from 'components/ProgressCircles';
-import {useSettings} from 'utilities/hooks/useSettings';
 import {useTranslation} from 'react-i18next';
 import Slider from 'react-slick';
+
+import globalStyles from 'constants/styles';
+import {Tree} from 'components/Icons';
+import Button from 'components/Button';
+import ProgressCircles from 'components/ProgressCircles';
+import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';

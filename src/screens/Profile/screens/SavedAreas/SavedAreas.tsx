@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {View, StyleSheet, Text, FlatList, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import {getAllOfflineMaps, deleteOfflineMap} from 'utilities/helpers/maps';
+
+import {Routes} from 'navigation';
 import Button from 'components/Button';
 import {colors} from 'constants/values';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import globalStyles, {fontBold, fontMedium} from 'constants/styles';
-import {ChevronLeft} from 'components/Icons';
-import Spacer from 'components/Spacer';
-import {useTranslation} from 'react-i18next';
-import {Routes} from 'navigation';
+import {getAllOfflineMaps, deleteOfflineMap} from 'utilities/helpers/maps';
 
 const SavedAreas = ({navigation}) => {
   const [areas, setAreas] = useState<any>(null);
@@ -56,16 +56,8 @@ const SavedAreas = ({navigation}) => {
 
   return (
     <SafeAreaView style={[{flex: 1, backgroundColor: colors.khaki}, globalStyles.screenViewBottom]}>
+      <ScreenTitle goBack title={t('offlineMap.savedAreas')} />
       <View style={styles.container}>
-        <Spacer times={2} />
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
-            <ChevronLeft />
-          </TouchableOpacity>
-          <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>
-            {t('offlineMap.savedAreas')}
-          </Text>
-        </View>
         <View style={styles.areaListContainer}>
           {areas && areas?.length ? (
             <FlatList data={areas} renderItem={renderSavedAreaItem} keyExtractor={(_, i) => i.toString()} />
