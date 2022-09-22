@@ -16,9 +16,9 @@
 - [fetch](./fetch.ts): custom fetch and sagafetch functions
 - [getStaticMapUrl](./getStaticMapUrl.ts): static mapbox
 - [hex](./hex.ts): hex to decimal
-- [inventory](./inventory.ts)
-- [inventoryConstants](./inventoryConstants.ts)
-- [IPFS](./IPFS.ts)
+- [inventory](./inventory.ts): inventory offline mode
+- [inventoryConstants](./inventoryConstants.ts): inventory constants
+- [IPFS](./IPFS.ts): upload tree photo
 - [language](./language.ts): detect locale and change application direction
 - [mapMarkingCoordinate](./mapMarkingCoordinate.ts)
 - [maps](./maps.ts): create offline map

@@ -59,6 +59,12 @@ const config = {
     [Routes.Login]: 'login',
     [Routes.Onboarding]: 'on-boarding',
     [Routes.Organization]: 'organization',
+    [Routes.Withdraw]: {
+      screens: {
+        [Routes.Transfer]: 'withdraw/transfer',
+        [Routes.WithdrawHistory]: 'withdraw/history',
+      },
+    },
   },
 };
 
