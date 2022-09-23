@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -171,6 +171,11 @@ function MyProfile(props: MyProfileProps) {
     // return Linking.openURL('https://discuss.treejer.com/group/planters');
     // @ts-ignore
     navigation.navigate(Routes.Support);
+  };
+
+  const handleNavigateActivity = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Activity);
   };
 
   const handleNavigateOfflineMap = () => {
@@ -345,6 +350,17 @@ function MyProfile(props: MyProfileProps) {
                     variant="tertiary"
                     onPress={handleNavigateSupport}
                   />
+                  {profile.isVerified ? (
+                    <>
+                      <Spacer times={4} />
+                      <Button
+                        style={styles.button}
+                        caption={t('activity')}
+                        variant="tertiary"
+                        onPress={handleNavigateActivity}
+                      />
+                    </>
+                  ) : null}
                   <Spacer times={4} />
                   <Button
                     style={styles.button}

@@ -2,4 +2,4 @@
 
 > Component that used in Support screen
 
-- [SupportItem](./SupportItem.tsx)
+- [SupportItem](SupportItem.tsx)

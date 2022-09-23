@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
 import Icon from 'react-native-vector-icons/Feather';
 import BrandIcon from 'react-native-vector-icons/FontAwesome5';
@@ -9,12 +9,13 @@ import Card from 'components/Card';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {useTranslation} from 'react-i18next';
+import {TreejerIcon} from '../../../../assets/images';
 
 export type TSupportItemProps = {
   support: {
     name: string;
     link: string;
-    icon: string;
+    icon?: string;
     color: string;
   };
 };
@@ -69,7 +70,11 @@ export function SupportItem(props: TSupportItemProps) {
     <Card style={styles.container}>
       <TouchableOpacity style={[styles.row, styles.supportBtn]} onPress={handleOpenSupportLink}>
         <View style={styles.brand}>
-          <BrandIcon name={support.icon} size={40} color={support.color} />
+          {support.icon ? (
+            <BrandIcon name={support.icon} size={40} color={support.color} />
+          ) : (
+            <Image source={TreejerIcon} style={styles.image} />
+          )}
         </View>
         <View style={[styles.row, styles.nameSection]}>
           <Text style={styles.name}>{t(`supports.${support.name}`)}</Text>
@@ -90,6 +95,7 @@ const styles = StyleSheet.create({
   },
   brand: {
     width: 52,
+    alignItems: 'flex-start',
   },
   supportBtn: {
     ...globalStyles.fill,
@@ -107,5 +113,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     color: colors.grayDarker,
+  },
+  image: {
+    width: 50,
+    height: 50,
+    marginLeft: -4,
   },
 });

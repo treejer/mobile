@@ -3,7 +3,6 @@ import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navi
 
 import {Routes} from './Navigation';
 import MyProfile from 'screens/Profile/screens/MyProfile';
-import {Support} from 'screens/Support/screens/Support';
 import VerifyProfile from 'screens/Profile/screens/VerifyProfile';
 import VerifyPending from 'screens/Profile/screens/VerifyPending';
 import SelectOnMapVerifyProfile from 'screens/Profile/screens/SelectOnMapVerifyProfile';
@@ -25,7 +24,6 @@ export type UnVerifiedUserNavigationParamList = {
   [Routes.VerifyPending]?: {
     user: GetMeQueryPartialData.User;
   };
-  [Routes.Support]: undefined;
 };
 
 export type UnVerifiedUserNavigationProp<ScreenName extends keyof UnVerifiedUserNavigationParamList> = LibraryProp<
@@ -58,7 +56,6 @@ export function UnVerifiedUserNavigation() {
         component={VerifyPending}
         options={{title: screenTitle('Verify Pending')}}
       />
-      <UnVerifiedUserStack.Screen name={Routes.Support} component={Support} />
     </UnVerifiedUserStack.Navigator>
   );
 }

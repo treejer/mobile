@@ -13,6 +13,9 @@ import SingUp from './sign-up.png';
 import StableDaiCoin from './stableCoin.png';
 import TreejerDaiCoin from './treejerCoin.png';
 import QrFrame from './qrFrame.png';
+import Tree from './tree.png';
+import MaticCoin from './matic.png';
+import EthCoin from './eth.png';
 
 export {
   MaticLogo,
@@ -29,4 +32,7 @@ export {
   StableDaiCoin,
   TreejerDaiCoin,
   QrFrame,
+  Tree,
+  MaticCoin,
+  EthCoin,
 };

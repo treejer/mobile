@@ -3,7 +3,6 @@ import {BottomTabScreenProps as LibraryProp, createBottomTabNavigator} from '@re
 
 import {Routes} from './Navigation';
 import TabBar from 'components/TabBar/TabBar';
-import {Support} from 'screens/Support/screens/Support';
 import {Withdraw} from 'screens/Withdraw/Withdraw';
 import TreeSubmission from 'screens/TreeSubmission';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
@@ -19,7 +18,6 @@ export type VerifiedUserNavigationParamList = {
   [Routes.TreeSubmission]: undefined;
   [Routes.GreenBlock]: undefined;
   [Routes.Withdraw]: undefined;
-  [Routes.Support]: undefined;
 };
 
 export type VerifiedUserNavigationProp<ScreenName extends keyof VerifiedUserNavigationParamList> = LibraryProp<
@@ -43,7 +41,6 @@ export function VerifiedUserNavigation() {
       </VerifiedUserStack.Screen>
       <VerifiedUserStack.Screen name={Routes.GreenBlock} component={GreenBlock} />
       <VerifiedUserStack.Screen name={Routes.Withdraw} component={Withdraw} />
-      <VerifiedUserStack.Screen name={Routes.Support} component={Support} />
     </VerifiedUserStack.Navigator>
   );
 }
