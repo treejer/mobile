@@ -3,6 +3,7 @@ import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
 import Icon from 'react-native-vector-icons/Feather';
 import BrandIcon from 'react-native-vector-icons/FontAwesome5';
+import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 
 import Card from 'components/Card';
 import {colors} from 'constants/values';
@@ -24,9 +25,41 @@ export function SupportItem(props: TSupportItemProps) {
   const {t} = useTranslation();
   const toast = useToast();
 
-  const handleOpenSupportLink = useCallback(() => {
-    if (support.link) {
-      Linking.openURL(support.link);
+  const handleOpenSupportLink = useCallback(async () => {
+    if (await InAppBrowser.isAvailable()) {
+      await InAppBrowser.open(support.link, {
+        // iOS Properties
+        dismissButtonStyle: 'cancel',
+        preferredBarTintColor: support.color,
+        preferredControlTintColor: colors.white,
+        readerMode: false,
+        animated: true,
+        modalPresentationStyle: 'fullScreen',
+        modalTransitionStyle: 'coverVertical',
+        modalEnabled: true,
+        enableBarCollapsing: false,
+        // Android Properties
+        showTitle: true,
+        hasBackButton: true,
+        toolbarColor: support.color,
+        secondaryToolbarColor: colors.white,
+        navigationBarColor: colors.white,
+        navigationBarDividerColor: colors.white,
+        enableUrlBarHiding: true,
+        enableDefaultShare: true,
+        forceCloseOnRedirection: false,
+        // Specify full animation resource identifier(package:anim/name)
+        // or only resource name(in case of animation bundled with app).
+        animations: {
+          startEnter: 'slide_in_right',
+          startExit: 'slide_out_left',
+          endEnter: 'slide_in_left',
+          endExit: 'slide_out_right',
+        },
+        headers: {
+          'my-custom-header': 'my custom header value',
+        },
+      });
     } else {
       toast.show('We are developing...');
     }

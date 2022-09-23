@@ -14,19 +14,19 @@ export const supportsList = [
     name: 'chatOnline',
     icon: 'rocketchat',
     color: colors.grayDarker,
-    link: '',
+    link: 'http:192.168.1.105:3000',
   },
   {
     name: 'discord',
     icon: 'discord',
     color: '#7289DA',
-    link: '',
+    link: 'https://discord.gg/treejer',
   },
   {
     name: 'twitter',
     icon: 'twitter-square',
     color: '#1DA1F2',
-    link: '',
+    link: 'https://twitter.com/TreejerTalks?s=20&t=PMXGAjYUujsrlfayUxRltw',
   },
 ];
 
