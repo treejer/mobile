@@ -166,9 +166,11 @@ function MyProfile(props: MyProfileProps) {
     </>
   );
 
-  const handleOpenHelp = () => {
-    sendEvent('help');
-    return Linking.openURL('https://discuss.treejer.com/group/planters');
+  const handleNavigateSupport = () => {
+    sendEvent('Support');
+    // return Linking.openURL('https://discuss.treejer.com/group/planters');
+    // @ts-ignore
+    navigation.navigate(Routes.Support);
   };
 
   const handleNavigateOfflineMap = () => {
@@ -297,7 +299,15 @@ function MyProfile(props: MyProfileProps) {
                         <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
                         <Text style={globalStyles.tiny}>{referrer || organization}</Text>
                         <Spacer times={4} />
-                        <Text style={[globalStyles.h5, {color: colors.green, fontWeight: 'bold'}]}>
+                        <Text
+                          style={[
+                            globalStyles.h5,
+                            {
+                              color: colors.green,
+                              fontWeight: 'bold',
+                            },
+                          ]}
+                        >
                           {t(referrer ? 'getVerified' : 'joinAndGetVerified')}
                         </Text>
                         <Spacer times={2} />
@@ -329,7 +339,12 @@ function MyProfile(props: MyProfileProps) {
                     onPress={handleNavigateSettings}
                   />
                   <Spacer times={4} />
-                  <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
+                  <Button
+                    style={styles.button}
+                    caption={t('support')}
+                    variant="tertiary"
+                    onPress={handleNavigateSupport}
+                  />
                   <Spacer times={4} />
                   <Button
                     style={styles.button}

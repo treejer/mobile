@@ -24,6 +24,7 @@ export const en = {
   joiningReferrer: 'You are referred by:',
   joinAndGetVerified: 'Join & Get Verified',
   help: 'Help',
+  support: 'Support',
   logout: 'Log Out',
   verified: 'Verified',
   notVerified: 'Not Verified',
@@ -413,5 +414,10 @@ export const en = {
       fee: "you can't submit this transaction",
       INVALID_ARGUMENT: 'Recipient Address is invalid',
     },
+  },
+  supports: {
+    chatOnline: 'Chat Online',
+    discord: 'Join Discord',
+    twitter: 'Follow Twitter',
   },
 };

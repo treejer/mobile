@@ -56,7 +56,6 @@ export enum Routes {
   SelectOnMap = 'SelectOnMap',
   TreeSubmission = 'TreeSubmission',
   GreenBlock = 'GreenBlock',
-  Test = 'Test',
   SelectPhoto = 'SelectPhoto',
   SelectPlantType = 'SelectPlantType',
   SubmitTree = 'SubmitTree',
@@ -66,6 +65,7 @@ export enum Routes {
   Withdraw = 'Withdraw',
   Transfer = 'Transfer',
   WithdrawHistory = 'WithdrawHistory',
+  Support = 'Support',
 }
 
 export function RootNavigation() {

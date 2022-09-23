@@ -65,6 +65,7 @@ const config = {
         [Routes.WithdrawHistory]: 'withdraw/history',
       },
     },
+    [Routes.Support]: 'support',
   },
 };
 
