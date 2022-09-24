@@ -65,9 +65,6 @@ export function SupportItem(props: TSupportItemProps) {
             endEnter: 'slide_in_left',
             endExit: 'slide_out_right',
           },
-          headers: {
-            'my-custom-header': 'my custom header value',
-          },
         });
       }
     }

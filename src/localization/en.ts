@@ -434,5 +434,7 @@ export const en = {
     sent: 'Sent',
     received: 'Received',
     claimed: 'Claimed',
+    receipt: 'Receipt',
+    showMore: 'Show more details',
   },
 };
