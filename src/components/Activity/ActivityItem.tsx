@@ -76,7 +76,7 @@ export function ActivityItem(props: TActivityItemProps) {
       >
         {treeId || tempId ? (
           <View style={[styles.image, {backgroundColor: bgTree[status]}]}>
-            <Image source={Tree} width={25} height={25} />
+            <Image source={Tree} style={styles.tree} />
           </View>
         ) : (
           <Image source={image} style={styles.image} />
@@ -129,6 +129,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.khaki,
     borderRadius: 10,
   },
+  tree: {
+    width: 25,
+    height: 25,
+  },
   image: {
     width: 40,
     height: 40,
@@ -141,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detail: {
-    ...globalStyles.fill,
+    flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
   },

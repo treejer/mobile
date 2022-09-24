@@ -6,7 +6,6 @@ import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import {Support} from 'screens/Profile/screens/Support/Support';
-import {Activity} from 'screens/Profile/screens/Activity/Activity';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
@@ -33,7 +32,6 @@ export type RootNavigationParamList = {
   [Routes.SavedAreas]: undefined;
   [Routes.Organization]: undefined;
   [Routes.Support]: undefined;
-  [Routes.Activity]: undefined;
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -121,20 +119,11 @@ export function RootNavigation() {
               <>
                 <RootStack.Screen name={Routes.OfflineMap} component={OfflineMap} />
                 <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
-                <RootStack.Screen name={Routes.Support} component={Support} />
-                <RootStack.Screen name={Routes.Activity} component={Activity} />
               </>
             )}
-            <RootStack.Screen
-              name={Routes.SelectLanguage}
-              component={SelectLanguage}
-              options={{title: screenTitle('Select Language')}}
-            />
-            <RootStack.Screen
-              name={Routes.Settings}
-              component={SettingsScreen}
-              options={{title: screenTitle('Settings')}}
-            />
+            <RootStack.Screen name={Routes.Support} component={Support} />
+            <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
+            <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
           </>
         ) : null}
       </RootStack.Navigator>
