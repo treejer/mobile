@@ -436,5 +436,6 @@ export const en = {
     claimed: 'Claimed',
     receipt: 'Receipt',
     showMore: 'Show more details',
+    filters: 'Filters',
   },
 };

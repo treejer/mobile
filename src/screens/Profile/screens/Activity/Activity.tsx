@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {FlatList, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -6,6 +6,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityItem, ActivityStatus, ContractTypes, TActivityItemProps} from 'components/Activity/ActivityItem';
 import globalStyles from 'constants/styles';
+import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 
 const staticActivities: TActivityItemProps[] = [
   {
@@ -25,14 +26,14 @@ const staticActivities: TActivityItemProps[] = [
     tempId: '#10',
     treeId: '#1001',
     date: new Date(),
-    status: ActivityStatus.UPDATESUBMITTED,
+    status: ActivityStatus.UPDATE_SUBMITTED,
     address: 'https://ranger.treejer.com',
   },
   {
     tempId: '#10',
     treeId: '#1001',
     date: new Date(),
-    status: ActivityStatus.UPDATEVERIFIED,
+    status: ActivityStatus.UPDATE_VERIFIED,
     address: 'https://ranger.treejer.com',
   },
   {
@@ -59,7 +60,21 @@ const staticActivities: TActivityItemProps[] = [
 ];
 
 export function Activity() {
+  const [filters, setFilters] = useState<string[]>(['submitted', 'verified']);
+
   const {t} = useTranslation();
+
+  const handleSelectFilterOption = useCallback(
+    (option: string) => {
+      if (!filters.some(filter => filter === option)) {
+        if (!option) return setFilters([]);
+        setFilters([...filters, option]);
+      } else {
+        setFilters(filters.filter(filter => filter !== option));
+      }
+    },
+    [filters],
+  );
 
   const renderItem = useCallback(({item, index}) => {
     return (
@@ -73,12 +88,8 @@ export function Activity() {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle goBack title={t('activity')} />
       <View style={globalStyles.alignItemsCenter}>
-        <FlatList
-          style={{width: '100%', overflow: 'visible'}}
-          data={staticActivities}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
+        <FlatList data={staticActivities} renderItem={renderItem} keyExtractor={(item, index) => index.toString()} />
       </View>
     </SafeAreaView>
   );

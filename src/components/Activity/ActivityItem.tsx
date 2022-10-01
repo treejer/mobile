@@ -13,13 +13,14 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {AlertMode} from 'utilities/helpers/alert';
+import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {EthCoin, MaticCoin, StableDaiCoin, Tree} from '../../../assets/images';
 
 export enum ActivityStatus {
   SUBMITTED = 'submitted',
   VERIFIED = 'verified',
-  UPDATESUBMITTED = 'updateSubmitted',
-  UPDATEVERIFIED = 'updateVerified',
+  UPDATE_SUBMITTED = 'updateSubmitted',
+  UPDATE_VERIFIED = 'updateVerified',
   CLAIMED = 'claimed',
   SENT = 'sent',
   RECEIVED = 'received',
@@ -186,7 +187,7 @@ export function MoreDetail(props: TMoreDetailProps) {
           {t('activities.receipt')} <IIcon name="open-outline" size={14} />
         </Text>
         <Text style={styles.address} onPress={handleCopy}>
-          {address} <Icon name="copy" size={14} />
+          {wrapUpString(address, 3)} <Icon name="copy" size={14} />
         </Text>
       </View>
       <Spacer times={3} />
