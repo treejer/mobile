@@ -20,10 +20,6 @@ export function SubmitTransfer(props: TSubmitTransferProps) {
 
   const {t} = useTranslation();
 
-  useEffect(() => {
-    console.log(disabled, 'is hereee');
-  }, [disabled]);
-
   return (
     <View style={styles.container}>
       {!disabled && (

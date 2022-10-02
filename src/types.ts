@@ -13,6 +13,9 @@ export interface MainTabsParamList extends Record<string, any> {
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
   };
+  Activity: {
+    filters: string[];
+  };
 }
 
 export interface GreenBlockRouteParamList extends Record<string, any> {

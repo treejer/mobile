@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View} from 'react-native';
 
 import {ActivityItem, ActivityStatus, ContractTypes, TActivityItemProps} from 'components/Activity/ActivityItem';
 import globalStyles from 'constants/styles';
@@ -67,6 +67,20 @@ const staticActivities: TActivityItemProps[] = [
     status: ActivityStatus.CLAIMED,
     address: 'https://ranger.treejer.com9',
   },
+  {
+    date: new Date(),
+    contract: ContractTypes.ETH,
+    amount: '2.0025',
+    status: ActivityStatus.CLAIMED,
+    address: 'https://ranger.treejer.com10',
+  },
+  {
+    date: new Date(),
+    contract: ContractTypes.ETH,
+    amount: '2.0025',
+    status: ActivityStatus.CLAIMED,
+    address: 'https://ranger.treejer.com11',
+  },
 ];
 
 export type TActivityListProps = {
@@ -91,20 +105,13 @@ export function ActivityList(props: TActivityListProps) {
     }
   }, [filters]);
 
-  const renderItem = useCallback(({item, index}) => {
-    return (
-      <View style={globalStyles.alignItemsCenter}>
-        <ActivityItem {...item} isLast={activities && activities?.length - 1 === index} />
-      </View>
-    );
-  }, []);
-
-  return (
-    <FlatList
-      style={{width: '100%'}}
-      data={activities}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
-  );
+  return activities && activities.length ? (
+    <View>
+      {activities.map((activity, index) => (
+        <View style={globalStyles.alignItemsCenter} key={activity.address}>
+          <ActivityItem {...activity} isLast={activities && activities?.length - 1 === index} />
+        </View>
+      ))}
+    </View>
+  ) : null;
 }

@@ -1,15 +1,25 @@
 import React, {useCallback, useState} from 'react';
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 
+import {MainTabsParamList} from 'types';
+import {Routes, VerifiedUserNavigationParamList} from 'navigation';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import globalStyles from 'constants/styles';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 
-export function Activity() {
-  const [filters, setFilters] = useState<string[]>([]);
+interface Props {
+  navigation: NavigationProp<VerifiedUserNavigationParamList>;
+  route: RouteProp<MainTabsParamList, Routes.Activity>;
+}
+
+export function Activity(props: Props) {
+  const {route} = props;
+
+  const [filters, setFilters] = useState<string[]>(route.params?.filters || []);
 
   const {t} = useTranslation();
 
@@ -30,7 +40,9 @@ export function Activity() {
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
         <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
-        <ActivityList filters={filters} />
+        <ScrollView>
+          <ActivityList filters={filters} />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

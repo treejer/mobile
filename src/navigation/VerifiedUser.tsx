@@ -19,7 +19,9 @@ export type VerifiedUserNavigationParamList = {
   [Routes.TreeSubmission]: undefined;
   [Routes.GreenBlock]: undefined;
   [Routes.Withdraw]: undefined;
-  [Routes.Activity]: undefined;
+  [Routes.Activity]?: {
+    filters: string[];
+  };
 };
 
 export type VerifiedUserNavigationProp<ScreenName extends keyof VerifiedUserNavigationParamList> = LibraryProp<
