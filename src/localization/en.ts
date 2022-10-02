@@ -427,6 +427,7 @@ export const en = {
     eth: '{{amount}} ETH',
     dai: '{{amount}} DAI',
     new: 'New {{tempId}}',
+    all: 'All',
     verified: 'Verified',
     submitted: 'Submitted',
     updateSubmitted: 'Update Submitted',

@@ -6,68 +6,48 @@ import Icon from 'react-native-vector-icons/Feather';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
+import {isFilterSelected} from 'utilities/helpers/isFilterSelected';
 
 export type TActivityFilterProps = {
   filters: string[];
   onFilterOption: (option: string) => void;
 };
 
-const categories: {
-  label: string;
-  value: string;
-}[] = [
-  {label: 'all', value: ''},
-  {label: 'verified', value: 'verified'},
-  {label: 'submitted', value: 'submitted'},
-  {label: 'update submitted', value: 'update submitted'},
-  {label: 'update verified', value: 'update verified'},
-  {label: 'sent', value: 'sent'},
-  {label: 'received', value: 'received'},
-  {label: 'earned', value: 'earned'},
-];
+const categories = ['all', 'verified', 'submitted', 'updateSubmitted', 'updateVerified', 'sent', 'received', 'claimed'];
 
 export function ActivityFilter(props: TActivityFilterProps) {
   const {filters, onFilterOption} = props;
 
-  const [open, setOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const {t} = useTranslation();
 
-  const handleToggleAccordion = useCallback(() => setOpen(prevOpen => !prevOpen), []);
+  const handleToggleAccordion = useCallback(() => setIsOpen(prevOpen => !prevOpen), []);
 
   return (
     <View style={styles.container}>
       <Card style={styles.accordion}>
-        <View style={styles.row}>
+        <TouchableOpacity style={styles.row} onPress={handleToggleAccordion}>
           <Text style={styles.title}>{t('activities.filters')}</Text>
-          <TouchableOpacity onPress={handleToggleAccordion}>
-            <Icon
-              style={{marginTop: 4, transform: [{rotate: open ? '90deg' : '0deg'}]}}
-              name="chevron-down"
-              size={20}
-              color={colors.grayDarker}
-            />
-          </TouchableOpacity>
-        </View>
-        {open && (
+          <Icon
+            style={{marginTop: 4, transform: [{rotate: isOpen ? '90deg' : '0deg'}]}}
+            name="chevron-down"
+            size={20}
+            color={colors.grayDarker}
+          />
+        </TouchableOpacity>
+        {isOpen && (
           <>
             <Spacer />
             <View style={styles.categoryList}>
               {categories.map(category => (
                 <TouchableOpacity
-                  style={[
-                    styles.category,
-                    (filters.includes(category.value) || (filters.length === 0 && !category.value)) &&
-                      styles.selectedSlug,
-                  ]}
-                  onPress={() => onFilterOption(category.value)}
+                  key={category}
+                  style={[styles.category, isFilterSelected(filters, category) && styles.selectedSlug]}
+                  onPress={() => onFilterOption(category)}
                 >
-                  <Text
-                    style={
-                      (filters.includes(category.value) || (filters.length === 0 && !category.value)) && styles.slugText
-                    }
-                  >
-                    {category.label}
+                  <Text style={[styles.categoryText, isFilterSelected(filters, category) && styles.slugText]}>
+                    {t(`activities.${category}`)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -76,13 +56,13 @@ export function ActivityFilter(props: TActivityFilterProps) {
         )}
       </Card>
       <Spacer />
-      {filters.length > 0 && !open && (
+      {filters.length > 0 && !isOpen && (
         <View style={styles.selectedList}>
           {filters.map(filter => (
-            <TouchableOpacity style={styles.selectedSlug} onPress={() => onFilterOption(filter)} key={filter}>
+            <TouchableOpacity key={filter} style={styles.selectedSlug} onPress={() => onFilterOption(filter)}>
               <Icon name="x-circle" size={20} color={colors.white} />
               <Spacer />
-              <Text style={styles.slugText}>{filter}</Text>
+              <Text style={styles.slugText}>{t(`activities.${filter}`)}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -114,6 +94,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '400',
+  },
   category: {
     backgroundColor: colors.khaki,
     color: colors.grayDarker,
@@ -134,6 +118,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   slugText: {
+    fontSize: 14,
+    fontWeight: '400',
     color: colors.white,
   },
   selectedList: {

@@ -5,7 +5,6 @@ export function shortenedString(text: string, length: number, dots: number) {
     : text;
 }
 
-export function wrapUpString(text: string, dots: number) {
-  const cutIndex = text.length - dots;
+export function wrapUpString(text: string, cutIndex: number, dots: number) {
   return text.length > dots ? `${text.slice(0, cutIndex)}${new Array(dots + 1).join('.')}` : text;
 }

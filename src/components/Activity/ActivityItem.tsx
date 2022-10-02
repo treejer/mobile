@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TFunction, useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
@@ -49,6 +49,10 @@ export function ActivityItem(props: TActivityItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const {t} = useTranslation();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [props]);
 
   const bgTree = useMemo(
     () => ({
@@ -181,13 +185,13 @@ export function MoreDetail(props: TMoreDetailProps) {
   }, []);
 
   return (
-    <View style={{width: '100%'}}>
+    <View style={styles.moreContainer}>
       <View style={[styles.row, {justifyContent: 'space-between'}]}>
         <Text style={styles.receipt} onPress={handleOpenInBrowser}>
           {t('activities.receipt')} <IIcon name="open-outline" size={14} />
         </Text>
         <Text style={styles.address} onPress={handleCopy}>
-          {wrapUpString(address, 3)} <Icon name="copy" size={14} />
+          {wrapUpString(address, 20, 3)} <Icon name="copy" size={14} />
         </Text>
       </View>
       <Spacer times={3} />
@@ -202,7 +206,6 @@ const styles = StyleSheet.create({
   open: {
     marginTop: -9,
     marginBottom: 24,
-    alignItems: 'flex-start',
   },
   container: {
     width: 358,
@@ -247,6 +250,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.grayLight,
   },
+  moreContainer: {
+    width: '100%',
+  },
   receipt: {
     fontSize: 14,
     color: '#5D5FEF',
@@ -256,8 +262,8 @@ const styles = StyleSheet.create({
     color: colors.grayLight,
   },
   showMore: {
-    ...globalStyles.textCenter,
     fontSize: 16,
+    textAlign: 'center',
     color: colors.grayDarker,
   },
 });
