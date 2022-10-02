@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import {ActivityItem, ActivityStatus, ContractTypes, TActivityItemProps} from 'components/Activity/ActivityItem';
 import globalStyles from 'constants/styles';
@@ -106,7 +106,7 @@ export function ActivityList(props: TActivityListProps) {
   }, [filters]);
 
   return activities && activities.length ? (
-    <View>
+    <View style={styles.container}>
       {activities.map((activity, index) => (
         <View style={globalStyles.alignItemsCenter} key={activity.address}>
           <ActivityItem {...activity} isLast={activities && activities?.length - 1 === index} />
@@ -115,3 +115,9 @@ export function ActivityList(props: TActivityListProps) {
     </View>
   ) : null;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+});

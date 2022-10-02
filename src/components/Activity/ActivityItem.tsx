@@ -111,7 +111,7 @@ export function ActivityItem(props: TActivityItemProps) {
               <Text style={styles.status}>{t(`activities.${status}`)}</Text>
               <Spacer />
               <Icon
-                style={{marginTop: 4, transform: [{rotate: isOpen ? '90deg' : '0deg'}]}}
+                style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
                 name="chevron-down"
                 size={20}
                 color={colors.grayLight}

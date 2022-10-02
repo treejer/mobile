@@ -223,10 +223,12 @@ export function TransferScreen() {
               daiBalance={daiBalance}
               redeeming={redeeming}
             />
-            <Spacer times={8} />
           </View>
           {!dai && !planterWithdrawableBalance ? (
-            <WithdrawHistory />
+            <>
+              <Spacer times={8} />
+              <WithdrawHistory />
+            </>
           ) : (
             !!daiBalance && (
               <TransferForm

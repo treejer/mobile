@@ -30,7 +30,7 @@ export function ActivityFilter(props: TActivityFilterProps) {
         <TouchableOpacity style={styles.row} onPress={handleToggleAccordion}>
           <Text style={styles.title}>{t('activities.filters')}</Text>
           <Icon
-            style={{marginTop: 4, transform: [{rotate: isOpen ? '90deg' : '0deg'}]}}
+            style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
             name="chevron-down"
             size={20}
             color={colors.grayDarker}

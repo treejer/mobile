@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
@@ -40,10 +40,16 @@ export function Activity(props: Props) {
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
         <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
-        <ScrollView>
+        <ScrollView style={styles.scrollView}>
           <ActivityList filters={filters} />
         </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    width: '100%',
+  },
+});

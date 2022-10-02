@@ -6,5 +6,6 @@ Profile screens
 - [SavedArea](./SavedAreas) screen: downloaded areas
 - [SelectOnMapVerifyProfile](./SelectOnMapVerifyProfile) screen: select user location for verification
 - [Settings](./Settings) screen: settings screen for change language and change the way transaction fee payment
+- [Support](./Support) screen: contact with RangerTreejer support team
 - [VerifyPending](./VerifyPending) screen: pending screen in verification
 - [VerifyProfile](./VerifyProfile) screen: verification stepper screen

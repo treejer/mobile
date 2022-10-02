@@ -1,5 +1,6 @@
 # components
 
-> Component that used in Support screen
+> Component that used in profile screens
 
 - [SupportItem](SupportItem.tsx)
+- [ActivityFilter](./ActivityFilter.tsx)
