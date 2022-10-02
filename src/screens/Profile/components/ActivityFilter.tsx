@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: '400',
+    color: colors.grayLight,
   },
   category: {
     backgroundColor: colors.khaki,
