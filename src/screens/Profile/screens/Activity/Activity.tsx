@@ -10,6 +10,7 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import globalStyles from 'constants/styles';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
+import Spacer from 'components/Spacer';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -42,6 +43,7 @@ export function Activity(props: Props) {
         <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
         <ScrollView style={styles.scrollView}>
           <ActivityList filters={filters} />
+          <Spacer times={6} />
         </ScrollView>
       </View>
     </SafeAreaView>
