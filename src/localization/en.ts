@@ -142,6 +142,7 @@ export const en = {
     photoUpdated: 'Your photo is being uploaded',
     updateTree: 'Update tree',
     submitTree: 'Submit a new tree',
+    model: 'Models',
     takePhoto: 'Take a photo of the tree',
     treeLocation: 'Submit tree location',
     updateTreeLocation: 'Update Tree Location',
@@ -413,5 +414,10 @@ export const en = {
       fee: "you can't submit this transaction",
       INVALID_ARGUMENT: 'Recipient Address is invalid',
     },
+  },
+  selectModels: {
+    title: 'Select Models',
+    plant: 'Start Planting',
+    choose: 'choose one of the models above',
   },
 };

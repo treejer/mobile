@@ -19,4 +19,15 @@ export const colors = {
   warning: '#d9caa9',
   white: '#FFF',
   info: '#424242',
+  smShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowBlur: 4,
+    elevation: 2,
+  },
 };
