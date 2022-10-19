@@ -1,6 +1,5 @@
 // @ts-nocheck
 import MaticLogo from './matic-network-logo-vector.png';
-import RinkebyLogo from './rinkeby-logo.jpeg';
 import TreejerIcon from './icon.png';
 import RotateIcon from './rotate.png';
 import NoWalletImage from './no-wallet.png';
@@ -13,10 +12,10 @@ import SingUp from './sign-up.png';
 import StableDaiCoin from './stableCoin.png';
 import TreejerDaiCoin from './treejerCoin.png';
 import QrFrame from './qrFrame.png';
+import GoerliLogo from './goerli-logo.png';
 
 export {
   MaticLogo,
-  RinkebyLogo,
   TreejerIcon,
   RotateIcon,
   NoWalletImage,
@@ -29,4 +28,5 @@ export {
   StableDaiCoin,
   TreejerDaiCoin,
   QrFrame,
+  GoerliLogo,
 };
