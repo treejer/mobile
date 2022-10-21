@@ -75,6 +75,11 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     inputRef?.current?.blur();
   }, [count, handleStart]);
 
+  const handleSelectModels = useCallback(() => {
+    navigation.navigate(Routes.SelectModels);
+    inputRef?.current?.blur();
+  }, []);
+
   const handleFocus = () => {
     setIsSingle(false);
     setIsFocused(true);
@@ -134,6 +139,12 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
             onChangeText={handleChangeNurseryCount}
             returnKeyType="done"
           />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectModels}>
+        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
+        <View style={{flex: 1, paddingHorizontal: 16}}>
+          <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.models')}</Text>
         </View>
       </TouchableOpacity>
       {isSingle === true && (

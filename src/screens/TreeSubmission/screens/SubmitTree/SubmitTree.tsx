@@ -40,7 +40,7 @@ import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubm
 import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useSettings} from '../../../../redux/modules/settings/settings';
-import {useConfig, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {useConfig, useTreeFactory, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -64,6 +64,7 @@ function SubmitTree(props: Props) {
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
   const isConnected = useNetInfoConnected();
+  const treeFactory = useTreeFactory();
 
   const birthDay = currentTimestamp();
 
@@ -185,7 +186,7 @@ function SubmitTree(props: Props) {
     let receipt;
     if (typeof journey?.treeIdToPlant !== 'undefined') {
       console.log('here plant tree', Hex2Dec(journey.treeIdToPlant));
-      // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant),metaDataHash, birthDay, 0);
+      const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0);
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
       receipt = await sendTransactionWithGSN(
@@ -285,6 +286,7 @@ function SubmitTree(props: Props) {
         mode: AlertMode.Error,
       });
       console.warn('Error', error);
+      console.log('Error', error);
     }
     setSubmitting(false);
   }, [

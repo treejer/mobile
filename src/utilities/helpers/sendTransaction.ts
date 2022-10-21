@@ -1,7 +1,8 @@
 import {RelayProvider} from '@opengsn/provider';
-import {ContractType, NetworkConfig} from 'services/config';
-import Web3 from 'services/Magic';
 import {TransactionReceipt} from 'web3-core';
+
+import Web3 from 'services/Magic';
+import {ContractType, NetworkConfig} from 'services/config';
 
 export async function sendTransactionWithGSN(
   config: NetworkConfig,
@@ -30,10 +31,15 @@ export async function sendTransactionWithGSN(
   };
   console.log(_config, '<== config sendTransactionWithGSN');
 
+  if (!useGSN) {
+    return sendTransactionWithoutGsn(config, contractType, web3, wallet, args, method);
+  }
+
   const gsnProvider = await RelayProvider.newProvider({
     provider: web3.currentProvider as any,
     config: _config,
   }).init();
+
   console.log('2 - Relay provider created', config.isMainnet);
 
   // gsnProvider.addAccount(wallet);
@@ -55,5 +61,24 @@ export async function sendTransactionWithGSN(
     gas: 1e6,
     gasPrice,
     useGSN,
+  }) as TransactionReceipt;
+}
+
+export async function sendTransactionWithoutGsn(
+  config: NetworkConfig,
+  contractType: ContractType,
+  web3: Web3,
+  wallet: string,
+  args: any,
+  method: string,
+) {
+  console.log('planting without GSN');
+  const contract = config.contracts[contractType];
+  const gasPrice = await web3.eth.getGasPrice();
+  const ethContract = new web3.eth.Contract(contract.abi, contract.address);
+  return ethContract.methods[method](...args).send({
+    from: wallet,
+    gas: 1e6,
+    gasPrice,
   }) as TransactionReceipt;
 }

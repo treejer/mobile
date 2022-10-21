@@ -21,7 +21,7 @@ export function SelectNetwork(props: SelectNetworkProps) {
 
   const networks = useMemo(
     () => ({
-      test: [BlockchainNetwork.Rinkeby, BlockchainNetwork.MaticTest],
+      test: [BlockchainNetwork.Goerli, BlockchainNetwork.MaticTest],
       main: [BlockchainNetwork.MaticMain],
     }),
     [],

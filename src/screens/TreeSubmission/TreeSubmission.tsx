@@ -1,19 +1,20 @@
 import React, {useEffect} from 'react';
 import {Route, NavigationProp} from '@react-navigation/native';
-import {TreeSubmissionRouteParamList} from 'types';
 import {useQuery} from '@apollo/client';
-import TreeDetailQuery, {
-  TreeDetailQueryQueryData,
-} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 
+import {Routes} from 'navigation';
+import {TreeSubmissionRouteParamList} from 'types';
 import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
 import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
-import {Routes} from 'navigation';
-import {useCurrentJourney} from 'services/currentJourney';
 import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
+import {SelectModels} from 'screens/TreeSubmission/screens/SelectModels/SelectModels';
+import TreeDetailQuery, {
+  TreeDetailQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {useCurrentJourney} from 'services/currentJourney';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
@@ -66,6 +67,9 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
     >
       <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
         {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>
+        {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>
       <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
         {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}

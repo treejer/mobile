@@ -416,6 +416,11 @@ export const en = {
       INVALID_ARGUMENT: 'Recipient Address is invalid',
     },
   },
+  selectModels: {
+    title: 'Select Models',
+    plant: 'Start Planting',
+    choose: 'choose one of the models above',
+  },
   supports: {
     chatOnline: 'Chat Online',
     discord: 'Join Discord',

@@ -17,6 +17,8 @@ import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useUserWeb3} from '../redux/modules/web3/web3';
 import {useSettings} from '../redux/modules/settings/settings';
 import {useProfile, UserStatus} from '../redux/modules/profile/profile';
+import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType';
+import {SelectModels} from 'screens/TreeSubmission/screens/SelectModels/SelectModels';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -60,6 +62,7 @@ export enum Routes {
   GreenBlock = 'GreenBlock',
   SelectPhoto = 'SelectPhoto',
   SelectPlantType = 'SelectPlantType',
+  SelectModels = 'SelectModels',
   SubmitTree = 'SubmitTree',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
