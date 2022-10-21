@@ -1,15 +1,19 @@
 import React, {useCallback, useState} from 'react';
 import {FlatList, ListRenderItemInfo, StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
+import {Routes} from 'navigation';
+import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import Spacer from 'components/Spacer';
 import Button from 'components/Button';
 import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {TreeImage} from '../../../../../assets/icons';
 
 const staticModels: TPlantModel[] = [
@@ -71,11 +75,20 @@ const staticModels: TPlantModel[] = [
   },
 ];
 
-export function SelectModels() {
+type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
+type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
+
+export interface SelectModelsProps {
+  navigation: NavigationProps;
+  route: RouteNavigationProps;
+  plantTreePermissions: TUsePlantTreePermissions;
+}
+
+export function SelectModels(props: SelectModelsProps) {
+  const {navigation} = props;
+
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const {t} = useTranslation();
-
-  const navigation = useNavigation();
 
   const handleContinue = useCallback(() => {
     console.log('plant button');
@@ -117,7 +130,7 @@ export function SelectModels() {
         ) : (
           <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
         )}
-        <Spacer times={4} />
+        <Spacer times={10} />
       </View>
     </SafeAreaView>
   );

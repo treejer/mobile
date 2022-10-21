@@ -172,7 +172,7 @@ const config: Config = {
         abi: require('../abis/PlanterFund.json'),
       },
       Dai: {
-        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_DAI_TOKEN_ADDRESS || '',
         abi: require('../abis/Dai.json'),
       },
     },

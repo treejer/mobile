@@ -142,7 +142,7 @@ export const en = {
     photoUpdated: 'Your photo is being uploaded',
     updateTree: 'Update tree',
     submitTree: 'Submit a new tree',
-    model: 'Models',
+    models: 'Models',
     takePhoto: 'Take a photo of the tree',
     treeLocation: 'Submit tree location',
     updateTreeLocation: 'Update Tree Location',
