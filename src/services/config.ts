@@ -1,8 +1,8 @@
 /* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
-import {ImageURISource, Platform} from 'react-native';
+import {ImageURISource} from 'react-native';
 
-import {RinkebyLogo, MaticLogo} from '../../assets/images';
+import {MaticLogo, GoerliLogo} from '../../assets/images';
 
 console.log(process.env);
 
@@ -33,7 +33,7 @@ export interface StorageKeys {
 }
 
 export enum BlockchainNetwork {
-  Rinkeby = 'RINKEYBY',
+  Goerli = 'GOERLI',
   MaticTest = 'MATIC_TEST',
   MaticMain = 'MATIC_MAIN',
 }
@@ -61,9 +61,9 @@ export interface NetworkConfig {
 }
 
 export interface Config {
-  [BlockchainNetwork.Rinkeby]: NetworkConfig;
   [BlockchainNetwork.MaticTest]: NetworkConfig;
   [BlockchainNetwork.MaticMain]: NetworkConfig;
+  [BlockchainNetwork.Goerli]: NetworkConfig;
 }
 
 export function formatUrl(url?: string) {
@@ -153,53 +153,53 @@ const config: Config = {
     magicNetwork: BlockchainNetwork.MaticTest,
     chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID || '',
   },
-  [BlockchainNetwork.Rinkeby]: {
+  [BlockchainNetwork.Goerli]: {
     contracts: {
       TreeFactory: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_TREE_FACTORY_ADDRESS || '',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_TREE_FACTORY_ADDRESS || '',
         abi: require('../abis/TreeFactory.json'),
       },
       Paymaster: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PAYMASTER_ADDRESS || '',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_PAYMASTER_ADDRESS || '',
         abi: require('../abis/WhitelistPaymaster.json'),
       },
       Planter: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_ADDRESS || '',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_PLANTER_ADDRESS || '',
         abi: require('../abis/Planter.json'),
       },
       PlanterFund: {
-        address: process.env.REACT_NATIVE_RINKEBY_CONTRACT_PLANTER_FUND_ADDRESS || '',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_PLANTER_FUND_ADDRESS || '',
         abi: require('../abis/PlanterFund.json'),
       },
       Dai: {
-        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_DAI_TOKEN_ADDRESS || '',
         abi: require('../abis/Dai.json'),
       },
     },
-    networkId: Number(process.env.REACT_NATIVE_RINKEBY_WEB3_NETWORK_ID || 3),
+    networkId: Number(process.env.REACT_NATIVE_GOERLI_WEB3_NETWORK_ID || 3),
     isMainnet: false,
-    web3Url: process.env.REACT_NATIVE_RINKEBY_WEB3_PROVIDER || '',
+    web3Url: process.env.REACT_NATIVE_GOERLI_WEB3_PROVIDER || '',
     // treejerApiUrl: formatUrl(
     //   isProd
-    //     ? process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL
+    //     ? process.env.REACT_NATIVE_GOERLI_TREEJER_API_URL
     //     : Platform.select({
     //         android: 'http://10.0.2.2:3000/',
     //         default: 'http://localhost:3000/',
     //       }),
     // ),
-    treejerApiUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_TREEJER_API_URL),
-    thegraphUrl: formatUrl(process.env.REACT_NATIVE_RINKEBY_THE_GRAPH_URL),
-    ipfsPostURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_POST_URL),
-    ipfsGetURL: formatUrl(process.env.REACT_NATIVE_RINKEBY_IPFS_GET_URL),
-    preferredRelays: process.env.REACT_NATIVE_RINKEBY_WEB3_PREFERREDRELAYS || '',
-    relayLookupWindowBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
-    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_RINKEBY_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
-    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_RINKEBY_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
-    learnMoreLink: process.env.REACT_NATIVE_RINKEBY_LEARN_MORE_URL || '',
-    avatarBaseUrl: process.env.REACT_NATIVE_RINKEBY_AVATAR_BASE_URL || '',
-    magicApiKey: process.env.REACT_NATIVE_RINKEBY_MAGIC_API_KEY || '',
-    magicNetwork: BlockchainNetwork.Rinkeby,
-    chainId: process.env.REACT_NATIVE_RINKEBY_CHAIN_ID || '',
+    treejerApiUrl: formatUrl(process.env.REACT_NATIVE_GOERLI_TREEJER_API_URL),
+    thegraphUrl: formatUrl(process.env.REACT_NATIVE_GOERLI_THE_GRAPH_URL),
+    ipfsPostURL: formatUrl(process.env.REACT_NATIVE_GOERLI_IPFS_POST_URL),
+    ipfsGetURL: formatUrl(process.env.REACT_NATIVE_GOERLI_IPFS_GET_URL),
+    preferredRelays: process.env.REACT_NATIVE_GOERLI_WEB3_PREFERREDRELAYS || '',
+    relayLookupWindowBlocks: process.env.REACT_NATIVE_GOERLI_WEB3_RELAY_LOOKUP_WINDOW_BLOCKS || '',
+    relayRegistrationLookupBlocks: process.env.REACT_NATIVE_GOERLI_WEB3_RELAY_REGISTRATION_LOOKUP_BLOCKS || '',
+    pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_GOERLI_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
+    learnMoreLink: process.env.REACT_NATIVE_GOERLI_LEARN_MORE_URL || '',
+    avatarBaseUrl: process.env.REACT_NATIVE_GOERLI_AVATAR_BASE_URL || '',
+    magicApiKey: process.env.REACT_NATIVE_GOERLI_MAGIC_API_KEY || '',
+    magicNetwork: BlockchainNetwork.Goerli,
+    chainId: process.env.REACT_NATIVE_GOERLI_CHAIN_ID || '',
   },
 };
 
@@ -237,11 +237,11 @@ export type Networks = {
 };
 
 export const networks: Networks = {
-  [BlockchainNetwork.Rinkeby]: {
-    title: 'Rinkeby',
-    network: BlockchainNetwork.Rinkeby,
-    details: 'This network is development purpose only on ethereum',
-    logo: RinkebyLogo,
+  [BlockchainNetwork.Goerli]: {
+    title: 'Goerli',
+    network: BlockchainNetwork.Goerli,
+    details: 'This is development purpose only on ethereum',
+    logo: GoerliLogo,
   },
   [BlockchainNetwork.MaticTest]: {
     title: 'Matic TEST',
