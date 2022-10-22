@@ -18,6 +18,7 @@ import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {EthCoin, MaticCoin, StableDaiCoin, Tree} from '../../../assets/images';
 import {GetUserActivitiesQueryData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
+import {useConfig} from '../../redux/modules/web3/web3';
 
 export enum ActivityStatus {
   PlanterJoined = 'PlanterJoined',
@@ -50,7 +51,13 @@ export function ActivityItem(props: TActivityItemProps) {
 
   const {t} = useTranslation();
 
-  const iconName = [ActivityStatus.PlanterJoined, ActivityStatus.OrganizationJoined] ? 'user-plus' : 'user-x';
+  const iconName = [ActivityStatus.PlanterJoined, ActivityStatus.OrganizationJoined].includes(
+    activity.event as ActivityStatus,
+  )
+    ? 'user-plus'
+    : ActivityStatus.RejectedByOrganization === activity.event
+    ? 'user-x'
+    : 'user';
 
   useEffect(() => {
     setIsOpen(false);
@@ -90,7 +97,7 @@ export function ActivityItem(props: TActivityItemProps) {
             </View>
           ) : (
             <View style={[styles.image, {backgroundColor: bgTree.gray, borderRadius: 22}]}>
-              <FIcon name={iconName} size={22} color={colors.white} />
+              <Icon name={iconName} size={22} color={colors.white} />
             </View>
           )}
           <Spacer />
@@ -116,7 +123,7 @@ export function ActivityItem(props: TActivityItemProps) {
             <Spacer />
             <Hr styles={{width: '100%'}} />
             <Spacer times={4} />
-            <MoreDetail t={t} address={activity.transactionHash} />
+            <MoreDetail t={t} txHash={activity.transactionHash} />
           </>
         )}
       </View>
@@ -128,22 +135,29 @@ export function ActivityItem(props: TActivityItemProps) {
 
 export type TMoreDetailProps = {
   t: TFunction<'translation', undefined>;
-  address: string;
+  txHash: string;
 };
 
 export function MoreDetail(props: TMoreDetailProps) {
-  const {t, address} = props;
+  const {t, txHash} = props;
 
   const toast = useToast();
 
+  const {explorerUrl} = useConfig();
+
+  console.log(explorerUrl, 'explorer ');
+
   const handleCopy = useCallback(() => {
-    Clipboard.setString(address);
+    Clipboard.setString(txHash);
     toast.show(t('myProfile.copied'), {type: AlertMode.Success});
-  }, [address]);
+  }, [txHash]);
 
   const handleOpenInBrowser = useCallback(async () => {
+    console.log('my log is hereeeee');
+
     if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.open(address, {
+      console.log('my log is here');
+      await InAppBrowser.open(`${explorerUrl}/tx/${txHash}`, {
         // iOS Properties
         dismissButtonStyle: 'cancel',
         preferredBarTintColor: colors.green,
@@ -183,7 +197,7 @@ export function MoreDetail(props: TMoreDetailProps) {
           {t('activities.receipt')} <IIcon name="open-outline" size={14} />
         </Text>
         <Text style={styles.address} onPress={handleCopy}>
-          {wrapUpString(address, 20, 3)} <Icon name="copy" size={14} />
+          {wrapUpString(`${explorerUrl}/tx/${txHash}`, 20, 3)} <Icon name="copy" size={14} />
         </Text>
       </View>
       <Spacer times={3} />

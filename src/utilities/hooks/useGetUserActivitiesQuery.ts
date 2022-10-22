@@ -29,6 +29,8 @@ export function useGetUserActivitiesQuery(wallet: string, event_in: ActivityStat
     },
   );
 
+  console.log(data, 'data is here');
+
   const refetch = useCallback(async (event_in: ActivityStatus[]) => {
     try {
       await activityQueryData.refetch({

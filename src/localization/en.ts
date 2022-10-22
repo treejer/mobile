@@ -154,7 +154,7 @@ export const en = {
     focusedNursery: 'How many trees to plant?',
     nurseryCount: 'Nursery ({{count}} trees)',
     startToPlant: 'Start To Plant',
-
+    models: 'Models',
     startToPlantNursery: 'Start To Plant {{count}} trees',
     update: 'Update',
     continue: 'Continue',

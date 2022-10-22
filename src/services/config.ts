@@ -58,6 +58,7 @@ export interface NetworkConfig {
   magicApiKey: string;
   magicNetwork: BlockchainNetwork;
   chainId: string;
+  explorerUrl: string;
 }
 
 export interface Config {
@@ -112,6 +113,7 @@ const config: Config = {
     magicApiKey: process.env.REACT_NATIVE_MATIC_MAIN_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticMain,
     chainId: process.env.REACT_NATIVE_MATIC_MAIN_CHAIN_ID || '',
+    explorerUrl: process.env.REACT_NATIVE_MATIC_MAIN_EXPLORER_URL || '',
   },
   [BlockchainNetwork.MaticTest]: {
     contracts: {
@@ -152,6 +154,7 @@ const config: Config = {
     magicApiKey: process.env.REACT_NATIVE_MATIC_TEST_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticTest,
     chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID || '',
+    explorerUrl: process.env.REACT_NATIVE_MATIC_TEST_EXPLORER_URL || '',
   },
   [BlockchainNetwork.Goerli]: {
     contracts: {
@@ -200,6 +203,7 @@ const config: Config = {
     magicApiKey: process.env.REACT_NATIVE_GOERLI_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.Goerli,
     chainId: process.env.REACT_NATIVE_GOERLI_CHAIN_ID || '',
+    explorerUrl: process.env.REACT_NATIVE_GOERLI_EXPLORER_URL || '',
   },
 };
 
