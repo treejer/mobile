@@ -6,7 +6,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {ActivityList} from 'components/Activity/ActivityList';
-import {Hr} from 'components/common/Hr';
+import {Hr} from 'components/Common/Hr';
 
 export type TWithdrawHistory = {
   id: string | number;

@@ -8,7 +8,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {useToast} from 'react-native-toast-notifications';
 import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 
-import {Hr} from 'components/common/Hr';
+import {Hr} from 'components/Common/Hr';
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
@@ -17,13 +17,16 @@ import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {EthCoin, MaticCoin, StableDaiCoin, Tree} from '../../../assets/images';
 
 export enum ActivityStatus {
-  SUBMITTED = 'submitted',
-  VERIFIED = 'verified',
-  UPDATE_SUBMITTED = 'updateSubmitted',
-  UPDATE_VERIFIED = 'updateVerified',
-  CLAIMED = 'claimed',
-  SENT = 'sent',
-  RECEIVED = 'received',
+  PlanterJoined = 'PlanterJoined',
+  OrganizationJoined = 'OrganizationJoined',
+  PlanterUpdated = 'PlanterUpdated',
+  AcceptedByOrganization = 'AcceptedByOrganization',
+  RejectedByOrganization = 'RejectedByOrganization',
+  OrganizationMemberShareUpdated = 'OrganizationMemberShareUpdated',
+  PlanterTotalClaimedUpdated = 'PlanterTotalClaimedUpdated',
+  BalanceWithdrew = 'BalanceWithdrew',
+  TreePlanted = 'TreePlanted',
+  TreeUpdated = 'TreeUpdated',
 }
 
 export enum ContractTypes {

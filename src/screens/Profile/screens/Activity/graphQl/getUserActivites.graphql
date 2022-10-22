@@ -1,0 +1,15 @@
+query GetUserActivities($address: String!, $event_in: [String]) {
+    addressHistories(where: {address: $address, event_in: $event_in}) {
+        address,
+        blockNumber,
+        count,
+        createdAt,
+        event,
+        from,
+        id,
+        transactionHash,
+        type,
+        typeId,
+        value
+    }
+}

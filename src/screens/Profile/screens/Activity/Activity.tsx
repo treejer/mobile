@@ -3,14 +3,20 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {useQuery} from '@apollo/client';
 
 import {MainTabsParamList} from 'types';
 import {Routes, VerifiedUserNavigationParamList} from 'navigation';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import globalStyles from 'constants/styles';
-import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 import Spacer from 'components/Spacer';
+import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
+import GetUserActivities, {
+  GetUserActivitiesQueryData,
+} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
+import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {ActivityStatus} from 'components/Activity/ActivityItem';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -20,7 +26,30 @@ interface Props {
 export function Activity(props: Props) {
   const {route} = props;
 
-  const [filters, setFilters] = useState<string[]>(route.params?.filters || []);
+  const event_in = route.params?.filters;
+
+  const wallet = useWalletAccount();
+
+  const {data} = useQuery<GetUserActivitiesQueryData, GetUserActivitiesQueryData.Variables>(GetUserActivities, {
+    variables: {
+      address: wallet,
+      event_in: event_in || [
+        ActivityStatus.TreePlanted,
+        ActivityStatus.PlanterJoined,
+        ActivityStatus.TreeUpdated,
+        ActivityStatus.PlanterUpdated,
+        ActivityStatus.PlanterTotalClaimedUpdated,
+        ActivityStatus.AcceptedByOrganization,
+        ActivityStatus.BalanceWithdrew,
+        ActivityStatus.OrganizationJoined,
+        ActivityStatus.RejectedByOrganization,
+      ],
+    },
+  });
+
+  console.log(data, 'data is here');
+
+  const [filters, setFilters] = useState<string[]>(event_in || []);
 
   const {t} = useTranslation();
 
