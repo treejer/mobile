@@ -16,7 +16,6 @@ export function ContainerLoading(props: ContainerLoadingProps) {
     <View
       style={[
         {
-          zIndex: 9999,
           flex: Number(container),
           position: 'relative',
           backgroundColor: loading ? colors.grayOpacity : undefined,

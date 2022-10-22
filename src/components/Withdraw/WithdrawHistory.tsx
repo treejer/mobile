@@ -25,7 +25,8 @@ export function WithdrawHistory() {
         <Spacer />
         <Hr />
       </View>
-      <ActivityList filters={['sent', 'claimed']} />
+      <Text>activity list</Text>
+      {/*<ActivityList filters={['sent', 'claimed']} />*/}
     </View>
   );
 }

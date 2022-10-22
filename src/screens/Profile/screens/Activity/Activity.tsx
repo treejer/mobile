@@ -15,6 +15,7 @@ import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQue
 import globalStyles from 'constants/styles';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -29,7 +30,13 @@ export function Activity(props: Props) {
   const [filters, setFilters] = useState<ActivityStatus[]>((event_in as ActivityStatus[]) || []);
   const wallet = useWalletAccount();
 
-  const {loading, addressHistories: activities} = useGetUserActivitiesQuery(wallet, filters);
+  const {loading, addressHistories: activities, refetch} = useGetUserActivitiesQuery(wallet, filters);
+
+  useRefocusEffect(() => {
+    (async () => {
+      await refetch();
+    })();
+  });
 
   const {t} = useTranslation();
 

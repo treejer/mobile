@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   slugText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
     color: colors.white,
   },

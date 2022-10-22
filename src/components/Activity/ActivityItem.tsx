@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TFunction, useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
 import IIcon from 'react-native-vector-icons/Ionicons';
@@ -19,6 +19,7 @@ import {EthCoin, MaticCoin, StableDaiCoin, Tree} from '../../../assets/images';
 import {GetUserActivitiesQueryData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {useConfig} from '../../redux/modules/web3/web3';
+import {isWeb} from 'utilities/helpers/web';
 
 export enum ActivityStatus {
   PlanterJoined = 'PlanterJoined',
@@ -67,7 +68,7 @@ export function ActivityItem(props: TActivityItemProps) {
 
   const bgTree = useMemo(
     () => ({
-      [ActivityStatus.TreePlanted]: colors.green,
+      [ActivityStatus.TreePlanted]: colors.yellow,
       [ActivityStatus.TreeUpdated]: colors.pink,
       gray: colors.gray,
     }),
@@ -77,7 +78,9 @@ export function ActivityItem(props: TActivityItemProps) {
   const title = useMemo(
     () =>
       [ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus)
-        ? `#${Hex2Dec(activity.typeId)} count: ${activity.count}`
+        ? activity.event === ActivityStatus.TreePlanted
+          ? t('activities.new', {tempId: Hex2Dec(activity.typeId)})
+          : `#${Hex2Dec(activity.typeId)}`
         : t(`activities.${activity.event}`),
     [],
   );
@@ -104,6 +107,7 @@ export function ActivityItem(props: TActivityItemProps) {
           <View style={[styles.row, styles.detail]}>
             <View>
               <Text style={styles.title}>{title}</Text>
+              <Spacer times={0.5} />
               <Text style={styles.date}>{date}</Text>
             </View>
             <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
@@ -153,10 +157,10 @@ export function MoreDetail(props: TMoreDetailProps) {
   }, [txHash]);
 
   const handleOpenInBrowser = useCallback(async () => {
-    console.log('my log is hereeeee');
-
+    if (isWeb()) {
+      return Linking.openURL(`${explorerUrl}/tx/${txHash}`);
+    }
     if (await InAppBrowser.isAvailable()) {
-      console.log('my log is here');
       await InAppBrowser.open(`${explorerUrl}/tx/${txHash}`, {
         // iOS Properties
         dismissButtonStyle: 'cancel',
