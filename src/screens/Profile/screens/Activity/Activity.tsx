@@ -11,11 +11,11 @@ import {ActivityList} from 'components/Activity/ActivityList';
 import Spacer from 'components/Spacer';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import {ContainerLoading} from 'components/AppLoading/LoadingContainer';
-import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import globalStyles from 'constants/styles';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
+import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;

@@ -5,9 +5,9 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
+import {ActivityStatus} from 'components/Activity/ActivityItem';
 import {colors} from 'constants/values';
 import {isFilterSelected} from 'utilities/helpers/isFilterSelected';
-import {ActivityStatus} from 'components/Activity/ActivityItem';
 
 export type TActivityFilterProps = {
   filters: string[];

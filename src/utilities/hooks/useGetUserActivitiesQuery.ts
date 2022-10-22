@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
 import {useQuery} from '@apollo/client';
+
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import GetUserActivities, {
   GetUserActivitiesQueryData,
