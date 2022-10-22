@@ -166,7 +166,7 @@ type Query {
     trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
 
     settings: Settings
-    addressHistories(where: WhereAddressHistories): [AddressHistories!]!
+    addressHistories(where: WhereAddressHistories): [addressHistoriesResponse!]
 }
 
 #input ApplyInput {
@@ -218,18 +218,18 @@ type Settings {
     forceUpdate: ForceUpdateSetting
 }
 
-type AddressHistories {
-    id: String!
+type addressHistoriesResponse {
+    id: ID!
     address: String!
     event: String!
     from: String!
     transactionHash: String!
-    blockNumber: String!
+    blockNumber: Int!
     type: String!
     typeId: String!
-    value: String!
-    count: String!
-    createdAt: String!
+    value: Int!
+    count: Int!
+    createdAt: Int!
 }
 
 input WhereAddressHistories {

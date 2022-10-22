@@ -7,13 +7,26 @@ import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import {isFilterSelected} from 'utilities/helpers/isFilterSelected';
+import {ActivityStatus} from 'components/Activity/ActivityItem';
 
 export type TActivityFilterProps = {
   filters: string[];
   onFilterOption: (option: string) => void;
 };
 
-const categories = ['all', 'verified', 'submitted', 'updateSubmitted', 'updateVerified', 'sent', 'received', 'claimed'];
+const categories = [
+  'all',
+  ActivityStatus.TreePlanted,
+  ActivityStatus.TreeUpdated,
+  ActivityStatus.PlanterJoined,
+  ActivityStatus.PlanterUpdated,
+  ActivityStatus.OrganizationJoined,
+  ActivityStatus.AcceptedByOrganization,
+  ActivityStatus.RejectedByOrganization,
+  ActivityStatus.OrganizationMemberShareUpdated,
+  ActivityStatus.BalanceWithdrew,
+  ActivityStatus.PlanterTotalClaimedUpdated,
+];
 
 export function ActivityFilter(props: TActivityFilterProps) {
   const {filters, onFilterOption} = props;
@@ -95,7 +108,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '400',
     color: colors.grayLight,
   },

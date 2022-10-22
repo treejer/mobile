@@ -58,6 +58,7 @@
     "lodash": "4.17.21",
     "magic-sdk": "^10.0.0",
     "mapbox-gl": "2.7.0",
+    "moment": "^2.29.4",
     "node-libs-browser": "2.2.1",
     "qs": "6.10.3",
     "react": "17.0.2",

@@ -7,6 +7,7 @@ import FIcon from 'react-native-vector-icons/FontAwesome';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useToast} from 'react-native-toast-notifications';
 import {InAppBrowser} from 'react-native-inappbrowser-reborn';
+import moment from 'moment';
 
 import {Hr} from 'components/Common/Hr';
 import Spacer from 'components/Spacer';
@@ -15,6 +16,8 @@ import globalStyles from 'constants/styles';
 import {AlertMode} from 'utilities/helpers/alert';
 import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {EthCoin, MaticCoin, StableDaiCoin, Tree} from '../../../assets/images';
+import {GetUserActivitiesQueryData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
+import {Hex2Dec} from 'utilities/helpers/hex';
 
 export enum ActivityStatus {
   PlanterJoined = 'PlanterJoined',
@@ -36,45 +39,40 @@ export enum ContractTypes {
 }
 
 export type TActivityItemProps = {
-  tempId?: string;
-  treeId?: string;
-  amount?: string;
-  date: Date;
-  isLast?: boolean;
-  contract?: ContractTypes;
-  status: ActivityStatus;
-  address: string;
+  activity: GetUserActivitiesQueryData.AddressHistories;
+  isLast: boolean;
 };
 
 export function ActivityItem(props: TActivityItemProps) {
-  const {status, amount, contract, date, treeId, tempId, isLast, address} = props;
+  const {activity, isLast} = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const {t} = useTranslation();
 
+  const iconName = [ActivityStatus.PlanterJoined, ActivityStatus.OrganizationJoined] ? 'user-plus' : 'user-x';
+
   useEffect(() => {
     setIsOpen(false);
   }, [props]);
 
+  const date = moment(+activity.createdAt * 1000).format('lll');
+
   const bgTree = useMemo(
     () => ({
-      submitted: colors.yellow,
-      verified: colors.green,
-      updateSubmitted: colors.pink,
-      updateVerified: colors.grayOpacity,
+      [ActivityStatus.TreePlanted]: colors.green,
+      [ActivityStatus.TreeUpdated]: colors.pink,
+      gray: colors.gray,
     }),
     [],
   );
 
   const title = useMemo(
-    () => (!treeId && !tempId ? amount : status === ActivityStatus.SUBMITTED ? `New ${tempId}` : treeId),
-    [status, amount, tempId, treeId],
-  );
-
-  const image = useMemo(
-    () => (contract === ContractTypes.ETH ? EthCoin : contract === ContractTypes.MATIC ? MaticCoin : StableDaiCoin),
-    [contract],
+    () =>
+      [ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus)
+        ? `#${Hex2Dec(activity.typeId)} count: ${activity.count}`
+        : t(`activities.${activity.event}`),
+    [],
   );
 
   const handleOpenDetails = useCallback(() => {
@@ -86,32 +84,23 @@ export function ActivityItem(props: TActivityItemProps) {
       <Spacer />
       <View style={[styles.container, isOpen && [colors.smShadow, styles.open]]}>
         <View style={styles.row}>
-          {treeId || tempId ? (
-            <View style={[styles.image, {backgroundColor: bgTree[status]}]}>
+          {[ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus) ? (
+            <View style={[styles.image, {backgroundColor: bgTree[activity.event]}]}>
               <Image source={Tree} style={styles.tree} />
             </View>
           ) : (
-            <Image source={image} style={styles.image} />
+            <View style={[styles.image, {backgroundColor: bgTree.gray, borderRadius: 22}]}>
+              <FIcon name={iconName} size={22} color={colors.white} />
+            </View>
           )}
           <Spacer />
           <View style={[styles.row, styles.detail]}>
             <View>
-              <Text style={styles.title}>
-                {contract
-                  ? t(`activities.${contract}`, {amount: title})
-                  : status === ActivityStatus.SUBMITTED
-                  ? t(`activities.new`, {tempId})
-                  : title}
-                {status === ActivityStatus.VERIFIED ? (
-                  <Text style={styles.prev}>
-                    <FIcon name="long-arrow-left" /> {t('activities.new', {tempId})}
-                  </Text>
-                ) : null}
-              </Text>
-              <Text style={styles.date}>{date.toLocaleDateString()}</Text>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.date}>{date}</Text>
             </View>
             <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
-              <Text style={styles.status}>{t(`activities.${status}`)}</Text>
+              <Text style={styles.status}>{t(`activities.${activity.event}`)}</Text>
               <Spacer />
               <Icon
                 style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
@@ -127,7 +116,7 @@ export function ActivityItem(props: TActivityItemProps) {
             <Spacer />
             <Hr styles={{width: '100%'}} />
             <Spacer times={4} />
-            <MoreDetail t={t} address={address} />
+            <MoreDetail t={t} address={activity.transactionHash} />
           </>
         )}
       </View>
@@ -246,7 +235,7 @@ const styles = StyleSheet.create({
     color: colors.grayOpacity,
   },
   status: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.grayLight,
   },
   prev: {
