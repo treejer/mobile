@@ -30,4 +30,5 @@ export const colors = {
     shadowBlur: 4,
     elevation: 2,
   },
+  placeholder: '#C7C7CD',
 };

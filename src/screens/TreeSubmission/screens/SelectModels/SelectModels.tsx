@@ -140,26 +140,28 @@ export function SelectModels(props: SelectModelsProps) {
           keyExtractor={item => item.id}
         />
       </View>
-      <View style={styles.pHorizontal}>
-        <Spacer times={4} />
-        {selectedModel ? (
+      <View style={globalStyles.alignItemsCenter}>
+        <View style={styles.btnContainer}>
+          <Spacer times={4} />
+          {selectedModel ? (
+            <Button
+              onPress={handleContinue}
+              caption={t('selectModels.plant')}
+              variant="secondary"
+              style={styles.plantBtn}
+            />
+          ) : (
+            <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
+          )}
+          <Spacer />
           <Button
-            onPress={handleContinue}
-            caption={t('selectModels.plant')}
-            variant="secondary"
+            caption={t('selectModels.create')}
+            variant="primary"
+            onPress={handleNavigateToCreateModel}
             style={styles.plantBtn}
           />
-        ) : (
-          <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
-        )}
-        <Spacer />
-        <Button
-          caption={t('selectModels.create')}
-          variant="primary"
-          onPress={handleNavigateToCreateModel}
-          style={styles.plantBtn}
-        />
-        <Spacer times={10} />
+          <Spacer times={10} />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -173,8 +175,11 @@ const styles = StyleSheet.create({
   pHorizontal: {
     paddingHorizontal: 16,
   },
+  btnContainer: {
+    width: 360,
+  },
   plantBtn: {
-    paddingVertical: 8,
+    paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,

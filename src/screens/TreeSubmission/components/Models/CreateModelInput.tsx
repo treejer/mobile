@@ -1,30 +1,69 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {Control, Controller} from 'react-hook-form';
 import Card from 'components/Card';
 import {useTranslation} from 'react-i18next';
+import CountryPicker, {Country, CountryCode} from 'react-native-country-picker-modal';
 
 import {colors} from 'constants/values';
-import {TCreateModelForm} from 'screens/TreeSubmission/screens/SelectModels/CreateModel';
+import {isWeb} from 'utilities/helpers/web';
+import {TCreateModelForm} from 'screens/TreeSubmission/components/Models/CreateModelForm';
 
 export type TCreateModelInputProps = {
   control: Control<TCreateModelForm>;
   name: keyof TCreateModelForm;
+  value?: string;
   label: string;
   placeholder?: string;
   disabled?: boolean;
   error?: string;
+  preview?: string;
+  countryCode?: CountryCode;
+  onSelectCountry?: (country: Country) => void;
+  onCloseCountry?: () => void;
 };
 
 export function CreateModelInput(props: TCreateModelInputProps) {
-  const {control, name, error, placeholder, label, disabled} = props;
+  const {
+    control,
+    name,
+    value,
+    error,
+    placeholder,
+    label,
+    disabled,
+    preview,
+    countryCode,
+    onSelectCountry,
+    onCloseCountry,
+  } = props;
 
   const {t} = useTranslation();
 
-  return (
-    <View>
-      <Text style={styles.label}>{t(`createModel.form.${label}`)}</Text>
-      <Card style={[styles.inputContainer, disabled && styles.disableInput]}>
+  const ref = useRef();
+
+  const renderInput = () => {
+    if (name === 'country') {
+      return (
+        <View style={[styles.inputContainer, {paddingLeft: 0}]}>
+          <Text
+            style={[styles.input, disabled && styles.disableInput, {color: value ? colors.black : colors.placeholder}]}
+          >
+            {value || placeholder}
+          </Text>
+          <CountryPicker
+            countryCode={countryCode || 'US'}
+            withFlag
+            withAlphaFilter={!isWeb()}
+            withFilter
+            withEmoji
+            onSelect={onSelectCountry}
+            onClose={onCloseCountry}
+          />
+        </View>
+      );
+    } else {
+      return (
         <Controller
           control={control}
           name={name}
@@ -33,13 +72,22 @@ export function CreateModelInput(props: TCreateModelInputProps) {
               style={[styles.input, disabled && styles.disableInput]}
               editable={!disabled}
               placeholder={placeholder}
+              placeholderTextColor={colors.placeholder}
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
             />
           )}
         />
-      </Card>
+      );
+    }
+  };
+
+  return (
+    <View>
+      <Text style={styles.label}>{t(`createModel.form.${label}`)}</Text>
+      <Card style={[styles.inputContainer, disabled && styles.disableInput]}>{renderInput()}</Card>
+      {!disabled && !error && preview ? <Text style={styles.preview}>= ${preview}</Text> : null}
       {!disabled && error ? (
         <Text style={styles.errorMessage}>{t(`createModel.errors.${error}`, {field: name})}</Text>
       ) : null}
@@ -58,10 +106,13 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: colors.black,
   },
   disableInput: {
     backgroundColor: colors.khakiDark,
+    color: colors.gray,
+  },
+  preview: {
+    marginStart: 8,
     color: colors.gray,
   },
   label: {

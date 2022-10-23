@@ -72,6 +72,7 @@
     "react-native": "0.67.3",
     "react-native-camera": "^4.2.1",
     "react-native-confirmation-code-field": "7.3.0",
+    "react-native-country-picker-modal": "^2.0.0",
     "react-native-crypto": "2.2.0",
     "react-native-device-info": "8.4.9",
     "react-native-fs": "2.18.0",

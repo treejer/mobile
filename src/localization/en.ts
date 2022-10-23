@@ -440,5 +440,6 @@ export const en = {
       required: '{{ field }} field is required',
       number: '{{ field }} field must be number',
     },
+    createYours: 'Create your planting model',
   },
 };
