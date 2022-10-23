@@ -4,6 +4,7 @@ import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useQuery} from '@apollo/client';
 
 import {Routes} from 'navigation';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -14,6 +15,10 @@ import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import GetPlantingModels, {
+  GetPlantingModelsQueryQueryData,
+} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
+import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 import {TreeImage} from '../../../../../assets/icons';
 
 const staticModels: TPlantModel[] = [
@@ -87,6 +92,19 @@ export interface SelectModelsProps {
 export function SelectModels(props: SelectModelsProps) {
   const {navigation} = props;
 
+  const wallet = useWalletAccount();
+
+  const {data, loading} = useQuery<GetPlantingModelsQueryQueryData, GetPlantingModelsQueryQueryData.Variables>(
+    GetPlantingModels,
+    {
+      variables: {
+        planter: wallet.toLowerCase(),
+      },
+    },
+  );
+
+  console.log({data, loading}, 'planting models data is here');
+
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const {t} = useTranslation();
 
@@ -94,6 +112,10 @@ export function SelectModels(props: SelectModelsProps) {
     console.log('plant button');
     // @ts-ignore
     // navigation.navigate(Routes.SelectPhoto);
+  }, []);
+
+  const handleNavigateToCreateModel = useCallback(() => {
+    navigation.navigate(Routes.CreateModel);
   }, []);
 
   const renderPlantModelItem = useCallback(
@@ -130,6 +152,13 @@ export function SelectModels(props: SelectModelsProps) {
         ) : (
           <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
         )}
+        <Spacer />
+        <Button
+          caption={t('selectModels.create')}
+          variant="primary"
+          onPress={handleNavigateToCreateModel}
+          style={styles.plantBtn}
+        />
         <Spacer times={10} />
       </View>
     </SafeAreaView>

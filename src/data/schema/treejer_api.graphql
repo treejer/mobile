@@ -166,6 +166,7 @@ type Query {
   trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
 
   settings: Settings
+  models(where: WhereModels): [Models]
 }
 
 #input ApplyInput {
@@ -215,4 +216,24 @@ type ForceUpdateSetting {
 type Settings {
   id: String
   forceUpdate: ForceUpdateSetting
+}
+
+type Models {
+  id: ID!
+  planter: planter!
+  country: Int!
+  species: Int!
+  status: Int!
+  price: Int!
+  count: Int!
+  start: Int!
+  lastFund: Int!
+  lastPlant: Int!
+  lastReservePlant: Int!
+  createdAt: Int!
+  updatedAt: Int!
+}
+
+input WhereModels {
+  planter: String!
 }

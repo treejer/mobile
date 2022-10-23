@@ -419,5 +419,26 @@ export const en = {
     title: 'Select Models',
     plant: 'Start Planting',
     choose: 'choose one of the models above',
+    create: 'Create Model',
+  },
+  createModel: {
+    title: 'Create Model',
+    form: {
+      country: 'Country',
+      species: 'Species',
+      price: 'Price',
+      count: 'Count',
+      create: 'Submit & Create',
+    },
+    placeholder: {
+      country: 'Country...',
+      species: 'Species...',
+      price: 'Price...',
+      count: 'Count...',
+    },
+    errors: {
+      required: '{{ field }} field is required',
+      number: '{{ field }} field must be number',
+    },
   },
 };
