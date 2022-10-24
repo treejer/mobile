@@ -384,16 +384,28 @@ export function OfflineTreeProvider({children}) {
           const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
           console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-          const receipt = await sendTransactionWithGSN(
-            config,
-            ContractType.TreeFactory,
-            web3,
-            address,
-            'plantTree',
-            [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
-            useGSN,
-          );
-
+          let receipt;
+          if (treeJourney.plantingModel) {
+            receipt = await sendTransactionWithGSN(
+              config,
+              ContractType.TreeFactory,
+              web3,
+              address,
+              'plantMarketPlaceTree',
+              [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0, Hex2Dec(treeJourney.plantingModel)],
+              useGSN,
+            );
+          } else {
+            receipt = await sendTransactionWithGSN(
+              config,
+              ContractType.TreeFactory,
+              web3,
+              address,
+              'plantTree',
+              [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
+              useGSN,
+            );
+          }
           console.log(receipt.transactionHash, 'receipt.transactionHash');
 
           setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));

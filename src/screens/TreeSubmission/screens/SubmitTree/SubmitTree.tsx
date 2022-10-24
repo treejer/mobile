@@ -199,15 +199,27 @@ function SubmitTree(props: Props) {
         useGSN,
       );
     } else {
-      receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.TreeFactory,
-        web3,
-        wallet,
-        'plantTree',
-        [metaDataHash, birthDay, 0],
-        useGSN,
-      );
+      if (journey.plantingModel) {
+        receipt = await sendTransactionWithGSN(
+          config,
+          ContractType.TreeFactory,
+          web3,
+          wallet,
+          'plantMarketPlaceTree',
+          [metaDataHash, birthDay, 0, Hex2Dec(journey.plantingModel)],
+          useGSN,
+        );
+      } else {
+        receipt = await sendTransactionWithGSN(
+          config,
+          ContractType.TreeFactory,
+          web3,
+          wallet,
+          'plantTree',
+          [metaDataHash, birthDay, 0],
+          useGSN,
+        );
+      }
     }
 
     console.log(receipt.transactionHash, 'receipt.transactionHash');

@@ -417,9 +417,11 @@ export const en = {
   },
   selectModels: {
     title: 'Select Models',
-    plant: 'Start Planting',
+    tree: 'Start Plant Tree',
+    nursery: 'Start Plant Nursery',
     choose: 'choose one of the models above',
     create: 'Create Model',
+    createFirst: 'Create The First Model',
   },
   createModel: {
     title: 'Create Model',
@@ -439,7 +441,10 @@ export const en = {
     errors: {
       required: '{{ field }} field is required',
       number: '{{ field }} field must be number',
+      min: 'price should be greater than 0',
     },
     createYours: 'Create your planting model',
+    success: 'Model successfully created',
+    failed: 'Something went wrong... try again',
   },
 };

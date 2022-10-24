@@ -1,5 +1,5 @@
-import React, {useRef} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import React from 'react';
+import {ActivityIndicator, StyleSheet, Text, TextInput, View} from 'react-native';
 import {Control, Controller} from 'react-hook-form';
 import Card from 'components/Card';
 import {useTranslation} from 'react-i18next';
@@ -7,6 +7,7 @@ import CountryPicker, {Country, CountryCode} from 'react-native-country-picker-m
 
 import {colors} from 'constants/values';
 import {isWeb} from 'utilities/helpers/web';
+import Spacer from 'components/Spacer';
 import {TCreateModelForm} from 'screens/TreeSubmission/components/Models/CreateModelForm';
 
 export type TCreateModelInputProps = {
@@ -17,10 +18,11 @@ export type TCreateModelInputProps = {
   placeholder?: string;
   disabled?: boolean;
   error?: string;
-  preview?: string;
+  preview?: string | number;
   countryCode?: CountryCode;
   onSelectCountry?: (country: Country) => void;
   onCloseCountry?: () => void;
+  availableCountries?: Country['cca2'][] | null;
 };
 
 export function CreateModelInput(props: TCreateModelInputProps) {
@@ -34,32 +36,43 @@ export function CreateModelInput(props: TCreateModelInputProps) {
     disabled,
     preview,
     countryCode,
+    availableCountries,
     onSelectCountry,
     onCloseCountry,
   } = props;
 
   const {t} = useTranslation();
 
-  const ref = useRef();
-
   const renderInput = () => {
     if (name === 'country') {
       return (
         <View style={[styles.inputContainer, {paddingLeft: 0}]}>
           <Text
-            style={[styles.input, disabled && styles.disableInput, {color: value ? colors.black : colors.placeholder}]}
+            style={[
+              styles.input,
+              disabled && styles.disableInput,
+              {color: value ? (disabled ? colors.gray : colors.black) : colors.placeholder},
+            ]}
           >
             {value || placeholder}
           </Text>
-          <CountryPicker
-            countryCode={countryCode || 'US'}
-            withFlag
-            withAlphaFilter={!isWeb()}
-            withFilter
-            withEmoji
-            onSelect={onSelectCountry}
-            onClose={onCloseCountry}
-          />
+          {availableCountries && availableCountries?.length > 0 ? (
+            <CountryPicker
+              countryCodes={availableCountries}
+              countryCode={countryCode || 'US'}
+              withFlag
+              withAlphaFilter={!isWeb()}
+              withFilter
+              withEmoji
+              onSelect={onSelectCountry}
+              onClose={onCloseCountry}
+            />
+          ) : (
+            <>
+              <ActivityIndicator />
+              <Spacer />
+            </>
+          )}
         </View>
       );
     } else {
@@ -69,7 +82,7 @@ export function CreateModelInput(props: TCreateModelInputProps) {
           name={name}
           render={({field: {onChange, onBlur, value}, formState}) => (
             <TextInput
-              style={[styles.input, disabled && styles.disableInput]}
+              style={[styles.input, disabled ? styles.disableInput : undefined]}
               editable={!disabled}
               placeholder={placeholder}
               placeholderTextColor={colors.placeholder}

@@ -46,7 +46,7 @@ export namespace GetPlantingModelsQueryQueryData {
   }
 }
 export interface GetPlantingModelsQueryQueryData {
-  models?: (GetPlantingModelsQueryQueryData.Models | null)[] | null;
+  models?: GetPlantingModelsQueryQueryData.Models[] | null;
 }
 declare const document: DocumentNode<GetPlantingModelsQueryQueryData, GetPlantingModelsQueryQueryData.Variables, GetPlantingModelsQueryQueryPartialData>;
 export default document;

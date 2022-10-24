@@ -37,11 +37,15 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {t} = useTranslation();
 
   const [isSingle, setIsSingle] = useState<boolean | null>(null);
+  const [byModel, setByModel] = useState<boolean>(false);
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const isConnected = useNetInfoConnected();
 
-  useRefocusEffect(clearJourney);
+  useRefocusEffect(() => {
+    clearJourney();
+    setCount('');
+  });
 
   const handleStart = useCallback(
     (single: boolean | null, nurseryCount: string) => {
@@ -66,21 +70,26 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
 
   const handleSelectNursery = useCallback(() => {
     setIsSingle(false);
+    setByModel(false);
     inputRef?.current?.focus();
   }, []);
 
   const handleSelectSingle = useCallback(() => {
+    setByModel(false);
     setIsSingle(true);
     handleStart(true, count);
     inputRef?.current?.blur();
   }, [count, handleStart]);
 
   const handleSelectModels = useCallback(() => {
+    setByModel(true);
+    setIsSingle(null);
     navigation.navigate(Routes.SelectModels);
     inputRef?.current?.blur();
   }, []);
 
   const handleFocus = () => {
+    setByModel(false);
     setIsSingle(false);
     setIsFocused(true);
   };
@@ -96,6 +105,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   };
 
   const singleColor = useMemo(() => (isSingle ? colors.green : colors.grayLight), [isSingle]);
+  const modelColor = useMemo(() => (byModel ? colors.green : colors.grayLight), [byModel]);
   const nurseryColor = useMemo(
     () => (isSingle === null ? colors.grayLight : isSingle === false ? colors.green : colors.grayLight),
     [isSingle],
@@ -141,10 +151,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
           />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectModels}>
-        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
+      <TouchableOpacity style={[{borderColor: modelColor}, styles.plantType]} onPress={handleSelectModels}>
+        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: modelColor}} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
-          <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.models')}</Text>
+          <Text style={[styles.text, {color: modelColor}]}>{t('submitTree.models')}</Text>
         </View>
       </TouchableOpacity>
       {isSingle === true && (
