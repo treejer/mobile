@@ -5,7 +5,7 @@ import {AppLoading} from 'components/AppLoading/AppLoading';
 import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
-import {Support} from 'screens/Profile/screens/Support/Support';
+import {SupportScreen} from 'screens/Profile/screens/Support/SupportScreen';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
@@ -17,8 +17,6 @@ import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useUserWeb3} from '../redux/modules/web3/web3';
 import {useSettings} from '../redux/modules/settings/settings';
 import {useProfile, UserStatus} from '../redux/modules/profile/profile';
-import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType';
-import {SelectModels} from 'screens/TreeSubmission/screens/SelectModels/SelectModels';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -124,7 +122,7 @@ export function RootNavigation() {
                 <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
               </>
             )}
-            <RootStack.Screen name={Routes.Support} component={Support} />
+            <RootStack.Screen name={Routes.Support} component={SupportScreen} />
             <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
             <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
           </>

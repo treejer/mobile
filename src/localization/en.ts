@@ -426,6 +426,7 @@ export const en = {
     discord: 'Join Discord',
     twitter: 'Follow Twitter',
     discussion: 'Treejer Discussion',
+    chatHeader: 'Customer Support Chat',
   },
   activities: {
     matic: '{{amount}} Matic',

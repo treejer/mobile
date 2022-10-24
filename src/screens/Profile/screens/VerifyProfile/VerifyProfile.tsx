@@ -38,6 +38,7 @@ import getCroppedImg from 'utilities/helpers/cropImage';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useProfile, UserStatus} from '../../../../redux/modules/profile/profile';
 import {useUserId} from '../../../../redux/modules/web3/web3';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -340,15 +341,9 @@ function VerifyProfile(props: Props) {
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <KeyboardAwareScrollView>
-        <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p1]}>
-          <TouchableOpacity onPress={() => navigation.navigate(Routes.MyProfile)}>
-            <ChevronLeft />
-          </TouchableOpacity>
-        </View>
+        <ScreenTitle title={t('getVerified')} goBack />
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
-          <Text style={globalStyles.h4}>{t('getVerified')}</Text>
-
-          <Spacer times={2} />
+          <Spacer times={4} />
 
           {status === UserStatus.Pending && (
             <>

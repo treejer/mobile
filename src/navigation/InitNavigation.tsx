@@ -17,6 +17,7 @@ import UpdateModal from 'components/UpdateModal/UpdateModal';
 import {ToastContainer, toastProviderProps} from 'components/Toast/ToastContainer';
 import CurrentJourneyProvider from 'services/currentJourney';
 import {useInit} from '../redux/modules/init/init';
+import {ChatButton} from 'screens/Profile/components/ChatButton';
 
 const config = {
   screens: {
@@ -92,6 +93,7 @@ export function InitNavigation() {
           <NetInfo />
           <SwitchNetwork />
           <PreLoadImage />
+          <ChatButton />
           {isWeb() ? <ToastContainer /> : <></>}
           {isWeb() ? <LandScapeModal /> : <></>}
           {!isWeb() ? <UpdateModal /> : <></>}

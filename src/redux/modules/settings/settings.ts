@@ -7,18 +7,21 @@ export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useGSN: boolean;
+  showSupportChat: boolean;
 };
 
 const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
   useGSN: true,
+  showSupportChat: false,
 };
 
 type TSettingsAction = {
   type: string;
   useGSN: boolean;
   locale: string;
+  showSupportChat: boolean;
 };
 
 export const MARK_ONBOARDING_DONE = 'MARK_ONBOARDING_DONE';
@@ -42,6 +45,11 @@ export function changeUseGSN(useGSN: boolean) {
     type: CHANGE_USE_GSN,
     useGSN: useGSN,
   };
+}
+
+export const SET_SHOW_SUPPORT_CHAT = 'SET_SHOW_SUPPORT_CHAT';
+export function setShowSupportChat(showSupportChat: boolean) {
+  return {type: SET_SHOW_SUPPORT_CHAT, showSupportChat};
 }
 
 export const settingsReducer = (state: TSettings = initialState, action: TSettingsAction): TSettings => {
@@ -70,6 +78,11 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
         useGSN: action.useGSN,
       };
     }
+    case SET_SHOW_SUPPORT_CHAT:
+      return {
+        ...state,
+        showSupportChat: action.showSupportChat,
+      };
 
     default: {
       return state;
@@ -82,6 +95,7 @@ export type TUseSettings = TReduxState['settings'] & {
   markOnBoardingDone: () => void;
   changeUseGSN: (useGSN: boolean) => void;
   resetOnBoardingData: () => void;
+  setShowSupportChat: (showSupportChat: boolean) => void;
 };
 
 export function useSettings(): TUseSettings {
@@ -104,12 +118,17 @@ export function useSettings(): TUseSettings {
     dispatch(changeUseGSN(useGSN));
   };
 
+  const handleShowSupportChat = (showSupportChat: boolean) => {
+    dispatch(setShowSupportChat(showSupportChat));
+  };
+
   return {
     ...settings,
     updateLocale: handleChangeLocale,
     markOnBoardingDone: handleMarkOnBoardingDone,
     changeUseGSN: handleChangeUseGSN,
     resetOnBoardingData: handleResetOnBoarding,
+    setShowSupportChat: handleShowSupportChat,
   };
 }
 

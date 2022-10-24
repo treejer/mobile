@@ -9,6 +9,7 @@ type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useGSN: boolean;
+  showSupportChat: boolean;
 };
 ```
 
@@ -19,6 +20,7 @@ type TSettingsAction = {
   type: string;
   useGSN: boolean;
   locale: string;
+  showSupportChat: boolean;
 };
 ```
 
@@ -29,6 +31,7 @@ const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
   useGSN: true,
+  showSupportChat: false,
 };
 ```
 
@@ -40,6 +43,7 @@ type TUseSettings = TReduxState['settings'] & {
   markOnBoardingDone: () => void;
   changeUseGSN: (useGSN: boolean) => void;
   resetOnBoardingData: () => void;
+  setShowSupportChat: (showSupportChat: boolean) => void;
 };
 
 function useSettings(): TUseSettings {
