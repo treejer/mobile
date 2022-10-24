@@ -186,7 +186,7 @@ function SubmitTree(props: Props) {
     let receipt;
     if (typeof journey?.treeIdToPlant !== 'undefined') {
       console.log('here plant tree', Hex2Dec(journey.treeIdToPlant));
-      const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0);
+      // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0);
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
       receipt = await sendTransactionWithGSN(

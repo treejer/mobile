@@ -9,11 +9,14 @@ import * as Yup from 'yup';
 import {Routes} from 'navigation';
 import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
+import {ContractType} from 'services/config';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import Spacer from 'components/Spacer';
-import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {CreateModelForm, TCreateModelForm} from 'screens/TreeSubmission/components/Models/CreateModelForm';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useConfig, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 import {TreeImage} from '../../../../../assets/icons';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.CreateModel>;
@@ -38,20 +41,41 @@ const schema = Yup.object().shape({
 
 export function CreateModel(props: CreateModelProps) {
   const {} = props;
+  const config = useConfig();
+  const web3 = useWalletWeb3();
+  const wallet = useWalletAccount();
+  const {useGSN} = useSettings();
 
   const [loading, setLoading] = useState(false);
 
   const {t} = useTranslation();
 
-  const handleCreateModel = useCallback((data: TCreateModelForm) => {
+  const handleCreateModel = useCallback(async (data: TCreateModelForm) => {
     try {
       console.log(data, 'create model form data is here');
-      // setLoading(true);
+      setLoading(true);
+      console.log(data.country.toLowerCase(), 'to lower case');
       // send transaction
+      const result = await sendTransactionWithGSN(
+        config,
+        ContractType.MarketPlace,
+        web3,
+        wallet,
+        'addModel',
+        [
+          web3.utils.asciiToHex(data.country.toLowerCase()),
+          // web3.utils.toBN('us'),
+          web3.utils.asciiToHex(data.species.toLowerCase()),
+          web3.utils.toWei(data.price, 'ether'),
+          web3.utils.toWei(data.count, 'ether'),
+        ],
+        useGSN,
+      );
+      console.log(result, 'create modal result');
     } catch (e: any) {
       console.log(e, 'error is here');
     } finally {
-      // setLoading(false)
+      setLoading(false);
     }
   }, []);
 
