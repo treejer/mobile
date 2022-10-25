@@ -74,7 +74,7 @@ export function CreateModel(props: CreateModelProps) {
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle goBack title={t('createModel.title')} />
-      <CreateModelForm onSubmit={handleCreateModel} loading={loading} config={config} />
+      <CreateModelForm onSubmit={handleCreateModel} loading={loading} />
       <Spacer times={12} />
       <View style={styles.tree}>
         <Image source={TreeImage} style={{width: 104, height: 104}} />

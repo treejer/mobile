@@ -5,13 +5,13 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import {Country, CountryCode} from 'react-native-country-picker-modal';
-import axios from 'axios';
 
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import {NetworkConfig} from 'services/config';
 import Spacer from 'components/Spacer';
 import {CreateModelInput} from 'screens/TreeSubmission/components/Models/CreateModelInput';
+import {useCountries} from '../../../../redux/modules/countris/countries';
 
 export type TCreateModelForm = {
   country: string;
@@ -57,23 +57,12 @@ const schema = Yup.object().shape({
 export type TCrateModelFormProps = {
   onSubmit: (data: TCreateModelForm) => void;
   loading: boolean;
-  config: NetworkConfig;
-};
-
-export type TreejerCountry = {
-  id: string;
-  iso: string;
-  name: string;
-  nicename: string;
-  iso3: string;
-  numcode: number;
-  phonecode: number;
 };
 
 export function CreateModelForm(props: TCrateModelFormProps) {
-  const {loading, config, onSubmit} = props;
+  const {loading, onSubmit} = props;
 
-  const [countries, setCountries] = useState<TreejerCountry[] | null>(null);
+  const {countries} = useCountries();
   const [availableCountries, setAvailableCountries] = useState<CountryCode[] | null>(null);
 
   const {control, formState, handleSubmit, watch, setValue} = useForm<TCreateModelForm>({
@@ -87,12 +76,14 @@ export function CreateModelForm(props: TCrateModelFormProps) {
   const [countryCode, setCountryCode] = useState<CountryCode>('US');
 
   useEffect(() => {
-    (async () => {
-      const {data: countryData} = await axios.get(`${config.treejerApiUrl}/resources/countries.min.json`);
-      setAvailableCountries(countryData.map(country => country.iso));
-      setCountries(countryData);
-    })();
+    if (countries) {
+      setAvailableCountries(countries.map(country => country.iso as CountryCode));
+    }
   }, []);
+
+  useEffect(() => {
+    console.log({availableCountries});
+  }, [availableCountries]);
 
   const handleSelectCountry = useCallback(
     (country: Country) => {
