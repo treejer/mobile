@@ -422,6 +422,7 @@ export const en = {
     choose: 'choose one of the models above',
     create: 'Create Model',
     createFirst: 'Create The First Model',
+    focusedNursery: 'Nursery count?',
   },
   createModel: {
     title: 'Create Model',

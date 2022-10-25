@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import Spacer from 'components/Spacer';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {CreateModelForm, TCreateModelForm} from 'screens/TreeSubmission/components/Models/CreateModelForm';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
@@ -30,7 +31,8 @@ export interface CreateModelProps {
 }
 
 export function CreateModel(props: CreateModelProps) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
+  const {showPermissionModal} = plantTreePermissions;
 
   const [loading, setLoading] = useState(false);
 
@@ -70,6 +72,10 @@ export function CreateModel(props: CreateModelProps) {
       setLoading(false);
     }
   }, []);
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>

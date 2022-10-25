@@ -147,7 +147,7 @@ export function CreateModelForm(props: TCrateModelFormProps) {
         placeholder={t('createModel.placeholder.count')}
         disabled={loading}
         error={formState.touchedFields.count && formState.errors.count ? formState.errors.count.message : undefined}
-        preview={Number(watch().price) * Number(watch().count)}
+        // preview={Number(watch().price) * Number(watch().count)}
       />
       <Spacer times={8} />
       <TouchableOpacity
