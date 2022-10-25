@@ -12,10 +12,10 @@ export type TActivityListProps = {
 };
 
 export function ActivityList(props: TActivityListProps) {
-  const {filters, wallet, activities} = props;
+  const {activities} = props;
 
   return activities && activities?.length ? (
-    <View style={styles.container}>
+    <View style={[styles.container, globalStyles.screenView]}>
       {activities.map((activity, index) => (
         <View style={globalStyles.alignItemsCenter} key={activity.transactionHash}>
           <ActivityItem activity={activity} isLast={activities && activities?.length - 1 === index} />

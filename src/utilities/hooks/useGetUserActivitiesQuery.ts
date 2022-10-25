@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {useQuery} from '@apollo/client';
+import {NetworkStatus, useQuery} from '@apollo/client';
 
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import GetUserActivities, {
@@ -19,7 +19,7 @@ const all_events = [
   ActivityStatus.PlanterUpdated,
 ];
 
-export function useGetUserActivitiesQuery(wallet: string, event_in: ActivityStatus[]) {
+export function useGetUserActivitiesQuery(wallet: string, event_in?: ActivityStatus[]) {
   const {data, ...activityQueryData} = useQuery<GetUserActivitiesQueryData, GetUserActivitiesQueryData.Variables>(
     GetUserActivities,
     {
@@ -30,9 +30,7 @@ export function useGetUserActivitiesQuery(wallet: string, event_in: ActivityStat
     },
   );
 
-  console.log(data, 'data is here');
-
-  const refetch = useCallback(async (event_in?: ActivityStatus[]) => {
+  const refetchUserActivity = useCallback(async (event_in?: ActivityStatus[]) => {
     try {
       await activityQueryData.refetch({
         address: wallet.toLowerCase(),
@@ -43,9 +41,14 @@ export function useGetUserActivitiesQuery(wallet: string, event_in: ActivityStat
     }
   }, []);
 
+  const refetching = activityQueryData.networkStatus === NetworkStatus.refetch;
+
+  const {refetch, ..._activityQueryData} = activityQueryData;
+
   return {
     ...data,
-    ...activityQueryData,
-    refetch,
+    ..._activityQueryData,
+    refetchUserActivity,
+    refetching,
   };
 }

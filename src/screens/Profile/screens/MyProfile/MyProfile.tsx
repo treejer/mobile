@@ -21,6 +21,7 @@ import {isWeb} from 'utilities/helpers/web';
 import useRefer from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
@@ -92,6 +93,7 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
+  const {addressHistories: activities} = useGetUserActivitiesQuery(wallet);
 
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
@@ -350,7 +352,7 @@ function MyProfile(props: MyProfileProps) {
                     variant="tertiary"
                     onPress={handleNavigateSupport}
                   />
-                  {profile.isVerified ? (
+                  {profile.isVerified && !!activities?.length ? (
                     <>
                       <Spacer times={4} />
                       <Button

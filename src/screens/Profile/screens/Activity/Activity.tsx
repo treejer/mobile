@@ -1,18 +1,21 @@
 import React, {useCallback, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 
 import {MainTabsParamList} from 'types';
 import {Routes, VerifiedUserNavigationParamList} from 'navigation';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
-import Spacer from 'components/Spacer';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
-import {ContainerLoading} from 'components/AppLoading/LoadingContainer';
-import globalStyles from 'constants/styles';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
+import {isWeb} from 'utilities/helpers/web';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
@@ -30,11 +33,16 @@ export function Activity(props: Props) {
   const [filters, setFilters] = useState<ActivityStatus[]>((event_in as ActivityStatus[]) || []);
   const wallet = useWalletAccount();
 
-  const {loading, addressHistories: activities, refetch} = useGetUserActivitiesQuery(wallet, filters);
+  const {
+    loading,
+    addressHistories: activities,
+    refetchUserActivity,
+    refetching,
+  } = useGetUserActivitiesQuery(wallet, filters);
 
   useRefocusEffect(() => {
     (async () => {
-      await refetch();
+      await refetchUserActivity();
     })();
   });
 
@@ -54,16 +62,29 @@ export function Activity(props: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <ContainerLoading loading={loading} container>
-        <ScreenTitle goBack title={t('activity')} />
-        <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
-          <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
-          <ScrollView style={styles.scrollView}>
-            <ActivityList wallet={wallet} filters={filters} activities={activities} />
-            <Spacer times={6} />
-          </ScrollView>
-        </View>
-      </ContainerLoading>
+      <ScreenTitle goBack title={t('activity')} />
+      <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
+        {loading ? (
+          <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
+            <ActivityIndicator size="large" color={colors.green} />
+          </View>
+        ) : (
+          <>
+            <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
+            <PullToRefresh onRefresh={refetchUserActivity}>
+              <ScrollView
+                style={styles.scrollView}
+                refreshControl={
+                  isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchUserActivity} />
+                }
+              >
+                <ActivityList wallet={wallet} filters={filters} activities={activities} />
+                <Spacer times={6} />
+              </ScrollView>
+            </PullToRefresh>
+          </>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
