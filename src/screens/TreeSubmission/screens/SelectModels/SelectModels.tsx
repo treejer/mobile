@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItemInfo,
+  RefreshControl,
   StyleSheet,
   Text,
   TextInput,
@@ -33,6 +34,9 @@ import GetPlantingModels, {
 } from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {isWeb} from 'utilities/helpers/web';
+import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -54,16 +58,7 @@ export function SelectModels(props: SelectModelsProps) {
   const wallet = useWalletAccount();
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
-  const {data, loading} = useQuery<GetPlantingModelsQueryQueryData, GetPlantingModelsQueryQueryData.Variables>(
-    GetPlantingModels,
-    {
-      variables: {
-        planter: wallet.toLowerCase(),
-      },
-    },
-  );
-
-  console.log({data, loading}, 'planting models data is here');
+  const {data, loading, refetching, refetchPlantModels} = useGetPlantModelsQuery(wallet);
 
   const {t} = useTranslation();
 
@@ -136,16 +131,23 @@ export function SelectModels(props: SelectModelsProps) {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          <FlatList<TPlantModel>
-            style={{width: '100%'}}
-            data={data?.models}
-            renderItem={renderPlantModelItem}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={[styles.list, (!data?.models || !data.models?.length) && styles.emptyList]}
-            ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
-            ListEmptyComponent={() => <EmptyModelsList />}
-            keyExtractor={item => item.id}
-          />
+          <PullToRefresh onRefresh={refetchPlantModels}>
+            <FlatList<TPlantModel>
+              style={{width: '100%', backgroundColor: colors.khaki}}
+              data={data?.models}
+              renderItem={renderPlantModelItem}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={[styles.list, (!data?.models || !data.models?.length) && styles.emptyList]}
+              ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
+              ListEmptyComponent={() => <EmptyModelsList />}
+              keyExtractor={item => item.id}
+              refreshing
+              onRefresh={refetchPlantModels}
+              refreshControl={
+                isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchPlantModels} />
+              }
+            />
+          </PullToRefresh>
         )}
       </View>
       {!loading && (
