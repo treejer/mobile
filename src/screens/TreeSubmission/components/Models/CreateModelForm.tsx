@@ -1,14 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
 import {Country, CountryCode} from 'react-native-country-picker-modal';
+import * as Yup from 'yup';
 
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import {NetworkConfig} from 'services/config';
 import Spacer from 'components/Spacer';
 import {CreateModelInput} from 'screens/TreeSubmission/components/Models/CreateModelInput';
 import {useCountries} from '../../../../redux/modules/countris/countries';
@@ -81,10 +80,6 @@ export function CreateModelForm(props: TCrateModelFormProps) {
     }
   }, []);
 
-  useEffect(() => {
-    console.log({availableCountries});
-  }, [availableCountries]);
-
   const handleSelectCountry = useCallback(
     (country: Country) => {
       setCountryCode(country.cca2);
@@ -92,7 +87,7 @@ export function CreateModelForm(props: TCrateModelFormProps) {
         shouldTouch: true,
         shouldValidate: true,
       });
-      const numCode = countries?.find(Tcountry => Tcountry.iso == country.cca2)?.numcode;
+      const numCode = countries?.find(TCountry => TCountry.iso == country.cca2)?.numcode;
       setValue('countryNumCode', `${numCode}`, {
         shouldTouch: true,
         shouldValidate: true,

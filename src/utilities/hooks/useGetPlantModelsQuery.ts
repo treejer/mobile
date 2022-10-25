@@ -1,13 +1,9 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback} from 'react';
 import {NetworkStatus, useQuery} from '@apollo/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import GetPlantingModels, {
   GetPlantingModelsQueryQueryData,
 } from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
-
-type Planter = GetPlantingModelsQueryQueryData.ModelsPlanter;
-
-export const planterStatusQueryStorageKey = 'planterStatusQuery';
 
 export default function useGetPlantModelsQuery(wallet: string) {
   const query = useQuery<GetPlantingModelsQueryQueryData, GetPlantingModelsQueryQueryData.Variables>(

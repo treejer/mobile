@@ -22,7 +22,7 @@ export type TCreateModelInputProps = {
   countryCode?: CountryCode;
   onSelectCountry?: (country: Country) => void;
   onCloseCountry?: () => void;
-  availableCountries?: Country['cca2'][] | null;
+  availableCountries?: CountryCode[] | null;
 };
 
 export function CreateModelInput(props: TCreateModelInputProps) {

@@ -14,7 +14,6 @@ import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useQuery} from '@apollo/client';
 
 import {Routes} from 'navigation';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -27,16 +26,13 @@ import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {EmptyModelsList} from 'components/plantModels/EmptyModelsList';
 import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import GetPlantingModels, {
-  GetPlantingModelsQueryQueryData,
-} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
-import {TreeJourney} from 'screens/TreeSubmission/types';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {isWeb} from 'utilities/helpers/web';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
+import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -71,6 +67,9 @@ export function SelectModels(props: SelectModelsProps) {
   useRefocusEffect(() => {
     clearJourney();
     setNurseryCount('');
+    (async () => {
+      await refetchPlantModels();
+    })();
   });
 
   const handleSelectNursery = useCallback(() => {
