@@ -16,13 +16,13 @@ import {EmptyModelsList} from 'components/plantModels/EmptyModelsList';
 import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {PlantModelButtons} from 'screens/TreeSubmission/components/Models/PlantModelButtons';
 import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
-import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
