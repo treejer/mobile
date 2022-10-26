@@ -64,26 +64,33 @@ export function Activity(props: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
+        <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
         {loading ? (
-          <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
+          <View
+            style={[
+              globalStyles.fill,
+              globalStyles.alignItemsCenter,
+              globalStyles.justifyContentCenter,
+              styles.loadingContainer,
+            ]}
+          >
             <ActivityIndicator size="large" color={colors.green} />
           </View>
         ) : (
-          <>
-            <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
-            <PullToRefresh onRefresh={refetchUserActivity}>
-              <ScrollView
-                style={styles.scrollView}
-                refreshControl={
-                  isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchUserActivity} />
-                }
-              >
-                <ActivityList wallet={wallet} filters={filters} activities={activities} />
-                <Spacer times={6} />
-              </ScrollView>
-            </PullToRefresh>
-          </>
+          <PullToRefresh onRefresh={refetchUserActivity}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={styles.scrollView}
+              refreshControl={
+                isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchUserActivity} />
+              }
+            >
+              <ActivityList wallet={wallet} filters={filters} activities={activities} />
+              <Spacer times={6} />
+            </ScrollView>
+          </PullToRefresh>
         )}
+        <Spacer times={4} />
       </View>
     </SafeAreaView>
   );
@@ -92,5 +99,12 @@ export function Activity(props: Props) {
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });

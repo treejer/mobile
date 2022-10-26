@@ -438,6 +438,7 @@ export const en = {
     updateSubmitted: 'Update Submitted',
     updateVerified: 'Update Verified',
     sent: 'Sent',
+    withdraw: '${{ amount }} Redeemed',
     received: 'Received',
     claimed: 'Claimed',
     receipt: 'Receipt',
@@ -453,5 +454,6 @@ export const en = {
     BalanceWithdrew: 'Balance Withdraw',
     TreePlanted: 'Tree Planted',
     TreeUpdated: 'Tree Updated',
+    empty: 'Empty',
   },
 };
