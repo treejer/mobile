@@ -4,12 +4,12 @@ import moment from 'moment';
 
 import {colors} from 'constants/values';
 import {Hex2Dec} from 'utilities/helpers/hex';
+import {capitalize} from 'utilities/helpers/capitalize';
 import Spacer from 'components/Spacer';
 import {GetPlantingModelsQueryQueryData} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {useWalletWeb3} from '../../redux/modules/web3/web3';
 import {useCountries} from '../../redux/modules/countris/countries';
 import {TreeImage} from '../../../assets/icons';
-import {capitalize} from 'utilities/helpers/capitalize';
 
 export type TPlantModel = Omit<GetPlantingModelsQueryQueryData.Models, '__typename'>;
 
@@ -23,8 +23,6 @@ export function PlantModelItem(props: TPlantModelItemProps) {
   const {model, isSelected, onSelect} = props;
   const web3 = useWalletWeb3();
   const {countries} = useCountries();
-
-  console.log({model}, 'model is here');
 
   const updatedAt = moment(model.updatedAt * 1000).format('lll');
 
