@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
@@ -12,10 +12,8 @@ import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
-import {isWeb} from 'utilities/helpers/web';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
@@ -34,10 +32,12 @@ export function Activity(props: Props) {
   const wallet = useWalletAccount();
 
   const {
-    loading,
-    addressHistories: activities,
-    refetchUserActivity,
-    refetching,
+    persistedData: activities,
+    refetchData: refetchUserActivity,
+    query: activityQuery,
+    refetching: activityRefetching,
+    loadMore: ActivityLoadMore,
+    resetPagination,
   } = useGetUserActivitiesQuery(wallet, filters);
 
   useRefocusEffect(() => {
@@ -56,6 +56,7 @@ export function Activity(props: Props) {
       } else {
         setFilters(filters.filter(filter => filter !== option));
       }
+      resetPagination();
     },
     [filters],
   );
@@ -65,7 +66,7 @@ export function Activity(props: Props) {
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
         <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
-        {loading ? (
+        {activityQuery.loading ? (
           <View
             style={[
               globalStyles.fill,
@@ -78,16 +79,15 @@ export function Activity(props: Props) {
           </View>
         ) : (
           <PullToRefresh onRefresh={refetchUserActivity}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={styles.scrollView}
-              refreshControl={
-                isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchUserActivity} />
-              }
-            >
-              <ActivityList wallet={wallet} filters={filters} activities={activities} />
-              <Spacer times={6} />
-            </ScrollView>
+            <ActivityList
+              wallet={wallet}
+              filters={filters}
+              activities={activities}
+              refreshing={activityRefetching}
+              onRefresh={refetchUserActivity}
+              onLoadMore={ActivityLoadMore}
+            />
+            <Spacer times={6} />
           </PullToRefresh>
         )}
         <Spacer times={4} />

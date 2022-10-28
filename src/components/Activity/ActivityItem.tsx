@@ -17,7 +17,7 @@ import {AlertMode} from 'utilities/helpers/alert';
 import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {isWeb} from 'utilities/helpers/web';
-import {GetUserActivitiesQueryData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
+import {GetUserActivitiesQueryPartialData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import {useConfig} from '../../redux/modules/web3/web3';
 import {Tree} from '../../../assets/images';
 
@@ -41,7 +41,7 @@ export enum ContractTypes {
 }
 
 export type TActivityItemProps = {
-  activity: Omit<GetUserActivitiesQueryData.AddressHistories, '__typename'>;
+  activity: GetUserActivitiesQueryPartialData.AddressHistories;
   isLast: boolean;
 };
 
@@ -67,7 +67,10 @@ export function ActivityItem(props: TActivityItemProps) {
     setIsOpen(false);
   }, [props]);
 
-  const date = useMemo(() => moment(+activity.createdAt * 1000).format('lll'), [activity.createdAt]);
+  const date = useMemo(
+    () => (activity.count ? moment(+activity.count * 1000).format('lll') : null),
+    [activity.createdAt],
+  );
 
   const bgTree = useMemo(
     () => ({
@@ -80,12 +83,12 @@ export function ActivityItem(props: TActivityItemProps) {
 
   const title = useMemo(
     () =>
-      activity.event === ActivityStatus.BalanceWithdrew
+      activity.event === ActivityStatus.BalanceWithdrew && activity.count
         ? t('activities.withdraw', {amount: Number(Hex2Dec(activity.count.toString()).toFixed(6))})
         : [ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus)
         ? activity.event === ActivityStatus.TreePlanted
-          ? t('activities.new', {tempId: Hex2Dec(activity.typeId)})
-          : `#${Hex2Dec(activity.typeId)}`
+          ? t('activities.new', {tempId: Hex2Dec(activity.typeId as string)})
+          : `#${Hex2Dec(activity.typeId as string)}`
         : t(`activities.${activity.event}`),
     [activity],
   );
@@ -100,7 +103,7 @@ export function ActivityItem(props: TActivityItemProps) {
       <View style={[styles.container, isOpen && colors.smShadow]}>
         <View style={styles.row}>
           {[ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus) ? (
-            <View style={[styles.image, {backgroundColor: bgTree[activity.event]}]}>
+            <View style={[styles.image, {backgroundColor: bgTree[activity.event as string]}]}>
               <Image source={Tree} style={styles.tree} />
             </View>
           ) : (
@@ -144,7 +147,7 @@ export function ActivityItem(props: TActivityItemProps) {
 
 export type TMoreDetailProps = {
   t: TFunction<'translation', undefined>;
-  txHash: string;
+  txHash?: string | null;
 };
 
 export function MoreDetail(props: TMoreDetailProps) {
@@ -157,7 +160,9 @@ export function MoreDetail(props: TMoreDetailProps) {
   console.log(explorerUrl, 'explorer ');
 
   const handleCopy = useCallback(() => {
-    Clipboard.setString(txHash);
+    if (txHash) {
+      Clipboard.setString(txHash);
+    }
     toast.show(t('myProfile.copied'), {type: AlertMode.Success});
   }, [txHash]);
 

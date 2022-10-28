@@ -166,7 +166,7 @@ type Query {
     trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
 
     settings: Settings
-    addressHistories(where: WhereAddressHistories): [addressHistoriesResponse!]
+    addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
 }
 
 #input ApplyInput {

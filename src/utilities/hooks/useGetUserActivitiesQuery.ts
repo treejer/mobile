@@ -1,10 +1,9 @@
-import React, {useCallback} from 'react';
-import {NetworkStatus, useQuery} from '@apollo/client';
-
-import {ActivityStatus} from 'components/Activity/ActivityItem';
 import GetUserActivities, {
   GetUserActivitiesQueryData,
+  GetUserActivitiesQueryPartialData,
 } from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
+import {usePagination} from 'utilities/hooks/usePagination';
+import {ActivityStatus} from 'components/Activity/ActivityItem';
 
 const all_events = [
   ActivityStatus.TreePlanted,
@@ -19,36 +18,20 @@ const all_events = [
   ActivityStatus.PlanterUpdated,
 ];
 
+export const AddressHistories = 'AddressHistories';
+
 export function useGetUserActivitiesQuery(wallet: string, event_in?: ActivityStatus[]) {
-  const {data, ...activityQueryData} = useQuery<GetUserActivitiesQueryData, GetUserActivitiesQueryData.Variables>(
+  return usePagination<
+    GetUserActivitiesQueryData,
+    GetUserActivitiesQueryData.Variables,
+    GetUserActivitiesQueryPartialData.AddressHistories[]
+  >(
     GetUserActivities,
     {
-      variables: {
-        address: wallet.toLowerCase(),
-        event_in: event_in?.length ? event_in : all_events,
-      },
+      address: wallet.toLowerCase(),
+      event_in: event_in?.length ? event_in : all_events,
     },
+    'addressHistories',
+    AddressHistories,
   );
-
-  const refetchUserActivity = useCallback(async (event_in?: ActivityStatus[]) => {
-    try {
-      await activityQueryData.refetch({
-        address: wallet.toLowerCase(),
-        event_in: event_in || all_events,
-      });
-    } catch (e: any) {
-      console.log(e, 'error is here');
-    }
-  }, []);
-
-  const refetching = activityQueryData.networkStatus === NetworkStatus.refetch;
-
-  const {refetch, ..._activityQueryData} = activityQueryData;
-
-  return {
-    ...data,
-    ..._activityQueryData,
-    refetchUserActivity,
-    refetching,
-  };
 }

@@ -1,42 +1,68 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {FlatList, ListRenderItemInfo, StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import {GetUserActivitiesQueryData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
+import {GetUserActivitiesQueryPartialData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import Spacer from 'components/Spacer';
 import {ActivityItem, ActivityStatus} from 'components/Activity/ActivityItem';
+import {isWeb} from 'utilities/helpers/web';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 
 export type TActivityListProps = {
   wallet: string;
   filters: ActivityStatus[];
-  activities: GetUserActivitiesQueryData.AddressHistories[] | null | undefined;
+  activities: GetUserActivitiesQueryPartialData.AddressHistories[] | null;
+  refreshing: boolean;
+  onRefresh: () => void;
+  onLoadMore: () => void;
 };
 
 export function ActivityList(props: TActivityListProps) {
-  const {activities} = props;
+  const {activities, refreshing, onRefresh, onLoadMore} = props;
 
   const {t} = useTranslation();
 
-  return activities && activities?.length ? (
-    <View style={[styles.container, globalStyles.screenView]}>
-      {activities.map((activity, index) => (
-        <View style={globalStyles.alignItemsCenter} key={activity.transactionHash}>
-          <ActivityItem activity={activity} isLast={activities && activities?.length - 1 === index} />
+  const renderItem = useCallback(
+    ({item, index}: ListRenderItemInfo<GetUserActivitiesQueryPartialData.AddressHistories>) => {
+      return (
+        <View style={globalStyles.alignItemsCenter} key={item.transactionHash}>
+          <ActivityItem activity={item} isLast={(activities && activities?.length - 1) === index} />
         </View>
-      ))}
-    </View>
-  ) : (
-    <View style={[styles.container, globalStyles.screenView, globalStyles.alignItemsCenter]}>
-      <Spacer times={8} />
-      <View style={styles.row}>
-        <Text style={styles.emptyText}>{t('activities.empty')}</Text>
-        <Spacer />
-        <Icon name="smileo" size={24} color={colors.green} />
+      );
+    },
+    [activities],
+  );
+
+  const emptyList = useCallback(() => {
+    return (
+      <View style={[styles.container, globalStyles.screenView, globalStyles.alignItemsCenter]}>
+        <Spacer times={8} />
+        <View style={styles.row}>
+          <Text style={styles.emptyText}>{t('activities.empty')}</Text>
+          <Spacer />
+          <Icon name="smileo" size={24} color={colors.green} />
+        </View>
       </View>
-    </View>
+    );
+  }, [activities]);
+
+  return (
+    <FlatList<GetUserActivitiesQueryPartialData.AddressHistories>
+      refreshing
+      onRefresh={onRefresh}
+      data={activities}
+      renderItem={renderItem}
+      ListEmptyComponent={emptyList}
+      showsVerticalScrollIndicator={false}
+      refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      onEndReachedThreshold={0.1}
+      initialNumToRender={20}
+      onEndReached={onLoadMore}
+      keyExtractor={item => (item.id as string).toString()}
+    />
   );
 }
 

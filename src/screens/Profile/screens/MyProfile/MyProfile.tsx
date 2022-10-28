@@ -93,7 +93,7 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
-  const {addressHistories: activities} = useGetUserActivitiesQuery(wallet);
+  const {persistedData: activities} = useGetUserActivitiesQuery(wallet);
 
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
