@@ -1,23 +1,25 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {RouteProp} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import ModelIcon from 'react-native-vector-icons/FontAwesome';
+
+import {Routes} from 'navigation';
+import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import Tree from 'components/Icons/Tree';
-import {useTranslation} from 'react-i18next';
-import Button from 'components/Button/Button';
-import {TreeSubmissionRouteParamList} from 'types';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RouteProp} from '@react-navigation/native';
-import {TreeImage} from '../../../../../assets/icons';
-import {Routes} from 'navigation';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {isNumber} from 'utilities/helpers/validators';
 import {useCurrentJourney} from 'services/currentJourney';
+import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import Tree from 'components/Icons/Tree';
+import Button from 'components/Button/Button';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {TreeImage} from '../../../../../assets/icons';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -37,11 +39,15 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {t} = useTranslation();
 
   const [isSingle, setIsSingle] = useState<boolean | null>(null);
+  const [byModel, setByModel] = useState<boolean>(false);
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const isConnected = useNetInfoConnected();
 
-  useRefocusEffect(clearJourney);
+  useRefocusEffect(() => {
+    clearJourney();
+    setCount('');
+  });
 
   const handleStart = useCallback(
     (single: boolean | null, nurseryCount: string) => {
@@ -66,21 +72,26 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
 
   const handleSelectNursery = useCallback(() => {
     setIsSingle(false);
+    setByModel(false);
     inputRef?.current?.focus();
   }, []);
 
   const handleSelectSingle = useCallback(() => {
+    setByModel(false);
     setIsSingle(true);
     handleStart(true, count);
     inputRef?.current?.blur();
   }, [count, handleStart]);
 
   const handleSelectModels = useCallback(() => {
+    setByModel(true);
+    setIsSingle(null);
     navigation.navigate(Routes.SelectModels);
     inputRef?.current?.blur();
   }, []);
 
   const handleFocus = () => {
+    setByModel(false);
     setIsSingle(false);
     setIsFocused(true);
   };
@@ -96,6 +107,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   };
 
   const singleColor = useMemo(() => (isSingle ? colors.green : colors.grayLight), [isSingle]);
+  const modelColor = useMemo(() => (byModel ? colors.green : colors.grayLight), [byModel]);
   const nurseryColor = useMemo(
     () => (isSingle === null ? colors.grayLight : isSingle === false ? colors.green : colors.grayLight),
     [isSingle],
@@ -141,10 +153,11 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
           />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectModels}>
-        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
+      <TouchableOpacity style={[{borderColor: modelColor}, styles.plantType]} onPress={handleSelectModels}>
+        {/*<Image source={TreeImage} style={{height: 56, width: 48, tintColor: modelColor}} />*/}
+        <ModelIcon name="th" size={48} color={modelColor} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
-          <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.models')}</Text>
+          <Text style={[styles.text, {color: modelColor}]}>{t('submitTree.models')}</Text>
         </View>
       </TouchableOpacity>
       {isSingle === true && (

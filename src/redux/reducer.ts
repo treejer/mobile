@@ -8,6 +8,7 @@ import {contractsReducer} from './modules/contracts/contracts';
 import {profileReducer} from './modules/profile/profile';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
+import {countriesReducer} from './modules/countris/countries';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
   profile: profileReducer,
   userSign: userSignReducer,
   userNonce: userNonceReducer,
+  countries: countriesReducer,
 });
 
 export default appReducer;

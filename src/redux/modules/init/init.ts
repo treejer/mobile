@@ -9,6 +9,7 @@ import {TReduxState} from '../../store';
 import {profileActions} from '../profile/profile';
 import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
+import {countriesActions} from '../countris/countries';
 import {version} from '../../../../package.json';
 
 export const INIT_APP = 'INIT_APP';
@@ -61,6 +62,7 @@ export function* watchInitApp() {
     yield take(UPDATE_WATCH_CONNECTION);
     yield put(createWeb3());
     yield take(UPDATE_WEB3);
+    yield put(countriesActions.load());
     console.log('started');
     const {accessToken, userId}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
     if (accessToken && userId) {

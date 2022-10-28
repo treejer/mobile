@@ -20,6 +20,9 @@ export interface UpdateMobileInput {
 }
 export type Web3Result = Record<string, any>;
 export type Any = any;
+export interface WhereModels {
+  planter: string;
+}
 export interface WhereAddressHistories {
   address: string;
   event_in?: (string | null)[] | null;

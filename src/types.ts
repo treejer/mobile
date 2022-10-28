@@ -48,6 +48,7 @@ export interface TreeSubmissionRouteParamList extends Record<string, any> {
     initialRouteName: string;
   };
   [Routes.SelectModels]: undefined;
+  [Routes.CreateModel]: undefined;
   [Routes.SelectPhoto]: undefined;
   [Routes.SubmitTree]: undefined;
   [Routes.SelectOnMap]: {

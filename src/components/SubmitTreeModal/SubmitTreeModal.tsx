@@ -15,6 +15,7 @@ import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {Hex2Dec} from 'utilities/helpers/hex';
 import Spacer from 'components/Spacer/Spacer';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
@@ -62,15 +63,28 @@ export default function SubmitTreeModal() {
         const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-        const receipt = await sendTransactionWithGSN(
-          config,
-          ContractType.TreeFactory,
-          web3,
-          wallet,
-          'plantTree',
-          [metaDataUploadResult.Hash, birthDay, 0],
-          useGSN,
-        );
+        let receipt;
+        if (treeJourney.plantingModel) {
+          receipt = await sendTransactionWithGSN(
+            config,
+            ContractType.TreeFactory,
+            web3,
+            wallet,
+            'plantMarketPlaceTree',
+            [metaDataUploadResult.Hash, birthDay, 0, Hex2Dec(treeJourney.plantingModel)],
+            useGSN,
+          );
+        } else {
+          receipt = await sendTransactionWithGSN(
+            config,
+            ContractType.TreeFactory,
+            web3,
+            wallet,
+            'plantTree',
+            [metaDataUploadResult.Hash, birthDay, 0],
+            useGSN,
+          );
+        }
 
         console.log(receipt.transactionHash, 'receipt.transactionHash');
         return Promise.resolve(receipt.transactionHash);

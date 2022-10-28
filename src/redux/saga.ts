@@ -7,6 +7,7 @@ import {userSignSagas} from './modules/userSign/userSign';
 import {netInfoSagas} from './modules/netInfo/netInfo';
 import {profileSagas} from './modules/profile/profile';
 import {contractsSagas} from './modules/contracts/contracts';
+import {countriesSagas} from './modules/countris/countries';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -17,5 +18,6 @@ export default function* root(store: TStoreRedux) {
     netInfoSagas(store),
     profileSagas(),
     contractsSagas(),
+    countriesSagas(),
   ]);
 }

@@ -50,10 +50,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   const {t} = useTranslation();
 
   useEffect(() => {
-    console.log({userLocation, locationPermission, cameraPermission, browserPlatform}, 'userLocation is here');
-  }, [cameraPermission, locationPermission, userLocation, browserPlatform]);
-
-  useEffect(() => {
     (async () => {
       try {
         await checkUserLocation();

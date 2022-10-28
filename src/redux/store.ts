@@ -19,6 +19,7 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
   'treeFactory',
   'planter',
   'planterFund',
+  'countries',
 ]);
 
 const persistConfig = {

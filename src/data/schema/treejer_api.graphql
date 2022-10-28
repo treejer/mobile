@@ -1,172 +1,173 @@
 type User {
-    id: ID!
-    firstName: String!
-    lastName: String!
-    email: String!
-    emailVerifiedAt: String
-    idCard: String
-    createdAt: String
-    updatedAt: String
-    mobile: String
-    mobileCountry: String
-    mobileVerifiedAt: String
-    isVerified: Boolean!
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  emailVerifiedAt: String
+  idCard: String
+  createdAt: String
+  updatedAt: String
+  mobile: String
+  mobileCountry: String
+  mobileVerifiedAt: String
+  isVerified: Boolean!
 }
 
 type PlanterTreesCount {
-    count: Int!
+  count: Int!
 }
 
 type TreeEdges {
-    currentPage: Int!
-    firstPageUrl: String!
-    from: Int!
-    lastPage: Int!
-    lastPageUrl: String!
-    nextPageUrl: String!
-    path: String!
-    perPage: String!
-    prevPageUrl: String!
-    to: Int!
-    total: Int!
-    data: [Tree]!
+  currentPage: Int!
+  firstPageUrl: String!
+  from: Int!
+  lastPage: Int!
+  lastPageUrl: String!
+  nextPageUrl: String!
+  path: String!
+  perPage: String!
+  prevPageUrl: String!
+  to: Int!
+  total: Int!
+  data: [Tree]!
 }
 
 type TreesResponse {
-    trees: TreeEdges
+  trees: TreeEdges
 }
 
 type ResponseWithMessage {
-    message: String
+  message: String
 }
 
 type TreeFactory {
-    getPlanterWithdrawableBalance: String!
+  getPlanterWithdrawableBalance: String!
 }
 
 type PlanterFund {
-    minWithdrawable: String!
+  minWithdrawable: String!
 }
 
 type ApplyMutationResponse {
-    message: String
+  message: String
 }
 
 type planter {
-    id: ID!
-    status: String!
-    planterType: String!
-    countryCode: String
-    balance: Int!
-    plantedCount: Int!
-    supplyCap: Int!
+  id: ID!
+  status: String!
+  planterType: String!
+  countryCode: String
+  balance: Int!
+  plantedCount: Int!
+  supplyCap: Int!
 }
 
 type tempTrees {
-    id: String!
-    planter: [planter]!
-    status: String!
-    birthDate: String!
-    treeSpecs: String!
-    createdAt: Int!
+  id: String!
+  planter: [planter]!
+  status: String!
+  birthDate: String!
+  treeSpecs: String!
+  createdAt: Int!
 }
 
 type trees {
-    id: String!
-    treeStatus: String!
-    treeSpecs: String!
-    planter: planter!
-    funder: TreeFunder!
-    countryCode: Int
-    saleType: Int
-    plantDate: String
-    birthDate: String
-    lastUpdate: TreeUpdate!
-    createdAt: Int!
-    treeSpecsEntity: TreeSpecs!
+  id: String!
+  treeStatus: String!
+  treeSpecs: String!
+  planter: planter!
+  funder: TreeFunder!
+  countryCode: Int
+  saleType: Int
+  plantDate: String
+  birthDate: String
+  lastUpdate: TreeUpdate!
+  createdAt: Int!
+  treeSpecsEntity: TreeSpecs!
 }
 
 type TreeSpecs {
-    id: String
-    name: String
-    description: String
-    externalUrl: String
-    imageFs: String
-    imageHash: String
-    symbolFs: String
-    symbolHash: String
-    animationUrl: String
-    diameter: Int
-    latitude: String
-    longitude: String
-    attributes: String
-    updates: String
-    nursery: String
-    locations: String
+  id: String
+  name: String
+  description: String
+  externalUrl: String
+  imageFs: String
+  imageHash: String
+  symbolFs: String
+  symbolHash: String
+  animationUrl: String
+  diameter: Int
+  latitude: String
+  longitude: String
+  attributes: String
+  updates: String
+  nursery: String
+  locations: String
 }
 
 type TreeFunder {
-    id: String
+  id: String
 }
 
 type Tree {
-    id: String
-    planter: planter!
-    funder: TreeFunder!
-    countryCode: Int
-    saleType: Int
-    treeStatus: Int
-    plantDate: String
-    birthDate: String
-    lastUpdate: TreeUpdate!
-    treeSpecsEntity: TreeSpecs!
+  id: String
+  planter: planter!
+  funder: TreeFunder!
+  countryCode: Int
+  saleType: Int
+  treeStatus: Int
+  plantDate: String
+  birthDate: String
+  lastUpdate: TreeUpdate!
+  treeSpecsEntity: TreeSpecs!
 }
 
 type TempTree {
-    id: String
-    countryCode: Int
-    status: Int
-    treeSpecs: String
-    plantDate: String
-    birthDate: String
-    treeSpecsEntity: TreeSpecs!
+  id: String
+  countryCode: Int
+  status: Int
+  treeSpecs: String
+  plantDate: String
+  birthDate: String
+  treeSpecsEntity: TreeSpecs!
 }
 
 type TreeUpdate {
-    id: String
-    updateStatus: Int
-    updateSpecs: String
-    createdAt: Int!
-    updatedAt: Int!
+  id: String
+  updateStatus: Int
+  updateSpecs: String
+  createdAt: Int!
+  updatedAt: Int!
 }
 
 type Query {
-    """
-    Returns the current user account.
-    """
-    user: User
+  """
+  Returns the current user account.
+  """
+  user: User
 
-    """
-    Returns the info for the given tree id
-    """
-    tree(id: Int!): Tree
+  """
+  Returns the info for the given tree id
+  """
+  tree(id: Int!): Tree
 
-    tempTree(id: String): TempTree
+  tempTree(id: String): TempTree
 
-    """
-    Returns number of trees planted by a planter with the given ETH address
-    """
-    planterTreesCount(address: String!): PlanterTreesCount
+  """
+  Returns number of trees planted by a planter with the given ETH address
+  """
+  planterTreesCount(address: String!): PlanterTreesCount
 
-    TreeFactory: TreeFactory
-    PlanterFund: PlanterFund
+  TreeFactory: TreeFactory
+  PlanterFund: PlanterFund
 
-    planter(id: String): planter
-    tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
-    trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
+  planter(id: String): planter
+  tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
+  trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
 
-    settings: Settings
-    addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
+  settings: Settings
+  addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
+  models(where: WhereModels): [Models!]
 }
 
 #input ApplyInput {
@@ -175,64 +176,84 @@ type Query {
 #}
 
 input whereType {
-    planter: String
+  planter: String
 }
 
 input ApplyInput {
-    firstName: String!
-    lastName: String!
-    idCardFile: String!
-    type: String!
-    organizationAddress: String!
-    referrer: String!
-    longitude: String!
-    latitude: String!
+  firstName: String!
+  lastName: String!
+  idCardFile: String!
+  type: String!
+  organizationAddress: String!
+  referrer: String!
+  longitude: String!
+  latitude: String!
 }
 
 input VerifyMobileInput {
-    verificationCode: String!
+  verificationCode: String!
 }
 
 input UpdateMobileInput {
-    country: String!
-    mobileNumber: String!
+  country: String!
+  mobileNumber: String!
 }
 
 type Mutation {
-    apply(input: ApplyInput!, userId: String): ApplyMutationResponse
-    verifyMobile(input: VerifyMobileInput!): ResponseWithMessage
-    requestSMS(input: Any): ResponseWithMessage
-    updateMobile(input: UpdateMobileInput!): ResponseWithMessage
+  apply(input: ApplyInput!, userId: String): ApplyMutationResponse
+  verifyMobile(input: VerifyMobileInput!): ResponseWithMessage
+  requestSMS(input: Any): ResponseWithMessage
+  updateMobile(input: UpdateMobileInput!): ResponseWithMessage
 }
 
 scalar Web3Result
 scalar Any
 
 type ForceUpdateSetting {
-    version: String
-    force: Boolean
+  version: String
+  force: Boolean
 }
 
 type Settings {
-    id: String
-    forceUpdate: ForceUpdateSetting
+  id: String
+  forceUpdate: ForceUpdateSetting
+}
+
+type Models {
+  id: ID!
+  planter: planter!
+  country: Int!
+  species: Int!
+  status: Int!
+  price: Int!
+  count: Int!
+  start: Int!
+  lastFund: Int!
+  lastPlant: Int!
+  lastReservePlant: Int!
+  createdAt: Int!
+  updatedAt: Int!
+}
+
+input WhereModels {
+  planter: String!
 }
 
 type addressHistoriesResponse {
-    id: ID!
-    address: String!
-    event: String!
-    from: String!
-    transactionHash: String!
-    blockNumber: Int!
-    type: String!
-    typeId: String!
-    value: Int!
-    count: Int!
-    createdAt: Int!
+  id: ID!
+  address: String!
+  event: String!
+  from: String!
+  transactionHash: String!
+  blockNumber: Int!
+  type: String!
+  typeId: String!
+  value: Int!
+  count: Int!
+  createdAt: Int!
 }
 
 input WhereAddressHistories {
-    address: String!,
-    event_in: [String]
+  address: String!,
+  event_in: [String]
 }

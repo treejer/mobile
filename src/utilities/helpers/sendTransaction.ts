@@ -16,6 +16,7 @@ export async function sendTransactionWithGSN(
   const contract = config.contracts[contractType];
   console.log(useGSN, 'useGSN <============== send transaction');
   console.log('1 - Is main net?', config.isMainnet);
+  console.log(method, '<===== method');
 
   const _config = {
     auditorsCount: config.isMainnet ? 1 : 0,

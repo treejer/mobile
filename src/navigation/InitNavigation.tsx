@@ -50,6 +50,8 @@ const config = {
             [Routes.SelectPhoto]: 'tree-submission/photo',
             [Routes.SelectOnMap]: 'tree-submission/location',
             [Routes.SubmitTree]: 'tree-submission/submit',
+            [Routes.SelectModels]: 'tree-submission/models',
+            [Routes.CreateModel]: 'tree-submission/create-model',
           },
         },
         [Routes.Withdraw]: {

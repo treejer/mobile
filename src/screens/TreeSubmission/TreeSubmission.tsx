@@ -16,6 +16,7 @@ import TreeDetailQuery, {
 import {useCurrentJourney} from 'services/currentJourney';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {CreateModel} from 'screens/TreeSubmission/screens/SelectModels/CreateModel';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -70,6 +71,9 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
       </Stack.Screen>
       <Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>
         {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.CreateModel} options={{title: screenTitle('Create Models')}}>
+        {props => <CreateModel {...props} plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>
       <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
         {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
