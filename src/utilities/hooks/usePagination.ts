@@ -7,6 +7,7 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
   variables: TVariables,
   dataKey: string,
   storageKey: string,
+  keepData?: boolean,
 ) {
   const perPage = useMemo(() => 40, []);
 
@@ -34,7 +35,12 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
     (async function () {
       console.log(query.data?.[dataKey], 'key key');
       if (query.data?.[dataKey] !== undefined && query.data?.[dataKey]?.length > 0) {
-        setPersistedData(query.data[dataKey]);
+        if (keepData && page !== 0) {
+          // @ts-ignore
+          setPersistedData([...persistedData, ...query.data[dataKey]]);
+        } else {
+          setPersistedData(query.data[dataKey]);
+        }
         try {
           await AsyncStorage.setItem(storageKey, JSON.stringify(query.data?.[dataKey]));
         } catch (e) {

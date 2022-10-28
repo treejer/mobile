@@ -33,5 +33,6 @@ export function useGetUserActivitiesQuery(wallet: string, event_in?: ActivitySta
     },
     'addressHistories',
     AddressHistories,
+    true,
   );
 }

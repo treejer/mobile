@@ -33,8 +33,7 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
-import {usePagination as useTempTrees} from 'utilities/hooks/usePagination';
-import {usePagination as usePlantedTrees} from 'utilities/hooks/usePagination';
+import {usePagination} from 'utilities/hooks/usePagination';
 import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
 import Button from '../Button';
@@ -95,7 +94,7 @@ function Trees({route, navigation, filter}: Props) {
     refetching: tempTreesRefetching,
     refetchData: refetchTempTrees,
     loadMore: tempLoadMore,
-  } = useTempTrees<
+  } = usePagination<
     TempTreesQueryQueryData,
     TempTreesQueryQueryData.Variables,
     TempTreesQueryQueryPartialData.TempTrees[]
@@ -114,7 +113,7 @@ function Trees({route, navigation, filter}: Props) {
     refetchData: refetchPlantedTrees,
     refetching: plantedRefetching,
     loadMore: plantedLoadMore,
-  } = usePlantedTrees<
+  } = usePagination<
     PlanterTreesQueryQueryData,
     PlanterTreesQueryQueryData.Variables,
     PlanterTreesQueryQueryPartialData.Trees[]
