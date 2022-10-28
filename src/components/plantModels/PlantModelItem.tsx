@@ -38,12 +38,13 @@ export function PlantModelItem(props: TPlantModelItemProps) {
       onPress={onSelect}
       style={[styles.row, styles.container, isSelected ? styles.selectedModel : styles.notSelectedModal]}
     >
-      <Image source={TreeImage} style={styles.avatar} />
+      <View style={styles.idContainer}>
+        <Text style={styles.id}>{Hex2Dec(model.id as string)}</Text>
+      </View>
+      <Spacer />
       <View style={styles.details}>
         <View>
-          <Text style={styles.title}>
-            {Hex2Dec(model.id as string)} {country ? capitalize(country) : null}
-          </Text>
+          <Text style={styles.title}>{country ? capitalize(country) : null}</Text>
           <Spacer times={1} />
           <Text style={styles.date}>{updatedAt}</Text>
         </View>
@@ -54,6 +55,15 @@ export function PlantModelItem(props: TPlantModelItemProps) {
 }
 
 const styles = StyleSheet.create({
+  idContainer: {
+    width: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  id: {
+    fontSize: 20,
+    color: colors.grayDarker,
+  },
   selectedModel: {
     ...colors.smShadow,
   },

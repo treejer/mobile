@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -13,6 +13,7 @@ import Button from 'components/Button';
 import {isWeb} from 'utilities/helpers/web';
 import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {TreeImage} from '../../../../../assets/icons';
 
 export type TPlantModelButtonsProps = {
   selectedModel: boolean;
@@ -64,6 +65,12 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
     <View style={[globalStyles.alignItemsCenter, isNursery && !isWeb() && {flex: 1}]}>
       <View style={styles.btnContainer}>
         <Spacer times={4} />
+        {/*<TouchableOpacity style={[{borderColor: colors.green}, styles.plantType]}>*/}
+        {/*  <Image source={TreeImage} style={{height: 56, width: 48, tintColor: colors.green}} />*/}
+        {/*  <View style={{flex: 1, paddingHorizontal: 16}}>*/}
+        {/*    <Text style={[styles.text, {color: colors.green}]}>{t('submitTree.singleTree')}</Text>*/}
+        {/*  </View>*/}
+        {/*</TouchableOpacity>*/}
         {selectedModel ? (
           <View style={{flexDirection: 'row'}}>
             <Button
@@ -114,6 +121,19 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
 const styles = StyleSheet.create({
   whiteText: {
     color: colors.white,
+  },
+  plantType: {
+    backgroundColor: colors.khakiDark,
+    alignSelf: 'stretch',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    height: 80,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 8,
   },
   btnContainer: {
     width: 360,

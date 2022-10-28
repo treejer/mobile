@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, RefreshControl, StyleSheet, View} from 'react-native';
+import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -23,6 +24,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
+import BigList, {BigListRenderItemInfo} from 'react-native-big-list';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -58,6 +60,19 @@ export function SelectModels(props: SelectModelsProps) {
     })();
   });
 
+  const renderPlantModelItem = useCallback(
+    ({item, index}: BigListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
+      const isSelected = item.id === selectedModel;
+      return (
+        <View>
+          <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
+          {plantModels && plantModels?.length - 1 !== index && <Hr styles={{marginVertical: 8}} />}
+        </View>
+      );
+    },
+    [selectedModel, plantModels],
+  );
+
   const handleContinueToPlant = useCallback(
     (nurseryCount: string, single: boolean = false) => {
       console.log('plant button');
@@ -82,16 +97,6 @@ export function SelectModels(props: SelectModelsProps) {
     [selectedModel],
   );
 
-  const renderPlantModelItem = useCallback(
-    ({item}: ListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
-      const isSelected = item.id === selectedModel;
-      return (
-        <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
-      );
-    },
-    [selectedModel],
-  );
-
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
@@ -106,17 +111,17 @@ export function SelectModels(props: SelectModelsProps) {
           </View>
         ) : (
           <PullToRefresh onRefresh={refetchPlantModels}>
-            <FlatList<GetPlantingModelsQueryQueryPartialData.Models>
-              style={{width: '100%', backgroundColor: colors.khaki}}
-              data={plantModels}
+            <BigList<GetPlantingModelsQueryQueryPartialData.Models>
+              style={{flex: 1, width: '100%'}}
+              data={plantModels || undefined}
               renderItem={renderPlantModelItem}
               showsVerticalScrollIndicator={false}
+              itemHeight={80}
               contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
-              ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
+              // ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
               ListEmptyComponent={() => <EmptyModelsList />}
               keyExtractor={item => item.id?.toString() as string}
               refreshing
-              scrollEnabled={true}
               onRefresh={refetchPlantModels}
               onEndReachedThreshold={0.1}
               onEndReached={plantModelsLoadMore}
@@ -143,6 +148,7 @@ export function SelectModels(props: SelectModelsProps) {
 const styles = StyleSheet.create({
   list: {
     alignItems: 'center',
+    paddingHorizontal: 16,
     paddingBottom: 8,
   },
   emptyList: {
