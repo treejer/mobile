@@ -18,28 +18,35 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 
+import {Routes} from 'navigation';
 import {GreenBlockRouteParamList, Tree} from 'types';
+import {colors} from 'constants/values';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {TreeJourney} from 'screens/TreeSubmission/types';
-import {colors} from 'constants/values';
-import {Routes} from 'navigation';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
-import useTempTrees from 'utilities/hooks/useTempTrees';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {isWeb} from 'utilities/helpers/web';
+import {usePagination} from 'utilities/hooks/usePagination';
 import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
 import Button from '../Button';
 import Spacer from '../Spacer';
+import TempTreesQuery, {
+  TempTreesQueryQueryData,
+  TempTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/TempTreesQuery.graphql';
+import planterTreeQuery, {
+  PlanterTreesQueryQueryData,
+  PlanterTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useWalletAccount} from '../../redux/modules/web3/web3';
 
 interface Props {
@@ -82,20 +89,42 @@ function Trees({route, navigation, filter}: Props) {
   const treeUpdateInterval = useTreeUpdateInterval();
 
   const {
-    tempTreesQuery,
-    tempTrees,
-    refetchTempTrees,
+    persistedData: tempTrees,
+    query: tempTreeQuery,
     refetching: tempTreesRefetching,
+    refetchData: refetchTempTrees,
     loadMore: tempLoadMore,
-  } = useTempTrees(address);
+  } = usePagination<
+    TempTreesQueryQueryData,
+    TempTreesQueryQueryData.Variables,
+    TempTreesQueryQueryPartialData.TempTrees[]
+  >(
+    TempTreesQuery,
+    {
+      address: address.toString().toLocaleLowerCase(),
+    },
+    'tempTrees',
+    TreeFilter.Temp,
+  );
 
   const {
-    plantedTrees,
-    plantedTreesQuery,
-    refetchPlantedTrees,
+    persistedData: plantedTrees,
+    query: plantedTreesQuery,
+    refetchData: refetchPlantedTrees,
     refetching: plantedRefetching,
     loadMore: plantedLoadMore,
-  } = usePlantedTrees(address);
+  } = usePagination<
+    PlanterTreesQueryQueryData,
+    PlanterTreesQueryQueryData.Variables,
+    PlanterTreesQueryQueryPartialData.Trees[]
+  >(
+    planterTreeQuery,
+    {
+      address: address.toString().toLocaleLowerCase(),
+    },
+    'trees',
+    TreeFilter.Submitted,
+  );
 
   const {
     offlineTrees,
@@ -111,7 +140,7 @@ function Trees({route, navigation, filter}: Props) {
 
   const dim = useWindowDimensions();
 
-  const allLoading = plantedTreesQuery.loading || tempTreesQuery.loading;
+  const allLoading = plantedTreesQuery.loading || tempTreeQuery.loading;
   const offlineLoading = Boolean(offlineLoadings?.length || offlineUpdateLoadings?.length);
   const showLoadingModal = offlineLoading && !loadingMinimized;
 

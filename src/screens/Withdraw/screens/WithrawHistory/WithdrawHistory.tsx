@@ -43,9 +43,9 @@ export function WithdrawHistoryScreen() {
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle title={t('transfer.withdrawHistory')} goBack />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-        <View style={styles.container}>
-          {history && history?.length ? <WithdrawHistory withdrawHistory={history} /> : null}
-        </View>
+        {/*<View style={styles.container}>/!**/}
+        {/*  {history && history?.length ? <WithdrawHistory withdrawHistory={history} /> : null}*/}
+        {/*</View>*!/*/}
       </ScrollView>
     </SafeAreaView>
   );

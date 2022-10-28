@@ -1,5 +1,6 @@
 # Components
 
+- [Activity](./Activity): list the user's activity
 - [Analytics](./Analytics): firebase logger button
 - [AppLoading](./AppLoading): app loading after lunch
 - [AppVersion](./AppVersion): current app version

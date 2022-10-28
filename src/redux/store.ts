@@ -1,6 +1,6 @@
 import {createStore, applyMiddleware, Middleware, Store} from 'redux';
 import {persistStore, persistReducer} from 'redux-persist';
-import {createFilter, createBlacklistFilter} from 'redux-persist-transform-filter';
+import {createBlacklistFilter} from 'redux-persist-transform-filter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createSagaMiddleware from 'redux-saga';
 import logger from 'redux-logger';
@@ -24,7 +24,7 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
-  whitelist: ['token', 'settings', 'web3', 'profile', 'contracts'],
+  whitelist: ['settings', 'web3', 'profile', 'contracts'],
   transforms: [saveSubsetBlacklistFilter],
 };
 

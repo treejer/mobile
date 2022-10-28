@@ -8,8 +8,8 @@ import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {TReduxState} from '../../store';
 import {profileActions} from '../profile/profile';
 import {createWeb3, UPDATE_WEB3} from '../web3/web3';
-import {version} from '../../../../package.json';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
+import {version} from '../../../../package.json';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({

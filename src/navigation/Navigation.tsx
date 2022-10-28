@@ -5,10 +5,11 @@ import {AppLoading} from 'components/AppLoading/AppLoading';
 import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
-import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
+import {Support} from 'screens/Profile/screens/Support/Support';
 import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
+import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
 import {isWeb} from 'utilities/helpers/web';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {VerifiedUserNavigation} from './VerifiedUser';
@@ -32,6 +33,7 @@ export type RootNavigationParamList = {
   [Routes.Settings]: undefined;
   [Routes.SavedAreas]: undefined;
   [Routes.Organization]: undefined;
+  [Routes.Support]: undefined;
 };
 
 export type RootNavigationProp<ScreenName extends keyof RootNavigationParamList> = LibraryProp<
@@ -58,7 +60,6 @@ export enum Routes {
   SelectOnMap = 'SelectOnMap',
   TreeSubmission = 'TreeSubmission',
   GreenBlock = 'GreenBlock',
-  Test = 'Test',
   SelectPhoto = 'SelectPhoto',
   SelectPlantType = 'SelectPlantType',
   SelectModels = 'SelectModels',
@@ -69,6 +70,8 @@ export enum Routes {
   Withdraw = 'Withdraw',
   Transfer = 'Transfer',
   WithdrawHistory = 'WithdrawHistory',
+  Support = 'Support',
+  Activity = 'Activity',
 }
 
 export function RootNavigation() {
@@ -121,16 +124,9 @@ export function RootNavigation() {
                 <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
               </>
             )}
-            <RootStack.Screen
-              name={Routes.SelectLanguage}
-              component={SelectLanguage}
-              options={{title: screenTitle('Select Language')}}
-            />
-            <RootStack.Screen
-              name={Routes.Settings}
-              component={SettingsScreen}
-              options={{title: screenTitle('Settings')}}
-            />
+            <RootStack.Screen name={Routes.Support} component={Support} />
+            <RootStack.Screen name={Routes.SelectLanguage} component={SelectLanguage} />
+            <RootStack.Screen name={Routes.Settings} component={SettingsScreen} />
           </>
         ) : null}
       </RootStack.Navigator>

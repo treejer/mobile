@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacityProps, ViewProps} from 'react-native';
+import {colors} from 'constants/values';
 
 interface Props extends TouchableOpacityProps {
   children: React.ReactNode;
@@ -19,14 +20,7 @@ Card.displayName = 'Card';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    elevation: 6,
-    shadowOffset: {
-      width: 2,
-      height: 6,
-    },
-    shadowRadius: 40,
-    shadowColor: 'black',
-    shadowOpacity: 0.1,
+    ...colors.smShadow,
     width: '100%',
     paddingVertical: 24,
     paddingHorizontal: 18,
