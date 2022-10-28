@@ -55,6 +55,8 @@ export function ActivityList(props: TActivityListProps) {
       onRefresh={onRefresh}
       data={activities}
       renderItem={renderItem}
+      style={styles.container}
+      contentContainerStyle={[globalStyles.screenView, globalStyles.alignItemsCenter]}
       ListEmptyComponent={emptyList}
       showsVerticalScrollIndicator={false}
       refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

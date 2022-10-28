@@ -20,8 +20,8 @@ export interface GetUserActivitiesQueryPartialData {
 }
 export namespace GetUserActivitiesQueryData {
   export interface Variables {
-    first: number;
-    skip: number;
+    first?: number | null;
+    skip?: number | null;
     address: string;
     event_in?: (string | null)[] | null;
   }
