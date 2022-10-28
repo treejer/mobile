@@ -375,6 +375,7 @@ function MyProfile(props: MyProfileProps) {
                   />
                   <Spacer times={4} />
                   <AppVersion />
+                  <Spacer times={4} />
                 </View>
               </>
             )}

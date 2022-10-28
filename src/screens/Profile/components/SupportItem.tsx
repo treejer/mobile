@@ -3,72 +3,39 @@ import {StyleSheet, Text, TouchableOpacity, View, Image, Linking} from 'react-na
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
 import BrandIcon from 'react-native-vector-icons/FontAwesome5';
-import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 
 import Card from 'components/Card';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {isWeb} from 'utilities/helpers/web';
 import {TreejerIcon} from '../../../../assets/images';
+import {chatItem, TSupportItem} from 'screens/Profile/components/supportList';
+import {useSettings} from '../../../redux/modules/settings/settings';
+import {useInAppBrowser} from 'utilities/hooks/useInAppBrowser';
 
 export type TSupportItemProps = {
-  support: {
-    name: string;
-    link: string;
-    icon?: string;
-    color: string;
-  };
+  support: TSupportItem;
 };
 
 export function SupportItem(props: TSupportItemProps) {
   const {support} = props;
 
+  const {setShowSupportChat} = useSettings();
+  const {handleOpenLink} = useInAppBrowser();
+
   const {t} = useTranslation();
 
   const handleOpenSupportLink = useCallback(async () => {
     if (isWeb()) {
-      console.log(support.name);
-      if (support.name === 'chatOnline') {
-        // @ts-ignore
-        window.HubSpotConversations.widget.open();
+      if (support.name === chatItem.name) {
+        setShowSupportChat(true);
       } else {
-        Linking.openURL(support.link);
+        await Linking.openURL(support.link);
       }
     } else {
-      if (await InAppBrowser.isAvailable()) {
-        await InAppBrowser.open(support.link, {
-          // iOS Properties
-          dismissButtonStyle: 'cancel',
-          preferredBarTintColor: support.color,
-          preferredControlTintColor: colors.white,
-          readerMode: false,
-          animated: true,
-          modalPresentationStyle: 'fullScreen',
-          modalTransitionStyle: 'coverVertical',
-          modalEnabled: true,
-          enableBarCollapsing: false,
-          // Android Properties
-          showTitle: true,
-          hasBackButton: true,
-          toolbarColor: support.color,
-          secondaryToolbarColor: colors.white,
-          navigationBarColor: colors.white,
-          navigationBarDividerColor: colors.white,
-          enableUrlBarHiding: true,
-          enableDefaultShare: true,
-          forceCloseOnRedirection: false,
-          // Specify full animation resource identifier(package:anim/name)
-          // or only resource name(in case of animation bundled with app).
-          animations: {
-            startEnter: 'slide_in_right',
-            startExit: 'slide_out_left',
-            endEnter: 'slide_in_left',
-            endExit: 'slide_out_right',
-          },
-        });
-      }
+      await handleOpenLink(support);
     }
-  }, [support]);
+  }, [handleOpenLink, setShowSupportChat, support]);
 
   return (
     <Card style={styles.container}>

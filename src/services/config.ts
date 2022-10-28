@@ -278,6 +278,13 @@ export const networks: Networks = {
 export const debugFetch = true;
 export const reduxLogger = false;
 
+export const supportLinks = {
+  chatOnline: process.env.REACT_NATIVE_CHAT_ONLINE_LINK || '',
+  discord: process.env.REACT_NATIVE_DISCORD_LINK || '',
+  twitter: process.env.REACT_NATIVE_TWITTER_LINK || '',
+  discussion: process.env.REACT_NATIVE_DISCUSSION_LINK || '',
+};
+
 export default config;
 
 export const maxDistanceInKiloMeters = 200;
