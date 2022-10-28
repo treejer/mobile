@@ -13,16 +13,16 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {EmptyModelsList} from 'components/plantModels/EmptyModelsList';
-import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
+import {PlantModelItem} from 'components/plantModels/PlantModelItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {GetPlantingModelsQueryQueryPartialData} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {PlantModelButtons} from 'screens/TreeSubmission/components/Models/PlantModelButtons';
 import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -39,10 +39,15 @@ export function SelectModels(props: SelectModelsProps) {
 
   const [selectedModel, setSelectedModel] = useState<string>('');
 
-  const wallet = useWalletAccount();
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
-  const {data, loading, refetching, refetchPlantModels} = useGetPlantModelsQuery(wallet);
+  const {
+    persistedData: plantModels,
+    query: plantModelsQuery,
+    refetching: plantModelsRefetching,
+    refetchData: refetchPlantModels,
+    loadMore: plantModelsLoadMore,
+  } = useGetPlantModelsQuery();
 
   const {t} = useTranslation();
 
@@ -78,9 +83,11 @@ export function SelectModels(props: SelectModelsProps) {
   );
 
   const renderPlantModelItem = useCallback(
-    ({item}: ListRenderItemInfo<TPlantModel>) => {
+    ({item}: ListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
       const isSelected = item.id === selectedModel;
-      return <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id)} />;
+      return (
+        <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
+      );
     },
     [selectedModel],
   );
@@ -93,34 +100,39 @@ export function SelectModels(props: SelectModelsProps) {
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle goBack title={t('selectModels.title')} />
       <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
-        {loading ? (
+        {plantModelsQuery.loading ? (
           <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
             <ActivityIndicator size="large" />
           </View>
         ) : (
           <PullToRefresh onRefresh={refetchPlantModels}>
-            <FlatList<TPlantModel>
+            <FlatList<GetPlantingModelsQueryQueryPartialData.Models>
               style={{width: '100%', backgroundColor: colors.khaki}}
-              data={data?.models}
+              data={plantModels}
               renderItem={renderPlantModelItem}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={[styles.list, (!data?.models || !data.models?.length) && styles.emptyList]}
+              contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
               ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
               ListEmptyComponent={() => <EmptyModelsList />}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.id?.toString() as string}
               refreshing
+              scrollEnabled={true}
               onRefresh={refetchPlantModels}
+              onEndReachedThreshold={0.1}
+              onEndReached={plantModelsLoadMore}
               refreshControl={
-                isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchPlantModels} />
+                isWeb() ? undefined : (
+                  <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
+                )
               }
             />
           </PullToRefresh>
         )}
       </View>
-      {!loading && (
+      {!plantModelsQuery.loading && (
         <PlantModelButtons
           selectedModel={!!selectedModel}
-          modelExist={!!data?.models?.length}
+          modelExist={!!plantModels?.length}
           onPlant={handleContinueToPlant}
         />
       )}

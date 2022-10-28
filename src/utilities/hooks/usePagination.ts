@@ -8,8 +8,9 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
   dataKey: string,
   storageKey: string,
   keepData?: boolean,
+  manualPerPage?: number,
 ) {
-  const perPage = useMemo(() => 40, []);
+  const perPage = useMemo(() => manualPerPage || 40, []);
 
   const [page, setPage] = useState(0);
 

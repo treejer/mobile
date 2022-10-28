@@ -1,8 +1,7 @@
-import {DocumentNode} from 'graphql-typed';
-
+import { DocumentNode } from "graphql-typed";
 export namespace GetUserActivitiesQueryPartialData {
   export interface AddressHistories {
-    __typename?: 'addressHistoriesResponse' | null;
+    __typename?: "addressHistoriesResponse" | null;
     address?: string | null;
     blockNumber?: number | null;
     count?: number | null;
@@ -16,19 +15,18 @@ export namespace GetUserActivitiesQueryPartialData {
     value?: number | null;
   }
 }
-
 export interface GetUserActivitiesQueryPartialData {
   addressHistories?: (GetUserActivitiesQueryPartialData.AddressHistories | null)[] | null;
 }
-
 export namespace GetUserActivitiesQueryData {
   export interface Variables {
+    first: number;
+    skip: number;
     address: string;
     event_in?: (string | null)[] | null;
   }
-
   export interface AddressHistories {
-    __typename: 'addressHistoriesResponse';
+    __typename: "addressHistoriesResponse";
     address: string;
     blockNumber: number;
     count: number;
@@ -42,14 +40,8 @@ export namespace GetUserActivitiesQueryData {
     value: number;
   }
 }
-
 export interface GetUserActivitiesQueryData {
   addressHistories?: GetUserActivitiesQueryData.AddressHistories[] | null;
 }
-
-declare const document: DocumentNode<
-  GetUserActivitiesQueryData,
-  GetUserActivitiesQueryData.Variables,
-  GetUserActivitiesQueryPartialData
->;
+declare const document: DocumentNode<GetUserActivitiesQueryData, GetUserActivitiesQueryData.Variables, GetUserActivitiesQueryPartialData>;
 export default document;
