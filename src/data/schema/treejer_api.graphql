@@ -166,6 +166,7 @@ type Query {
   trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
 
   settings: Settings
+  addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
   models(where: WhereModels): [Models!]
 }
 
@@ -236,4 +237,23 @@ type Models {
 
 input WhereModels {
   planter: String!
+}
+
+type addressHistoriesResponse {
+  id: ID!
+  address: String!
+  event: String!
+  from: String!
+  transactionHash: String!
+  blockNumber: Int!
+  type: String!
+  typeId: String!
+  value: Int!
+  count: Int!
+  createdAt: Int!
+}
+
+input WhereAddressHistories {
+  address: String!,
+  event_in: [String]
 }

@@ -223,29 +223,27 @@ export function TransferScreen() {
               daiBalance={daiBalance}
               redeeming={redeeming}
             />
-            {!daiBalance && !planterWithdrawableBalance ? (
-              history?.length ? (
-                <>
-                  <Spacer times={12} />
-                  <WithdrawHistory withdrawHistory={history} />
-                </>
-              ) : null
-            ) : (
-              !!daiBalance && (
-                <TransferForm
-                  hasHistory={!!history?.length}
-                  daiBalance={dai}
-                  userWallet={wallet}
-                  fee={fee}
-                  submitting={submitting}
-                  handleSubmitTransaction={submitTransaction}
-                  handleEstimateGasPrice={estimateGasPrice}
-                  handleCancelTransaction={cancelTransaction}
-                />
-              )
-            )}
-            <Spacer times={8} />
           </View>
+          {!dai && !planterWithdrawableBalance ? (
+            <>
+              <Spacer times={8} />
+              <WithdrawHistory />
+            </>
+          ) : (
+            !!daiBalance && (
+              <TransferForm
+                hasHistory={!!history.length}
+                daiBalance={dai}
+                userWallet={wallet}
+                fee={fee}
+                submitting={submitting}
+                handleSubmitTransaction={submitTransaction}
+                handleEstimateGasPrice={estimateGasPrice}
+                handleCancelTransaction={cancelTransaction}
+              />
+            )
+          )}
+          <Spacer times={8} />
         </ScrollView>
       </PullToRefresh>
     </SafeAreaView>

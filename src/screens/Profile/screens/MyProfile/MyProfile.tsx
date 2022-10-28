@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -21,6 +21,7 @@ import {isWeb} from 'utilities/helpers/web';
 import useRefer from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
@@ -92,6 +93,7 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
+  const {persistedData: activities} = useGetUserActivitiesQuery(wallet);
 
   // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
   //   variables: {
@@ -166,9 +168,16 @@ function MyProfile(props: MyProfileProps) {
     </>
   );
 
-  const handleOpenHelp = () => {
-    sendEvent('help');
-    return Linking.openURL('https://discuss.treejer.com/group/planters');
+  const handleNavigateSupport = () => {
+    sendEvent('Support');
+    // return Linking.openURL('https://discuss.treejer.com/group/planters');
+    // @ts-ignore
+    navigation.navigate(Routes.Support);
+  };
+
+  const handleNavigateActivity = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Activity);
   };
 
   const handleNavigateOfflineMap = () => {
@@ -297,7 +306,15 @@ function MyProfile(props: MyProfileProps) {
                         <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
                         <Text style={globalStyles.tiny}>{referrer || organization}</Text>
                         <Spacer times={4} />
-                        <Text style={[globalStyles.h5, {color: colors.green, fontWeight: 'bold'}]}>
+                        <Text
+                          style={[
+                            globalStyles.h5,
+                            {
+                              color: colors.green,
+                              fontWeight: 'bold',
+                            },
+                          ]}
+                        >
                           {t(referrer ? 'getVerified' : 'joinAndGetVerified')}
                         </Text>
                         <Spacer times={2} />
@@ -329,7 +346,23 @@ function MyProfile(props: MyProfileProps) {
                     onPress={handleNavigateSettings}
                   />
                   <Spacer times={4} />
-                  <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
+                  <Button
+                    style={styles.button}
+                    caption={t('support')}
+                    variant="tertiary"
+                    onPress={handleNavigateSupport}
+                  />
+                  {profile.isVerified && !!activities?.length ? (
+                    <>
+                      <Spacer times={4} />
+                      <Button
+                        style={styles.button}
+                        caption={t('activity')}
+                        variant="tertiary"
+                        onPress={handleNavigateActivity}
+                      />
+                    </>
+                  ) : null}
                   <Spacer times={4} />
                   <Button
                     style={styles.button}

@@ -54,6 +54,13 @@ const config = {
             [Routes.CreateModel]: 'tree-submission/create-model',
           },
         },
+        [Routes.Withdraw]: {
+          screens: {
+            [Routes.Transfer]: 'withdraw/transfer',
+            [Routes.WithdrawHistory]: 'withdraw/history',
+          },
+        },
+        [Routes.Activity]: 'activity',
       },
     },
     [Routes.Settings]: 'settings',
@@ -61,12 +68,7 @@ const config = {
     [Routes.Login]: 'login',
     [Routes.Onboarding]: 'on-boarding',
     [Routes.Organization]: 'organization',
-    [Routes.Withdraw]: {
-      screens: {
-        [Routes.Transfer]: 'withdraw/transfer',
-        [Routes.WithdrawHistory]: 'withdraw/history',
-      },
-    },
+    [Routes.Support]: 'support',
   },
 };
 

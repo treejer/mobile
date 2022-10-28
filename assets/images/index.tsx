@@ -13,6 +13,9 @@ import StableDaiCoin from './stableCoin.png';
 import TreejerDaiCoin from './treejerCoin.png';
 import QrFrame from './qrFrame.png';
 import GoerliLogo from './goerli-logo.png';
+import Tree from './tree.png';
+import MaticCoin from './matic.png';
+import EthCoin from './eth.png';
 
 export {
   MaticLogo,
@@ -29,4 +32,7 @@ export {
   TreejerDaiCoin,
   QrFrame,
   GoerliLogo,
+  Tree,
+  MaticCoin,
+  EthCoin,
 };
