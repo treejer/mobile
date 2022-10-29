@@ -29,6 +29,5 @@ export interface WhereAddressHistories {
 }
 export interface WhereTransactionHistory {
   token: string;
-  from?: string | null;
-  to?: string | null;
+  address: string;
 }

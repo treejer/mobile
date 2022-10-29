@@ -260,18 +260,18 @@ input WhereAddressHistories {
 
 type transactionHistoryResponse {
   id: ID!
+  address: String!
+  amount: Int!
   token: String!
   from: String!
   to: String!
   event: String!
   transactionHash: String!
   blockNumber: Int!
-  amount: Int!
   createdAt: Int!
 }
 
 input WhereTransactionHistory {
   token: String!,
-  from: String,
-  to: String,
+  address: String!
 }
