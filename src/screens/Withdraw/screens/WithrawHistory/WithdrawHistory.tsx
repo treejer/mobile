@@ -5,9 +5,10 @@ import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {TWithdrawHistory, WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
+import {TransactionHistory} from 'components/Withdraw/TransactionHistory';
+import {TTransactionHistory} from 'components/Withdraw/TransactionItem';
 
-// export const history: TWithdrawHistory[] = [
+// export const history = [
 //   {
 //     id: '1',
 //     amount: '20.00000000000',
@@ -34,7 +35,7 @@ import {TWithdrawHistory, WithdrawHistory} from 'components/Withdraw/WithdrawHis
 //   },
 // ];
 
-export const history: TWithdrawHistory[] = [];
+export const history: TTransactionHistory[] = [];
 
 export function WithdrawHistoryScreen() {
   const {t} = useTranslation();
@@ -43,9 +44,9 @@ export function WithdrawHistoryScreen() {
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle title={t('transfer.withdrawHistory')} goBack />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
-        {/*<View style={styles.container}>/!**/}
-        {/*  {history && history?.length ? <WithdrawHistory withdrawHistory={history} /> : null}*/}
-        {/*</View>*!/*/}
+        <View style={styles.container}>
+          {history && history?.length ? <TransactionHistory history={history} /> : null}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

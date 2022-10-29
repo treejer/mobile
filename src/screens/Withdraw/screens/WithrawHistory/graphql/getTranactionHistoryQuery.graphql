@@ -1,0 +1,20 @@
+query GetTransactionHistory($token: String!, $skip: Int, $first: Int, $from: String, $to: String) {
+  erc20Histories(
+    first: $first,
+    skip: $skip,
+    where: {
+      token: $token
+      from: $from
+      to: $to
+    }) {
+    id
+    token
+    from
+    to
+    event
+    transactionHash
+    blockNumber
+    amount
+    createdAt
+  }
+}

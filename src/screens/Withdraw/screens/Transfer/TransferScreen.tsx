@@ -8,7 +8,7 @@ import {ContractType} from 'services/config';
 import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {WithdrawHistory} from 'components/Withdraw/WithdrawHistory';
+import {TransactionHistory} from 'components/Withdraw/TransactionHistory';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
@@ -227,7 +227,7 @@ export function TransferScreen() {
           {!dai && !planterWithdrawableBalance ? (
             <>
               <Spacer times={8} />
-              <WithdrawHistory />
+              <TransactionHistory history={[]} />
             </>
           ) : (
             !!daiBalance && (

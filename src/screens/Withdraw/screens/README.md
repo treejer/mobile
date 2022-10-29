@@ -3,4 +3,4 @@
 > Withdraw history and Transfer screens
 
 - [Transfer](./Transfer) screen
-- [WithdrawHistory](./WithrawHistory) screen
+- [TransactionHistory](./WithrawHistory) screen

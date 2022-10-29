@@ -3,6 +3,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {isWeb} from 'utilities/helpers/web';
+import {TransactionHistory} from 'components/Withdraw/TransactionHistory';
+import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 
 type CounterType = {
   id: string;
@@ -39,61 +41,5 @@ const staticData: CounterType[] = [
 ];
 
 export function TestScreen() {
-  const [counter, setCounter] = useState<CounterType[]>(staticData);
-
-  useEffect(() => {
-    console.log(counter, 'is here');
-  }, [counter]);
-
-  const handleIncrementCounter = () => {
-    setCounter([
-      ...counter,
-      {
-        id: Date.now().toString(),
-        value: counter.length + 1,
-        name: 'name',
-      },
-    ]);
-  };
-
-  const handleChangeName = (id: string) => {
-    const cloneCounter = [...counter];
-    const index = cloneCounter.findIndex(item => item.id === id);
-    const selectedItem = {...cloneCounter[index]};
-    selectedItem.name = 'name changed';
-    cloneCounter[index] = selectedItem;
-    setCounter(cloneCounter);
-  };
-
-  const renderItem = useCallback(
-    ({item}) => {
-      return (
-        <View style={{height: 80}}>
-          <Text>{item.value}</Text>
-          <Text>{item.name}</Text>
-          <TouchableOpacity onPress={() => handleChangeName(item.id)}>
-            <Text>add</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    },
-    [counter],
-  );
-
-  return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{flex: 1}}>
-        <Text>hello world</Text>
-        <FlashList
-          extraData={counter}
-          data={counter}
-          estimatedItemSize={80}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          onEndReachedThreshold={0.1}
-          onEndReached={handleIncrementCounter}
-        />
-      </View>
-    </SafeAreaView>
-  );
+  return <SafeAreaView style={{flex: 1}}>{/*<TransactionHistory history={history} />*/}</SafeAreaView>;
 }
