@@ -32,6 +32,14 @@ export enum ActivityStatus {
   BalanceWithdrew = 'BalanceWithdrew',
   TreePlanted = 'TreePlanted',
   TreeUpdated = 'TreeUpdated',
+  TreeAssigned = 'TreeAssigned',
+  AssignedTreePlanted = 'AssignedTreePlanted',
+  AssignedTreeVerified = 'AssignedTreeVerified',
+  AssignedTreeRejected = 'AssignedTreeRejected',
+  TreeVerified = 'TreeVerified',
+  TreeRejected = 'TreeRejected',
+  TreeUpdatedVerified = 'TreeUpdatedVerified',
+  TreeUpdateRejected = 'TreeUpdateRejected',
 }
 
 export enum ContractTypes {
@@ -52,46 +60,80 @@ export function ActivityItem(props: TActivityItemProps) {
 
   const {t} = useTranslation();
 
-  const AIcon = ActivityStatus.BalanceWithdrew === activity.event ? IIcon : FIcon;
-
-  const iconName =
-    activity.event === ActivityStatus.BalanceWithdrew
-      ? 'md-wallet'
-      : [ActivityStatus.PlanterJoined, ActivityStatus.OrganizationJoined].includes(activity.event as ActivityStatus)
-      ? 'user-plus'
-      : activity.event === ActivityStatus.RejectedByOrganization
-      ? 'user-x'
-      : 'user';
-
   useEffect(() => {
     setIsOpen(false);
   }, [props]);
 
+  const AIcon = ActivityStatus.BalanceWithdrew === activity.event ? IIcon : FIcon;
+
+  const iconName = useMemo(() => {
+    if (activity.event === ActivityStatus.BalanceWithdrew) {
+      return 'md-wallet';
+    } else if (
+      [ActivityStatus.PlanterJoined, ActivityStatus.OrganizationJoined].includes(activity.event as ActivityStatus)
+    ) {
+      return 'user-plus';
+    } else if (activity.event === ActivityStatus.RejectedByOrganization) {
+      return 'user-x';
+    } else {
+      return 'user';
+    }
+  }, [activity.event]);
+
   const date = useMemo(
-    () => (activity.count ? moment(+activity.count * 1000).format('lll') : null),
+    () => (activity.createdAt ? moment(+activity.createdAt * 1000).format('lll') : null),
     [activity.createdAt],
   );
 
   const bgTree = useMemo(
     () => ({
+      [ActivityStatus.TreeRejected]: colors.red,
+      [ActivityStatus.TreeUpdateRejected]: colors.red,
+      [ActivityStatus.AssignedTreeRejected]: colors.red,
+      [ActivityStatus.RejectedByOrganization]: colors.red,
       [ActivityStatus.TreePlanted]: colors.yellow,
+      [ActivityStatus.AssignedTreePlanted]: colors.yellow,
       [ActivityStatus.TreeUpdated]: colors.pink,
+      [ActivityStatus.TreeVerified]: colors.green,
+      [ActivityStatus.AssignedTreeVerified]: colors.green,
+      [ActivityStatus.TreeUpdatedVerified]: colors.green,
+      [ActivityStatus.TreeAssigned]: colors.green,
+      [ActivityStatus.RejectedByOrganization]: colors.red,
       gray: colors.gray,
     }),
     [],
   );
 
-  const title = useMemo(
+  const isRelatedToTree = useMemo(
     () =>
-      activity.event === ActivityStatus.BalanceWithdrew && activity.count
-        ? t('activities.withdraw', {amount: Number(Hex2Dec(activity.count.toString()).toFixed(6))})
-        : [ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus)
-        ? activity.event === ActivityStatus.TreePlanted
-          ? t('activities.new', {tempId: Hex2Dec(activity.typeId as string)})
-          : `#${Hex2Dec(activity.typeId as string)}`
-        : t(`activities.${activity.event}`),
-    [activity],
+      [
+        ActivityStatus.TreePlanted,
+        ActivityStatus.TreeUpdated,
+        ActivityStatus.TreeVerified,
+        ActivityStatus.TreeRejected,
+        ActivityStatus.TreeUpdateRejected,
+        ActivityStatus.TreeUpdatedVerified,
+        ActivityStatus.AssignedTreeVerified,
+        ActivityStatus.AssignedTreeRejected,
+        ActivityStatus.AssignedTreePlanted,
+        ActivityStatus.TreeAssigned,
+      ].includes(activity.event as ActivityStatus),
+    [activity.event],
   );
+
+  const title = useMemo(() => {
+    if (activity.event === ActivityStatus.BalanceWithdrew && activity.count) {
+      return t('activities.withdraw', {amount: Number(Hex2Dec(activity.count.toString()).toFixed(6))});
+    } else if (isRelatedToTree) {
+      if (activity.event === ActivityStatus.TreePlanted) {
+        return t('activities.new', {tempId: Hex2Dec(activity.typeId as string)});
+      } else {
+        return `#${Hex2Dec(activity.typeId as string)}`;
+      }
+    } else {
+      return t(`activities.${activity.event}`);
+    }
+  }, [activity]);
 
   const handleOpenDetails = useCallback(() => {
     setIsOpen(prevIsOpen => !prevIsOpen);
@@ -102,12 +144,17 @@ export function ActivityItem(props: TActivityItemProps) {
       <Spacer />
       <View style={[styles.container, isOpen && colors.smShadow]}>
         <View style={styles.row}>
-          {[ActivityStatus.TreePlanted, ActivityStatus.TreeUpdated].includes(activity.event as ActivityStatus) ? (
+          {isRelatedToTree ? (
             <View style={[styles.image, {backgroundColor: bgTree[activity.event as string]}]}>
               <Image source={Tree} style={styles.tree} />
             </View>
           ) : (
-            <View style={[styles.image, {backgroundColor: bgTree.gray, borderRadius: 22}]}>
+            <View
+              style={[
+                styles.image,
+                {backgroundColor: bgTree[activity.event as string] || bgTree.gray, borderRadius: 22},
+              ]}
+            >
               <AIcon name={iconName} size={22} color={colors.white} />
             </View>
           )}

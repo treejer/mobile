@@ -18,7 +18,7 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
     <View style={styles.container}>
       {goBack && handleGoBack ? (
         <TouchableOpacity style={[globalStyles.fill]} onPress={handleGoBack}>
-          <ChevronLeft />
+          <ChevronLeft color={colors.black} />
         </TouchableOpacity>
       ) : (
         <View style={globalStyles.fill} />

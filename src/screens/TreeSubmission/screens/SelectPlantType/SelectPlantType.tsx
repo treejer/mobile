@@ -15,11 +15,10 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {TreeImage} from '../../../../../assets/icons';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -124,41 +123,32 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
-      <TouchableOpacity style={[{borderColor: singleColor}, styles.plantType]} onPress={handleSelectSingle}>
-        <Image source={TreeImage} style={{height: 56, width: 48, tintColor: singleColor}} />
-        <View style={{flex: 1, paddingHorizontal: 16}}>
-          <Text style={[styles.text, {color: singleColor}]}>{t('submitTree.singleTree')}</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={[{borderColor: nurseryColor}, styles.plantType]} onPress={handleSelectNursery}>
-        <View style={styles.treesWrapper}>
-          <View style={styles.trees}>
-            <Tree color={nurseryColor} size={24} />
-            <Tree color={nurseryColor} size={24} />
-          </View>
-          <Tree color={nurseryColor} size={24} />
-        </View>
-        <View style={{flex: 1, paddingHorizontal: 16}}>
-          <TextInput
-            placeholderTextColor={nurseryColor}
-            placeholder={t(nurseryPlaceholder)}
-            style={[styles.text, styles.nurseryInput]}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            ref={inputRef}
-            keyboardType="number-pad"
-            value={count?.toString()}
-            onChangeText={handleChangeNurseryCount}
-            returnKeyType="done"
-          />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={[{borderColor: modelColor}, styles.plantType]} onPress={handleSelectModels}>
-        <ModelIcon name="th" size={48} color={modelColor} />
-        <View style={{flex: 1, paddingHorizontal: 16}}>
-          <Text style={[styles.text, {color: modelColor}]}>{t('submitTree.models')}</Text>
-        </View>
-      </TouchableOpacity>
+      <StartPlantButton
+        caption={t('submitTree.singleTree')}
+        onPress={handleSelectSingle}
+        color={singleColor}
+        size="lg"
+        type="single"
+      />
+      <StartPlantButton
+        placeholder={t(nurseryPlaceholder)}
+        onPress={handleSelectNursery}
+        color={nurseryColor}
+        count={count}
+        inputRef={inputRef}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onChangeText={handleChangeNurseryCount}
+        size="lg"
+        type="nursery"
+      />
+      <StartPlantButton
+        caption={t('submitTree.models')}
+        onPress={handleSelectModels}
+        color={modelColor}
+        size="lg"
+        type="model"
+      />
       {isSingle === true && (
         <Button
           variant="secondary"
@@ -182,30 +172,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  plantType: {
-    backgroundColor: colors.khakiDark,
-    alignSelf: 'stretch',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    height: 80,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-  treesWrapper: {
-    alignItems: 'center',
-  },
-  trees: {
-    flexDirection: 'row',
-  },
-  text: {
-    ...globalStyles.h5,
-  },
-  nurseryInput: {
-    height: '100%',
   },
 });

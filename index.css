@@ -90,3 +90,8 @@ input {
     right: calc(100vw - 768px - calc(50vw - 392px));
   }
 }
+
+
+#ptr-parent{
+  width: 100% !important;
+}

@@ -1,19 +1,15 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import {Routes} from 'navigation';
-import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import Button from 'components/Button';
+import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {isWeb} from 'utilities/helpers/web';
 import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {TreeImage} from '../../../../../assets/icons';
 
 export type TPlantModelButtonsProps = {
   selectedModel: boolean;
@@ -27,7 +23,6 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
   const [isNursery, setIsNursery] = useState<boolean>(false);
   const [nurseryCount, setNurseryCount] = useState<string>('');
 
-  const navigation = useNavigation<NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>>();
   const {t} = useTranslation();
 
   const inputRef = useRef<TextInput>(null);
@@ -49,7 +44,7 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
   const handleBlur = useCallback(() => {
     setIsNursery(false);
     inputRef.current?.blur();
-  }, []);
+  }, [isNursery, inputRef]);
 
   const handleChangeNurseryCount = useCallback(value => {
     if (isNumber(value)) {
@@ -57,61 +52,57 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
     }
   }, []);
 
-  const handleNavigateToCreateModel = useCallback(() => {
-    navigation.navigate(Routes.CreateModel);
-  }, []);
+  const nurseryPlaceholder = useMemo(
+    () => (isNursery ? 'selectModels.focusedNursery' : 'selectModels.nursery'),
+    [isNursery],
+  );
+
+  const nurseryColor = useMemo(
+    () => (isNursery || nurseryCount ? colors.green : colors.grayLight),
+    [isNursery, nurseryCount],
+  );
 
   return (
     <View style={[globalStyles.alignItemsCenter, isNursery && !isWeb() && {flex: 1}]}>
       <View style={styles.btnContainer}>
         <Spacer times={4} />
-        {/*<TouchableOpacity style={[{borderColor: colors.green}, styles.plantType]}>*/}
-        {/*  <Image source={TreeImage} style={{height: 56, width: 48, tintColor: colors.green}} />*/}
-        {/*  <View style={{flex: 1, paddingHorizontal: 16}}>*/}
-        {/*    <Text style={[styles.text, {color: colors.green}]}>{t('submitTree.singleTree')}</Text>*/}
-        {/*  </View>*/}
-        {/*</TouchableOpacity>*/}
         {selectedModel ? (
           <View style={{flexDirection: 'row'}}>
-            <Button
-              onPress={() => onPlant(nurseryCount, true)}
+            <StartPlantButton
+              containerStyle={{flex: 1}}
               caption={t('selectModels.tree')}
-              variant="secondary"
-              style={styles.plantBtn}
+              onPress={() => onPlant(nurseryCount, true)}
+              color={colors.grayLight}
+              size="sm"
+              type="single"
             />
             <Spacer />
-            <TouchableOpacity
+            <StartPlantButton
+              containerStyle={{flex: 1}}
               onPress={handleSelectNursery}
-              style={[!isNursery && !nurseryCount ? styles.darkBtn : styles.nurseryBtn, styles.plantBtn]}
-            >
-              {!isNursery && !nurseryCount ? (
-                <Text style={styles.whiteText}>{t('selectModels.nursery')}</Text>
-              ) : (
-                <TextInput
-                  ref={inputRef}
-                  placeholderTextColor={colors.green}
-                  placeholder={t('selectModels.focusedNursery')}
-                  style={[styles.text, styles.nurseryInput]}
-                  onFocus={handleSelectNursery}
-                  onBlur={handleBlur}
-                  keyboardType="number-pad"
-                  value={nurseryCount}
-                  onChangeText={handleChangeNurseryCount}
-                  returnKeyType="done"
-                />
-              )}
-            </TouchableOpacity>
+              color={nurseryColor}
+              inputRef={inputRef}
+              count={nurseryCount}
+              onChangeText={handleChangeNurseryCount}
+              placeholder={t(nurseryPlaceholder)}
+              onBlur={handleBlur}
+              onFocus={handleSelectNursery}
+              size="sm"
+              type="nursery"
+            />
           </View>
         ) : modelExist ? (
           <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
         ) : null}
-        <Spacer />
-        <Button
-          caption={isNursery || !!nurseryCount ? t('selectModels.nursery') : t('selectModels.create')}
-          variant="primary"
-          onPress={isNursery || !!nurseryCount ? () => onPlant(nurseryCount) : handleNavigateToCreateModel}
-          style={styles.createBtn}
-        />
+        {isNursery || !!nurseryCount ? (
+          <Button
+            caption={isNursery || !!nurseryCount ? t('selectModels.nursery') : t('selectModels.create')}
+            variant="primary"
+            onPress={() => onPlant(nurseryCount)}
+            style={styles.createBtn}
+            textStyle={{color: colors.grayLight}}
+          />
+        ) : null}
         <Spacer times={10} />
       </View>
     </View>
@@ -122,19 +113,6 @@ const styles = StyleSheet.create({
   whiteText: {
     color: colors.white,
   },
-  plantType: {
-    backgroundColor: colors.khakiDark,
-    alignSelf: 'stretch',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    height: 80,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
   btnContainer: {
     width: 360,
   },
@@ -142,35 +120,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-  },
-  darkBtn: {
-    backgroundColor: colors.grayDarker,
-  },
-  plantBtn: {
-    flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  nurseryBtn: {
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: colors.green,
-  },
-  text: {
-    fontSize: 12,
-    width: '100%',
-    textAlign: 'center',
-    color: colors.green,
-  },
-  nurseryInput: {
-    paddingVertical: 0,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 5,
+    height: 60,
+    color: colors.khakiDark,
+    borderColor: colors.grayLight,
   },
   chooseMessage: {
     textAlign: 'center',

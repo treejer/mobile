@@ -1,7 +1,8 @@
-import React, {useCallback, useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
+import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -10,9 +11,9 @@ import Spacer from 'components/Spacer';
 import {ActivityItem, ActivityStatus} from 'components/Activity/ActivityItem';
 import {isWeb} from 'utilities/helpers/web';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 
 export type TActivityListProps = {
+  ref: React.RefObject<FlashList<any>>;
   wallet: string;
   filters: ActivityStatus[];
   activities: GetUserActivitiesQueryPartialData.AddressHistories[] | null;
@@ -22,7 +23,7 @@ export type TActivityListProps = {
 };
 
 export function ActivityList(props: TActivityListProps) {
-  const {activities, refreshing, onRefresh, onLoadMore} = props;
+  const {activities, refreshing, ref, onRefresh, onLoadMore} = props;
 
   const {t} = useTranslation();
 
@@ -51,20 +52,34 @@ export function ActivityList(props: TActivityListProps) {
   }, [activities]);
 
   return (
-    <View style={{flex: 1, width: '100%'}}>
-      <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
-        refreshing
-        onRefresh={onRefresh}
-        data={activities}
-        renderItem={renderItem}
-        estimatedItemSize={100}
-        ListEmptyComponent={emptyList}
-        showsVerticalScrollIndicator={false}
-        refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        onEndReachedThreshold={0.1}
-        onEndReached={onLoadMore}
-        keyExtractor={item => (item.id as string).toString()}
-      />
+    <View style={[{flex: 1, width: '100%'}, globalStyles.screenView]}>
+      {refreshing ? (
+        <View
+          style={[
+            globalStyles.fill,
+            globalStyles.alignItemsCenter,
+            globalStyles.justifyContentCenter,
+            styles.loadingContainer,
+          ]}
+        >
+          <ActivityIndicator size="large" color={colors.green} />
+        </View>
+      ) : (
+        <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
+          ref={ref}
+          refreshing
+          onRefresh={onRefresh}
+          data={activities}
+          renderItem={renderItem}
+          estimatedItemSize={100}
+          ListEmptyComponent={emptyList}
+          showsVerticalScrollIndicator={false}
+          refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          onEndReachedThreshold={0.1}
+          onEndReached={onLoadMore}
+          keyExtractor={item => (item.id as string).toString()}
+        />
+      )}
     </View>
   );
 }
@@ -81,5 +96,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: colors.green,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
