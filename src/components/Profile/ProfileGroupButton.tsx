@@ -8,7 +8,7 @@ export type TProfileGroupButton = {
 };
 
 export function ProfileGroupButton(props: TProfileGroupButton) {
-  const {direction = 'column', children} = props;
+  const {direction = 'row', children} = props;
 
   return <View style={[styles.container, styles[direction]]}>{children}</View>;
 }

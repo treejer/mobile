@@ -232,7 +232,7 @@ function MyProfile(props: MyProfileProps) {
                 <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  <ProfileGroupButton isVerified={profile.isVerified} direction="row">
+                  <ProfileGroupButton>
                     {profile.isVerified ? (
                       <Button
                         iconPlace="left"
@@ -271,7 +271,7 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
                   {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
-                    <ProfileGroupButton isVerified={profile.isVerified} direction="row">
+                    <ProfileGroupButton>
                       <Button
                         textAlign="center"
                         iconPlace="left"
@@ -336,7 +336,7 @@ function MyProfile(props: MyProfileProps) {
                   {/*) : null}*/}
 
                   {planterData?.planterType && !!wallet ? (
-                    <ProfileGroupButton isVerified={profile.isVerified} direction="row">
+                    <ProfileGroupButton>
                       <Invite
                         caption={''}
                         iconPlace="left"
@@ -361,7 +361,7 @@ function MyProfile(props: MyProfileProps) {
 
                   <Spacer times={4} />
 
-                  <ProfileGroupButton isVerified={profile.isVerified} direction="row">
+                  <ProfileGroupButton>
                     <Button
                       iconPlace="left"
                       size="sm"
@@ -383,7 +383,7 @@ function MyProfile(props: MyProfileProps) {
                     />
                   </ProfileGroupButton>
                   <Spacer times={4} />
-                  <ProfileGroupButton isVerified={profile.isVerified} direction="row">
+                  <ProfileGroupButton>
                     <Button
                       textAlign="center"
                       iconPlace="left"
