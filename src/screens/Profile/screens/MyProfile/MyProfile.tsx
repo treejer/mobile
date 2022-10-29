@@ -231,63 +231,62 @@ function MyProfile(props: MyProfileProps) {
                 {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
                 <Spacer times={5} />
 
-                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
+                {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
                   <ProfileGroupButton>
-                    {profile.isVerified ? (
-                      <Button
-                        iconPlace="left"
-                        size="sm"
-                        style={styles.button}
-                        icon={() => <FAIcon name="wallet" size={20} color={colors.grayLight} />}
-                        caption={t('withdraw')}
-                        variant="tertiary"
-                        onPress={handleNavigateWithdraw}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                    {!isWeb() ? (
-                      <>
-                        <Spacer times={4} />
+                    <Button
+                      textAlign="center"
+                      iconPlace="left"
+                      icon={() => <ADIcon name="adduser" size={20} color={colors.grayLight} />}
+                      style={styles.button}
+                      caption={t('getVerified')}
+                      variant="tertiary"
+                      onPress={() => {
+                        sendEvent('get_verified');
+                        if (profile) {
+                          // @ts-ignore
+                          navigation.navigate(Routes.VerifyProfile);
+                        }
+                      }}
+                    />
+                  </ProfileGroupButton>
+                )}
+
+                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
+                  {profile.isVerified ? (
+                    <>
+                      <ProfileGroupButton>
                         <Button
                           iconPlace="left"
                           size="sm"
                           style={styles.button}
-                          caption={t('offlineMap.title')}
+                          icon={() => <FAIcon name="wallet" size={20} color={colors.grayLight} />}
+                          caption={t('withdraw')}
                           variant="tertiary"
-                          icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
-                          onPress={handleNavigateOfflineMap}
+                          onPress={handleNavigateWithdraw}
                         />
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                  </ProfileGroupButton>
-                  <Spacer times={4} />
+                        <Spacer times={4} />
+                        {!isWeb() ? (
+                          <Button
+                            iconPlace="left"
+                            size="sm"
+                            style={styles.button}
+                            caption={t('offlineMap.title')}
+                            variant="tertiary"
+                            icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
+                            onPress={handleNavigateOfflineMap}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </ProfileGroupButton>
+                      <Spacer times={4} />
+                    </>
+                  ) : null}
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                       <Spacer times={6} />
                     </>
-                  )}
-                  {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
-                    <ProfileGroupButton>
-                      <Button
-                        textAlign="center"
-                        iconPlace="left"
-                        icon={() => <ADIcon name="adduser" size={20} color={colors.grayLight} />}
-                        style={styles.button}
-                        caption={t('getVerified')}
-                        variant="tertiary"
-                        onPress={() => {
-                          sendEvent('get_verified');
-                          if (profile) {
-                            // @ts-ignore
-                            navigation.navigate(Routes.VerifyProfile);
-                          }
-                        }}
-                      />
-                    </ProfileGroupButton>
                   )}
 
                   {!route.params?.hideVerification && status === UserStatus.Unverified && hasRefer && (
@@ -336,30 +335,31 @@ function MyProfile(props: MyProfileProps) {
                   {/*) : null}*/}
 
                   {planterData?.planterType && !!wallet ? (
-                    <ProfileGroupButton>
-                      <Invite
-                        caption={''}
-                        iconPlace="left"
-                        size="sm"
-                        icon={() => <ADIcon name="addusergroup" size={20} color={colors.grayLight} />}
-                        style={styles.button}
-                        address={wallet}
-                        planterType={Number(planterData?.planterType)}
-                      />
+                    <>
+                      <ProfileGroupButton>
+                        <Invite
+                          caption={''}
+                          iconPlace="left"
+                          size="sm"
+                          icon={() => <ADIcon name="addusergroup" size={20} color={colors.grayLight} />}
+                          style={styles.button}
+                          address={wallet}
+                          planterType={Number(planterData?.planterType)}
+                        />
+                        <Spacer times={4} />
+                        <Button
+                          iconPlace="left"
+                          size="sm"
+                          icon={() => <FAIcon name="list-alt" size={20} color={colors.grayLight} />}
+                          style={styles.button}
+                          caption={t('activity')}
+                          variant="tertiary"
+                          onPress={handleNavigateActivity}
+                        />
+                      </ProfileGroupButton>
                       <Spacer times={4} />
-                      <Button
-                        iconPlace="left"
-                        size="sm"
-                        icon={() => <FAIcon name="list-alt" size={20} color={colors.grayLight} />}
-                        style={styles.button}
-                        caption={t('activity')}
-                        variant="tertiary"
-                        onPress={handleNavigateActivity}
-                      />
-                    </ProfileGroupButton>
+                    </>
                   ) : null}
-
-                  <Spacer times={4} />
 
                   <ProfileGroupButton>
                     <Button
@@ -382,7 +382,7 @@ function MyProfile(props: MyProfileProps) {
                       onPress={handleNavigateSupport}
                     />
                   </ProfileGroupButton>
-                  <Spacer times={4} />
+                  <Spacer times={6} />
                   <ProfileGroupButton>
                     <Button
                       textAlign="center"

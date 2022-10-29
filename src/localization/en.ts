@@ -363,7 +363,7 @@ export const en = {
   tree: 'tree',
   nursery: 'nursery',
   magicWallet: {
-    title: 'Magic Wallet',
+    title: 'Wallet',
     daiBalance: 'DAI Balance:',
   },
   dai: 'DAI',

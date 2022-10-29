@@ -15,7 +15,7 @@ export function ProfileGroupButton(props: TProfileGroupButton) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
+    width: 300,
   },
   row: {
     flexDirection: 'row',

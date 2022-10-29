@@ -41,7 +41,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   return (
     <Card style={styles.container}>
       <View style={styles.walletWrapper}>
-        <Text>{t('magicWallet.title')}</Text>
+        <Text style={globalStyles.h5}>{t('magicWallet.title')}</Text>
         <Spacer />
         <TouchableOpacity onPress={handleCopyWalletAddress}>
           <Text numberOfLines={1} style={styles.addressBox}>
