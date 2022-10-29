@@ -1,8 +1,7 @@
-import React from 'react';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
-// import {RNCamera} from 'react-native-camera';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {BarCodeScanner} from 'expo-barcode-scanner';
 
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
@@ -16,14 +15,34 @@ export type TQrReaderProps = {
 export function QrReader(props: TQrReaderProps) {
   const {handleScan, handleDismiss} = props;
 
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const {status} = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  const handleBarCodeScanned = ({type, data}) => {
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+  };
+
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (!hasPermission) {
+    return <Text>No access to camera</Text>;
+  }
+
   return (
     <Modal>
-      {/*<QRCodeScanner*/}
-      {/*  cameraStyle={styles.scanner}*/}
-      {/*  onRead={result => handleScan(result.data)}*/}
-      {/*  flashMode={RNCamera.Constants.FlashMode.auto}*/}
-      {/*  fadeIn={false}*/}
-      {/*/>*/}
+      <BarCodeScanner
+        onBarCodeScanned={handleBarCodeScanned}
+        style={StyleSheet.absoluteFillObject}
+        type="back"
+        // barCodeTypes={['qrcode']}
+      />
       <View style={styles.areaContainer}>
         <View style={[styles.darkArea, globalStyles.fill]}>
           <TouchableOpacity style={styles.close} onPress={handleDismiss}>
@@ -45,7 +64,7 @@ export function QrReader(props: TQrReaderProps) {
 
 const styles = StyleSheet.create({
   scanner: {
-    height: '100%',
+    flex: 1,
   },
   areaContainer: {
     position: 'absolute',

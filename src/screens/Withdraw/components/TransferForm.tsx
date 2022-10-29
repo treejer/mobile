@@ -86,7 +86,7 @@ export function TransferForm(props: TTransferFormProps) {
   const {t} = useTranslation();
   const navigation = useNavigation();
 
-  const defaultValues = useMemo(() => ({from: userWallet, to: '', amount: ''}), []);
+  const defaultValues = useMemo(() => ({from: userWallet, to: '', amount: ''}), [userWallet]);
 
   const {control, handleSubmit, formState, getValues, getFieldState, setValue, watch, reset} =
     useForm<TTransferFormData>({
@@ -96,25 +96,31 @@ export function TransferForm(props: TTransferFormProps) {
       defaultValues,
     });
 
-  const handleSubmitTransfer = useCallback(data => {
-    console.log(data, 'transfer form data is here');
-    handleSubmitTransaction(data);
-  }, []);
+  const handleSubmitTransfer = useCallback(
+    data => {
+      console.log(data, 'transfer form data is here');
+      handleSubmitTransaction(data);
+    },
+    [handleSubmitTransaction],
+  );
 
   const handleResetForm = useCallback(() => {
     reset(defaultValues);
-  }, [handleCancelTransaction]);
+  }, [defaultValues, reset]);
 
   const handlePasteClipboard = useCallback(async () => {
     const text = await Clipboard.getString();
     console.log(text);
     setValue('to', text, {shouldTouch: true, shouldValidate: true});
-  }, []);
+  }, [setValue]);
 
-  const handleScanQrCode = useCallback((data: string) => {
-    setValue('to', data, {shouldTouch: true, shouldValidate: true});
-    setShowQrReader(false);
-  }, []);
+  const handleScanQrCode = useCallback(
+    (data: string) => {
+      setValue('to', data, {shouldTouch: true, shouldValidate: true});
+      setShowQrReader(false);
+    },
+    [setValue],
+  );
 
   const handleOpenQrReader = useCallback(() => {
     setShowQrReader(true);
@@ -126,16 +132,16 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handleCalcMacAmount = useCallback(() => {
     setValue('amount', Web3.utils.fromWei(daiBalance), {shouldTouch: true, shouldValidate: true});
-  }, []);
+  }, [daiBalance, setValue]);
 
   const handleEstimate = useCallback(() => {
     handleEstimateGasPrice(getValues());
-  }, [handleEstimateGasPrice]);
+  }, [getValues, handleEstimateGasPrice]);
 
   const handleCloseConfirmModal = useCallback(() => {
     reset(defaultValues);
     handleCancelTransaction();
-  }, []);
+  }, [defaultValues, handleCancelTransaction, reset]);
 
   const handleNavigateHistory = useCallback(() => {
     // @ts-ignore
@@ -146,7 +152,7 @@ export function TransferForm(props: TTransferFormProps) {
     if (!submitting && formState.isValid) {
       handleResetForm();
     }
-  }, [submitting]);
+  }, [formState.isValid, handleResetForm, submitting]);
 
   if (showQrReader) {
     return <QrReader handleScan={handleScanQrCode} handleDismiss={handleCloseQrReader} />;
