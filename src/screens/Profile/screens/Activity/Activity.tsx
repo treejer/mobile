@@ -17,6 +17,7 @@ import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useDebounce} from 'utilities/hooks/useDebounce';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -29,6 +30,7 @@ export function Activity(props: Props) {
   const event_in = route.params?.filters;
 
   const [filters, setFilters] = useState<ActivityStatus[]>((event_in as ActivityStatus[]) || []);
+  const debouncedFilters = useDebounce<ActivityStatus[]>(filters);
   const wallet = useWalletAccount();
 
   const {
@@ -37,7 +39,7 @@ export function Activity(props: Props) {
     query: activityQuery,
     refetching: activityRefetching,
     loadMore: ActivityLoadMore,
-  } = useGetUserActivitiesQuery(wallet, filters);
+  } = useGetUserActivitiesQuery(wallet, debouncedFilters);
 
   useEffect(() => {
     (async () => {
@@ -46,7 +48,7 @@ export function Activity(props: Props) {
         event_in: filters.length > 0 ? filters : all_events,
       });
     })();
-  }, [filters]);
+  }, [debouncedFilters]);
 
   useRefocusEffect(() => {
     (async () => {
