@@ -418,8 +418,8 @@ export const en = {
   },
   selectModels: {
     title: 'Select Models',
-    tree: 'Start Plant Tree',
-    nursery: 'Start Plant Nursery',
+    tree: 'Plant Tree',
+    nursery: 'Plant Nursery',
     choose: 'choose one of the models above',
     create: 'Create Model',
     createFirst: 'Create The First Model',

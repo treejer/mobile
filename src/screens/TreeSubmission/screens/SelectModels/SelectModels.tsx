@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from 'react';
 import {ActivityIndicator, RefreshControl, StyleSheet, View} from 'react-native';
-import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -9,7 +8,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Routes} from 'navigation';
 import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import {useCurrentJourney} from 'services/currentJourney';
 import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
@@ -64,9 +62,11 @@ export function SelectModels(props: SelectModelsProps) {
     ({item, index}: BigListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
       const isSelected = item.id === selectedModel;
       return (
-        <View>
+        <View
+          style={[{justifyContent: 'center', alignItems: 'center', height: isWeb() ? 68 : 73}, globalStyles.screenView]}
+        >
           <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
-          {plantModels && plantModels?.length - 1 !== index && <Hr styles={{marginVertical: 8}} />}
+          {plantModels && plantModels?.length - 1 !== index && <Hr styles={{marginTop: 8, width: 360}} />}
         </View>
       );
     },
@@ -111,26 +111,27 @@ export function SelectModels(props: SelectModelsProps) {
           </View>
         ) : (
           <PullToRefresh onRefresh={refetchPlantModels}>
-            <BigList<GetPlantingModelsQueryQueryPartialData.Models>
-              style={{flex: 1, width: '100%'}}
-              data={plantModels || undefined}
-              renderItem={renderPlantModelItem}
-              showsVerticalScrollIndicator={false}
-              itemHeight={80}
-              contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
-              // ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
-              ListEmptyComponent={() => <EmptyModelsList />}
-              keyExtractor={item => item.id?.toString() as string}
-              refreshing
-              onRefresh={refetchPlantModels}
-              onEndReachedThreshold={0.1}
-              onEndReached={plantModelsLoadMore}
-              refreshControl={
-                isWeb() ? undefined : (
-                  <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
-                )
-              }
-            />
+            <View style={globalStyles.screenView}>
+              <BigList<GetPlantingModelsQueryQueryPartialData.Models>
+                style={{flex: 1, width: '100%'}}
+                data={plantModels || undefined}
+                renderItem={renderPlantModelItem}
+                showsVerticalScrollIndicator={false}
+                itemHeight={isWeb() ? 68 : 73}
+                contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
+                ListEmptyComponent={() => <EmptyModelsList />}
+                keyExtractor={item => item.id?.toString() as string}
+                refreshing
+                onRefresh={refetchPlantModels}
+                onEndReachedThreshold={0.1}
+                onEndReached={plantModelsLoadMore}
+                refreshControl={
+                  isWeb() ? undefined : (
+                    <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
+                  )
+                }
+              />
+            </View>
           </PullToRefresh>
         )}
       </View>
