@@ -22,6 +22,8 @@ export namespace GetUserActivitiesQueryData {
   export interface Variables {
     first?: number | null;
     skip?: number | null;
+    orderBy?: string | null;
+    orderDirection?: string | null;
     address: string;
     event_in?: (string | null)[] | null;
   }

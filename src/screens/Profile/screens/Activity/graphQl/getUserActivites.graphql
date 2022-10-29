@@ -1,5 +1,5 @@
-query GetUserActivities($first: Int, $skip: Int, $address: String!, $event_in: [String]) {
-  addressHistories(first: $first, skip: $skip ,where: {address: $address, event_in: $event_in}) {
+query GetUserActivities($first: Int, $skip: Int, $orderBy: String, $orderDirection: String, $address: String!, $event_in: [String]) {
+  addressHistories(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection ,where: {address: $address, event_in: $event_in}) {
     address,
     blockNumber,
     count,

@@ -21,6 +21,8 @@ export namespace TempTreesQueryQueryData {
   export interface Variables {
     address: string;
     first?: number | null;
+    orderBy?: string | null;
+    orderDirection?: string | null;
     skip?: number | null;
   }
   export interface TempTreesPlanter {
