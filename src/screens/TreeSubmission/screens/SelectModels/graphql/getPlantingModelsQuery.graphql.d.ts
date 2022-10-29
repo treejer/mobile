@@ -26,6 +26,8 @@ export namespace GetPlantingModelsQueryQueryData {
   export interface Variables {
     first?: number | null;
     skip?: number | null;
+    orderBy?: string | null;
+    orderDirection?: string | null;
     planter: string;
   }
   export interface ModelsPlanter {

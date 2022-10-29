@@ -14,17 +14,25 @@ export type TActivityFilterProps = {
   onFilterOption: (option: string) => void;
 };
 
-const categories = [
+export const categories = [
   'all',
   ActivityStatus.TreePlanted,
   ActivityStatus.TreeUpdated,
+  ActivityStatus.TreeAssigned,
+  ActivityStatus.TreeVerified,
+  ActivityStatus.TreeRejected,
+  ActivityStatus.AssignedTreePlanted,
+  ActivityStatus.AssignedTreeVerified,
+  ActivityStatus.AssignedTreeRejected,
+  ActivityStatus.TreeUpdatedVerified,
+  ActivityStatus.TreeUpdateRejected,
+  ActivityStatus.BalanceWithdrew,
   ActivityStatus.PlanterJoined,
   ActivityStatus.PlanterUpdated,
   ActivityStatus.OrganizationJoined,
   ActivityStatus.AcceptedByOrganization,
   ActivityStatus.RejectedByOrganization,
   ActivityStatus.OrganizationMemberShareUpdated,
-  ActivityStatus.BalanceWithdrew,
   ActivityStatus.PlanterTotalClaimedUpdated,
 ];
 
@@ -116,13 +124,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.khaki,
     color: colors.grayDarker,
     paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 100,
+    paddingHorizontal: 12,
+    borderRadius: 8,
     marginRight: 4,
     marginBottom: 4,
   },
   selectedSlug: {
-    borderRadius: 20,
+    borderRadius: 12,
     padding: 4,
     flexDirection: 'row',
     alignItems: 'center',
@@ -132,7 +140,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   slugText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '400',
     color: colors.white,
   },

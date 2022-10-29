@@ -6,16 +6,24 @@ import {usePagination} from 'utilities/hooks/usePagination';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 
 export const all_events = [
-  ActivityStatus.TreePlanted,
-  ActivityStatus.TreeUpdated,
-  ActivityStatus.OrganizationMemberShareUpdated,
+  ActivityStatus.PlanterJoined,
   ActivityStatus.OrganizationJoined,
+  ActivityStatus.PlanterUpdated,
   ActivityStatus.AcceptedByOrganization,
   ActivityStatus.RejectedByOrganization,
-  ActivityStatus.BalanceWithdrew,
+  ActivityStatus.OrganizationMemberShareUpdated,
   ActivityStatus.PlanterTotalClaimedUpdated,
-  ActivityStatus.PlanterJoined,
-  ActivityStatus.PlanterUpdated,
+  ActivityStatus.BalanceWithdrew,
+  ActivityStatus.TreePlanted,
+  ActivityStatus.TreeUpdated,
+  ActivityStatus.TreeAssigned,
+  ActivityStatus.AssignedTreePlanted,
+  ActivityStatus.AssignedTreeVerified,
+  ActivityStatus.AssignedTreeRejected,
+  ActivityStatus.TreeVerified,
+  ActivityStatus.TreeRejected,
+  ActivityStatus.TreeUpdatedVerified,
+  ActivityStatus.TreeUpdateRejected,
 ];
 
 export const AddressHistories = 'AddressHistories';

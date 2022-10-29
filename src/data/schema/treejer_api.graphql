@@ -162,12 +162,11 @@ type Query {
   PlanterFund: PlanterFund
 
   planter(id: String): planter
-  tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
-  trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
-
+  tempTrees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [tempTrees!]
+  trees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [trees!]
   settings: Settings
-  addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
-  models(first: Int, skip: Int, where: WhereModels): [Models!]
+  addressHistories(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereAddressHistories): [addressHistoriesResponse!]
+  models(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereModels): [Models!]
 }
 
 #input ApplyInput {

@@ -20,6 +20,8 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
     (newPage: number) => ({
       first: perPage,
       skip: newPage * perPage,
+      orderBy: 'createdAt',
+      orderDirection: 'desc',
     }),
     [perPage],
   );
@@ -34,10 +36,13 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
 
   useEffect(() => {
     (async function () {
-      if (query.data?.[dataKey] !== undefined && query.data?.[dataKey]?.length > 0) {
+      console.log(query.data, 'data is here');
+      if (query.data?.[dataKey] !== undefined) {
         if (keepData && page !== 0) {
-          // @ts-ignore
-          setPersistedData([...persistedData, ...query.data[dataKey]]);
+          if (query.data?.[dataKey]?.length > 0) {
+            // @ts-ignore
+            setPersistedData([...persistedData, ...query.data[dataKey]]);
+          }
         } else {
           setPersistedData(query.data[dataKey]);
         }
@@ -64,6 +69,7 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
   const refetching = query.networkStatus === NetworkStatus.refetch;
 
   const loadMore = useCallback(async () => {
+    console.log(page, 'page');
     const newPage = page + 1;
     try {
       await query.fetchMore({

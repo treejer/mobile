@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 
 import {MainTabsParamList} from 'types';
 import {Routes, VerifiedUserNavigationParamList} from 'navigation';
@@ -13,7 +14,7 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
+import {ActivityFilter, categories} from 'screens/Profile/components/ActivityFilter';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
@@ -30,8 +31,10 @@ export function Activity(props: Props) {
   const event_in = route.params?.filters;
 
   const [filters, setFilters] = useState<ActivityStatus[]>((event_in as ActivityStatus[]) || []);
-  const debouncedFilters = useDebounce<ActivityStatus[]>(filters);
+  const debouncedFilters = useDebounce<ActivityStatus[]>(filters, 200);
   const wallet = useWalletAccount();
+
+  const listRef = useRef<FlashList<any>>(null);
 
   const {
     persistedData: activities,
@@ -43,6 +46,7 @@ export function Activity(props: Props) {
 
   useEffect(() => {
     (async () => {
+      listRef?.current?.scrollToOffset({animated: false, offset: 0});
       await refetchUserActivity({
         address: wallet.toString().toLowerCase(),
         event_in: filters.length > 0 ? filters : all_events,
@@ -62,7 +66,7 @@ export function Activity(props: Props) {
     async (option: string) => {
       if (!filters.some(filter => filter === option)) {
         if (option === 'all') return setFilters([]);
-        setFilters(filters.length === 9 ? [] : ([...filters, option] as ActivityStatus[]));
+        setFilters(filters.length === categories.length - 2 ? [] : ([...filters, option] as ActivityStatus[]));
       } else {
         setFilters(filters.filter(filter => filter !== option));
       }
@@ -75,6 +79,7 @@ export function Activity(props: Props) {
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
         <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
+        <Spacer times={4} />
         {activityQuery.loading ? (
           <View
             style={[
@@ -89,6 +94,7 @@ export function Activity(props: Props) {
         ) : (
           <PullToRefresh onRefresh={refetchUserActivity}>
             <ActivityList
+              ref={listRef}
               wallet={wallet}
               filters={filters}
               activities={activities}
