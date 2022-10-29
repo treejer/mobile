@@ -1,6 +1,6 @@
 import React from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+// import {RNCamera} from 'react-native-camera';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
@@ -18,12 +18,12 @@ export function QrReader(props: TQrReaderProps) {
 
   return (
     <Modal>
-      <QRCodeScanner
-        cameraStyle={styles.scanner}
-        onRead={result => handleScan(result.data)}
-        flashMode={RNCamera.Constants.FlashMode.auto}
-        fadeIn={false}
-      />
+      {/*<QRCodeScanner*/}
+      {/*  cameraStyle={styles.scanner}*/}
+      {/*  onRead={result => handleScan(result.data)}*/}
+      {/*  flashMode={RNCamera.Constants.FlashMode.auto}*/}
+      {/*  fadeIn={false}*/}
+      {/*/>*/}
       <View style={styles.areaContainer}>
         <View style={[styles.darkArea, globalStyles.fill]}>
           <TouchableOpacity style={styles.close} onPress={handleDismiss}>
