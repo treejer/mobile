@@ -1,5 +1,5 @@
 import React, {useCallback, useRef} from 'react';
-import {FlatList, ListRenderItemInfo, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
 
@@ -10,6 +10,7 @@ import Spacer from 'components/Spacer';
 import {ActivityItem, ActivityStatus} from 'components/Activity/ActivityItem';
 import {isWeb} from 'utilities/helpers/web';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
+import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 
 export type TActivityListProps = {
   wallet: string;
@@ -50,19 +51,21 @@ export function ActivityList(props: TActivityListProps) {
   }, [activities]);
 
   return (
-    <FlatList<GetUserActivitiesQueryPartialData.AddressHistories>
-      refreshing
-      onRefresh={onRefresh}
-      data={activities}
-      renderItem={renderItem}
-      ListEmptyComponent={emptyList}
-      showsVerticalScrollIndicator={false}
-      refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      onEndReachedThreshold={0.1}
-      initialNumToRender={20}
-      onEndReached={onLoadMore}
-      keyExtractor={item => (item.id as string).toString()}
-    />
+    <View style={{flex: 1, width: '100%'}}>
+      <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
+        refreshing
+        onRefresh={onRefresh}
+        data={activities}
+        renderItem={renderItem}
+        estimatedItemSize={100}
+        ListEmptyComponent={emptyList}
+        showsVerticalScrollIndicator={false}
+        refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onEndReachedThreshold={0.1}
+        onEndReached={onLoadMore}
+        keyExtractor={item => (item.id as string).toString()}
+      />
+    </View>
   );
 }
 

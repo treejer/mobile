@@ -21,12 +21,10 @@ import {isWeb} from 'utilities/helpers/web';
 import useRefer from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
-import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -39,7 +37,6 @@ function MyProfile(props: MyProfileProps) {
   const requiredBalance = useMemo(() => 500000000000000000, []);
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
-  const config = useConfig();
   const {getBalance, loading: contractsLoading} = useContracts();
   useTreeUpdateInterval();
 
@@ -71,20 +68,15 @@ function MyProfile(props: MyProfileProps) {
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
-  const {useGSN} = useSettings();
 
   const {sendEvent} = useAnalytics();
 
-  // const {data, loading, status, refetchUser, handleLogout} = useCurrentUser();
   const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
+  console.log(profile, 'profile data');
+
   const isVerified = profile?.isVerified;
 
   const isConnected = useNetInfoConnected();
-
-  // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
-  //   variables: {},
-  //   fetchPolicy: 'cache-first',
-  // });
 
   const skipStats = !wallet || !isVerified;
 
@@ -93,22 +85,8 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
-  const {persistedData: activities} = useGetUserActivitiesQuery(wallet);
 
-  // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
-  //   variables: {
-  //     address,
-  //   },
-  //   skip: skipStats,
-  // });
-
-  // const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
-  //   variables: {
-  //     address,
-  //   },
-  //   fetchPolicy: 'cache-first',
-  //   skip: skipStats,
-  // });
+  console.log(planterData, 'planter data');
 
   const getPlanter = useCallback(async () => {
     if (!isConnected) {
@@ -133,8 +111,6 @@ function MyProfile(props: MyProfileProps) {
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const [submitting, setSubmitting] = useState(false);
 
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
@@ -352,7 +328,7 @@ function MyProfile(props: MyProfileProps) {
                     variant="tertiary"
                     onPress={handleNavigateSupport}
                   />
-                  {profile.isVerified && !!activities?.length ? (
+                  {profile.isVerified ? (
                     <>
                       <Spacer times={4} />
                       <Button

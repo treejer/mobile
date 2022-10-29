@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -15,8 +15,9 @@ import {ActivityStatus} from 'components/Activity/ActivityItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {ActivityFilter} from 'screens/Profile/components/ActivityFilter';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
+import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useDebounce} from 'utilities/hooks/useDebounce';
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -29,6 +30,7 @@ export function Activity(props: Props) {
   const event_in = route.params?.filters;
 
   const [filters, setFilters] = useState<ActivityStatus[]>((event_in as ActivityStatus[]) || []);
+  const debouncedFilters = useDebounce<ActivityStatus[]>(filters);
   const wallet = useWalletAccount();
 
   const {
@@ -37,8 +39,16 @@ export function Activity(props: Props) {
     query: activityQuery,
     refetching: activityRefetching,
     loadMore: ActivityLoadMore,
-    resetPagination,
-  } = useGetUserActivitiesQuery(wallet, filters);
+  } = useGetUserActivitiesQuery(wallet, debouncedFilters);
+
+  useEffect(() => {
+    (async () => {
+      await refetchUserActivity({
+        address: wallet.toString().toLowerCase(),
+        event_in: filters.length > 0 ? filters : all_events,
+      });
+    })();
+  }, [debouncedFilters]);
 
   useRefocusEffect(() => {
     (async () => {
@@ -49,14 +59,13 @@ export function Activity(props: Props) {
   const {t} = useTranslation();
 
   const handleSelectFilterOption = useCallback(
-    (option: string) => {
+    async (option: string) => {
       if (!filters.some(filter => filter === option)) {
         if (option === 'all') return setFilters([]);
         setFilters(filters.length === 9 ? [] : ([...filters, option] as ActivityStatus[]));
       } else {
         setFilters(filters.filter(filter => filter !== option));
       }
-      resetPagination();
     },
     [filters],
   );

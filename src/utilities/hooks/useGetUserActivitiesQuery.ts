@@ -5,7 +5,7 @@ import GetUserActivities, {
 import {usePagination} from 'utilities/hooks/usePagination';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 
-const all_events = [
+export const all_events = [
   ActivityStatus.TreePlanted,
   ActivityStatus.TreeUpdated,
   ActivityStatus.OrganizationMemberShareUpdated,

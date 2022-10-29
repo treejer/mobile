@@ -1,5 +1,5 @@
-query GetPlantingModelsQuery($planter: String!) {
-    models(where: { planter: $planter }) {
+query GetPlantingModelsQuery($first: Int, $skip: Int, $planter: String!) {
+    models(first: $first, skip: $skip, where: { planter: $planter }) {
         id
         planter {
             id

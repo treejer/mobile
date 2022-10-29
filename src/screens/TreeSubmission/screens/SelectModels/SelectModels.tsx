@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, RefreshControl, StyleSheet, View} from 'react-native';
+import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -13,16 +14,17 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {Hr} from 'components/Common/Hr';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {EmptyModelsList} from 'components/plantModels/EmptyModelsList';
-import {PlantModelItem, TPlantModel} from 'components/plantModels/PlantModelItem';
+import {PlantModelItem} from 'components/plantModels/PlantModelItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {GetPlantingModelsQueryQueryPartialData} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {PlantModelButtons} from 'screens/TreeSubmission/components/Models/PlantModelButtons';
 import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import BigList, {BigListRenderItemInfo} from 'react-native-big-list';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -39,10 +41,15 @@ export function SelectModels(props: SelectModelsProps) {
 
   const [selectedModel, setSelectedModel] = useState<string>('');
 
-  const wallet = useWalletAccount();
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
 
-  const {data, loading, refetching, refetchPlantModels} = useGetPlantModelsQuery(wallet);
+  const {
+    persistedData: plantModels,
+    query: plantModelsQuery,
+    refetching: plantModelsRefetching,
+    refetchData: refetchPlantModels,
+    loadMore: plantModelsLoadMore,
+  } = useGetPlantModelsQuery();
 
   const {t} = useTranslation();
 
@@ -52,6 +59,19 @@ export function SelectModels(props: SelectModelsProps) {
       await refetchPlantModels();
     })();
   });
+
+  const renderPlantModelItem = useCallback(
+    ({item, index}: BigListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
+      const isSelected = item.id === selectedModel;
+      return (
+        <View>
+          <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
+          {plantModels && plantModels?.length - 1 !== index && <Hr styles={{marginVertical: 8}} />}
+        </View>
+      );
+    },
+    [selectedModel, plantModels],
+  );
 
   const handleContinueToPlant = useCallback(
     (nurseryCount: string, single: boolean = false) => {
@@ -77,14 +97,6 @@ export function SelectModels(props: SelectModelsProps) {
     [selectedModel],
   );
 
-  const renderPlantModelItem = useCallback(
-    ({item}: ListRenderItemInfo<TPlantModel>) => {
-      const isSelected = item.id === selectedModel;
-      return <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id)} />;
-    },
-    [selectedModel],
-  );
-
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
@@ -93,34 +105,39 @@ export function SelectModels(props: SelectModelsProps) {
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle goBack title={t('selectModels.title')} />
       <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
-        {loading ? (
+        {plantModelsQuery.loading ? (
           <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
             <ActivityIndicator size="large" />
           </View>
         ) : (
           <PullToRefresh onRefresh={refetchPlantModels}>
-            <FlatList<TPlantModel>
-              style={{width: '100%', backgroundColor: colors.khaki}}
-              data={data?.models}
+            <BigList<GetPlantingModelsQueryQueryPartialData.Models>
+              style={{flex: 1, width: '100%'}}
+              data={plantModels || undefined}
               renderItem={renderPlantModelItem}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={[styles.list, (!data?.models || !data.models?.length) && styles.emptyList]}
-              ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
+              itemHeight={80}
+              contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
+              // ItemSeparatorComponent={() => <Hr styles={{marginVertical: 8}} />}
               ListEmptyComponent={() => <EmptyModelsList />}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.id?.toString() as string}
               refreshing
               onRefresh={refetchPlantModels}
+              onEndReachedThreshold={0.1}
+              onEndReached={plantModelsLoadMore}
               refreshControl={
-                isWeb() ? undefined : <RefreshControl refreshing={refetching} onRefresh={refetchPlantModels} />
+                isWeb() ? undefined : (
+                  <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
+                )
               }
             />
           </PullToRefresh>
         )}
       </View>
-      {!loading && (
+      {!plantModelsQuery.loading && (
         <PlantModelButtons
           selectedModel={!!selectedModel}
-          modelExist={!!data?.models?.length}
+          modelExist={!!plantModels?.length}
           onPlant={handleContinueToPlant}
         />
       )}
@@ -131,6 +148,7 @@ export function SelectModels(props: SelectModelsProps) {
 const styles = StyleSheet.create({
   list: {
     alignItems: 'center',
+    paddingHorizontal: 16,
     paddingBottom: 8,
   },
   emptyList: {

@@ -167,7 +167,7 @@ type Query {
 
   settings: Settings
   addressHistories(first: Int, skip: Int, where: WhereAddressHistories): [addressHistoriesResponse!]
-  models(where: WhereModels): [Models!]
+  models(first: Int, skip: Int, where: WhereModels): [Models!]
 }
 
 #input ApplyInput {

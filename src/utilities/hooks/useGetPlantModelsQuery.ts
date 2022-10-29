@@ -1,33 +1,25 @@
-import {useCallback} from 'react';
-import {NetworkStatus, useQuery} from '@apollo/client';
-
 import GetPlantingModels, {
   GetPlantingModelsQueryQueryData,
+  GetPlantingModelsQueryQueryPartialData,
 } from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
+import {usePagination} from 'utilities/hooks/usePagination';
+import {useWalletAccount} from '../../redux/modules/web3/web3';
 
-export default function useGetPlantModelsQuery(wallet: string) {
-  const query = useQuery<GetPlantingModelsQueryQueryData, GetPlantingModelsQueryQueryData.Variables>(
+export const PlantModels = 'PlantModels';
+
+export default function useGetPlantModelsQuery() {
+  const wallet = useWalletAccount();
+  return usePagination<
+    GetPlantingModelsQueryQueryData,
+    GetPlantingModelsQueryQueryData.Variables,
+    GetPlantingModelsQueryQueryPartialData.Models[]
+  >(
     GetPlantingModels,
     {
-      variables: {
-        planter: wallet.toLowerCase(),
-      },
+      planter: wallet.toString().toLowerCase(),
     },
+    'models',
+    PlantModels,
+    true,
   );
-
-  const refetchPlantModels = useCallback(async () => {
-    try {
-      const newQuery = await query.refetch({
-        planter: wallet.toLocaleLowerCase(),
-      });
-    } catch (e) {
-      console.log(e, 'e inside refetchPlanterStatus');
-    }
-  }, [wallet, query]);
-
-  const refetching = query.networkStatus === NetworkStatus.refetch;
-
-  const {refetch, ..._query} = query;
-
-  return {..._query, refetchPlantModels, refetching};
 }

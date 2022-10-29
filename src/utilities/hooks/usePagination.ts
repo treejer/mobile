@@ -8,8 +8,9 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
   dataKey: string,
   storageKey: string,
   keepData?: boolean,
+  manualPerPage?: number,
 ) {
-  const perPage = useMemo(() => 40, []);
+  const perPage = useMemo(() => manualPerPage || 40, []);
 
   const [page, setPage] = useState(0);
 
@@ -50,13 +51,16 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
     })();
   }, [query.data?.[dataKey]]);
 
-  const refetchData = useCallback(async () => {
-    setPage(0);
-    await query.refetch({
-      ...variables,
-      ...paginationProps(0),
-    });
-  }, [variables, query, setPage, paginationProps]);
+  const refetchData = useCallback(
+    async (newVariables?: TVariables) => {
+      setPage(0);
+      await query.refetch({
+        ...(newVariables || variables),
+        ...paginationProps(0),
+      });
+    },
+    [variables, query, setPage, paginationProps],
+  );
 
   const refetching = query.networkStatus === NetworkStatus.refetch;
 

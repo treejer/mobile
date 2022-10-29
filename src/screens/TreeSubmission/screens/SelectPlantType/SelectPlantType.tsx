@@ -154,7 +154,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
         </View>
       </TouchableOpacity>
       <TouchableOpacity style={[{borderColor: modelColor}, styles.plantType]} onPress={handleSelectModels}>
-        {/*<Image source={TreeImage} style={{height: 56, width: 48, tintColor: modelColor}} />*/}
         <ModelIcon name="th" size={48} color={modelColor} />
         <View style={{flex: 1, paddingHorizontal: 16}}>
           <Text style={[styles.text, {color: modelColor}]}>{t('submitTree.models')}</Text>
