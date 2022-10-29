@@ -1,19 +1,20 @@
 import React from 'react';
-import {Share, View} from 'react-native';
+import {Share} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import Clipboard from '@react-native-clipboard/clipboard';
+
 import {rangerUrl} from 'services/config';
 import {isWeb} from 'utilities/helpers/web';
 import {showAlert} from 'utilities/helpers/alert';
-import Clipboard from '@react-native-clipboard/clipboard';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import Button from 'components/Button';
+import {TButtonProps} from 'components/Button/Button';
 
-export interface InviteProps {
+export type InviteProps = {
   planterType: number;
   address: string;
   style?: any;
-}
+} & TButtonProps;
 
 export default function Invite(props: InviteProps) {
   const {planterType} = props;
@@ -26,7 +27,7 @@ export default function Invite(props: InviteProps) {
 }
 
 export function InviteOrgAndFriends(props: InviteProps) {
-  const {planterType, address, style} = props;
+  const {planterType, address, style, caption, ...restProps} = props;
 
   const {t} = useTranslation();
 
@@ -54,8 +55,7 @@ export function InviteOrgAndFriends(props: InviteProps) {
 
   return (
     <>
-      <Button caption={text} variant="tertiary" onPress={handleInvite} style={style} />
-      <Spacer times={4} />
+      <Button caption={text} variant="tertiary" onPress={handleInvite} style={style} {...restProps} />
     </>
   );
 }

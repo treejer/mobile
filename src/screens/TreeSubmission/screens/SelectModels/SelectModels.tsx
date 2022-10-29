@@ -124,7 +124,7 @@ export function SelectModels(props: SelectModelsProps) {
             <View style={globalStyles.screenView}>
               <BigList<GetPlantingModelsQueryQueryPartialData.Models>
                 style={{flex: 1, width: '100%'}}
-                data={undefined}
+                data={plantModels || undefined}
                 renderItem={renderPlantModelItem}
                 showsVerticalScrollIndicator={false}
                 itemHeight={isWeb() ? 68 : 73}
