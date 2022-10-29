@@ -1,11 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import {Routes} from 'navigation';
-import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
@@ -27,7 +23,6 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
   const [isNursery, setIsNursery] = useState<boolean>(false);
   const [nurseryCount, setNurseryCount] = useState<string>('');
 
-  const navigation = useNavigation<NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>>();
   const {t} = useTranslation();
 
   const inputRef = useRef<TextInput>(null);
@@ -55,10 +50,6 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
     if (isNumber(value)) {
       setNurseryCount(value);
     }
-  }, []);
-
-  const handleNavigateToCreateModel = useCallback(() => {
-    navigation.navigate(Routes.CreateModel);
   }, []);
 
   const nurseryPlaceholder = useMemo(
@@ -103,13 +94,15 @@ export function PlantModelButtons(props: TPlantModelButtonsProps) {
         ) : modelExist ? (
           <Text style={styles.chooseMessage}>{t('selectModels.choose')}</Text>
         ) : null}
-        <Button
-          caption={isNursery || !!nurseryCount ? t('selectModels.nursery') : t('selectModels.create')}
-          variant="primary"
-          onPress={isNursery || !!nurseryCount ? () => onPlant(nurseryCount) : handleNavigateToCreateModel}
-          style={styles.createBtn}
-          textStyle={{color: colors.grayLight}}
-        />
+        {isNursery || !!nurseryCount ? (
+          <Button
+            caption={isNursery || !!nurseryCount ? t('selectModels.nursery') : t('selectModels.create')}
+            variant="primary"
+            onPress={() => onPlant(nurseryCount)}
+            style={styles.createBtn}
+            textStyle={{color: colors.grayLight}}
+          />
+        ) : null}
         <Spacer times={10} />
       </View>
     </View>
@@ -128,6 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
+    height: 60,
     color: colors.khakiDark,
     borderColor: colors.grayLight,
   },
