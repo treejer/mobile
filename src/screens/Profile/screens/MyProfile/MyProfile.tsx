@@ -2,6 +2,9 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import FAIcon from 'react-native-vector-icons/FontAwesome5';
+import IoIcon from 'react-native-vector-icons/Ionicons';
+import ADIcon from 'react-native-vector-icons/AntDesign';
 
 import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
@@ -25,6 +28,7 @@ import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
 import {usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -72,7 +76,6 @@ function MyProfile(props: MyProfileProps) {
   const {sendEvent} = useAnalytics();
 
   const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
-  console.log(profile, 'profile data');
 
   const isVerified = profile?.isVerified;
 
@@ -85,8 +88,6 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
-
-  console.log(planterData, 'planter data');
 
   const getPlanter = useCallback(async () => {
     if (!isConnected) {
@@ -176,6 +177,7 @@ function MyProfile(props: MyProfileProps) {
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <PullToRefresh onRefresh={onRefetch}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={
             isWeb() ? undefined : (
@@ -230,27 +232,50 @@ function MyProfile(props: MyProfileProps) {
                 <Spacer times={5} />
 
                 <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  {profile.isVerified ? (
-                    <>
+                  <ProfileGroupButton>
+                    {profile.isVerified ? (
                       <Button
+                        iconPlace="left"
+                        size="sm"
                         style={styles.button}
+                        icon={() => <FAIcon name="wallet" size={20} color={colors.grayLight} />}
                         caption={t('withdraw')}
                         variant="tertiary"
                         onPress={handleNavigateWithdraw}
                       />
-                      <Spacer times={4} />
-                    </>
-                  ) : null}
+                    ) : (
+                      <></>
+                    )}
+                    {!isWeb() ? (
+                      <>
+                        <Spacer times={4} />
+                        <Button
+                          iconPlace="left"
+                          size="sm"
+                          style={styles.button}
+                          caption={t('offlineMap.title')}
+                          variant="tertiary"
+                          icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
+                          onPress={handleNavigateOfflineMap}
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </ProfileGroupButton>
+                  <Spacer times={4} />
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                       <Spacer times={6} />
                     </>
                   )}
-
                   {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
-                    <>
+                    <ProfileGroupButton>
                       <Button
+                        textAlign="center"
+                        iconPlace="left"
+                        icon={() => <ADIcon name="adduser" size={20} color={colors.grayLight} />}
                         style={styles.button}
                         caption={t('getVerified')}
                         variant="tertiary"
@@ -262,8 +287,7 @@ function MyProfile(props: MyProfileProps) {
                           }
                         }}
                       />
-                      <Spacer times={4} />
-                    </>
+                    </ProfileGroupButton>
                   )}
 
                   {!route.params?.hideVerification && status === UserStatus.Unverified && hasRefer && (
@@ -299,56 +323,89 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
 
-                  {!route.params?.unVerified && !isWeb() ? (
-                    <>
-                      <Button
-                        style={styles.button}
-                        caption={t('offlineMap.title')}
-                        variant="tertiary"
-                        onPress={handleNavigateOfflineMap}
-                      />
-                      <Spacer times={4} />
-                    </>
-                  ) : null}
+                  {/*{!route.params?.unVerified && !isWeb() ? (*/}
+                  {/*  <>*/}
+                  {/*    <Button*/}
+                  {/*      style={styles.button}*/}
+                  {/*      caption={t('offlineMap.title')}*/}
+                  {/*      variant="tertiary"*/}
+                  {/*      onPress={handleNavigateOfflineMap}*/}
+                  {/*    />*/}
+                  {/*    <Spacer times={4} />*/}
+                  {/*  </>*/}
+                  {/*) : null}*/}
 
                   {planterData?.planterType && !!wallet ? (
-                    <Invite style={styles.button} address={wallet} planterType={Number(planterData?.planterType)} />
-                  ) : null}
-
-                  <Button
-                    style={styles.button}
-                    caption={t('settings.title')}
-                    variant="tertiary"
-                    onPress={handleNavigateSettings}
-                  />
-                  <Spacer times={4} />
-                  <Button
-                    style={styles.button}
-                    caption={t('support')}
-                    variant="tertiary"
-                    onPress={handleNavigateSupport}
-                  />
-                  {profile.isVerified ? (
-                    <>
+                    <ProfileGroupButton>
+                      <Invite
+                        caption={''}
+                        iconPlace="left"
+                        size="sm"
+                        icon={() => <ADIcon name="addusergroup" size={20} color={colors.grayLight} />}
+                        style={styles.button}
+                        address={wallet}
+                        planterType={Number(planterData?.planterType)}
+                      />
                       <Spacer times={4} />
                       <Button
+                        iconPlace="left"
+                        size="sm"
+                        icon={() => <FAIcon name="list-alt" size={20} color={colors.grayLight} />}
                         style={styles.button}
                         caption={t('activity')}
                         variant="tertiary"
                         onPress={handleNavigateActivity}
                       />
-                    </>
+                    </ProfileGroupButton>
                   ) : null}
+
                   <Spacer times={4} />
-                  <Button
-                    style={styles.button}
-                    caption={t('logout')}
-                    variant="tertiary"
-                    onPress={() => {
-                      sendEvent('logout');
-                      handleLogout(true);
-                    }}
-                  />
+
+                  <ProfileGroupButton>
+                    <Button
+                      iconPlace="left"
+                      size="sm"
+                      icon={() => <IoIcon name="settings-outline" size={20} color={colors.grayLight} />}
+                      style={styles.button}
+                      caption={t('settings.title')}
+                      variant="tertiary"
+                      onPress={handleNavigateSettings}
+                    />
+                    <Spacer times={4} />
+                    <Button
+                      iconPlace="left"
+                      size="sm"
+                      style={styles.button}
+                      icon={() => <FAIcon name="rocketchat" size={20} color={colors.grayLight} />}
+                      caption={t('support')}
+                      variant="tertiary"
+                      onPress={handleNavigateSupport}
+                    />
+                  </ProfileGroupButton>
+                  <Spacer times={4} />
+                  <ProfileGroupButton>
+                    <Button
+                      textAlign="center"
+                      iconPlace="left"
+                      size="sm"
+                      icon={() => (
+                        <FAIcon
+                          name="sign-out-alt"
+                          size={20}
+                          color={colors.red}
+                          style={{transform: [{rotate: '180deg'}]}}
+                        />
+                      )}
+                      style={styles.button}
+                      textStyle={{color: colors.red}}
+                      caption={t('logout')}
+                      variant="tertiary"
+                      onPress={() => {
+                        sendEvent('logout');
+                        handleLogout(true);
+                      }}
+                    />
+                  </ProfileGroupButton>
                   <Spacer times={4} />
                   <AppVersion />
                   <Spacer times={4} />
@@ -365,7 +422,7 @@ function MyProfile(props: MyProfileProps) {
 
 const styles = StyleSheet.create({
   button: {
-    width: 180,
+    flex: 1,
   },
   helpWrapper: {
     alignItems: 'center',

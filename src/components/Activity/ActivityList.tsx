@@ -51,7 +51,7 @@ export function ActivityList(props: TActivityListProps) {
   }, [activities]);
 
   return (
-    <View style={{flex: 1, width: '100%'}}>
+    <View style={[{flex: 1, width: '100%'}, globalStyles.screenView]}>
       <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
         refreshing
         onRefresh={onRefresh}
