@@ -491,6 +491,8 @@ export const en = {
     TreeRejected: 'Tree Rejected',
     TreeUpdatedVerified: 'Tree Updated Verified',
     TreeUpdateRejected: 'Tree Update Rejected',
+    TransferOut: 'Sent',
+    TransferIn: 'Received',
     empty: 'Empty',
   },
 };

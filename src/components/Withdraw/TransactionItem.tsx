@@ -12,6 +12,11 @@ import {GetTransactionHistoryQueryPartialData} from 'screens/Withdraw/screens/Wi
 import {useWalletWeb3} from '../../redux/modules/web3/web3';
 import {StableDaiCoin, EthCoin} from '../../../assets/images';
 
+export enum TTransactionEvent {
+  TransferOut = 'TransferOut',
+  TransferIn = 'TransferIn',
+}
+
 export type TTransactionHistory = GetTransactionHistoryQueryPartialData.Erc20Histories;
 
 export type TTransactionItemProps = {
@@ -44,12 +49,12 @@ export function TransactionItem(props: TTransactionItemProps) {
         <Spacer />
         <View style={[styles.row, styles.detail]}>
           <View>
-            <Text style={styles.title}>{amount}</Text>
+            <Text style={styles.title}>${amount}</Text>
             <Spacer times={0.5} />
             <Text style={styles.date}>{date}</Text>
           </View>
           <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
-            <Text style={styles.status}>event</Text>
+            <Text style={styles.status}>{t(`activities.${transaction.event}`)}</Text>
             <Spacer />
             <FIcon
               style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
