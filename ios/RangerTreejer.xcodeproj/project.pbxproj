@@ -21,6 +21,7 @@
 		6994D0E6268C45D4933FC509 /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 855B27C5427D43998610521A /* Montserrat-ExtraLightItalic.ttf */; };
 		6E5116833DEB488AB638C952 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D49CBEEC632743BDBF063CD8 /* Montserrat-Light.ttf */; };
 		74EE9D09FBF341AEA222A34F /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9577382940F54E409A669102 /* Montserrat-Thin.ttf */; };
+		7A721DBD304582F4750FE365 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49B26B3A6CD8DC6D506CFE5 /* ExpoModulesProvider.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		87F64416D91F46EE878A0C3A /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E99E43E6337146CFA9B455C9 /* Montserrat-ExtraBold.ttf */; };
 		88BE24771246C8820CDD2998 /* libPods-RangerTreejer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B260360C813A9ECBE7BA844 /* libPods-RangerTreejer.a */; };
@@ -32,6 +33,7 @@
 		E026ED85D3054F8DBDDBB12D /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 146424AB1B3E42FBA88F733D /* Montserrat-Medium.ttf */; };
 		E646EBF51513484FB5CB2545 /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52B4423D92CF4F82916D7722 /* Montserrat-SemiBold.ttf */; };
 		EE0B1839F7C74B4C93CF107B /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D099AF12757041859D4F301B /* Montserrat-LightItalic.ttf */; };
+		F08BD6D6C6BA9AEA441B0AD6 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C664C7CCE1571DDEDF1011 /* ExpoModulesProvider.swift */; };
 		FB9CA9AB2E1A440392606459 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A8C619B95913496987A402AD /* Montserrat-Bold.ttf */; };
 /* End PBXBuildFile section */
 
@@ -110,10 +112,12 @@
 		D2D9C1E1C5EF41749B5049C7 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		D49CBEEC632743BDBF063CD8 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		DCC316DA8FA5424CB0F12EE9 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		E1C664C7CCE1571DDEDF1011 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-RangerTreejer/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		E4016BE128EE4F579BCC3F54 /* Montserrat-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraLight.ttf"; path = "../assets/fonts/Montserrat-ExtraLight.ttf"; sourceTree = "<group>"; };
 		E99E43E6337146CFA9B455C9 /* Montserrat-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraBold.ttf"; path = "../assets/fonts/Montserrat-ExtraBold.ttf"; sourceTree = "<group>"; };
 		EA550D58660349BB8E0C5415 /* Montserrat-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-BlackItalic.ttf"; path = "../assets/fonts/Montserrat-BlackItalic.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F49B26B3A6CD8DC6D506CFE5 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-RangerTreejer-RangerTreejerTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +170,14 @@
 			name = RangerTreejer;
 			sourceTree = "<group>";
 		};
+		27FC974B57C1E4E2CB00036D /* RangerTreejer */ = {
+			isa = PBXGroup;
+			children = (
+				E1C664C7CCE1571DDEDF1011 /* ExpoModulesProvider.swift */,
+			);
+			name = RangerTreejer;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +186,15 @@
 				C1FB965B6B26A9250F32C523 /* libPods-RangerTreejer-RangerTreejerTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		42DF8D106B9BDF78A738EF8D /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				27FC974B57C1E4E2CB00036D /* RangerTreejer */,
+				FAAD0E9EFA6F0337752AD1EB /* RangerTreejerTests */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		7547BFED8AB946F684C4C6CD /* Resources */ = {
@@ -236,6 +257,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				E233CBF5F47BEE60B243DCF8 /* Pods */,
 				7547BFED8AB946F684C4C6CD /* Resources */,
+				42DF8D106B9BDF78A738EF8D /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -284,6 +306,14 @@
 				5B1E0E9F924CDD790424465C /* Pods-RangerTreejer-RangerTreejerTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		FAAD0E9EFA6F0337752AD1EB /* RangerTreejerTests */ = {
+			isa = PBXGroup;
+			children = (
+				F49B26B3A6CD8DC6D506CFE5 /* ExpoModulesProvider.swift */,
+			);
+			name = RangerTreejerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -574,6 +604,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* RangerTreejerTests.m in Sources */,
+				7A721DBD304582F4750FE365 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +614,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F08BD6D6C6BA9AEA441B0AD6 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,7 +639,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = RangerTreejerTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -618,6 +650,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RangerTreejer.app/RangerTreejer";
@@ -631,7 +664,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = RangerTreejerTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -642,6 +675,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RangerTreejer.app/RangerTreejer";
@@ -669,6 +703,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = RangerTreejer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -697,6 +732,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = RangerTreejer;
 				SWIFT_VERSION = 5.0;
@@ -753,7 +789,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -811,7 +847,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

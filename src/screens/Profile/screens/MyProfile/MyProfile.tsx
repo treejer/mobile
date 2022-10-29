@@ -21,7 +21,7 @@ import {colors} from 'constants/values';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {isWeb} from 'utilities/helpers/web';
-import useRefer from 'utilities/hooks/useDeepLinking';
+import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
@@ -47,7 +47,7 @@ function MyProfile(props: MyProfileProps) {
   // const user = useCurrentUser();
   // console.log(user, 'user>++');
 
-  const {referrer, organization, hasRefer} = useRefer();
+  const {referrer, organization, hasRefer} = useDeepLinkingValue();
 
   const getMinBalance = useCallback(() => {
     // @here

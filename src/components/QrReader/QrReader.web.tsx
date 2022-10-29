@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import QRCodeScanner from 'react-qr-scanner';
 import {Image, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import globalStyles from 'constants/styles';
