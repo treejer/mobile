@@ -45,18 +45,21 @@ export function useInitialDeepLinking() {
     } else if (action === 'referrer') {
       await AsyncStorage.setItem(deepLinkingKey('referrer'), value);
       await AsyncStorage.removeItem(deepLinkingKey('organization'));
+    } else if (action === 'oauth') {
+      await AsyncStorage.setItem(deepLinkingKey('oauth'), value);
     }
   };
 }
 
-export default function useRefer() {
+export default function useDeepLinkingValue() {
   const [referrer, setReferrer] = useState<string | null>(null);
   const [organization, setOrganization] = useState<string | null>(null);
+  const [oauthProvider, setOauthProvider] = useState<string | null>(null);
 
   useEffect(() => {
     (async function () {
       Linking.addEventListener('url', onReceiveURL);
-      await setRefers();
+      await setCachedValues();
     })();
 
     return () => {
@@ -64,14 +67,17 @@ export default function useRefer() {
     };
   }, []);
 
-  const setRefers = async () => {
+  const setCachedValues = async () => {
     try {
       const _referrer = await AsyncStorage.getItem(deepLinkingKey('referrer'));
       setReferrer(_referrer);
       const _organization = await AsyncStorage.getItem(deepLinkingKey('organization'));
       setOrganization(_organization);
+
+      const _oauthProvider = await AsyncStorage.getItem(deepLinkingKey('oauth'));
+      setOauthProvider(_oauthProvider);
     } catch (e) {
-      console.log(e, 'useRefer > setRefers: Error');
+      console.log(e, 'useDeepLinkingValue > setCachedValues: Error');
     }
   };
 
@@ -83,12 +89,14 @@ export default function useRefer() {
     } else if (action === 'organization') {
       setOrganization(value);
       setReferrer(null);
+    } else if (action === 'oauth') {
+      setOauthProvider(value);
     }
   };
 
   const hasRefer = referrer || organization;
 
-  return {referrer, organization, hasRefer};
+  return {referrer, organization, hasRefer, oauthProvider};
 }
 
 export function deepLinkingKey(action) {
@@ -104,4 +112,8 @@ export function convertUrlParams(url: string) {
   });
   const [_, action, value] = url?.replace(baseUrl, '')?.split('/');
   return {action, value};
+}
+
+export function oauthDeepLinkUrl(provider: string): string {
+  return `${rangerUrl}/oauth/${provider}`;
 }

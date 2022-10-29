@@ -28,7 +28,7 @@ import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
 import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
 import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
-import useRefer from 'utilities/hooks/useDeepLinking';
+import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
 import {restApiError} from 'utilities/helpers/error';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
@@ -81,7 +81,7 @@ function VerifyProfile(props: Props) {
 
   const {sendEvent} = useAnalytics();
 
-  const refer = useRefer();
+  const refer = useDeepLinkingValue();
   const {referrer, organization, hasRefer} = refer;
 
   const handleChangeRadioButton = (key: string) => {

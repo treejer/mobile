@@ -3,7 +3,7 @@ module.exports = function (api) {
   api.cache(true);
   return {
     // eslint-disable-next-line no-process-env
-    presets: [process.env.REACT_APP_WEB ? 'babel-preset-expo' : 'module:metro-react-native-babel-preset'],
+    presets: ['babel-preset-expo'],
     plugins: [
       'inline-dotenv',
       [
@@ -21,6 +21,7 @@ module.exports = function (api) {
         },
       ],
       'import-graphql',
+      'react-native-reanimated/plugin',
     ],
   };
 };

@@ -56,8 +56,9 @@ buck-out/
 # Bundle artifacts
 *.jsbundle
 
-# CocoaPods
+# Ruby / CocoaPods
 /ios/Pods/
+/vendor/bundle/
 
 # BUCK
 !debug.keystore
