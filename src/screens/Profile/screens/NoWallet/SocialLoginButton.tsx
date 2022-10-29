@@ -8,10 +8,11 @@ export interface SocialLoginButtonProps {
   name: 'Apple' | 'Google' | 'Twitter';
   color?: string;
   disabled?: boolean;
+  onPress?: () => void;
 }
 
 export function SocialLoginButton(props: SocialLoginButtonProps) {
-  const {name, color = colors.grayDarker, disabled} = props;
+  const {name, color = colors.grayDarker, disabled, onPress} = props;
 
   return (
     <TouchableOpacity
@@ -26,11 +27,13 @@ export function SocialLoginButton(props: SocialLoginButtonProps) {
         borderWidth: 1,
       }}
       onPress={() =>
-        showAlert({
-          title: 'Not Implemented',
-          message: 'We are developing...',
-          mode: AlertMode.Info,
-        })
+        onPress
+          ? onPress()
+          : showAlert({
+              title: 'Not Implemented',
+              message: 'We are developing...',
+              mode: AlertMode.Info,
+            })
       }
       disabled={disabled}
     >

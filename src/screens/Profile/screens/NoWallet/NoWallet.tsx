@@ -23,6 +23,8 @@ import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
 import {useProfile} from '../../../../redux/modules/profile/profile';
 import {useConfig, useMagic, useUserWeb3} from '../../../../redux/modules/web3/web3';
+import {OAuthRedirectResult} from 'services/Magic';
+import {oauthDeepLinkUrl} from 'utilities/hooks/useDeepLinking';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -158,6 +160,26 @@ function NoWallet(props: NoWalletProps) {
     }
   });
 
+  const handleConnectWithOauth = useCallback(
+    async (provider: string) => {
+      try {
+        // @ts-ignore
+        const result: OAuthRedirectResult = await magic.oauth.loginWithPopup({
+          provider,
+          redirectURI: oauthDeepLinkUrl(provider),
+        });
+        console.log('result', result);
+      } catch (e: any) {
+        showAlert({
+          title: t('createWallet.failed.title'),
+          message: e?.message || t('tryAgain'),
+          mode: AlertMode.Error,
+        });
+      }
+    },
+    [magic.oauth, t],
+  );
+
   const handleToggleAuthMethod = () => {
     setIsEmail(!isEmail);
   };
@@ -245,11 +267,25 @@ function NoWallet(props: NoWalletProps) {
                   />
                   <Spacer times={4} />
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <SocialLoginButton name="Apple" disabled={loading} />
+                    <SocialLoginButton
+                      name="Apple"
+                      disabled={loading}
+                      onPress={() => handleConnectWithOauth('apple')}
+                    />
                     <Spacer times={2} />
-                    <SocialLoginButton name="Google" color={colors.red} disabled={loading} />
+                    <SocialLoginButton
+                      name="Google"
+                      color={colors.red}
+                      disabled={loading}
+                      onPress={() => handleConnectWithOauth('google')}
+                    />
                     <Spacer times={2} />
-                    <SocialLoginButton name="Twitter" color="#24A4F3" disabled={loading} />
+                    <SocialLoginButton
+                      name="Twitter"
+                      color="#24A4F3"
+                      disabled={loading}
+                      onPress={() => handleConnectWithOauth('twitter')}
+                    />
                   </View>
                 </View>
                 <Spacer times={4} />

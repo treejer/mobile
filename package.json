@@ -27,6 +27,7 @@
     "@apollo/client": "3.5.7",
     "@expo/webpack-config": "0.16.20",
     "@hookform/resolvers": "^2.9.7",
+    "@magic-ext/react-native-oauth": "^4.0.0",
     "@magic-sdk/react-native": "^11.0.0",
     "@opengsn/gsn": "2.1.0",
     "@opengsn/provider": "2.2.6",

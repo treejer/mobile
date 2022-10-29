@@ -40,6 +40,7 @@
           <category android:name="android.intent.category.BROWSABLE"/>
           <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/referrer/" />
           <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/organization/" />
+          <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/oauth/" />
         </intent-filter>
       </activity>
     </application>
