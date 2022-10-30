@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@apollo/client": "3.5.7",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo/webpack-config": "0.16.20",
     "@hookform/resolvers": "^2.9.7",
     "@magic-ext/react-native-oauth": "^4.0.0",

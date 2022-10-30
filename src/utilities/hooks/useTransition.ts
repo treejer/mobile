@@ -4,7 +4,7 @@ import Animated, {
   Clock,
   clockRunning,
   cond,
-  Easing,
+  EasingNode,
   not,
   onChange,
   set,
@@ -29,7 +29,7 @@ function useTransition(fill: boolean) {
 
   const config = {
     toValue: new Animated.Value(0),
-    easing: Easing.ease,
+    easing: EasingNode.ease,
     duration: 300,
   };
 

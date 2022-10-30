@@ -21,6 +21,7 @@ module.exports = function (api) {
         },
       ],
       'import-graphql',
+      '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
     ],
   };

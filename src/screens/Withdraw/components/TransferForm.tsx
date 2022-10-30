@@ -152,7 +152,7 @@ export function TransferForm(props: TTransferFormProps) {
     if (!submitting && formState.isValid) {
       handleResetForm();
     }
-  }, [formState.isValid, handleResetForm, submitting]);
+  }, [handleResetForm, submitting]);
 
   if (showQrReader) {
     return <QrReader handleScan={handleScanQrCode} handleDismiss={handleCloseQrReader} />;
