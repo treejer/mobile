@@ -59,6 +59,7 @@ type planter {
   countryCode: String
   balance: Int!
   plantedCount: Int!
+  balanceProjected: Int!
   supplyCap: Int!
 }
 

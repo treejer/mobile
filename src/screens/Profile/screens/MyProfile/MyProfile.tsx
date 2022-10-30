@@ -126,6 +126,9 @@ function MyProfile(props: MyProfileProps) {
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
+  const planterProjectedBalance =
+    Number(planterData?.balanceProjected) > 0 ? parseBalance(planterData?.balanceProjected.toString() || '0') : 0;
+
   const avatarStatus = isVerified ? 'active' : 'inactive';
   const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
@@ -206,6 +209,13 @@ function MyProfile(props: MyProfileProps) {
 
                 {planterData && (
                   <Card style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                    <View style={styles.statContainer}>
+                      <Text style={styles.statValue}>{planterProjectedBalance}</Text>
+                      <Text style={styles.statLabel}>{t('projected')}</Text>
+                    </View>
+
+                    <Spacer times={6} />
+
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
                       <Text style={styles.statLabel}>{t('balance')}</Text>
@@ -446,7 +456,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
-    maxWidth: 300,
+    maxWidth: 320,
     justifyContent: 'center',
   },
   getVerifiedRefer: {

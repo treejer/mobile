@@ -6,6 +6,7 @@ query PlanterStatusQuery($id: String!) {
     planterType
     plantedCount
     balance
+    balanceProjected,
     supplyCap
   }
 }
