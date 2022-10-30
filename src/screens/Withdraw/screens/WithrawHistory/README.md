@@ -1,3 +1,3 @@
-# TransactionHistory
+# TransactionList
 
 > User transactions history

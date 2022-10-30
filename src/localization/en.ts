@@ -377,7 +377,7 @@ export const en = {
     redeem: 'Reedem from Treejer',
     treejerDescription: 'Withdrawable blocked DAI on Treejer Protocol',
     stablecoinDescription: 'Withdrawable DAI in Magic wallet',
-    withdrawHistory: 'Withdraw History',
+    transactionHistory: 'Transaction History',
     date: 'Date',
     txHash: 'Tx Hash',
     id: '#',

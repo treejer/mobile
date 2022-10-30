@@ -19,7 +19,6 @@ export interface GetTransactionHistoryQueryPartialData {
 }
 export namespace GetTransactionHistoryQueryData {
   export interface Variables {
-    token: string;
     address: string;
     skip?: number | null;
     first?: number | null;

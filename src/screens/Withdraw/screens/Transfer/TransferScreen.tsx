@@ -8,21 +8,22 @@ import {ContractType} from 'services/config';
 import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {TransactionHistory} from 'components/Withdraw/TransactionHistory';
+import {TransactionList} from 'components/Withdraw/TransactionList';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
-import {history} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
 import {isWeb} from 'utilities/helpers/web';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {useGetTransactionHistory} from 'utilities/hooks/useGetTransactionHistory';
 import {useProfile} from '../../../../redux/modules/profile/profile';
 import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
 import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {TTransactionEvent} from 'components/Withdraw/TransactionItem';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -55,6 +56,14 @@ export function TransferScreen() {
 
   const isVerified = profile?.isVerified;
   const skipStats = !wallet || !isVerified;
+
+  const {
+    query: txHistoryQuery,
+    persistedData: txHistory,
+    refetching: txHistoryRefetching,
+    refetchData: refetchTxHistory,
+    loadMore: txHistoryLoadMore,
+  } = useGetTransactionHistory(wallet);
 
   const {
     data: planterData,
@@ -186,6 +195,7 @@ export function TransferScreen() {
           if (isConnected) {
             getBalance();
             await getPlanter();
+            await refetchTxHistory();
             resolve();
           }
         })();
@@ -216,7 +226,7 @@ export function TransferScreen() {
           {isWeb() && <Spacer times={4} />}
           <View style={styles.container}>
             <WithdrawSection
-              history={history}
+              history={txHistory}
               loading={loading}
               handleWithdraw={handleWithdrawPlanterBalance}
               planterWithdrawableBalance={planterWithdrawableBalance}
@@ -225,14 +235,21 @@ export function TransferScreen() {
             />
           </View>
           {!dai && !planterWithdrawableBalance ? (
-            <>
+            <View style={globalStyles.alignItemsCenter}>
               <Spacer times={8} />
-              <TransactionHistory history={[]} />
-            </>
+              <TransactionList
+                disabled={isWeb()}
+                showHeader={true}
+                history={txHistory}
+                onRefresh={refetchTxHistory}
+                refreshing={txHistoryRefetching || txHistoryQuery.loading}
+                onLoadMore={txHistoryLoadMore}
+              />
+            </View>
           ) : (
             !!daiBalance && (
               <TransferForm
-                hasHistory={!!history.length}
+                hasHistory={!!txHistory?.length}
                 daiBalance={dai}
                 userWallet={wallet}
                 fee={fee}

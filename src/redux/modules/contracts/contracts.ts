@@ -167,7 +167,7 @@ export function* watchContracts({getBalance}: TAction) {
 
     yield put(setBalance(contracts));
   } catch (e: any) {
-    show?.(i18next.t('transfer.error.contractsFailed'), {
+    toast?.show?.(i18next.t('transfer.error.contractsFailed'), {
       type: AlertMode.Error,
     });
     yield put(getBalanceFailed());
@@ -204,11 +204,11 @@ export function* watchTransaction({transaction}: TAction) {
     yield put(cancelTransaction());
     yield put(getBalance());
 
-    show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
+    toast.show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
   } catch (e: any) {
     yield put(cancelTransaction());
     yield put(getBalance());
-    show(e.message, {
+    toast.show?.(e.message, {
       type: AlertMode.Error,
     });
   }
@@ -234,11 +234,11 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
       yield put(transactionFee({fee}));
     } else {
       yield put(cancelTransaction());
-      show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
+      toast.show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
     }
   } catch (e: any) {
     console.log(e.message);
-    show?.(i18next.t(`transfer.error.${web3Error(e).code}`), {type: AlertMode.Error});
+    toast.show?.(i18next.t(`transfer.error.${web3Error(e).code}`), {type: AlertMode.Error});
     yield put(cancelTransaction());
   }
 }

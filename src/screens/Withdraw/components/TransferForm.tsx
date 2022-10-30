@@ -145,7 +145,7 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handleNavigateHistory = useCallback(() => {
     // @ts-ignore
-    navigation.navigate(Routes.Activity, {filters: ['sent', 'claimed']});
+    navigation.navigate(Routes.WithdrawHistory);
   }, [navigation]);
 
   useEffect(() => {

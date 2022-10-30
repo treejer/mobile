@@ -7,4 +7,4 @@
 - [SubmitTransfer](./SubmitTransfer.tsx): this component does return transfer form buttons
 - [TransferConfirmationModal](./TransferConfirmationModal.tsx): this component does return confirmation modal for submit transfer
 - [TransferInput](./TransferInput.tsx): this component does return transfer input, it's dynamic and used for amount and wallet address
-- [TransactionHistory](./TransactionHistory.tsx): this component does return transaction history
+- [TransactionList](./TransactionList.tsx): this component does return transaction history

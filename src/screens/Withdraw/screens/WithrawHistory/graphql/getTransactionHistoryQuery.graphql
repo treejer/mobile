@@ -1,9 +1,8 @@
-query GetTransactionHistory($token: String!, $address: String!, $skip: Int, $first: Int) {
+query GetTransactionHistory($address: String!, $skip: Int, $first: Int) {
   erc20Histories(
     first: $first,
     skip: $skip,
     where: {
-      token: $token
       address: $address
     }) {
     id

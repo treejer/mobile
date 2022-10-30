@@ -272,6 +272,5 @@ type transactionHistoryResponse {
 }
 
 input WhereTransactionHistory {
-  token: String!,
   address: String!
 }
