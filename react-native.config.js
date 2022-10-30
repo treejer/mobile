@@ -18,4 +18,9 @@ module.exports = {
       },
     },
   },
+  expo: {
+    autolinking: {
+      exclude: ['expo-application', 'expo-asset', 'expo-constants', 'expo-file-system', 'expo-font', 'expo-keep-awake'],
+    },
+  },
 };

@@ -266,25 +266,25 @@ function NoWallet(props: NoWalletProps) {
                     disabled={loading}
                   />
                   <Spacer times={4} />
+                  <Text style={{textAlign: 'center'}}>{t('createWallet.or')}</Text>
+                  <Spacer times={4} />
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                     <SocialLoginButton
-                      name="Apple"
+                      name="Facebook"
                       disabled={loading}
-                      onPress={() => handleConnectWithOauth('apple')}
+                      onPress={() => handleConnectWithOauth('facebook')}
                     />
-                    <Spacer times={2} />
+                    <Spacer times={4} />
                     <SocialLoginButton
                       name="Google"
-                      color={colors.red}
                       disabled={loading}
                       onPress={() => handleConnectWithOauth('google')}
                     />
-                    <Spacer times={2} />
+                    <Spacer times={4} />
                     <SocialLoginButton
-                      name="Twitter"
-                      color="#24A4F3"
+                      name="Discord"
                       disabled={loading}
-                      onPress={() => handleConnectWithOauth('twitter')}
+                      onPress={() => handleConnectWithOauth('discord')}
                     />
                   </View>
                 </View>

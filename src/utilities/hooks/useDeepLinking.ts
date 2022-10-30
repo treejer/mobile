@@ -25,6 +25,7 @@ export function useInitialDeepLinking() {
     return () => {
       Linking.removeEventListener('url', onReceiveURL);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onReceiveURL = async ({url}) => {
@@ -82,6 +83,7 @@ export default function useDeepLinkingValue() {
   };
 
   const onReceiveURL = async ({url}) => {
+    console.log(url, 'url received');
     const {action, value} = convertUrlParams(url);
     if (action === 'referrer') {
       setReferrer(value);
@@ -103,6 +105,8 @@ export function deepLinkingKey(action) {
   return `deepLinking-${action}`;
 }
 
+export const deepLinkingUriSchema = 'ranger-treejer://';
+
 export function convertUrlParams(url: string) {
   const baseUrl = Platform.select({
     ios: 'treejer-ranger://',
@@ -110,10 +114,19 @@ export function convertUrlParams(url: string) {
     web: isProd ? rangerUrl : rangerDevUrl,
     default: rangerUrl,
   });
-  const [_, action, value] = url?.replace(baseUrl, '')?.split('/');
-  return {action, value};
+
+  if (url.includes(`${deepLinkingUriSchema}oauth`)) {
+    const [action, value] = url?.replace(deepLinkingUriSchema, '')?.split('/');
+    return {
+      action,
+      value,
+    };
+  } else {
+    const [_, action, value] = url?.replace(baseUrl, '')?.split('/');
+    return {action, value};
+  }
 }
 
 export function oauthDeepLinkUrl(provider: string): string {
-  return `${rangerUrl}/oauth/${provider}`;
+  return `${deepLinkingUriSchema}oauth/${provider}`;
 }

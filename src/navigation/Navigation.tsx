@@ -78,7 +78,6 @@ export function RootNavigation() {
   const {locale, onBoardingDone} = useSettings();
 
   const {profile, status} = useProfile();
-  //
 
   const isVerified = status === UserStatus.Verified;
 
