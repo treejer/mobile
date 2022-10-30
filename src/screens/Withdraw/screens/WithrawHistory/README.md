@@ -1,3 +1,3 @@
-# WithdrawHistory
+# TransactionList
 
 > User transactions history

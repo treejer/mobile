@@ -9,11 +9,11 @@ import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
-import {TWithdrawHistory} from 'components/Withdraw/WithdrawHistory';
+import {TTransactionHistory} from 'components/Withdraw/TransactionItem';
 import {TContract} from '../../../redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {
-  history: TWithdrawHistory[] | null;
+  history: TTransactionHistory[] | null;
   handleWithdraw: () => void;
   planterWithdrawableBalance: TContract | undefined;
   daiBalance: BN | string | number;

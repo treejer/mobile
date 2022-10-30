@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {BarCodeScanner} from 'expo-barcode-scanner';
+import {useTranslation} from 'react-i18next';
 
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
+import Spacer from 'components/Spacer';
 import {QrFrame} from '../../../assets/images';
 
 export type TQrReaderProps = {
@@ -17,6 +19,8 @@ export function QrReader(props: TQrReaderProps) {
 
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
+  const {t} = useTranslation();
+
   useEffect(() => {
     (async () => {
       const {status} = await BarCodeScanner.requestPermissionsAsync();
@@ -25,21 +29,35 @@ export function QrReader(props: TQrReaderProps) {
   }, []);
 
   const handleBarCodeScanned = ({type, data}) => {
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    handleScan(data);
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return (
+      <View style={styles.requesting}>
+        <Spacer times={12} />
+        <Text style={styles.reqText}>{t('transfer.requesting')}</Text>
+        <Spacer times={4} />
+        <ActivityIndicator color={colors.green} size="large" />
+      </View>
+    );
   }
   if (!hasPermission) {
-    return <Text>No access to camera</Text>;
+    return (
+      <View style={styles.requesting}>
+        <Spacer times={12} />
+        <Text style={styles.reqText}>{t('transfer.noCameraPermission')}</Text>
+        <Spacer times={4} />
+        <Icon name="smileo" size={24} color={colors.green} />
+      </View>
+    );
   }
 
   return (
     <Modal>
       <BarCodeScanner
         onBarCodeScanned={handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
+        style={{width: '100%', height: '100%'}}
         type="back"
         // barCodeTypes={['qrcode']}
       />
@@ -90,5 +108,13 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+  },
+  reqText: {
+    fontSize: 22,
+    color: colors.green,
+  },
+  requesting: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

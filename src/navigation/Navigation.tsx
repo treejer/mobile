@@ -17,7 +17,6 @@ import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useUserWeb3} from '../redux/modules/web3/web3';
 import {useSettings} from '../redux/modules/settings/settings';
 import {useProfile, UserStatus} from '../redux/modules/profile/profile';
-import {TestScreen} from 'screens/TestScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -88,7 +87,6 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
-        {/*<RootStack.Screen name="Test" component={TestScreen} />*/}
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

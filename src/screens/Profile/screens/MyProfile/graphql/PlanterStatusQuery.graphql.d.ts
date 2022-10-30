@@ -9,6 +9,7 @@ export namespace PlanterStatusQueryQueryPartialData {
     plantedCount?: number | null;
     balance?: number | null;
     supplyCap?: number | null;
+    balanceProjected?: number | null;
   }
 }
 export interface PlanterStatusQueryQueryPartialData {
@@ -27,6 +28,7 @@ export namespace PlanterStatusQueryQueryData {
     plantedCount: number;
     balance: number;
     supplyCap: number;
+    balanceProjected: number;
   }
 }
 export interface PlanterStatusQueryQueryData {

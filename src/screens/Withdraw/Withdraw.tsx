@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {Routes} from 'navigation';
 import {TransferScreen} from 'screens/Withdraw/screens/Transfer/TransferScreen';
-import {WithdrawHistoryScreen} from 'screens/Withdraw/screens/WithrawHistory/WithdrawHistory';
+import {WithdrawHistoryScreen} from 'screens/Withdraw/screens/WithrawHistory/TransactionHistory';
 
 const WithdrawStack = createStackNavigator();
 

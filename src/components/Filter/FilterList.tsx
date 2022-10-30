@@ -2,48 +2,43 @@ import React, {useCallback, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
+import {useToast} from 'react-native-toast-notifications';
 
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {ActivityStatus} from 'components/Activity/ActivityItem';
 import {colors} from 'constants/values';
 import {isFilterSelected} from 'utilities/helpers/isFilterSelected';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {AlertMode} from 'utilities/helpers/alert';
 
 export type TActivityFilterProps = {
+  categories: string[];
   filters: string[];
   onFilterOption: (option: string) => void;
 };
 
-export const categories = [
-  'all',
-  ActivityStatus.TreePlanted,
-  ActivityStatus.TreeUpdated,
-  ActivityStatus.TreeAssigned,
-  ActivityStatus.TreeVerified,
-  ActivityStatus.TreeRejected,
-  ActivityStatus.AssignedTreePlanted,
-  ActivityStatus.AssignedTreeVerified,
-  ActivityStatus.AssignedTreeRejected,
-  ActivityStatus.TreeUpdatedVerified,
-  ActivityStatus.TreeUpdateRejected,
-  ActivityStatus.BalanceWithdrew,
-  ActivityStatus.PlanterJoined,
-  ActivityStatus.PlanterUpdated,
-  ActivityStatus.OrganizationJoined,
-  ActivityStatus.AcceptedByOrganization,
-  ActivityStatus.RejectedByOrganization,
-  ActivityStatus.OrganizationMemberShareUpdated,
-  ActivityStatus.PlanterTotalClaimedUpdated,
-];
-
-export function ActivityFilter(props: TActivityFilterProps) {
-  const {filters, onFilterOption} = props;
+export function FilterList(props: TActivityFilterProps) {
+  const {filters, onFilterOption, categories} = props;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const isConnected = useNetInfoConnected();
+  const toast = useToast();
 
   const {t} = useTranslation();
 
   const handleToggleAccordion = useCallback(() => setIsOpen(prevOpen => !prevOpen), []);
+
+  const handlePressOption = useCallback(
+    category => {
+      if (isConnected) {
+        onFilterOption(category);
+      } else {
+        toast.show(t('netInfo.filter'), {type: AlertMode.Info});
+      }
+    },
+    [filters, onFilterOption, isConnected],
+  );
 
   return (
     <View style={styles.container}>
@@ -63,9 +58,14 @@ export function ActivityFilter(props: TActivityFilterProps) {
             <View style={styles.categoryList}>
               {categories.map(category => (
                 <TouchableOpacity
+                  activeOpacity={!isConnected ? 1 : undefined}
                   key={category}
-                  style={[styles.category, isFilterSelected(filters, category) && styles.selectedSlug]}
-                  onPress={() => onFilterOption(category)}
+                  style={[
+                    styles.category,
+                    !isConnected && styles.dicNetwork,
+                    isFilterSelected(filters, category) && styles.selectedSlug,
+                  ]}
+                  onPress={() => handlePressOption(category)}
                 >
                   <Text style={[styles.categoryText, isFilterSelected(filters, category) && styles.slugText]}>
                     {t(`activities.${category}`)}
@@ -148,5 +148,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
+  },
+  dicNetwork: {
+    opacity: 0.8,
   },
 });

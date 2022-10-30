@@ -187,7 +187,7 @@ export function ActivityItem(props: TActivityItemProps) {
         )}
       </View>
       <Spacer />
-      {!isOpen && !isLast && <Hr styles={{width: 340}} />}
+      {!isOpen && !isLast && <Hr styles={{width: 340, marginBottom: 8}} />}
     </View>
   );
 }

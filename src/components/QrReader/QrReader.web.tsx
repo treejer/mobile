@@ -23,7 +23,7 @@ export function QrReader(props: TQrReaderProps) {
         onError={error => {
           console.log(error, 'error message');
         }}
-        facingMode="rear"
+        facingmode="rear"
         delay={500}
         style={videoStyles}
       />

@@ -145,14 +145,14 @@ export function TransferForm(props: TTransferFormProps) {
 
   const handleNavigateHistory = useCallback(() => {
     // @ts-ignore
-    navigation.navigate(Routes.Activity, {filters: ['sent', 'claimed']});
+    navigation.navigate(Routes.WithdrawHistory);
   }, [navigation]);
 
   useEffect(() => {
     if (!submitting && formState.isValid) {
       handleResetForm();
     }
-  }, [formState.isValid, handleResetForm, submitting]);
+  }, [handleResetForm, submitting]);
 
   if (showQrReader) {
     return <QrReader handleScan={handleScanQrCode} handleDismiss={handleCloseQrReader} />;

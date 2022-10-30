@@ -27,3 +27,7 @@ export interface WhereAddressHistories {
   address: string;
   event_in?: (string | null)[] | null;
 }
+export interface WhereTransactionHistory {
+  address: string;
+  event_in?: (string | null)[] | null;
+}

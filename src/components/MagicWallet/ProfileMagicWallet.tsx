@@ -69,7 +69,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: 300,
+    maxWidth: 320,
     paddingVertical: 12,
   },
   walletWrapper: {

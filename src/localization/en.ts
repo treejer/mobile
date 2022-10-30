@@ -1,6 +1,7 @@
 export const en = {
   language: 'Language',
   balance: 'Balance (DAI)',
+  projected: 'Projected (DAI)',
   plantedTrees: 'Planted Trees',
   withdraw: 'Withdraw',
   offlineMap: {
@@ -228,6 +229,7 @@ export const en = {
     error: 'Network Error!',
     details: 'You have no internet connection! \nYou can continue planting trees when you are offline',
     detailsWeb: 'You have no internet connection! \nYou can continue planting trees when you are online',
+    filter: 'You have no internet connection! \nPlease check you network connection',
   },
   loginFailed: {
     title: 'Login Failed',
@@ -368,6 +370,8 @@ export const en = {
   },
   dai: 'DAI',
   transfer: {
+    requesting: 'Lunching camera',
+    noCameraPermission: 'Camera is not available',
     info: {
       title: 'Plant and Update to earn DAI',
       desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
@@ -375,7 +379,7 @@ export const en = {
     redeem: 'Reedem from Treejer',
     treejerDescription: 'Withdrawable blocked DAI on Treejer Protocol',
     stablecoinDescription: 'Withdrawable DAI in Magic wallet',
-    withdrawHistory: 'Withdraw History',
+    transactionHistory: 'Transaction History',
     date: 'Date',
     txHash: 'Tx Hash',
     id: '#',
@@ -491,6 +495,8 @@ export const en = {
     TreeRejected: 'Tree Rejected',
     TreeUpdatedVerified: 'Tree Updated Verified',
     TreeUpdateRejected: 'Tree Update Rejected',
+    TransferOut: 'Sent',
+    TransferIn: 'Received',
     empty: 'Empty',
   },
 };

@@ -30,7 +30,7 @@ export function ActivityList(props: TActivityListProps) {
   const renderItem = useCallback(
     ({item, index}: ListRenderItemInfo<GetUserActivitiesQueryPartialData.AddressHistories>) => {
       return (
-        <View style={globalStyles.alignItemsCenter} key={item.transactionHash}>
+        <View style={globalStyles.alignItemsCenter}>
           <ActivityItem activity={item} isLast={(activities && activities?.length - 1) === index} />
         </View>
       );
