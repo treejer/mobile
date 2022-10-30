@@ -3,10 +3,13 @@ import TransactionHistoryQuery, {
   GetTransactionHistoryQueryData,
   GetTransactionHistoryQueryPartialData,
 } from 'screens/Withdraw/screens/WithrawHistory/graphql/getTransactionHistoryQuery.graphql';
+import {TTransactionEvent} from 'components/Withdraw/TransactionItem';
 
 export const TransactionHistory = 'TransactionHistory';
 
-export function useGetTransactionHistory(wallet: string) {
+const all_events = [TTransactionEvent.TransferIn, TTransactionEvent.TransferOut];
+
+export function useGetTransactionHistory(wallet: string, event_in?: TTransactionEvent[]) {
   return usePagination<
     GetTransactionHistoryQueryData,
     GetTransactionHistoryQueryData.Variables,
@@ -15,6 +18,7 @@ export function useGetTransactionHistory(wallet: string) {
     TransactionHistoryQuery,
     {
       address: wallet.toString().toLowerCase(),
+      event_in: event_in?.length ? event_in : all_events,
     },
     'erc20Histories',
     TransactionHistory,

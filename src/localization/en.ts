@@ -228,6 +228,7 @@ export const en = {
     error: 'Network Error!',
     details: 'You have no internet connection! \nYou can continue planting trees when you are offline',
     detailsWeb: 'You have no internet connection! \nYou can continue planting trees when you are online',
+    filter: 'You have no internet connection! \nPlease check you network connection',
   },
   loginFailed: {
     title: 'Login Failed',

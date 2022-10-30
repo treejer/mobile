@@ -14,11 +14,33 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {ActivityFilter, categories} from 'screens/Profile/components/ActivityFilter';
+import {FilterList} from 'components/Filter/FilterList';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from '../../../../redux/modules/web3/web3';
 import {useDebounce} from 'utilities/hooks/useDebounce';
+
+const categories = [
+  'all',
+  ActivityStatus.TreePlanted,
+  ActivityStatus.TreeUpdated,
+  ActivityStatus.TreeAssigned,
+  ActivityStatus.TreeVerified,
+  ActivityStatus.TreeRejected,
+  ActivityStatus.AssignedTreePlanted,
+  ActivityStatus.AssignedTreeVerified,
+  ActivityStatus.AssignedTreeRejected,
+  ActivityStatus.TreeUpdatedVerified,
+  ActivityStatus.TreeUpdateRejected,
+  ActivityStatus.BalanceWithdrew,
+  ActivityStatus.PlanterJoined,
+  ActivityStatus.PlanterUpdated,
+  ActivityStatus.OrganizationJoined,
+  ActivityStatus.AcceptedByOrganization,
+  ActivityStatus.RejectedByOrganization,
+  ActivityStatus.OrganizationMemberShareUpdated,
+  ActivityStatus.PlanterTotalClaimedUpdated,
+];
 
 interface Props {
   navigation: NavigationProp<VerifiedUserNavigationParamList>;
@@ -78,7 +100,7 @@ export function Activity(props: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle goBack title={t('activity')} />
       <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
-        <ActivityFilter filters={filters} onFilterOption={handleSelectFilterOption} />
+        <FilterList categories={categories} filters={filters} onFilterOption={handleSelectFilterOption} />
         <Spacer times={4} />
         {activityQuery.loading ? (
           <View
