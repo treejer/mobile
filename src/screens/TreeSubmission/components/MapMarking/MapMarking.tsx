@@ -1,25 +1,29 @@
-import MapboxGL from '@rnmapbox/maps';
-import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import MapboxGL from '@rnmapbox/maps';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useNavigation} from '@react-navigation/native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
-import {locationPermission} from 'utilities/helpers/permissions';
+
 import Map from './Map';
+import {Routes} from 'navigation';
+import {useCurrentJourney} from 'services/currentJourney';
+import {maxDistanceInMeters} from 'services/config';
 import {colors} from 'constants/values';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useTranslation} from 'react-i18next';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {locationPermission} from 'utilities/helpers/permissions';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Routes} from 'navigation';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
-import {maxDistanceInMeters} from 'services/config';
+import {checkExif} from 'utilities/helpers/checkExif';
+import {useConfig} from '../../../../redux/modules/web3/web3';
+import {useSettings} from '../../../../redux/modules/settings/settings';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -45,6 +49,8 @@ export default function MapMarking(props: IMapMarkingProps) {
   const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
 
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   useEffect(() => {
     if (!!camera.current && !isCameraRefVisible) {
@@ -126,7 +132,11 @@ export default function MapMarking(props: IMapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation) {
+        if (
+          distance < maxDistanceInMeters ||
+          journey.nurseryContinuedUpdatingLocation ||
+          !checkExif(isMainnet, checkMetaData)
+        ) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {
@@ -139,7 +149,7 @@ export default function MapMarking(props: IMapMarkingProps) {
       } else {
         console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
             dispatchAddOfflineTree(newJourney);
             clearJourney();
             showAlert({
@@ -156,7 +166,7 @@ export default function MapMarking(props: IMapMarkingProps) {
             return;
           }
         } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
             const offlineTrees: TreeJourney[] = [];
             for (let i = 0; i < newJourney.nurseryCount; i++) {
               offlineTrees.push({
@@ -180,7 +190,7 @@ export default function MapMarking(props: IMapMarkingProps) {
             return;
           }
         } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-          if (distance < maxDistanceInMeters) {
+          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
             const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
             dispatchAddOfflineUpdateTree({
               ...newJourney,
@@ -223,6 +233,8 @@ export default function MapMarking(props: IMapMarkingProps) {
     location,
     onSubmit,
     isConnected,
+    isMainnet,
+    checkMetaData,
     navigation,
     setNewJourney,
     t,

@@ -1,40 +1,41 @@
 import React, {useMemo} from 'react';
-import {ActivityIndicator, Dimensions, Switch, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Octicons';
 import Web3 from 'web3';
 
-import Button from 'components/Button';
+import {ProfileRouteParamList} from 'types';
+import {isMatic} from 'services/Magic';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import Card from 'components/Card';
 import Spacer from 'components/Spacer/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
-import {isMatic} from 'services/Magic';
-import {ProfileRouteParamList} from 'types';
 import {useConfig} from '../../../../redux/modules/web3/web3';
 import {useSettings} from '../../../../redux/modules/settings/settings';
 import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {languages, treejerLanguages} from 'utilities/helpers/language';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
 }
-
-const {width} = Dimensions.get('window');
 
 export default function SettingsScreen(props: SettingsScreenProps) {
   const {navigation} = props;
 
   const config = useConfig();
   const {ether} = useContracts();
-  const {useGSN, changeUseGSN} = useSettings();
-
-  console.log(useGSN, 'useGsn');
-
+  const {locale, useGSN, checkMetaData, changeUseGSN, changeCheckMetaData} = useSettings();
   const {t} = useTranslation();
 
+  console.log(useGSN, 'useGsn');
+  console.log(checkMetaData, 'checkMetaData');
+
   const etherBalance = useMemo(() => Web3.utils.fromWei(ether), [ether]);
+
+  const selectedLocale = useMemo(() => treejerLanguages.find(language => language.locale === locale)?.name, [locale]);
 
   const handleSelectLanguage = () => {
     navigation.navigate('SelectLanguage', {back: true});
@@ -46,41 +47,18 @@ export default function SettingsScreen(props: SettingsScreenProps) {
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
-      {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
-      {/*  <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>*/}
-      {/*    <ChevronLeft />*/}
-      {/*  </TouchableOpacity>*/}
-      {/*  <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>*/}
-      {/*</View>*/}
       <ScreenTitle title={t('settings.title')} goBack />
-      <Spacer times={4} />
       <View style={[globalStyles.p1, {flex: 1, alignItems: 'center', paddingHorizontal: 16}]}>
-        <Button style={{width: '100%'}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+        <Card style={styles.btnContainer}>
+          <TouchableOpacity style={styles.changeLngBtn} onPress={handleSelectLanguage}>
+            <Text style={styles.text}>{t('language')}</Text>
+            <Text style={styles.text}>{selectedLocale}</Text>
+          </TouchableOpacity>
+        </Card>
         <Spacer times={4} />
-        <View
-          style={{
-            backgroundColor: 'white',
-            paddingVertical: 12,
-            paddingHorizontal: 20,
-            borderRadius: 10,
-            shadowOffset: {
-              width: 2,
-              height: 6,
-            },
-            shadowRadius: 20,
-            shadowColor: 'black',
-            shadowOpacity: 0.15,
-            elevation: 6,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text>{t('settings.useGSN')}</Text>
+        <Card>
+          <View style={styles.settingsItem}>
+            <Text style={styles.text}>{t('settings.useGSN')}</Text>
             <Switch value={useGSN} onValueChange={handleChangeUseGSN} />
           </View>
           <View style={{paddingVertical: 16}}>
@@ -94,15 +72,45 @@ export default function SettingsScreen(props: SettingsScreenProps) {
           <View
             style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
           >
-            <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
+            <Text style={styles.text}>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
             {etherBalance ? (
-              <Text>{Number(etherBalance).toFixed(etherBalance ? 7 : 0)}</Text>
+              <Text style={styles.text}>{Number(etherBalance).toFixed(etherBalance ? 7 : 0)}</Text>
             ) : (
               <ActivityIndicator color={colors.gray} />
             )}
           </View>
-        </View>
+          {!config.isMainnet && (
+            <>
+              <Spacer />
+              <View style={styles.settingsItem}>
+                <Text style={styles.text}>{t('settings.checkMetaData')}</Text>
+                <Switch value={checkMetaData} onValueChange={changeCheckMetaData} />
+              </View>
+            </>
+          )}
+        </Card>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  btnContainer: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+  changeLngBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
+  text: {
+    color: colors.grayDarker,
+  },
+});

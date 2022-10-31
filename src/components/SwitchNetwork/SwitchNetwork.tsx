@@ -37,11 +37,15 @@ export function SwitchNetwork() {
     setConfirming(null);
   }, []);
   const handleConfirmNetwork = useCallback(
-    (network: BlockchainNetwork) => {
-      changeNetwork(network);
-      setConfirming(null);
-      setShowModal(false);
-      handleLogout();
+    async (network: BlockchainNetwork) => {
+      try {
+        await handleLogout(true);
+        changeNetwork(network);
+        setConfirming(null);
+        setShowModal(false);
+      } catch (e: any) {
+        console.log(e, 'error is here');
+      }
     },
     [changeNetwork, handleLogout],
   );
