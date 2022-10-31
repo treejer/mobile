@@ -103,7 +103,7 @@ export function InitNavigation() {
             <NavigationContainer linking={linking}>
               <RootNavigation />
             </NavigationContainer>
-            <Toast ref={ref => (global['toast'] = ref)} offsetTop={top} {...toastProviderProps} />
+            <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
           </ToastContainer>
         </CurrentJourneyProvider>
       </OfflineTreeProvider>

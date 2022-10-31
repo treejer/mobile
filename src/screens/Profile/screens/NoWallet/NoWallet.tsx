@@ -12,7 +12,6 @@ import TextField, {PhoneField} from 'components/TextField';
 import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
-import {colors} from 'constants/values';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {isWeb} from 'utilities/helpers/web';
 import {RootNavigationProp, Routes} from 'navigation';
@@ -272,19 +271,19 @@ function NoWallet(props: NoWalletProps) {
                     <SocialLoginButton
                       name="Facebook"
                       disabled={loading}
-                      onPress={() => handleConnectWithOauth('facebook')}
+                      // onPress={() => handleConnectWithOauth('facebook')}
                     />
                     <Spacer times={4} />
                     <SocialLoginButton
                       name="Google"
                       disabled={loading}
-                      onPress={() => handleConnectWithOauth('google')}
+                      // onPress={() => handleConnectWithOauth('google')}
                     />
                     <Spacer times={4} />
                     <SocialLoginButton
                       name="Discord"
                       disabled={loading}
-                      onPress={() => handleConnectWithOauth('discord')}
+                      // onPress={() => handleConnectWithOauth('discord')}
                     />
                   </View>
                 </View>

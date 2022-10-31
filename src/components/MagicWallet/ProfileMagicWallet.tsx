@@ -45,7 +45,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
         <Spacer />
         <TouchableOpacity onPress={handleCopyWalletAddress}>
           <Text numberOfLines={1} style={styles.addressBox}>
-            {shortenedString(wallet, 16, 6)}
+            {shortenedString(wallet, 20, 8)}
           </Text>
         </TouchableOpacity>
       </View>
@@ -69,7 +69,6 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
     paddingVertical: 12,
   },
   walletWrapper: {
