@@ -10,7 +10,7 @@ import globalStyles from 'constants/styles';
 import {isWeb} from 'utilities/helpers/web';
 import {TreejerIcon} from '../../../../assets/images';
 import {chatItem, TSupportItem} from 'screens/Profile/components/supportList';
-import {useSettings} from '../../../redux/modules/settings/settings';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useInAppBrowser} from 'utilities/hooks/useInAppBrowser';
 
 export type TSupportItemProps = {

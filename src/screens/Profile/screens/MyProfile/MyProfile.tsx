@@ -6,7 +6,7 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import IoIcon from 'react-native-vector-icons/Ionicons';
 import ADIcon from 'react-native-vector-icons/AntDesign';
 
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation/index';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
@@ -25,9 +25,9 @@ import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useContracts} from '../../../../redux/modules/contracts/contracts';
-import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
-import {usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {UserStatus, useProfile} from 'ranger-redux/modules/profile/profile';
+import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 
 export type MyProfileProps =
@@ -201,7 +201,7 @@ function MyProfile(props: MyProfileProps) {
               </View>
             ) : null}
             {!profileLoading && (
-              <>
+              <View style={styles.maxWidthWrapper}>
                 {profile?.firstName ? <Text style={globalStyles.h4}>{profile.firstName}</Text> : null}
 
                 {profile?.firstName ? <Spacer times={4} /> : null}
@@ -214,14 +214,14 @@ function MyProfile(props: MyProfileProps) {
                       <Text style={styles.statLabel}>{t('projected')}</Text>
                     </View>
 
-                    <Spacer times={6} />
+                    <Spacer times={4} />
 
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
                       <Text style={styles.statLabel}>{t('balance')}</Text>
                     </View>
 
-                    <Spacer times={6} />
+                    <Spacer times={4} />
 
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterData?.plantedCount}</Text>
@@ -261,7 +261,7 @@ function MyProfile(props: MyProfileProps) {
                   </ProfileGroupButton>
                 )}
 
-                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
+                <View style={[globalStyles.alignItemsCenter, {paddingVertical: 16}]}>
                   {profile.isVerified ? (
                     <>
                       <ProfileGroupButton>
@@ -420,7 +420,7 @@ function MyProfile(props: MyProfileProps) {
                   <AppVersion />
                   <Spacer times={4} />
                 </View>
-              </>
+              </View>
             )}
           </View>
           <Spacer times={4} />
@@ -439,7 +439,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
   },
+  maxWidthWrapper: {
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    maxWidth: 540,
+    width: '100%',
+  },
   statContainer: {
+    flex: 1,
     alignItems: 'center',
   },
   statValue: {
@@ -450,13 +457,14 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     color: colors.grayLight,
+    textAlign: 'center',
   },
   statsContainer: {
+    width: '100%',
     paddingBottom: 20,
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
-    maxWidth: 320,
     justifyContent: 'center',
   },
   getVerifiedRefer: {

@@ -12,8 +12,8 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {shortenedString} from 'utilities/helpers/shortenedString';
 import {AlertMode} from 'utilities/helpers/alert';
-import {useConfig} from '../../redux/modules/web3/web3';
-import {useContracts} from '../../redux/modules/contracts/contracts';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 
 export type ProfileMagicWalletProps = {
   wallet: string;
@@ -45,7 +45,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
         <Spacer />
         <TouchableOpacity onPress={handleCopyWalletAddress}>
           <Text numberOfLines={1} style={styles.addressBox}>
-            {shortenedString(wallet, 16, 6)}
+            {shortenedString(wallet, 20, 8)}
           </Text>
         </TouchableOpacity>
       </View>
@@ -69,7 +69,6 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: 320,
     paddingVertical: 12,
   },
   walletWrapper: {

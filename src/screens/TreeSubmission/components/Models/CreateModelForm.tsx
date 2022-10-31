@@ -10,7 +10,7 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import {CreateModelInput} from 'screens/TreeSubmission/components/Models/CreateModelInput';
-import {useCountries} from '../../../../redux/modules/countris/countries';
+import {useCountries} from 'ranger-redux/modules/countris/countries';
 
 export type TCreateModelForm = {
   country: string;

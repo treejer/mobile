@@ -459,6 +459,7 @@ export const en = {
     twitter: 'Follow Twitter',
     discussion: 'Treejer Discussion',
     chatHeader: 'Customer Support Chat',
+    needHelp: 'Need Help',
   },
   activities: {
     matic: '{{amount}} Matic',

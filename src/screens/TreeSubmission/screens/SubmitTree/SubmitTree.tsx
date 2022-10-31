@@ -6,7 +6,7 @@ import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Button from 'components/Button';
@@ -39,8 +39,8 @@ import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmiss
 import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {useSettings} from '../../../../redux/modules/settings/settings';
-import {useConfig, useTreeFactory, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;

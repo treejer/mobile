@@ -3,7 +3,7 @@ import {Image, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {RootNavigationProp, Routes} from 'navigation';
+import {RootNavigationProp, Routes} from 'navigation/index';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import AppVersion from 'components/AppVersion';
@@ -12,7 +12,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import globalStyles from 'constants/styles';
-import {useSettings} from '../../../../redux/modules/settings/settings';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {Welcome} from '../../../../../assets/images';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;

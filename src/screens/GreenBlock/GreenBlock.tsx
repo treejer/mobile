@@ -1,16 +1,12 @@
 import React, {useCallback, useEffect} from 'react';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {GreenBlockRouteParamList, MainTabsParamList} from 'types';
+import {GreenBlockRouteParamList} from 'types';
 import TreeDetails from './screens/TreeDetails';
 import TreeList from 'components/TreeList';
-import {Routes} from 'navigation';
+import {Routes, VerifiedUserNavigationProp} from 'navigation/index';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {createStackNavigator} from '@react-navigation/stack';
 
-interface Props {
-  navigation: NavigationProp<GreenBlockRouteParamList>;
-  route: RouteProp<MainTabsParamList, Routes.GreenBlock>;
-}
+interface Props extends VerifiedUserNavigationProp<Routes.GreenBlock> {}
 
 const Stack = createStackNavigator<GreenBlockRouteParamList>();
 
@@ -20,7 +16,9 @@ function GreenBlock({navigation, route}: Props) {
 
   const shouldNavigateToTree = useCallback(() => {
     if (route.params?.shouldNavigateToTreeDetails) {
-      navigation.navigate('MyCommunity', {shouldNavigateToTreeDetails: route.params?.shouldNavigateToTreeDetails});
+      (navigation as any).navigate('MyCommunity', {
+        shouldNavigateToTreeDetails: route.params?.shouldNavigateToTreeDetails,
+      });
     }
   }, [navigation, route.params]);
 

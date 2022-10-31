@@ -9,7 +9,7 @@ import {colors} from 'constants/values';
 import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
 import {useTranslation} from 'react-i18next';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';

@@ -10,7 +10,7 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {capitalize} from 'utilities/helpers/capitalize';
 import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
-import {TContract} from '../../redux/modules/contracts/contracts';
+import {TContract} from 'ranger-redux/modules/contracts/contracts';
 
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';

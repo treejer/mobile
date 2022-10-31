@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Text, FlatList, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+import MapboxGL from '@rnmapbox/maps';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import Button from 'components/Button';
 import {colors} from 'constants/values';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';

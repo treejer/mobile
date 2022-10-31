@@ -2,7 +2,7 @@ import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';

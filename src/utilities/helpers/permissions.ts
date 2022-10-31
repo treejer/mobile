@@ -18,6 +18,8 @@ export const locationPermission = () => {
             case PermissionsAndroid.RESULTS.DENIED:
               reject(new Error('denied'));
               return false;
+            default:
+              return false;
           }
         })
         .catch(err => console.warn(err));

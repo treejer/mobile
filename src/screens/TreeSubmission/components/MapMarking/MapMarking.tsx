@@ -1,5 +1,5 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import {CommonActions, NavigationContainer, useNavigation} from '@react-navigation/native';
+import MapboxGL from '@rnmapbox/maps';
+import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -15,7 +15,7 @@ import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
@@ -237,7 +237,6 @@ export default function MapMarking(props: IMapMarkingProps) {
     const watchId = Geolocation.watchPosition(
       position => {
         onUpdateUserLocation(position);
-        setLocation(position);
         setAccuracyInMeters(position.coords.accuracy);
         setLoading(false);
       },

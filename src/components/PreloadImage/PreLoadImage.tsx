@@ -16,7 +16,7 @@ import {
   onBoardingTwo,
 } from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
-import {useWalletAccount} from '../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 const staticImages = [
   MapMarker,

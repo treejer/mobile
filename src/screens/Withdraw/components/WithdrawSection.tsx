@@ -10,7 +10,7 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import {DaiCoinBalance} from 'components/Withdraw/DaiCoinBalance';
 import {TTransactionHistory} from 'components/Withdraw/TransactionItem';
-import {TContract} from '../../../redux/modules/contracts/contracts';
+import {TContract} from 'ranger-redux/modules/contracts/contracts';
 
 export type TWithdrawSectionProps = {
   history: TTransactionHistory[] | null;

@@ -1,7 +1,7 @@
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 

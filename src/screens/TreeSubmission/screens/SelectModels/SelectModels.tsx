@@ -6,7 +6,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BigList, {BigListRenderItemInfo} from 'react-native-big-list';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';

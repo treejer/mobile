@@ -6,7 +6,7 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import ModelIcon from 'react-native-vector-icons/FontAwesome';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';

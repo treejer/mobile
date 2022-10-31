@@ -18,6 +18,7 @@ Animated.addWhitelistedNativeProps({
 });
 
 function GreenBlock({color = colors.green, fill = false}: Props) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const fillOpacity = isWeb() ? Number(fill) : useTransition(fill);
 
   return (
@@ -25,7 +26,7 @@ function GreenBlock({color = colors.green, fill = false}: Props) {
       <AnimatedPath
         d="M20.6605 17.6788H9.33949C4.72967 17.6788 1 13.9491 1 9.33929C1 4.72947 4.72967 0.999802 9.33949 0.999802H20.6605C25.2703 0.999802 29 4.72947 29 9.33929C29 13.9491 25.2703 17.6788 20.6605 17.6788Z"
         fill={color}
-        fillOpacity={fillOpacity}
+        fillOpacity={fillOpacity as any}
       />
       <Path
         d="M20.6605 17.879H9.33949C4.72967 17.879 1 14.1493 1 9.53949C1 4.92966 4.72967 1.2 9.33949 1.2H20.6605C25.2703 1.2 29 4.92966 29 9.53949C29 14.1493 25.2703 17.879 20.6605 17.879Z"
