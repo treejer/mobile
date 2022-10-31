@@ -31,4 +31,5 @@ export const colors = {
     elevation: 2,
   },
   placeholder: '#C7C7CD',
+  loadingOpacity: '#00000022',
 };

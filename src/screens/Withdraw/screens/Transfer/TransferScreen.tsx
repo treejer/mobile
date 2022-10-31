@@ -231,7 +231,7 @@ export function TransferScreen() {
     });
   }, [refetching, contractsLoading, loading]);
 
-  const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai)), [dai]);
+  const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai as string)), [dai, web3]);
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>

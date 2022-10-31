@@ -7,6 +7,8 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {useAppState} from 'utilities/hooks/useAppState';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useConfig} from '../../redux/modules/web3/web3';
+import {useSettings} from '../../redux/modules/settings/settings';
 
 export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
 
@@ -72,15 +74,16 @@ export type TPlantTreePermissionsOptions = {didMount: boolean};
 export function usePlantTreePermissions(
   {didMount}: TPlantTreePermissionsOptions = {didMount: true},
 ): TUsePlantTreePermissions {
-  const {appState} = useAppState();
-
   const [cameraPermission, setCameraPermission] = useState<string | null>(null);
   const [locationPermission, setLocationPermission] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<TUserLocation | null>(null);
   const [requested, setRequested] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  const {appState} = useAppState();
   const {t} = useTranslation();
+  const {checkMetaData} = useSettings();
+  const {isMainnet} = useConfig();
 
   useEffect(() => {
     (async () => {
@@ -274,6 +277,8 @@ export function usePlantTreePermissions(
     [checked, hasLocation, isCameraBlocked, isGPSEnabled, isLocationBlocked],
   );
 
+  const showPermissionModal = useMemo(() => !isGranted || isChecking, [isGranted, isChecking]);
+
   return {
     cameraPermission,
     locationPermission,
@@ -295,6 +300,6 @@ export function usePlantTreePermissions(
     hasLocation,
     requested,
     isGPSEnabled,
-    showPermissionModal: !isGranted || isChecking,
+    showPermissionModal,
   };
 }

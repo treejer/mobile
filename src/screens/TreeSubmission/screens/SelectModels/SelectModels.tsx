@@ -25,6 +25,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import useGetPlantModelsQuery from 'utilities/hooks/useGetPlantModelsQuery';
+import {Loading} from 'components/AppLoading/Loading';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectModels>;
@@ -109,49 +110,47 @@ export function SelectModels(props: SelectModelsProps) {
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
-      <ScreenTitle
-        goBack
-        title={t('selectModels.title')}
-        rightContent={<Plus color={colors.black} onPress={handleNavigateToCreateModel} />}
-      />
-      <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
-        {plantModelsQuery.loading ? (
-          <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <PullToRefresh onRefresh={refetchPlantModels}>
-            <View style={globalStyles.screenView}>
-              <BigList<GetPlantingModelsQueryQueryPartialData.Models>
-                style={{flex: 1, width: '100%'}}
-                data={plantModels || undefined}
-                renderItem={renderPlantModelItem}
-                showsVerticalScrollIndicator={false}
-                itemHeight={isWeb() ? 68 : 73}
-                contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
-                ListEmptyComponent={() => <EmptyModelsList />}
-                keyExtractor={item => item.id?.toString() as string}
-                refreshing
-                onRefresh={refetchPlantModels}
-                onEndReachedThreshold={0.1}
-                onEndReached={plantModelsLoadMore}
-                refreshControl={
-                  isWeb() ? undefined : (
-                    <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
-                  )
-                }
-              />
-            </View>
-          </PullToRefresh>
-        )}
-      </View>
-      {!plantModelsQuery.loading && (
-        <PlantModelButtons
-          selectedModel={!!selectedModel}
-          modelExist={!!plantModels?.length}
-          onPlant={handleContinueToPlant}
+      <Loading loading={plantModelsQuery.loading || plantModelsRefetching} container>
+        <ScreenTitle
+          goBack
+          title={t('selectModels.title')}
+          rightContent={<Plus color={colors.black} onPress={handleNavigateToCreateModel} />}
         />
-      )}
+        <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
+          {!plantModelsQuery.loading && (
+            <PullToRefresh onRefresh={refetchPlantModels}>
+              <View style={globalStyles.screenView}>
+                <BigList<GetPlantingModelsQueryQueryPartialData.Models>
+                  refreshing
+                  style={{flex: 1, width: '100%'}}
+                  data={plantModels || undefined}
+                  renderItem={renderPlantModelItem}
+                  showsVerticalScrollIndicator={false}
+                  itemHeight={isWeb() ? 68 : 73}
+                  contentContainerStyle={[styles.list, plantModels && !plantModels.length && styles.emptyList]}
+                  ListEmptyComponent={() => <EmptyModelsList />}
+                  keyExtractor={item => item.id?.toString() as string}
+                  onRefresh={refetchPlantModels}
+                  onEndReachedThreshold={0.1}
+                  onEndReached={plantModelsLoadMore}
+                  refreshControl={
+                    isWeb() ? undefined : (
+                      <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
+                    )
+                  }
+                />
+              </View>
+            </PullToRefresh>
+          )}
+        </View>
+        {!plantModelsQuery.loading && (
+          <PlantModelButtons
+            selectedModel={!!selectedModel}
+            modelExist={!!plantModels?.length}
+            onPlant={handleContinueToPlant}
+          />
+        )}
+      </Loading>
     </SafeAreaView>
   );
 }

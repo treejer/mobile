@@ -131,7 +131,7 @@ export function TransferForm(props: TTransferFormProps) {
   }, []);
 
   const handleCalcMacAmount = useCallback(() => {
-    setValue('amount', Web3.utils.fromWei(daiBalance), {shouldTouch: true, shouldValidate: true});
+    setValue('amount', Web3.utils.fromWei(daiBalance as string), {shouldTouch: true, shouldValidate: true});
   }, [daiBalance, setValue]);
 
   const handleEstimate = useCallback(() => {

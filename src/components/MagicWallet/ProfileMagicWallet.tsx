@@ -28,8 +28,8 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const {t} = useTranslation();
   const toast = useToast();
 
-  const daiBalance = useMemo(() => Web3.utils.fromWei(dai), [dai]);
-  const etherBalance = useMemo(() => Web3.utils.fromWei(ether), [ether]);
+  const daiBalance = useMemo(() => Web3.utils.fromWei(dai as string), [dai]);
+  const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
 
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {

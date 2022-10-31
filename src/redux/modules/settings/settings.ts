@@ -7,6 +7,7 @@ export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useGSN: boolean;
+  checkMetaData: boolean;
   showSupportChat: boolean;
 };
 
@@ -14,12 +15,14 @@ const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
   useGSN: true,
+  checkMetaData: true,
   showSupportChat: false,
 };
 
 type TSettingsAction = {
   type: string;
   useGSN: boolean;
+  checkMetaData: boolean;
   locale: string;
   showSupportChat: boolean;
 };
@@ -43,7 +46,15 @@ export const CHANGE_USE_GSN = 'CHANGE_USE_GSN';
 export function changeUseGSN(useGSN: boolean) {
   return {
     type: CHANGE_USE_GSN,
-    useGSN: useGSN,
+    useGSN,
+  };
+}
+
+export const CHANGE_CHECK_METADATA = 'CHANGE_CHECK_METADATA';
+export function changeCheckMetaData(checkMetaData: boolean) {
+  return {
+    type: CHANGE_CHECK_METADATA,
+    checkMetaData,
   };
 }
 
@@ -78,6 +89,12 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
         useGSN: action.useGSN,
       };
     }
+    case CHANGE_CHECK_METADATA: {
+      return {
+        ...state,
+        checkMetaData: action.checkMetaData,
+      };
+    }
     case SET_SHOW_SUPPORT_CHAT:
       return {
         ...state,
@@ -94,6 +111,7 @@ export type TUseSettings = TReduxState['settings'] & {
   updateLocale: (newLocale: string) => void;
   markOnBoardingDone: () => void;
   changeUseGSN: (useGSN: boolean) => void;
+  changeCheckMetaData: (checkMetaData: boolean) => void;
   resetOnBoardingData: () => void;
   setShowSupportChat: (showSupportChat: boolean) => void;
 };
@@ -118,6 +136,10 @@ export function useSettings(): TUseSettings {
     dispatch(changeUseGSN(useGSN));
   };
 
+  const handleChangeCheckMetaData = (checkMetaData: boolean) => {
+    dispatch(changeCheckMetaData(checkMetaData));
+  };
+
   const handleShowSupportChat = (showSupportChat: boolean) => {
     dispatch(setShowSupportChat(showSupportChat));
   };
@@ -129,6 +151,7 @@ export function useSettings(): TUseSettings {
     changeUseGSN: handleChangeUseGSN,
     resetOnBoardingData: handleResetOnBoarding,
     setShowSupportChat: handleShowSupportChat,
+    changeCheckMetaData: handleChangeCheckMetaData,
   };
 }
 

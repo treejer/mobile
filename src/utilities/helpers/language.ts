@@ -1,8 +1,23 @@
 import {DefaultTheme, css} from 'styled-components/native';
 
-export type Locale = 'en' | 'ar' | string;
+export enum Locale {
+  en = 'en',
+  ar = 'ar',
+  fr = 'fr',
+  fa = 'fa',
+  tr = 'tr',
+  es = 'es',
+}
 
-export type LanguageName = 'English' | 'Arabic';
+export enum LanguageName {
+  English = 'English',
+  Arabic = 'العربیه',
+  French = 'French',
+  Persian = 'فارسی',
+  Turkish = 'Turkish',
+  Español = 'Español',
+}
+
 export type LanguageDirection = 'rtl' | 'ltr';
 
 export const languageUtil = {
@@ -29,15 +44,35 @@ export type Languages = {
 };
 
 export const languages: Languages = {
+  ar: {
+    locale: Locale.ar,
+    name: LanguageName.Arabic,
+    direction: 'rtl',
+  },
+  fa: {
+    locale: Locale.fa,
+    name: LanguageName.Persian,
+    direction: 'rtl',
+  },
   en: {
-    locale: 'en',
-    name: 'English',
+    locale: Locale.en,
+    name: LanguageName.English,
     direction: 'ltr',
   },
-  ar: {
-    locale: 'ar',
-    name: 'Arabic',
-    direction: 'rtl',
+  fr: {
+    locale: Locale.fr,
+    name: LanguageName.French,
+    direction: 'ltr',
+  },
+  tr: {
+    locale: Locale.tr,
+    name: LanguageName.Turkish,
+    direction: 'ltr',
+  },
+  es: {
+    locale: Locale.es,
+    name: LanguageName.Español,
+    direction: 'ltr',
   },
 };
 
@@ -51,3 +86,5 @@ export const setLanguageDirection = (props: SetLanguageDirection) =>
     : css`
         text-align: ${languageUtil.start(props.locale)};
       `;
+
+export const treejerLanguages = Object.values(languages);
