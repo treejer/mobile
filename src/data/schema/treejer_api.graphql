@@ -168,7 +168,7 @@ type Query {
   settings: Settings
   addressHistories(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereAddressHistories): [addressHistoriesResponse!]
   models(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereModels): [Models!]
-  erc20Histories(first: Int, skip: Int, where: WhereTransactionHistory): [transactionHistoryResponse!]
+  erc20Histories(first: Int, skip: Int, orderBy: String, orderDirection: String, where: WhereTransactionHistory): [transactionHistoryResponse!]
 }
 
 #input ApplyInput {
