@@ -53,33 +53,20 @@ export function ActivityList(props: TActivityListProps) {
 
   return (
     <View style={[{flex: 1, width: '100%'}, globalStyles.screenView]}>
-      {refreshing ? (
-        <View
-          style={[
-            globalStyles.fill,
-            globalStyles.alignItemsCenter,
-            globalStyles.justifyContentCenter,
-            styles.loadingContainer,
-          ]}
-        >
-          <ActivityIndicator size="large" color={colors.green} />
-        </View>
-      ) : (
-        <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
-          ref={ref}
-          refreshing
-          onRefresh={onRefresh}
-          data={activities}
-          renderItem={renderItem}
-          estimatedItemSize={100}
-          ListEmptyComponent={emptyList}
-          showsVerticalScrollIndicator={false}
-          refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          onEndReachedThreshold={0.1}
-          onEndReached={onLoadMore}
-          keyExtractor={item => (item.id as string).toString()}
-        />
-      )}
+      <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
+        ref={ref}
+        refreshing
+        onRefresh={onRefresh}
+        data={activities}
+        renderItem={renderItem}
+        estimatedItemSize={100}
+        ListEmptyComponent={emptyList}
+        showsVerticalScrollIndicator={false}
+        refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onEndReachedThreshold={0.1}
+        onEndReached={onLoadMore}
+        keyExtractor={item => (item.id as string).toString()}
+      />
     </View>
   );
 }
@@ -96,12 +83,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: colors.green,
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 });

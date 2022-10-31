@@ -1,20 +1,21 @@
+import {useCallback} from 'react';
 import Web3, {Magic, magicGenerator} from 'services/Magic';
 import {Contract} from 'web3-eth-contract';
 import configs, {BlockchainNetwork, ConfigContract, defaultNetwork, NetworkConfig} from 'services/config';
 import {put, select, take, takeEvery} from 'redux-saga/effects';
+import {Account} from 'web3-core';
 import {t} from 'i18next';
 
 import {UserNonceForm} from 'services/types';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
-import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
-import {getBalance, resetBalance} from '../contracts/contracts';
-import {selectNetInfo} from '../netInfo/netInfo';
-import {profileActions, selectProfile} from '../profile/profile';
-import {TReduxState, TStoreRedux} from '../../store';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {useCallback} from 'react';
-import {Account} from 'web3-core';
+import {selectNetInfo} from '../netInfo/netInfo';
+import {changeCheckMetaData} from '../settings/settings';
+import {getBalance, resetBalance} from '../contracts/contracts';
+import {profileActions, selectProfile} from '../profile/profile';
+import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
+import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
+import {TReduxState, TStoreRedux} from '../../store';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -214,6 +215,9 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
     yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
+    if (config.isMainnet) {
+      yield put(changeCheckMetaData(true));
+    }
     console.log(isConnected, profile, 'isConnected, profile is hereeee');
     if (isConnected && profile) {
       yield put(getBalance());
