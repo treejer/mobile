@@ -26,7 +26,10 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
 
   const {t} = useTranslation();
 
-  const daiBalance = useMemo(() => Number(Web3.utils.fromWei(balance as string)), [balance]);
+  const daiBalance = useMemo(
+    () => Number(balance instanceof BN ? Web3.utils.fromWei(balance as any) : balance),
+    [balance],
+  );
 
   return (
     <Card style={[globalStyles.justifyContentCenter, open ? styles.container : styles.containerSmall]}>
