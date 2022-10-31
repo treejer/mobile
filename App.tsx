@@ -10,14 +10,23 @@ import {persistor, store} from './src/redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {InitNavigation} from './src/navigation/InitNavigation';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import MapboxGL from '@rnmapbox/maps';
+import {mapboxPrivateToken} from './src/services/config';
 
 export default function App() {
   useInitialDeepLinking();
 
   useEffect(() => {
-    if (!isWeb()) {
-      SplashScreen.hide();
-    }
+    (async function () {
+      try {
+        if (!isWeb()) {
+          SplashScreen.hide();
+        }
+        await MapboxGL.setAccessToken(mapboxPrivateToken);
+      } catch (e) {
+        console.log(e, 'e is here App.tsx');
+      }
+    })();
   }, []);
 
   return (
