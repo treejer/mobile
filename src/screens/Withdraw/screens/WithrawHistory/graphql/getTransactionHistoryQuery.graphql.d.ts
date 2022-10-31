@@ -23,6 +23,8 @@ export namespace GetTransactionHistoryQueryData {
     event_in?: (string | null)[] | null;
     skip?: number | null;
     first?: number | null;
+    orderBy?: string | null;
+    orderDirection?: string | null;
   }
   export interface Erc20Histories {
     __typename: "transactionHistoryResponse";
