@@ -32,7 +32,7 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';

@@ -7,7 +7,6 @@ import {useNavigation} from '@react-navigation/native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import Map from './Map';
-import {Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
 import {maxDistanceInMeters} from 'services/config';
 import {colors} from 'constants/values';
@@ -19,11 +18,12 @@ import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
+import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {checkExif} from 'utilities/helpers/checkExif';
-import {useConfig} from '../../../../redux/modules/web3/web3';
-import {useSettings} from '../../../../redux/modules/settings/settings';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;

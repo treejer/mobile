@@ -9,15 +9,13 @@ import {RootNavigation, Routes} from 'navigation/Navigation';
 import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
 import {isWeb} from 'utilities/helpers/web';
 import {AppLoading} from 'components/AppLoading/AppLoading';
-import NetInfo from 'components/NetInfo';
-import {SwitchNetwork} from 'components/SwitchNetwork/SwitchNetwork';
 import PreLoadImage from 'components/PreloadImage/PreLoadImage';
 import LandScapeModal from 'components/LandScapeModal/LandScapeModal';
 import UpdateModal from 'components/UpdateModal/UpdateModal';
 import {ToastContainer, toastProviderProps} from 'components/Toast/ToastContainer';
 import CurrentJourneyProvider from 'services/currentJourney';
-import {useInit} from '../redux/modules/init/init';
-import {ChatButton} from 'screens/Profile/components/ChatButton';
+import {useInit} from 'ranger-redux/modules/init/init';
+import {HeaderFixedButtons} from 'components/HeaderFixedButtons/HeaderFixedButtons';
 
 const config = {
   screens: {
@@ -92,10 +90,8 @@ export function InitNavigation() {
     <ApolloProvider>
       <OfflineTreeProvider>
         <CurrentJourneyProvider>
-          <NetInfo />
-          <SwitchNetwork />
           <PreLoadImage />
-          <ChatButton />
+          <HeaderFixedButtons />
           {isWeb() ? <ToastContainer /> : <></>}
           {isWeb() ? <LandScapeModal /> : <></>}
           {!isWeb() ? <UpdateModal /> : <></>}

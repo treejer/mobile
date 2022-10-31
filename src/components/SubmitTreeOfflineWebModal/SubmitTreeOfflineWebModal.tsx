@@ -1,7 +1,7 @@
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import React from 'react';
 import {isWeb} from 'utilities/helpers/web';
 import {useTranslation} from 'react-i18next';

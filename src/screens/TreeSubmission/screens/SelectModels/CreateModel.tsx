@@ -6,7 +6,7 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useToast} from 'react-native-toast-notifications';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
@@ -17,8 +17,8 @@ import {CreateModelForm, TCreateModelForm} from 'screens/TreeSubmission/componen
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {AlertMode} from 'utilities/helpers/alert';
-import {useConfig, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
-import {useSettings} from '../../../../redux/modules/settings/settings';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {TreeImage} from '../../../../../assets/icons';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.CreateModel>;

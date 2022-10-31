@@ -14,9 +14,9 @@ import {isWeb} from 'utilities/helpers/web';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
-import {useUserWeb3} from '../redux/modules/web3/web3';
-import {useSettings} from '../redux/modules/settings/settings';
-import {useProfile, UserStatus} from '../redux/modules/profile/profile';
+import {useUserWeb3} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;

@@ -17,6 +17,8 @@ module.exports = function (api) {
             constants: './src/constants',
             utilities: './src/utilities',
             navigation: './src/navigation',
+            types: './src/types',
+            'ranger-redux': './src/redux',
           },
         },
       ],

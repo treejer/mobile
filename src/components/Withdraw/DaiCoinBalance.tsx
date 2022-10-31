@@ -10,7 +10,7 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {capitalize} from 'utilities/helpers/capitalize';
 import {TreejerDaiCoin, StableDaiCoin} from '../../../assets/images';
-import {TContract} from '../../redux/modules/contracts/contracts';
+import {TContract} from 'ranger-redux/modules/contracts/contracts';
 
 export type TDaiCoinBalanceProps = {
   name: 'treejer' | 'stablecoin';
@@ -26,7 +26,7 @@ export function DaiCoinBalance(props: TDaiCoinBalanceProps) {
 
   const {t} = useTranslation();
 
-  const daiBalance = useMemo(() => Number(balance instanceof BN ? Web3.utils.fromWei(balance) : balance), [balance]);
+  const daiBalance = useMemo(() => Number(Web3.utils.fromWei(balance as string)), [balance]);
 
   return (
     <Card style={[globalStyles.justifyContentCenter, open ? styles.container : styles.containerSmall]}>

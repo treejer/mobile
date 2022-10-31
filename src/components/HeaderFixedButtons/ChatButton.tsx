@@ -2,14 +2,13 @@ import React, {useEffect} from 'react';
 import {chatItem} from 'screens/Profile/components/supportList';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors} from 'constants/values';
 import {isWeb} from 'utilities/helpers/web';
 import {useToast} from 'react-native-toast-notifications';
 import {useTranslation} from 'react-i18next';
 import {ScreenTitleWithoutNavigation} from 'components/ScreenTitle/ScreenTitleWithoutNavigation';
 import {useInAppBrowser} from 'utilities/hooks/useInAppBrowser';
-import {useSettings} from '../../../redux/modules/settings/settings';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 
@@ -20,7 +19,6 @@ export function ChatButton() {
     console.log('showSupportChat', showSupportChat);
   }, [showSupportChat]);
 
-  const {top, right} = useSafeAreaInsets();
   const {t} = useTranslation();
 
   const {handleOpenLink} = useInAppBrowser();
@@ -41,7 +39,7 @@ export function ChatButton() {
 
   return (
     <>
-      <TouchableOpacity style={[styles.container, {top: top + 4, right: right + 128}]} onPress={handlePress}>
+      <TouchableOpacity style={styles.container} onPress={handlePress}>
         <Text style={styles.text}>{t('supports.needHelp')}</Text>
         <Spacer />
         <Icon name="question" size={12} color={colors.white} />
@@ -80,13 +78,9 @@ export function ChatButton() {
 const styles = StyleSheet.create({
   container: {
     borderRadius: 100,
-    position: 'absolute',
-    top: 0,
     backgroundColor: 'rgb(81, 111, 144)',
-    zIndex: 9,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-end',
     paddingHorizontal: 12,
     height: 22,
     flexDirection: 'row',

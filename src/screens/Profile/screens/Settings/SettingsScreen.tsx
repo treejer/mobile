@@ -5,6 +5,7 @@ import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Octicons';
 import Web3 from 'web3';
+import BN from 'bn.js';
 
 import {ProfileRouteParamList} from 'types';
 import {isMatic} from 'services/Magic';
@@ -13,10 +14,10 @@ import globalStyles from 'constants/styles';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {useConfig} from '../../../../redux/modules/web3/web3';
-import {useSettings} from '../../../../redux/modules/settings/settings';
-import {useContracts} from '../../../../redux/modules/contracts/contracts';
-import {languages, treejerLanguages} from 'utilities/helpers/language';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {treejerLanguages} from 'utilities/helpers/language';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -33,7 +34,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   console.log(useGSN, 'useGsn');
   console.log(checkMetaData, 'checkMetaData');
 
-  const etherBalance = useMemo(() => Web3.utils.fromWei(ether), [ether]);
+  const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
 
   const selectedLocale = useMemo(() => treejerLanguages.find(language => language.locale === locale)?.name, [locale]);
 

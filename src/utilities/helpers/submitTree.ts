@@ -3,11 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native-image-crop-picker';
 
-import {Routes} from 'navigation';
 import {useCurrentJourney} from 'services/currentJourney';
 import {maxDistanceInMeters} from 'services/config';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
+import {Routes} from 'navigation/index';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
@@ -20,8 +20,8 @@ import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {checkExif} from 'utilities/helpers/checkExif';
 import {isWeb} from './web';
 import {calcDistanceInMeters} from './distanceInMeters';
-import {useConfig} from '../../redux/modules/web3/web3';
-import {useSettings} from '../../redux/modules/settings/settings';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 export namespace SubmitTreeData {
   export interface Options {

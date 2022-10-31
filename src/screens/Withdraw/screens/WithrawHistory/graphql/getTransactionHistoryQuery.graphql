@@ -1,9 +1,11 @@
-query GetTransactionHistory($address: String!, $event_in: [String], $skip: Int, $first: Int) {
+query GetTransactionHistory($address: String!, $event_in: [String], $skip: Int, $first: Int, $orderBy: String, $orderDirection: String) {
   erc20Histories(
     first: $first,
     skip: $skip,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
     where: {
-      event_in: $event_in
+      event_in: $event_in,
       address: $address
     }) {
     id

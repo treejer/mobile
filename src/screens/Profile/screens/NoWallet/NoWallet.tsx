@@ -14,14 +14,14 @@ import PhoneInput from 'react-native-phone-number-input';
 import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {isWeb} from 'utilities/helpers/web';
-import {RootNavigationProp, Routes} from 'navigation';
+import {RootNavigationProp, Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
 import {NoWalletImage} from '../../../../../assets/images';
-import {useProfile} from '../../../../redux/modules/profile/profile';
-import {useConfig, useMagic, useUserWeb3} from '../../../../redux/modules/web3/web3';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
+import {useConfig, useMagic, useUserWeb3} from 'ranger-redux/modules/web3/web3';
 import {OAuthRedirectResult} from 'services/Magic';
 import {oauthDeepLinkUrl} from 'utilities/hooks/useDeepLinking';
 

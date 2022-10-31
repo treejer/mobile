@@ -12,7 +12,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
@@ -36,8 +36,8 @@ import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {isWeb} from 'utilities/helpers/web';
 import getCroppedImg from 'utilities/helpers/cropImage';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useProfile, UserStatus} from '../../../../redux/modules/profile/profile';
-import {useUserId} from '../../../../redux/modules/web3/web3';
+import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
+import {useUserId} from 'ranger-redux/modules/web3/web3';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}

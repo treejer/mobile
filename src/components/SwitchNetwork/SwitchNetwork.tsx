@@ -1,5 +1,4 @@
 import React, {useCallback, useState} from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
@@ -8,12 +7,11 @@ import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
 import {colors} from 'constants/values';
 import {BlockchainNetwork} from 'services/config';
-import {useProfile} from '../../redux/modules/profile/profile';
-import {useUserWeb3, useConfig} from '../../redux/modules/web3/web3';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
+import {useUserWeb3, useConfig} from 'ranger-redux/modules/web3/web3';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const insets = useSafeAreaInsets();
 
   const config = useConfig();
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
@@ -80,7 +78,7 @@ export function SwitchNetwork() {
       <TouchableOpacity
         activeOpacity={0.7}
         hitSlop={{top: 8, right: 32, bottom: 8, left: 32}}
-        style={[styles.container, {top: insets.top + 4, right: insets.right + 44}]}
+        style={styles.container}
         onPress={handleOpenModal}
       >
         <Card style={[styles.card]}>
@@ -93,13 +91,10 @@ export function SwitchNetwork() {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
     flexDirection: 'row',
-    alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
     width: -1,
-    zIndex: 9,
   },
   card: {
     width: -1,

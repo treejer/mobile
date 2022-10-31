@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
 
 import {colors} from 'constants/values';
-import {useConfig, useWalletAccount} from '../../redux/modules/web3/web3';
+import {useConfig, useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   size?: number;

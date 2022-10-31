@@ -22,10 +22,10 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useGetTransactionHistory} from 'utilities/hooks/useGetTransactionHistory';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
-import {useProfile} from '../../../../redux/modules/profile/profile';
-import {useSettings} from '../../../../redux/modules/settings/settings';
-import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -231,7 +231,7 @@ export function TransferScreen() {
     });
   }, [refetching, contractsLoading, loading]);
 
-  const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai)), [dai]);
+  const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai as string)), [dai, web3]);
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>

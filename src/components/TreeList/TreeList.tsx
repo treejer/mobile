@@ -18,7 +18,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {GreenBlockRouteParamList, Tree} from 'types';
 import {colors} from 'constants/values';
 import NoInternetTrees from 'components/TreeList/NoInternetTrees';
@@ -47,7 +47,7 @@ import planterTreeQuery, {
   PlanterTreesQueryQueryPartialData,
 } from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {useWalletAccount} from '../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;

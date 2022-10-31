@@ -3,11 +3,11 @@ import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {i18next} from '../../localization';
 import {put, select} from 'redux-saga/effects';
-import {TReduxState} from '../../redux/store';
+import {TReduxState} from 'ranger-redux/store';
 import {debugFetch, NetworkConfig} from 'services/config';
-import {selectSettings} from '../../redux/modules/settings/settings';
-import {clearUserNonce, selectConfig} from '../../redux/modules/web3/web3';
-import {profileActions} from '../../redux/modules/profile/profile';
+import {selectSettings} from 'ranger-redux/modules/settings/settings';
+import {clearUserNonce, selectConfig} from 'ranger-redux/modules/web3/web3';
+import {profileActions} from 'ranger-redux/modules/profile/profile';
 
 export type FetchResult<Data> = {
   result: Data;

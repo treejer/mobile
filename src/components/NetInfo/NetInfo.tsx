@@ -4,15 +4,12 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Card from 'components/Card';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {showAlert} from 'utilities/helpers/alert';
 import {isWeb} from 'utilities/helpers/web';
 
 export default function NetInfo() {
   const isConnected = useNetInfoConnected();
-
-  const insets = useSafeAreaInsets();
 
   const {t} = useTranslation();
 
@@ -33,7 +30,7 @@ export default function NetInfo() {
   }
 
   return (
-    <View style={[styles.container, {top: insets.top + 4}]}>
+    <View style={styles.container}>
       <Card style={[styles.card, bgStyle]}>
         <Text style={styles.text}>{text}</Text>
       </Card>
@@ -43,14 +40,10 @@ export default function NetInfo() {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    right: 4,
     flexDirection: 'row',
-    alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
     width: -1,
-    zIndex: 9,
   },
   card: {
     width: -1,

@@ -7,8 +7,8 @@ import {Hex2Dec} from 'utilities/helpers/hex';
 import {capitalize} from 'utilities/helpers/capitalize';
 import Spacer from 'components/Spacer';
 import {GetPlantingModelsQueryQueryPartialData} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
-import {useWalletWeb3} from '../../redux/modules/web3/web3';
-import {useCountries} from '../../redux/modules/countris/countries';
+import {useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useCountries} from 'ranger-redux/modules/countris/countries';
 import {TreeImage} from '../../../assets/icons';
 
 export type TPlantModel = GetPlantingModelsQueryQueryPartialData.Models;
