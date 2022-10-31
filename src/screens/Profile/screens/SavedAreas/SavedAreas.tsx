@@ -1,56 +1,64 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, StyleSheet, Text, FlatList, ActivityIndicator} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  ListRenderItemInfo,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MapboxGL from '@rnmapbox/maps';
 
 import {Routes} from 'navigation/index';
 import Button from 'components/Button';
 import {colors} from 'constants/values';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import globalStyles, {fontBold, fontMedium} from 'constants/styles';
-import {getAllOfflineMaps, deleteOfflineMap} from 'utilities/helpers/maps';
+import {TOfflineMapPack, useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
+import {mapboxPrivateToken} from 'services/config';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Spacer from 'components/Spacer';
 
 const SavedAreas = ({navigation}) => {
-  const [areas, setAreas] = useState<any>(null);
+  const {packs, dispatchDeleteOfflineMap} = useOfflineMap();
 
   const {t} = useTranslation();
 
   useEffect(() => {
-    loadAreas();
-  }, []);
+    console.log(packs, 'packes');
+  }, [packs]);
 
-  const loadAreas = async () => {
-    getAllOfflineMaps().then(offlineMaps => {
-      setAreas(offlineMaps);
-    });
-  };
-
-  const deleteArea = async name => {
-    deleteOfflineMap({name}).then(async () => {
-      setTimeout(async () => await MapboxGL.offlineManager.deletePack(name), 0);
-      loadAreas();
-    });
+  const handleDeleteArea = async name => {
+    dispatchDeleteOfflineMap(name);
   };
 
   const onPressAddArea = () => {
     navigation.navigate(Routes.OfflineMap);
   };
 
-  const renderSavedAreaItem = ({item}) => {
-    const {areaName, size, name} = item;
-    const mb = `${Number(size) / 1000} MB`;
+  const renderSavedAreaItem = ({item}: ListRenderItemInfo<TOfflineMapPack>) => {
+    const {areaName, size, name, coords} = item;
+    const mb = `${(Number(size) / 1024 / 1024).toFixed(2)} MB`;
+
+    const imageUrl = getStaticMapboxUrl(mapboxPrivateToken, coords[0], coords[1], 600, 300);
 
     return (
-      <View style={styles.areaContainer}>
+      <ImageBackground source={{uri: imageUrl}} imageStyle={{opacity: 0.4}} style={styles.areaContainer}>
         <Text style={styles.subHeadingText}>{areaName}</Text>
         <View style={styles.bottomContainer}>
           <Text style={[styles.subHeadingText, styles.regularText]}>{mb}</Text>
-          <Text style={[styles.subHeadingText, styles.redText]} onPress={() => deleteArea(name)}>
-            {t('offlineMap.delete')}
-          </Text>
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleDeleteArea(name)}>
+            <Icon name="trash" color={colors.red} size={24} />
+            <Spacer />
+            <Text style={[styles.subHeadingText, styles.redText]}>{t('offlineMap.delete')}</Text>
+          </TouchableOpacity>
         </View>
-      </View>
+      </ImageBackground>
     );
   };
 
@@ -59,9 +67,13 @@ const SavedAreas = ({navigation}) => {
       <ScreenTitle goBack title={t('offlineMap.savedAreas')} />
       <View style={styles.container}>
         <View style={styles.areaListContainer}>
-          {areas && areas?.length ? (
-            <FlatList data={areas} renderItem={renderSavedAreaItem} keyExtractor={(_, i) => i.toString()} />
-          ) : areas && areas?.length === 0 ? (
+          {packs && packs?.length ? (
+            <FlatList<TOfflineMapPack>
+              data={packs}
+              renderItem={renderSavedAreaItem}
+              keyExtractor={(_, i) => i.toString()}
+            />
+          ) : packs && packs?.length === 0 ? (
             <Text style={{alignSelf: 'center', textAlignVertical: 'center', margin: 20}}>
               {t('offlineMap.noOfflineArea')}
             </Text>
@@ -117,14 +129,15 @@ const styles = StyleSheet.create({
   subHeadingText: {
     ...fontBold,
     ...globalStyles.body2,
-    color: colors.gray,
+    color: colors.black,
     marginVertical: 8,
   },
   redText: {
-    color: 'red',
+    color: colors.red,
   },
   regularText: {
     ...fontMedium,
+    color: colors.grayLight,
   },
   addSpecies: {
     color: colors.red,

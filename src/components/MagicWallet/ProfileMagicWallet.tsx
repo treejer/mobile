@@ -34,9 +34,9 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {
       Clipboard.setString(wallet);
-      toast.show(t('myProfile.copied'), {type: AlertMode.Success});
+      toast.show('myProfile.copied', {type: AlertMode.Success, translate: true});
     }
-  }, [t, toast, wallet]);
+  }, [toast, wallet]);
 
   return (
     <Card style={styles.container}>

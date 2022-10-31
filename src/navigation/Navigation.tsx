@@ -6,7 +6,7 @@ import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
 import SelectLanguage from 'screens/Onboarding/screens/SelectLanguage/SelectLanguage';
 import {SupportScreen} from 'screens/Profile/screens/Support/SupportScreen';
-import OfflineMap from 'screens/Profile/screens/OfflineMap/OfflineMap';
+import {OfflineMapScreen} from 'screens/Profile/screens/OfflineMap/OfflineMap';
 import SavedAreas from 'screens/Profile/screens/SavedAreas/SavedAreas';
 import SettingsScreen from 'screens/Profile/screens/Settings/SettingsScreen';
 import OnboardingSlides from 'screens/Onboarding/screens/OnboardingSlides/OnboardingSlides';
@@ -118,7 +118,7 @@ export function RootNavigation() {
           <>
             {isWeb() ? null : (
               <>
-                <RootStack.Screen name={Routes.OfflineMap} component={OfflineMap} />
+                <RootStack.Screen name={Routes.OfflineMap} component={OfflineMapScreen} />
                 <RootStack.Screen name={Routes.SavedAreas} component={SavedAreas} />
               </>
             )}

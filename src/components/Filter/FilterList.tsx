@@ -34,10 +34,10 @@ export function FilterList(props: TActivityFilterProps) {
       if (isConnected) {
         onFilterOption(category);
       } else {
-        toast.show(t('netInfo.filter'), {type: AlertMode.Info});
+        toast.show('netInfo.filter', {type: AlertMode.Info});
       }
     },
-    [filters, onFilterOption, isConnected],
+    [isConnected, onFilterOption, toast],
   );
 
   return (

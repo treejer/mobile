@@ -25,7 +25,7 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
-  whitelist: ['settings', 'web3', 'profile', 'contracts'],
+  whitelist: ['settings', 'web3', 'profile', 'contracts', 'offlineMap'],
   transforms: [saveSubsetBlacklistFilter],
 };
 

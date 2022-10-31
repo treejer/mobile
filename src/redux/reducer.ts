@@ -9,6 +9,7 @@ import {profileReducer} from './modules/profile/profile';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
 import {countriesReducer} from './modules/countris/countries';
+import {offlineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
   userSign: userSignReducer,
   userNonce: userNonceReducer,
   countries: countriesReducer,
+  offlineMap,
 });
 
 export default appReducer;
