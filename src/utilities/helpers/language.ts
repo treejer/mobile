@@ -11,9 +11,9 @@ export enum Locale {
 
 export enum LanguageName {
   English = 'English',
-  Arabic = 'Arabic',
+  Arabic = 'العربیه',
   French = 'French',
-  Persian = 'Persian',
+  Persian = 'فارسی',
   Turkish = 'Turkish',
   Español = 'Español',
 }
