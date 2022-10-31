@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {FlashList} from '@shopify/flash-list';
@@ -13,10 +13,11 @@ import {ActivityList} from 'components/Activity/ActivityList';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {FilterList} from 'components/Filter/FilterList';
+import {Loading} from 'components/AppLoading/Loading';
+import {useDebounce} from 'utilities/hooks/useDebounce';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
 import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
-import {useDebounce} from 'utilities/hooks/useDebounce';
 
 const categories = [
   'all',
@@ -93,50 +94,28 @@ export function Activity(props: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <ScreenTitle goBack title={t('activity')} />
-      <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
-        <FilterList categories={categories} filters={filters} onFilterOption={handleSelectFilterOption} />
-        <Spacer times={4} />
-        {activityQuery.loading ? (
-          <View
-            style={[
-              globalStyles.fill,
-              globalStyles.alignItemsCenter,
-              globalStyles.justifyContentCenter,
-              styles.loadingContainer,
-            ]}
-          >
-            <ActivityIndicator size="large" color={colors.green} />
-          </View>
-        ) : (
-          <PullToRefresh onRefresh={refetchUserActivity}>
-            <ActivityList
-              ref={listRef}
-              wallet={wallet}
-              filters={filters}
-              activities={activities}
-              refreshing={activityRefetching}
-              onRefresh={refetchUserActivity}
-              onLoadMore={ActivityLoadMore}
-            />
-            <Spacer times={6} />
-          </PullToRefresh>
-        )}
-        <Spacer times={4} />
-      </View>
+      <Loading loading={activityQuery.loading || activityRefetching} container={true} loadingColor={colors.green}>
+        <ScreenTitle goBack title={t('activity')} />
+        <View style={[globalStyles.alignItemsCenter, globalStyles.fill]}>
+          <FilterList categories={categories} filters={filters} onFilterOption={handleSelectFilterOption} />
+          <Spacer times={4} />
+          {!activityQuery.loading && (
+            <PullToRefresh onRefresh={refetchUserActivity}>
+              <ActivityList
+                ref={listRef}
+                wallet={wallet}
+                filters={filters}
+                activities={activities}
+                refreshing={activityRefetching}
+                onRefresh={refetchUserActivity}
+                onLoadMore={ActivityLoadMore}
+              />
+              <Spacer times={6} />
+            </PullToRefresh>
+          )}
+          <Spacer times={4} />
+        </View>
+      </Loading>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-});
