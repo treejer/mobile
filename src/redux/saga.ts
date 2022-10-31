@@ -8,6 +8,7 @@ import {netInfoSagas} from './modules/netInfo/netInfo';
 import {profileSagas} from './modules/profile/profile';
 import {contractsSagas} from './modules/contracts/contracts';
 import {countriesSagas} from './modules/countris/countries';
+import {offlineMapSagas} from 'ranger-redux/modules/offlineMap/offlineMap';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -19,5 +20,6 @@ export default function* root(store: TStoreRedux) {
     profileSagas(),
     contractsSagas(),
     countriesSagas(),
+    offlineMapSagas(store),
   ]);
 }

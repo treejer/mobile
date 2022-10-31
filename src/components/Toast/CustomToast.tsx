@@ -1,11 +1,12 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {ToastProps} from 'react-native-toast-notifications/lib/typescript/toast';
+import {useTranslation} from 'react-i18next';
 
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import {AlertMode} from 'utilities/helpers/alert';
-import {ToastProps} from 'react-native-toast-notifications/lib/typescript/toast';
 
 export type ToastContainerProps = {
   toastOptions: ToastProps;
@@ -14,6 +15,8 @@ export type ToastContainerProps = {
 
 export function CustomToast(props: ToastContainerProps) {
   const {toastOptions, mode} = props;
+
+  const {t} = useTranslation();
 
   return (
     <View style={[styles.container, {backgroundColor: colors[mode]}]}>
@@ -39,7 +42,9 @@ export function CustomToast(props: ToastContainerProps) {
               <Spacer times={2} />
             </>
           ) : null}
-          <Text style={styles.text}>{toastOptions.message}</Text>
+          <Text style={styles.text}>
+            {toastOptions.translate ? t(toastOptions.message as string) : toastOptions.message}
+          </Text>
         </View>
       )}
       <TouchableOpacity

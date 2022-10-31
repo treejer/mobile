@@ -108,7 +108,6 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-redux": "^8.0.2",
     "react-slick": "0.28.1",
-    "realm": "10.11.0",
     "redux": "^4.2.0",
     "redux-fetch-state": "^0.2.4",
     "redux-logger": "^3.0.6",
