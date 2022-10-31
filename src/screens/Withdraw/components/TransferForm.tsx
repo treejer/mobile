@@ -15,7 +15,7 @@ import Spacer from 'components/Spacer';
 import {SubmitTransfer} from 'components/Withdraw/SubmitTransfer';
 import {TransferConfirmationModal} from 'components/Withdraw/TransferConfirmationModal';
 import globalStyles from 'constants/styles';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 
 export type TTransferFormData = {
   from: string;

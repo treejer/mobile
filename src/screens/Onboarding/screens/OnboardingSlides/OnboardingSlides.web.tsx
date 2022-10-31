@@ -8,7 +8,7 @@ import {Tree} from 'components/Icons';
 import Button from 'components/Button';
 import ProgressCircles from 'components/ProgressCircles';
 import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
-import {useSettings} from '../../../../redux/modules/settings/settings';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';

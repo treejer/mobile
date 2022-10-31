@@ -3,7 +3,6 @@ import {Image, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-na
 import {TFunction, useTranslation} from 'react-i18next';
 import FIcon from 'react-native-vector-icons/Feather';
 import IIcon from 'react-native-vector-icons/Ionicons';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useToast} from 'react-native-toast-notifications';
 import {InAppBrowser} from 'react-native-inappbrowser-reborn';
@@ -18,7 +17,7 @@ import {wrapUpString} from 'utilities/helpers/shortenedString';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {isWeb} from 'utilities/helpers/web';
 import {GetUserActivitiesQueryPartialData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
-import {useConfig} from '../../redux/modules/web3/web3';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {Tree} from '../../../assets/images';
 
 export enum ActivityStatus {

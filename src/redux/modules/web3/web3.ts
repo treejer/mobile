@@ -45,7 +45,7 @@ const initialState: TWeb3 = {
   loading: false,
   network: defaultNetwork,
   config: defaultConfig,
-  magic: defaultMagic,
+  magic: defaultMagic as any,
   web3: defaultWeb3,
   treeFactory: contractGenerator(defaultWeb3, defaultConfig.contracts.TreeFactory),
   planter: contractGenerator(defaultWeb3, defaultConfig.contracts.Planter),
@@ -208,7 +208,7 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
       yield put(resetWeb3Data());
       config = configs[newNetwork];
     }
-    const magic: Magic = magicGenerator(config);
+    const magic: any = magicGenerator(config);
     const web3 = new Web3(magic.rpcProvider);
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);

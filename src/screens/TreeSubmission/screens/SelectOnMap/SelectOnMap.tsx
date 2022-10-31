@@ -4,7 +4,7 @@ import globalStyles from 'constants/styles';
 import React, {useMemo} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';

@@ -3,7 +3,7 @@ import {Route, NavigationProp} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
 import SubmitTree from './screens/SubmitTree';
 import SelectPhoto from './screens/SelectPhoto/SelectPhoto';

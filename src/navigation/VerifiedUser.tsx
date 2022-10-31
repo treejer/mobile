@@ -10,6 +10,7 @@ import {Withdraw} from 'screens/Withdraw/Withdraw';
 import TreeSubmission from 'screens/TreeSubmission';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -17,7 +18,11 @@ export type VerifiedUserNavigationParamList = {
     unVerified?: boolean;
   };
   [Routes.TreeSubmission]: undefined;
-  [Routes.GreenBlock]: undefined;
+  [Routes.GreenBlock]: {
+    greenBlockIdToJoin?: string;
+    shouldNavigateToTreeDetails: boolean;
+    filter?: TreeFilter;
+  };
   [Routes.Withdraw]: undefined;
   [Routes.Activity]?: {
     filters: string[];

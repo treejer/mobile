@@ -11,8 +11,8 @@ import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'util
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from '../../redux/modules/settings/settings';
-import {useConfig, useWalletAccount, useWeb3} from '../../redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useWalletAccount, useWeb3} from 'ranger-redux/modules/web3/web3';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;
 export const offlineUpdatedTreesStorageKey = storageKeys.offlineUpdatedTrees;

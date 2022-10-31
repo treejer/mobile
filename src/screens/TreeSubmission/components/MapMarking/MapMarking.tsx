@@ -15,7 +15,7 @@ import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useCurrentJourney} from 'services/currentJourney';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';

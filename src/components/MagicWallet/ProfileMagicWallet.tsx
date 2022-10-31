@@ -12,8 +12,8 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {shortenedString} from 'utilities/helpers/shortenedString';
 import {AlertMode} from 'utilities/helpers/alert';
-import {useConfig} from '../../redux/modules/web3/web3';
-import {useContracts} from '../../redux/modules/contracts/contracts';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 
 export type ProfileMagicWalletProps = {
   wallet: string;

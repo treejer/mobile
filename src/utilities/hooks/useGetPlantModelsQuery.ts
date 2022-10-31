@@ -3,7 +3,7 @@ import GetPlantingModels, {
   GetPlantingModelsQueryQueryPartialData,
 } from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {usePagination} from 'utilities/hooks/usePagination';
-import {useWalletAccount} from '../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 export const PlantModels = 'PlantModels';
 

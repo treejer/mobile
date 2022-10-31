@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {colors} from 'constants/values';
 import {ContractType} from 'services/config';
 import {useCurrentJourney} from 'services/currentJourney';
@@ -20,8 +20,8 @@ import Spacer from 'components/Spacer/Spacer';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {useSettings} from '../../redux/modules/settings/settings';
-import {useConfig, useWalletAccount, useWalletWeb3} from '../../redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 

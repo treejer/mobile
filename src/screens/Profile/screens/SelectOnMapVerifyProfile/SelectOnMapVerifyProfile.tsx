@@ -5,7 +5,7 @@ import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {GeoPosition} from 'react-native-geolocation-service';
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {MapMarker} from '../../../../../assets/icons/index';
 

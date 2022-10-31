@@ -9,7 +9,14 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "*": ["./src/*", "./node_modules/*"]
+      "ranger-redux/*": ["./src/redux/*"],
+      "components/*": ["./src/components/*"],
+      "screens/*": ["./src/screens/*"],
+      "services/*": ["./src/services/*"],
+      "constants/*": ["./src/constants/*"],
+      "utilities/*": ["./src/utilities/*"],
+      "navigation/*": ["./src/navigation/*"],
+      "types": ["./src/types"],
     },
     "resolveJsonModule": true,
     "allowJs": true,

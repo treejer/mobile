@@ -2,11 +2,9 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 
-import {MainTabsParamList} from 'types';
-import {Routes, VerifiedUserNavigationParamList} from 'navigation';
+import {Routes, VerifiedUserNavigationProp} from 'navigation/index';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
@@ -17,7 +15,7 @@ import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {FilterList} from 'components/Filter/FilterList';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {all_events, useGetUserActivitiesQuery} from 'utilities/hooks/useGetUserActivitiesQuery';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {useDebounce} from 'utilities/hooks/useDebounce';
 
 const categories = [
@@ -42,10 +40,7 @@ const categories = [
   ActivityStatus.PlanterTotalClaimedUpdated,
 ];
 
-interface Props {
-  navigation: NavigationProp<VerifiedUserNavigationParamList>;
-  route: RouteProp<MainTabsParamList, Routes.Activity>;
-}
+interface Props extends VerifiedUserNavigationProp<Routes.Activity> {}
 
 export function Activity(props: Props) {
   const {route} = props;

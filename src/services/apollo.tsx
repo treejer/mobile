@@ -14,7 +14,7 @@ import camelCase from 'lodash/camelCase';
 import Web3 from 'services/Magic';
 
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from '../redux/modules/web3/web3';
+import {useAccessToken, useConfig, useUserId, useWeb3} from 'ranger-redux/modules/web3/web3';
 
 function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {

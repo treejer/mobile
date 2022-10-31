@@ -12,7 +12,7 @@ import {TTransactionEvent} from 'components/Withdraw/TransactionItem';
 import {useGetTransactionHistory} from 'utilities/hooks/useGetTransactionHistory';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useDebounce} from 'utilities/hooks/useDebounce';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 export const historyCategories = ['all', TTransactionEvent.TransferOut, TTransactionEvent.TransferIn];
 

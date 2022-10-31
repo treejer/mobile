@@ -3,13 +3,13 @@ import {View, Text, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Card from 'components/Card';
 import {EastWoodMessage} from '../../../../../assets/images';
-import {useProfile} from '../../../../redux/modules/profile/profile';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyPending> {}
 

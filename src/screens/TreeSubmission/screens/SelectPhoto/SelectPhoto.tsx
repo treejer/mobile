@@ -4,7 +4,7 @@ import {CommonActions} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import globalStyles from 'constants/styles';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
@@ -34,7 +34,7 @@ import {maxDistanceInMeters} from 'services/config';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {useWalletAccount} from '../../../../redux/modules/web3/web3';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;

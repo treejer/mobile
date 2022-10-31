@@ -6,7 +6,7 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import IoIcon from 'react-native-vector-icons/Ionicons';
 import ADIcon from 'react-native-vector-icons/AntDesign';
 
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation/index';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
@@ -25,9 +25,9 @@ import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useContracts} from '../../../../redux/modules/contracts/contracts';
-import {UserStatus, useProfile} from '../../../../redux/modules/profile/profile';
-import {usePlanterFund, useWalletAccount, useWalletWeb3} from '../../../../redux/modules/web3/web3';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {UserStatus, useProfile} from 'ranger-redux/modules/profile/profile';
+import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 
 export type MyProfileProps =

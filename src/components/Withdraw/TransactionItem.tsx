@@ -9,7 +9,7 @@ import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
 import {MoreDetail} from 'components/Activity/ActivityItem';
 import {GetTransactionHistoryQueryPartialData} from 'screens/Withdraw/screens/WithrawHistory/graphql/getTransactionHistoryQuery.graphql';
-import {useWalletWeb3} from '../../redux/modules/web3/web3';
+import {useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {StableDaiCoin, EthCoin, Tree} from '../../../assets/images';
 import globalStyles from 'constants/styles';
 

@@ -13,9 +13,9 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import {isMatic} from 'services/Magic';
 import {ProfileRouteParamList} from 'types';
-import {useConfig} from '../../../../redux/modules/web3/web3';
-import {useSettings} from '../../../../redux/modules/settings/settings';
-import {useContracts} from '../../../../redux/modules/contracts/contracts';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;

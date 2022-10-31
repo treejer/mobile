@@ -1,8 +1,8 @@
 import React, {useCallback} from 'react';
 import {ScreenTitleWithoutNavigation} from 'components/ScreenTitle/ScreenTitleWithoutNavigation';
 import {useNavigation} from '@react-navigation/native';
-import {Routes} from 'navigation';
-import {useProfile} from '../../redux/modules/profile/profile';
+import {Routes} from 'navigation/index';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 
 export type TScreenTitle = {
   goBack?: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {TransferScreen} from 'screens/Withdraw/screens/Transfer/TransferScreen';
 import {WithdrawHistoryScreen} from 'screens/Withdraw/screens/WithrawHistory/TransactionHistory';
 

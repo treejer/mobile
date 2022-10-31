@@ -14,7 +14,7 @@ import Spacer from 'components/Spacer';
 import {ChevronLeft} from 'components/Icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {mapboxPrivateToken} from 'services/config';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
