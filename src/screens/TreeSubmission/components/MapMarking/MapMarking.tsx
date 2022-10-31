@@ -1,5 +1,5 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import {CommonActions, NavigationContainer, useNavigation} from '@react-navigation/native';
+import MapboxGL from '@rnmapbox/maps';
+import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
@@ -237,7 +237,6 @@ export default function MapMarking(props: IMapMarkingProps) {
     const watchId = Geolocation.watchPosition(
       position => {
         onUpdateUserLocation(position);
-        setLocation(position);
         setAccuracyInMeters(position.coords.accuracy);
         setLoading(false);
       },

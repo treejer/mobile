@@ -302,6 +302,7 @@ function NoWallet(props: NoWalletProps) {
                   </Card>
                 </View>
                 <AppVersion />
+                <Spacer times={8} />
               </View>
             </KeyboardDismiss>
           </KeyboardAwareScrollView>

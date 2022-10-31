@@ -1,5 +1,5 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import Logger from '@react-native-mapbox-gl/maps/javascript/utils/Logger';
+import MapboxGL from '@rnmapbox/maps';
+import Logger from '@rnmapbox/maps/javascript/utils/Logger';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import MapKit from 'components/Map/Map';
