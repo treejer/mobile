@@ -143,7 +143,6 @@ function SubmitTree(props: Props) {
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
       setMetaDataHash(metaDataUploadResult.Hash);
-      // }
 
       setIsReadyToSubmit(true);
     } catch (e: any) {
@@ -364,7 +363,7 @@ function SubmitTree(props: Props) {
             onPress={handleSignTransaction}
             caption={t('confirm')}
             loading={submitting}
-            disabled={submitting}
+            disabled={true}
           />
         </>
       )}

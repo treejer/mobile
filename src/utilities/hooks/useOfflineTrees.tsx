@@ -396,15 +396,27 @@ export function OfflineTreeProvider({children}) {
               useGSN,
             );
           } else {
-            receipt = await sendTransactionWithGSN(
-              config,
-              ContractType.TreeFactory,
-              web3,
-              address,
-              'plantTree',
-              [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
-              useGSN,
-            );
+            if (treeJourney.plantingModel) {
+              receipt = await sendTransactionWithGSN(
+                config,
+                ContractType.TreeFactory,
+                web3,
+                address,
+                'plantMarketPlaceTree',
+                [metaDataUploadResult.Hash, jsonData.updates[0], 0, Hex2Dec(treeJourney.plantingModel)],
+                useGSN,
+              );
+            } else {
+              receipt = await sendTransactionWithGSN(
+                config,
+                ContractType.TreeFactory,
+                web3,
+                address,
+                'plantTree',
+                [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
+                useGSN,
+              );
+            }
           }
           console.log(receipt.transactionHash, 'receipt.transactionHash');
 
