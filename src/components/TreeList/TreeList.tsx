@@ -55,8 +55,7 @@ interface Props {
   filter?: TreeFilter;
 }
 
-function Trees({route, navigation, filter}: Props) {
-  // const navigation = useNavigation();
+function Trees({navigation, filter}: Props) {
   const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
   const [treeColorsModalVisible, setTreeColorModalVisible] = useState<boolean>(false);
   const {t} = useTranslation();
@@ -557,7 +556,7 @@ function Trees({route, navigation, filter}: Props) {
         ]}
       >
         {renderLoadingModal()}
-        <Spacer times={4} />
+        <Spacer times={2} />
         <View
           style={[
             globalStyles.horizontalStack,

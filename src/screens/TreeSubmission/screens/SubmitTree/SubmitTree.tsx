@@ -386,7 +386,6 @@ function SubmitTree(props: Props) {
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         {journey.isSingle === false && <SubmitTreeModal />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-          <Spacer times={10} />
           {contentMarkup}
         </View>
       </ScrollView>

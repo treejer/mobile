@@ -17,7 +17,10 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
   return (
     <View style={styles.container}>
       {goBack && handleGoBack ? (
-        <TouchableOpacity style={[globalStyles.fill]} onPress={handleGoBack}>
+        <TouchableOpacity
+          style={[globalStyles.fill, globalStyles.justifyContentCenter, {alignSelf: 'stretch'}]}
+          onPress={handleGoBack}
+        >
           <ChevronLeft color={colors.black} />
         </TouchableOpacity>
       ) : (
@@ -29,7 +32,11 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
         </View>
       )}
       {rightContent ? (
-        <View style={[globalStyles.fill, globalStyles.justifyContentCenter, styles.alignItemsEnd]}>{rightContent}</View>
+        <View
+          style={[globalStyles.fill, globalStyles.justifyContentCenter, styles.alignItemsEnd, {alignSelf: 'stretch'}]}
+        >
+          {rightContent}
+        </View>
       ) : (
         <View style={globalStyles.fill} />
       )}
@@ -39,8 +46,9 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    paddingTop: 28,
+    paddingTop: 40,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

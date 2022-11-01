@@ -189,7 +189,7 @@ function MyProfile(props: MyProfileProps) {
           }
         >
           <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
-            <Spacer times={8} />
+            <Spacer times={10} />
             {avatarMarkup}
             <Spacer times={4} />
 

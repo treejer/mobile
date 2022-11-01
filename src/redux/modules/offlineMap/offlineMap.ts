@@ -149,6 +149,9 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
                 metadata: offlineRegion.metadata,
               }),
             );
+            if (!silent) {
+              toast?.show('offlineMap.downloaded', {type: AlertMode.Success, translate: true});
+            }
           }
         };
         const errorListener = (offlineRegion: MapboxGL.OfflinePack, err: MapboxGL.OfflineProgressError) => {

@@ -318,7 +318,6 @@ function SelectPhoto(props: Props) {
       <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-          <Spacer times={10} />
           <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>
             <Spacer times={4} />
             {/* @here */}

@@ -34,7 +34,6 @@ function TreeSubmissionStepper(props: Props) {
 
   return (
     <>
-      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}></View>
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
         <Steps.Step step={1}>

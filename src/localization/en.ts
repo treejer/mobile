@@ -385,7 +385,7 @@ export const en = {
     noCameraPermission: 'Camera is not available',
     info: {
       title: 'Plant and Update to earn DAI',
-      desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      desc: 'By planting a tree, you will get awards due to raising and taking care of the planted tree. This awards are blocked on Treejer protocol and could be redeemed to your wallet connected to your account.\nYou can keep it on your account or move it to your personal wallet.',
     },
     redeem: 'Reedem from Treejer',
     treejerDescription: 'Withdrawable blocked DAI on Treejer Protocol',

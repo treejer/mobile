@@ -75,9 +75,9 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
         }}
       >
         <Stack.Screen
-          component={CheckOfflineMaps}
           name={Routes.SelectPlantType}
           options={{title: screenTitle('Plant Type')}}
+          component={CheckOfflineMaps}
         />
         <Stack.Screen
           name={Routes.SelectModels}
