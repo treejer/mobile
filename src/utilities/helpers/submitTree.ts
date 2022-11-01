@@ -1,23 +1,27 @@
-import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
-import {currentTimestamp} from 'utilities/helpers/date';
+import {useCallback} from 'react';
+import {useTranslation} from 'react-i18next';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import {Image} from 'react-native-image-crop-picker';
+
+import {useCurrentJourney} from 'services/currentJourney';
+import {maxDistanceInMeters} from 'services/config';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {Routes} from 'navigation';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {Routes} from 'navigation/index';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
+import {currentTimestamp} from 'utilities/helpers/date';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Image} from 'react-native-image-crop-picker';
-import {useTranslation} from 'react-i18next';
-import {useCallback} from 'react';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney} from 'services/currentJourney';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
-import {calcDistanceInMeters} from './distanceInMeters';
-import {maxDistanceInMeters} from 'services/config';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {checkExif} from 'utilities/helpers/checkExif';
 import {isWeb} from './web';
+import {calcDistanceInMeters} from './distanceInMeters';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -289,10 +293,11 @@ export function useAfterSelectPhotoHandler() {
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
   const browserPlatform = useBrowserPlatform();
+  const isConnected = useNetInfoConnected();
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   const {t} = useTranslation();
-
-  const isConnected = useNetInfoConnected();
 
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
@@ -317,7 +322,11 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+          if (
+            distance < maxDistanceInMeters ||
+            (isWeb() && browserPlatform === 'iOS') ||
+            !checkExif(isMainnet, checkMetaData)
+          ) {
             navigation.navigate(Routes.SubmitTree);
             setNewJourney({
               ...newJourney,
@@ -334,7 +343,11 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+          if (
+            distance < maxDistanceInMeters ||
+            (isWeb() && browserPlatform === 'iOS') ||
+            !checkExif(isMainnet, checkMetaData)
+          ) {
             navigation.navigate(Routes.SubmitTree);
           } else {
             showAlert({
@@ -358,7 +371,11 @@ export function useAfterSelectPhotoHandler() {
         console.log(distance, 'distance is hereeee');
 
         if (isUpdate && isNursery && !canUpdate) {
-          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+          if (
+            distance < maxDistanceInMeters ||
+            (isWeb() && browserPlatform === 'iOS') ||
+            !checkExif(isMainnet, checkMetaData)
+          ) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -387,7 +404,11 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+          if (
+            distance < maxDistanceInMeters ||
+            (isWeb() && browserPlatform === 'iOS') ||
+            !checkExif(isMainnet, checkMetaData)
+          ) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,

@@ -5,38 +5,40 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useForm} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import PhoneInput from 'react-native-phone-number-input';
 import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
+
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
+import RadioButton from 'components/RadioButton/RadioButton';
+import {ChevronLeft} from 'components/Icons';
+import WebCam from 'components/WebCam/WebCam';
 import TextField, {PhoneField} from 'components/TextField';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
 import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/UserApplyMutation.graphql';
 import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
 import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
 import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
-import {useUserId} from 'services/web3';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
-import RadioButton from 'components/RadioButton/RadioButton';
-import {ChevronLeft} from 'components/Icons';
-import useRefer from 'utilities/hooks/useDeepLinking';
-import {useTranslation} from 'react-i18next';
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
+import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
+import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
+import {restApiError} from 'utilities/helpers/error';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import WebCam from 'components/WebCam/WebCam';
-import getCroppedImg from 'utilities/hooks/cropImage';
-import {restApiError} from 'utilities/helpers/error';
-import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
-import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
 import {isWeb} from 'utilities/helpers/web';
+import getCroppedImg from 'utilities/helpers/cropImage';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
+import {useUserId} from 'ranger-redux/modules/web3/web3';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -53,7 +55,7 @@ const radioItems = [
 
 function VerifyProfile(props: Props) {
   const {navigation, route} = props;
-  const {status} = useCurrentUser({didMount: true});
+  const {status} = useProfile();
 
   const {openCameraHook, openLibraryHook} = useCamera();
   const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
@@ -79,7 +81,7 @@ function VerifyProfile(props: Props) {
 
   const {sendEvent} = useAnalytics();
 
-  const refer = useRefer();
+  const refer = useDeepLinkingValue();
   const {referrer, organization, hasRefer} = refer;
 
   const handleChangeRadioButton = (key: string) => {
@@ -307,6 +309,7 @@ function VerifyProfile(props: Props) {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
@@ -338,15 +341,9 @@ function VerifyProfile(props: Props) {
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <KeyboardAwareScrollView>
-        <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p1]}>
-          <TouchableOpacity onPress={() => navigation.navigate(Routes.MyProfile)}>
-            <ChevronLeft />
-          </TouchableOpacity>
-        </View>
+        <ScreenTitle title={t('getVerified')} goBack />
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
-          <Text style={globalStyles.h4}>{t('getVerified')}</Text>
-
-          <Spacer times={2} />
+          <Spacer times={4} />
 
           {status === UserStatus.Pending && (
             <>

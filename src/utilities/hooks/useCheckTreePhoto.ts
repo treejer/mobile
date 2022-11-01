@@ -1,12 +1,18 @@
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {maxDistanceInKiloMeters} from 'services/config';
+
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {checkExif} from 'utilities/helpers/checkExif';
 import {TUserLocation} from './usePlantTreePermissions';
+import {useConfig} from '../../redux/modules/web3/web3';
+import {useSettings} from '../../redux/modules/settings/settings';
 
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   return useCallback(
     (
@@ -16,6 +22,10 @@ export const useCheckTreePhoto = () => {
       imageLocation?: TUserLocation,
       fromGallery?: boolean,
     ) => {
+      if (!checkExif(isMainnet, checkMetaData)) {
+        successCallback({latitude: 0, longitude: 0});
+        return;
+      }
       if (imageLocation?.latitude && imageLocation?.longitude) {
         // @here
 
@@ -50,6 +60,6 @@ export const useCheckTreePhoto = () => {
         }
       }
     },
-    [t],
+    [t, checkMetaData, isMainnet],
   );
 };

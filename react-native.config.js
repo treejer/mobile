@@ -5,12 +5,6 @@ module.exports = {
   },
   assets: ['./assets/fonts/'],
   dependencies: {
-    expo: {
-      platforms: {
-        android: null,
-        ios: null,
-      },
-    },
     'magic-sdk': {
       platforms: {
         android: null,
@@ -22,6 +16,11 @@ module.exports = {
         android: null,
         ios: null,
       },
+    },
+  },
+  expo: {
+    autolinking: {
+      exclude: ['expo-application', 'expo-asset', 'expo-constants', 'expo-file-system', 'expo-font', 'expo-keep-awake'],
     },
   },
 };

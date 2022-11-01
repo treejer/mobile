@@ -1,15 +1,15 @@
-import globalStyles from 'constants/styles';
-import TreeSymbol from 'components/TreeList/TreeSymbol';
 import React, {useMemo} from 'react';
 import {Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {useCurrentJourney} from 'services/currentJourney';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
-import {useTranslation} from 'react-i18next';
-import {useCurrentJourney} from 'services/currentJourney';
-import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
-import {colors} from 'constants/values';
-import {Hex2Dec} from 'utilities/helpers/hex';
+import TreeSymbol from 'components/TreeList/TreeSymbol';
 import {isWeb} from 'utilities/helpers/web';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 interface Props {
   currentStep: number;
@@ -18,22 +18,13 @@ interface Props {
 
 function TreeSubmissionStepper(props: Props) {
   const {currentStep, children} = props;
+
   const {t} = useTranslation();
   const {journey} = useCurrentJourney();
 
   const isUpdate = typeof journey?.treeIdToUpdate !== 'undefined';
   const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
   const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
-  const isSingle = journey?.isSingle;
-  const count = journey?.nurseryCount;
-
-  const title = isSingle
-    ? 'submitTree.submitTree'
-    : isSingle === false
-    ? 'submitTree.nurseryCount'
-    : isUpdate
-    ? 'submitTree.updateTree'
-    : 'submitTree.submitTree';
 
   const imageSize = useMemo(
     () =>
@@ -43,12 +34,7 @@ function TreeSubmissionStepper(props: Props) {
 
   return (
     <>
-      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
-        <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-          {t(title, {count})} {isUpdate && `#${Hex2Dec(journey.tree?.id!)}`}
-        </Text>
-      </View>
-      <Spacer times={10} />
+      <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}></View>
       <Steps.Container currentStep={currentStep} style={{width: 300}}>
         {/* Step 1  */}
         <Steps.Step step={1}>

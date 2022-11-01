@@ -1,13 +1,12 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image as NativeImage} from 'react-native';
-import {useWalletAccount} from 'services/web3';
+
 import {isWeb} from 'utilities/helpers/web';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import {
   EastWoodMessage,
   MaticLogo,
   NoWalletImage,
-  RinkebyLogo,
   RotateIcon,
   SingUp,
   TreejerIcon,
@@ -17,6 +16,7 @@ import {
   onBoardingTwo,
 } from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 const staticImages = [
   MapMarker,
@@ -24,7 +24,6 @@ const staticImages = [
   EastWoodMessage,
   MaticLogo,
   NoWalletImage,
-  RinkebyLogo,
   RotateIcon,
   SingUp,
   TreejerIcon,

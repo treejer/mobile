@@ -1,19 +1,19 @@
-import globalStyles from 'constants/styles';
-
 import React, {useMemo} from 'react';
 import {Image, Text, View} from 'react-native';
-import BackgroundEntropy from 'components/BackgroundEntropy';
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
-import {useSettings} from 'services/settings';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import AppVersion from 'components/AppVersion';
-import {isWeb} from 'utilities/helpers/web';
-import {RootNavigationProp, Routes} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {RootNavigationProp, Routes} from 'navigation/index';
+import Button from 'components/Button';
+import AppVersion from 'components/AppVersion';
+import BackgroundEntropy from 'components/BackgroundEntropy';
+import {isWeb} from 'utilities/helpers/web';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import globalStyles from 'constants/styles';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {Welcome} from '../../../../../assets/images';
+import {treejerLanguages} from 'utilities/helpers/language';
 
 export type SelectLanguageProps = RootNavigationProp<Routes.SelectLanguage>;
 
@@ -53,49 +53,26 @@ function SelectLanguage(props: SelectLanguageProps) {
           <AppVersion style={globalStyles.mb1} />
           <Image source={Welcome} style={imageStyle} />
           <Text style={[globalStyles.h4, globalStyles.textCenter]}>Choose language</Text>
-          <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
-            <Button
-              caption="English"
-              onPress={() => {
-                handleChangeLanguage('en');
-              }}
-            />
-            <Spacer />
-            <Button
-              caption="Français"
-              onPress={() => {
-                handleChangeLanguage('fr');
-              }}
-            />
-            <Spacer />
-            <Button
-              caption="فارسی"
-              onPress={() => {
-                handleChangeLanguage('fa');
-              }}
-            />
-          </View>
-          <View style={[globalStyles.horizontalStack, globalStyles.ph1, globalStyles.pt1]}>
-            <Button
-              caption="Español"
-              onPress={() => {
-                handleChangeLanguage('es');
-              }}
-            />
-            <Spacer />
-            <Button
-              caption="Turkish"
-              onPress={() => {
-                handleChangeLanguage('tr');
-              }}
-            />
-            <Spacer />
-            <Button
-              caption="العربيه"
-              onPress={() => {
-                handleChangeLanguage('ar');
-              }}
-            />
+          <View
+            style={[
+              globalStyles.horizontalStack,
+              globalStyles.ph1,
+              globalStyles.pt1,
+              globalStyles.justifyContentCenter,
+              globalStyles.alignItemsCenter,
+              globalStyles.flexWrap,
+            ]}
+          >
+            {treejerLanguages.map(lang => (
+              <View style={{margin: 4}}>
+                <Button
+                  caption={lang.name}
+                  onPress={() => {
+                    handleChangeLanguage(lang.locale);
+                  }}
+                />
+              </View>
+            ))}
           </View>
         </View>
       </View>

@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   extends: [
     // 'plugin:@shopify/typescript',
     // 'plugin:@shopify/graphql',
@@ -8,6 +9,8 @@ module.exports = {
   ],
   plugins: ['unused-imports'],
   rules: {
+    'no-shadow': 'off',
+    'no-undef': 'off',
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'off',
     '@typescript-eslint/no-unused-vars': 'off',

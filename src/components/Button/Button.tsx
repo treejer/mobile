@@ -13,7 +13,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-type Props = {
+export type TButtonProps = {
+  textAlign?: string;
+  size?: 'sm' | 'lg';
+  iconPlace?: 'left' | 'right';
   caption: string | null;
   variant?: 'primary' | 'cta' | 'secondary' | 'success' | 'tertiary' | 'fourth';
   icon?: React.ComponentType<any>;
@@ -32,6 +35,9 @@ type Props = {
 );
 
 function Button({
+  textAlign,
+  size = 'lg',
+  iconPlace = 'right',
   caption,
   disabled,
   variant = 'primary',
@@ -42,7 +48,7 @@ function Button({
   loading = false,
   onPress,
   ...props
-}: Props) {
+}: TButtonProps) {
   const Component = (disabled ? View : TouchableOpacity) as React.ComponentType<TouchableOpacityProps>;
   return (
     <Component
@@ -51,10 +57,27 @@ function Button({
       disabled={disabled}
       {...props}
     >
+      {icon && iconPlace === 'left' && (
+        <View style={[styles[`${variant}IconWrapper`]]}>
+          {React.createElement(icon, {
+            color: styles[`${variant}Text`].color ?? 'white',
+          })}
+        </View>
+      )}
       {!round && Boolean(caption) ? (
-        <Text style={[styles[`${variant}Text`], textStyle, icon ? styles.hasIcon : {}]}>{caption}</Text>
+        <Text
+          style={[
+            styles[`${variant}Text`],
+            textStyle,
+            icon ? (iconPlace === 'right' ? styles.hasIconRight : !textAlign ? styles.hasIconLeft : undefined) : {},
+            size === 'sm' && styles.smText,
+            {textAlign},
+          ]}
+        >
+          {caption}
+        </Text>
       ) : null}
-      {icon && (
+      {icon && iconPlace === 'right' && (
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: styles[`${variant}Text`].color ?? 'white',
@@ -85,6 +108,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   primaryContainer: {
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
     backgroundColor: colors.khakiDark,
@@ -97,6 +121,7 @@ const styles = StyleSheet.create({
     ...globalStyles.normal,
   },
   ctaContainer: {
+    alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 29,
     backgroundColor: 'white',
@@ -110,7 +135,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     elevation: 7,
     flexDirection: 'row',
-    alignItems: 'flex-start',
   },
   ctaText: {
     color: colors.grayDarker,
@@ -127,10 +151,15 @@ const styles = StyleSheet.create({
     marginBottom: -10,
     marginTop: -10,
   },
-  hasIcon: {
+  hasIconRight: {
     paddingRight: 21,
   },
+  hasIconLeft: {
+    paddingLeft: 16,
+    textAlign: 'left',
+  },
   secondaryContainer: {
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
     backgroundColor: colors.grayDarker,
@@ -142,6 +171,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   successContainer: {
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
     backgroundColor: colors.green,
@@ -153,6 +183,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   tertiaryContainer: {
+    alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 20,
     backgroundColor: 'white',
@@ -173,6 +204,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     flex: 1,
+  },
+  smText: {
+    fontSize: 12,
   },
 });
 

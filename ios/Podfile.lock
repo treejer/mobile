@@ -4,6 +4,23 @@ PODS:
     - React
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
+  - EXApplication (4.2.2):
+    - ExpoModulesCore
+  - EXConstants (13.1.1):
+    - ExpoModulesCore
+  - EXErrorRecovery (3.1.0):
+    - ExpoModulesCore
+  - EXFileSystem (14.0.0):
+    - ExpoModulesCore
+  - EXFont (10.1.0):
+    - ExpoModulesCore
+  - Expo (45.0.8):
+    - ExpoModulesCore
+  - ExpoKeepAwake (10.1.1):
+    - ExpoModulesCore
+  - ExpoModulesCore (0.9.2):
+    - React-Core
+    - ReactCommon/turbomodule/core
   - FBLazyVector (0.67.3)
   - FBReactNativeSpec (0.67.3):
     - RCT-Folly (= 2021.06.28.00-v2)
@@ -374,6 +391,14 @@ PODS:
   - React-jsinspector (0.67.3)
   - React-logger (0.67.3):
     - glog
+  - react-native-camera (4.2.1):
+    - React-Core
+    - react-native-camera/RCT (= 4.2.1)
+    - react-native-camera/RN (= 4.2.1)
+  - react-native-camera/RCT (4.2.1):
+    - React-Core
+  - react-native-camera/RN (4.2.1):
+    - React-Core
   - react-native-geolocation-service (5.2.0):
     - React
   - react-native-mapbox-gl (8.5.0):
@@ -503,6 +528,8 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
+  - RNInAppBrowser (3.7.0):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNPermissions (3.6.1):
@@ -526,6 +553,14 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXApplication (from `../node_modules/expo-application/ios`)
+  - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
+  - EXFileSystem (from `../node_modules/expo-file-system/ios`)
+  - EXFont (from `../node_modules/expo-font/ios`)
+  - Expo (from `../node_modules/expo/ios`)
+  - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
+  - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (= 0.99.0)
@@ -568,6 +603,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -600,6 +636,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -647,6 +684,22 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../node_modules/expo-application/ios"
+  EXConstants:
+    :path: "../node_modules/expo-constants/ios"
+  EXErrorRecovery:
+    :path: "../node_modules/expo-error-recovery/ios"
+  EXFileSystem:
+    :path: "../node_modules/expo-file-system/ios"
+  EXFont:
+    :path: "../node_modules/expo-font/ios"
+  Expo:
+    :path: "../node_modules/expo/ios"
+  ExpoKeepAwake:
+    :path: "../node_modules/expo-keep-awake/ios"
+  ExpoModulesCore:
+    :path: "../node_modules/expo-modules-core/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -683,6 +736,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-mapbox-gl:
@@ -747,6 +802,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNPermissions:
@@ -767,6 +824,14 @@ SPEC CHECKSUMS:
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
+  EXApplication: e418d737a036e788510f2c4ad6c10a7d54d18586
+  EXConstants: fdbe52259365b6a6faaa5e99a3b82cfa6bc2eb61
+  EXErrorRecovery: 3ce46e5d42e53c0371ff048a7f0cbc959968ef4a
+  EXFileSystem: 2aa2d9289f84bca9532b9ccbd81504fa31eb1ded
+  EXFont: 04235cc22e6fef86028feb67db452978dc6f240f
+  Expo: 1133eaf0e12dc265ac82a256f3815401b7570f96
+  ExpoKeepAwake: c0c494b442ecd8122974c13b93ccfb57bd408e88
+  ExpoModulesCore: e4278a668e8c13c0269ed8b8a4200989deea2973
   FBLazyVector: 808f741ddb0896a20e5b98cc665f5b3413b072e2
   FBReactNativeSpec: 94473205b8741b61402e8c51716dea34aa3f5b2f
   Firebase: 580d09e8edafc3073ebf09c03fd42e4d80d35fe9
@@ -810,6 +875,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 15ea57ead631a11fad57634ff69f78e797113a39
   React-jsinspector: 1e1e03345cf6d47779e2061d679d0a87d9ae73d8
   React-logger: 1e10789cb84f99288479ba5f20822ce43ced6ffe
+  react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-geolocation-service: 7c9436da6dfdecd9526c62eac62ea2bc3f0cc8ea
   react-native-mapbox-gl: 955d2c064b56ef058b9cc0fbbf6cf743b05c928e
   react-native-netinfo: ba4ea50d836c60580c59079233c400753fe5bcb6
@@ -842,6 +908,7 @@ SPEC CHECKSUMS:
   RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
+  RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
@@ -853,6 +920,6 @@ SPEC CHECKSUMS:
   Yoga: 90dcd029e45d8a7c1ff059e8b3c6612ff409061a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 2e80b1c59cf67b9d623faddec2dd18850ce93e70
+PODFILE CHECKSUM: 06816a9e991d4315377224a63f95db496530132a
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.11.2

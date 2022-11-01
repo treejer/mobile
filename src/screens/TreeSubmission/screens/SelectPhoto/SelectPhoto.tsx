@@ -1,38 +1,42 @@
-import globalStyles from 'constants/styles';
-
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import {ScrollView, Text, View, Modal} from 'react-native';
 import {CommonActions} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {Routes} from 'navigation/index';
+import globalStyles from 'constants/styles';
+import {maxDistanceInMeters} from 'services/config';
+import {useCurrentJourney} from 'services/currentJourney';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {ScrollView, Text, View, Modal} from 'react-native';
-import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {useCamera} from 'utilities/hooks';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {useWalletAccount} from 'services/web3';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useTranslation} from 'react-i18next';
-import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
-import {Routes} from 'navigation';
-import {isWeb} from 'utilities/helpers/web';
-import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import WebCam from 'components/WebCam/WebCam';
-import getCroppedImg from 'utilities/hooks/cropImage';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
-import {useCurrentJourney} from 'services/currentJourney';
+import {isWeb} from 'utilities/helpers/web';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {useCamera} from 'utilities/hooks';
+import {checkExif} from 'utilities/helpers/checkExif';
+import getCroppedImg from 'utilities/helpers/cropImage';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
+import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
+import {canUpdateTreeLocation, useAfterSelectPhotoHandler} from 'utilities/helpers/submitTree';
+import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
+import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
 import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useConfig, useWalletAccount} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import SelectPhotoButton from './SelectPhotoButton';
 import {PickImageButton} from './PickImageButton';
-import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
-import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
-import {maxDistanceInMeters} from 'services/config';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 
 interface Props extends TreeSubmissionStackScreenProps<Routes.SelectPhoto> {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -59,6 +63,8 @@ function SelectPhoto(props: Props) {
   const checkTreePhoto = useCheckTreePhoto();
   const browserPlatform = useBrowserPlatform();
   const address = useWalletAccount();
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   const {canPlant} = usePlanterStatusQuery(address);
 
@@ -124,7 +130,7 @@ function SelectPhoto(props: Props) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate],
+    [openLibraryHook, openCameraHook, handleAfterSelectPhoto, isUpdate, isNursery, canUpdate, checkTreePhoto],
   );
 
   const handlePickPhotoWeb = e => {
@@ -184,7 +190,11 @@ function SelectPhoto(props: Props) {
       },
     );
     if (isConnected) {
-      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+      if (
+        distance < maxDistanceInMeters ||
+        (isWeb() && browserPlatform === 'iOS') ||
+        !checkExif(isMainnet, checkMetaData)
+      ) {
         navigation.navigate(Routes.SubmitTree);
         setNewJourney({
           ...journey,
@@ -199,7 +209,11 @@ function SelectPhoto(props: Props) {
         });
       }
     } else {
-      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+      if (
+        distance < maxDistanceInMeters ||
+        (isWeb() && browserPlatform === 'iOS') ||
+        !checkExif(isMainnet, checkMetaData)
+      ) {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
         dispatchAddOfflineUpdateTree({
           ...journey,
@@ -230,9 +244,11 @@ function SelectPhoto(props: Props) {
     }
   }, [
     browserPlatform,
+    checkMetaData,
     clearJourney,
     dispatchAddOfflineUpdateTree,
     isConnected,
+    isMainnet,
     journey,
     navigation,
     persistedPlantedTrees,
@@ -285,9 +301,21 @@ function SelectPhoto(props: Props) {
     );
   }
 
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
+
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <Spacer times={10} />

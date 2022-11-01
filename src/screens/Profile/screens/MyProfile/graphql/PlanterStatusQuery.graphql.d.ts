@@ -8,6 +8,7 @@ export namespace PlanterStatusQueryQueryPartialData {
     planterType?: string | null;
     plantedCount?: number | null;
     balance?: number | null;
+    balanceProjected?: number | null;
     supplyCap?: number | null;
   }
 }
@@ -26,6 +27,7 @@ export namespace PlanterStatusQueryQueryData {
     planterType: string;
     plantedCount: number;
     balance: number;
+    balanceProjected: number;
     supplyCap: number;
   }
 }

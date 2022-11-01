@@ -1,25 +1,27 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Dimensions, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import {Routes} from 'navigation/index';
 import {colors} from 'constants/values';
-import Spacer from 'components/Spacer/Spacer';
-import {TreeJourney} from 'screens/TreeSubmission/types';
+import {ContractType} from 'services/config';
+import {useCurrentJourney} from 'services/currentJourney';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useTranslation} from 'react-i18next';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import Spacer from 'components/Spacer/Spacer';
 import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {useSettings} from 'services/settings';
-import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
-import {ContractType} from 'services/config';
-import {Routes} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney} from 'services/currentJourney';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 
@@ -61,15 +63,28 @@ export default function SubmitTreeModal() {
         const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
         console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-        const receipt = await sendTransactionWithGSN(
-          config,
-          ContractType.TreeFactory,
-          web3,
-          wallet,
-          'plantTree',
-          [metaDataUploadResult.Hash, birthDay, 0],
-          useGSN,
-        );
+        let receipt;
+        if (treeJourney.plantingModel) {
+          receipt = await sendTransactionWithGSN(
+            config,
+            ContractType.TreeFactory,
+            web3,
+            wallet,
+            'plantMarketPlaceTree',
+            [metaDataUploadResult.Hash, birthDay, 0, Hex2Dec(treeJourney.plantingModel)],
+            useGSN,
+          );
+        } else {
+          receipt = await sendTransactionWithGSN(
+            config,
+            ContractType.TreeFactory,
+            web3,
+            wallet,
+            'plantTree',
+            [metaDataUploadResult.Hash, birthDay, 0],
+            useGSN,
+          );
+        }
 
         console.log(receipt.transactionHash, 'receipt.transactionHash');
         return Promise.resolve(receipt.transactionHash);

@@ -1,0 +1,17 @@
+query GetPlantingModelsQuery($first: Int, $skip: Int, $orderBy: String, $orderDirection: String, $planter: String!) {
+    models(first: $first, skip: $skip, orderDirection: $orderDirection, orderBy: $orderBy, where: { planter: $planter }) {
+        id
+        planter {
+            id
+        }
+        price
+        country
+        lastFund
+        lastPlant
+        status
+        start
+        lastReservePlant
+        createdAt
+        updatedAt
+    }
+}

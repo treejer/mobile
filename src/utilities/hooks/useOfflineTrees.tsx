@@ -1,17 +1,18 @@
 import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
-import {TreeJourney} from 'screens/TreeSubmission/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContractType, storageKeys} from 'services/config';
-import {Tree} from 'types';
+import {useTranslation} from 'react-i18next';
 import {Alert} from 'react-native';
+
+import {Tree} from 'types';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {ContractType, storageKeys} from 'services/config';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
-import {useTranslation} from 'react-i18next';
-import {useSettings} from 'services/settings';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useWalletAccount, useWeb3} from 'ranger-redux/modules/web3/web3';
 
 export const offlineTreesStorageKey = storageKeys.offlineTrees;
 export const offlineUpdatedTreesStorageKey = storageKeys.offlineUpdatedTrees;
@@ -383,16 +384,40 @@ export function OfflineTreeProvider({children}) {
           const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
           console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
-          const receipt = await sendTransactionWithGSN(
-            config,
-            ContractType.TreeFactory,
-            web3,
-            address,
-            'plantTree',
-            [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
-            useGSN,
-          );
-
+          let receipt;
+          if (treeJourney.plantingModel) {
+            receipt = await sendTransactionWithGSN(
+              config,
+              ContractType.TreeFactory,
+              web3,
+              address,
+              'plantMarketPlaceTree',
+              [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0, Hex2Dec(treeJourney.plantingModel)],
+              useGSN,
+            );
+          } else {
+            if (treeJourney.plantingModel) {
+              receipt = await sendTransactionWithGSN(
+                config,
+                ContractType.TreeFactory,
+                web3,
+                address,
+                'plantMarketPlaceTree',
+                [metaDataUploadResult.Hash, jsonData.updates[0], 0, Hex2Dec(treeJourney.plantingModel)],
+                useGSN,
+              );
+            } else {
+              receipt = await sendTransactionWithGSN(
+                config,
+                ContractType.TreeFactory,
+                web3,
+                address,
+                'plantTree',
+                [metaDataUploadResult.Hash, jsonData.updates[0].created_at, 0],
+                useGSN,
+              );
+            }
+          }
           console.log(receipt.transactionHash, 'receipt.transactionHash');
 
           setOfflineLoadings(offlineLoadings.filter(id => id !== treeJourney.offlineId));
