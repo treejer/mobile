@@ -93,7 +93,7 @@ export function CreateModelForm(props: TCrateModelFormProps) {
         shouldValidate: true,
       });
     },
-    [countries, availableCountries],
+    [setValue, countries],
   );
 
   const handleCloseCountry = useCallback(() => {
@@ -101,7 +101,7 @@ export function CreateModelForm(props: TCrateModelFormProps) {
       shouldTouch: true,
       shouldValidate: true,
     });
-  }, []);
+  }, [setValue, watch]);
 
   return (
     <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
