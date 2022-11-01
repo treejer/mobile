@@ -3066,8 +3066,8 @@
   integrity sha512-1dgmkh+3so0+LlBWRhGA33ua4MYr7tUOj+a9Si28vUi0IUFNbff1T3sgpeDJI/LaC75bBYnQ0A3wXjn0OrRNBA==
 
 "@rnmapbox/maps@rnmapbox/maps#main":
-  version "10.0.0-beta.53"
-  resolved "https://codeload.github.com/rnmapbox/maps/tar.gz/301ce7fa639a3db808334758d32dc3c9259a65bb"
+  version "10.0.0-beta.54"
+  resolved "https://codeload.github.com/rnmapbox/maps/tar.gz/4a2b2a5bcb889837b35eeab88a73ca3b4285c639"
   dependencies:
     "@mapbox/geo-viewport" ">= 0.4.0"
     "@turf/along" "6.5.0"

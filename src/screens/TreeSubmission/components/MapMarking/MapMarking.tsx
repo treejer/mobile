@@ -8,7 +8,7 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import Map from './Map';
 import {useCurrentJourney} from 'services/currentJourney';
-import {maxDistanceInMeters} from 'services/config';
+import {maxDistanceInMeters, offlineSubmittingMapName} from 'services/config';
 import {colors} from 'constants/values';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
@@ -24,6 +24,7 @@ import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {checkExif} from 'utilities/helpers/checkExif';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 
 interface IMapMarkingProps {
   onSubmit?: (location: GeoPosition) => void;
@@ -42,8 +43,10 @@ export default function MapMarking(props: IMapMarkingProps) {
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
 
+  const {dispatchCreateSubmittingOfflineMap} = useOfflineMap();
+
   const camera = useRef<MapboxGL.Camera>(null);
-  const map = useRef(null);
+  const map = useRef<MapboxGL.MapView>(null);
   const navigation = useNavigation<any>();
 
   const [isCameraRefVisible, setIsCameraRefVisible] = useState(!!camera?.current);
@@ -107,7 +110,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     navigation.goBack();
   }, [navigation]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     console.log('====================================');
     console.log(journey, 'journey is here');
     console.log('====================================');
@@ -124,6 +127,12 @@ export default function MapMarking(props: IMapMarkingProps) {
           longitude: journey?.photoLocation?.longitude,
         },
       );
+      const coords = await map.current?.getCenter();
+      const bounds = await map.current?.getVisibleBounds();
+      if (coords && bounds) {
+        dispatchCreateSubmittingOfflineMap({coords, name: offlineSubmittingMapName(), bounds, areaName: ''});
+      }
+
       const newJourney = {
         ...journey,
         location: {

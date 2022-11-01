@@ -1,5 +1,5 @@
 import MapboxGL from '@rnmapbox/maps';
-import Logger from '@rnmapbox/maps/javascript/utils/Logger';
+// import Logger from '@rnmapbox/maps/javascript/utils/Logger';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import MapKit from 'components/Map/Map';
@@ -8,17 +8,17 @@ import globalStyles, {fontBold} from 'constants/styles';
 import {locationPermission} from 'utilities/helpers/permissions';
 import Geolocation from 'react-native-geolocation-service';
 
-Logger.setLogCallback(log => {
-  const {message} = log;
-  // expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
-  if (
-    message.match('Request failed due to a permanent error: Canceled') ||
-    message.match('Request failed due to a permanent error: Socket Closed')
-  ) {
-    return true;
-  }
-  return false;
-});
+// Logger.setLogCallback(log => {
+//   const {message} = log;
+//   // expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
+//   if (
+//     message.match('Request failed due to a permanent error: Canceled') ||
+//     message.match('Request failed due to a permanent error: Socket Closed')
+//   ) {
+//     return true;
+//   }
+//   return false;
+// });
 
 interface IMapProps {
   map?: any;
