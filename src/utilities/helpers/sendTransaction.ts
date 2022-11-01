@@ -23,6 +23,7 @@ export async function sendTransactionWithGSN(
     paymasterAddress: config.contracts.Paymaster.address,
     methodSuffix: '_v4',
     jsonStringifyRequest: true,
+    performDryRunViewRelayCall: false,
     preferredRelays: [config.preferredRelays],
     relayLookupWindowBlocks: Number(config.relayLookupWindowBlocks),
     relayRegistrationLookupBlocks: Number(config.relayRegistrationLookupBlocks),
