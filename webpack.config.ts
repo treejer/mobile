@@ -1,3 +1,6 @@
+import {Configuration} from 'webpack';
+import {DevConfiguration} from '@expo/webpack-config/webpack/types';
+
 const createExpoWebpackConfigAsync = require('@expo/webpack-config');
 const path = require('path');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
@@ -8,15 +11,25 @@ module.exports = async function (env, argv) {
   const isEnvProduction = env.mode === 'production';
 
   // Create the default config
-  const config = await createExpoWebpackConfigAsync(env, argv);
+  const config: Configuration | DevConfiguration = await createExpoWebpackConfigAsync(env, argv);
 
-  if (isEnvProduction) {
+  if (isEnvProduction && config.optimization && config.plugins) {
     config.optimization.splitChunks = false;
     config.optimization.runtimeChunk = false;
     config.optimization.namedChunks = false;
     config.optimization.minimize = true;
     config.optimization.removeEmptyChunks = true;
     config.devtool = false;
+
+    /*if (config.module) {
+      config.module.rules = [
+        {
+          test: /.tsx|.ts/,
+          exclude: /node_modules\/@rnmapbox\/maps/,
+        },
+      ];
+    }*/
+
     // config.resolve.alias = {
     // react: path.resolve('./node_modules/react'),
     // };

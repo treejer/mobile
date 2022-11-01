@@ -3,7 +3,7 @@ import MapboxGL from '@rnmapbox/maps';
 import {AlertMode} from 'utilities/helpers/alert';
 import {TReduxState, TStoreRedux} from 'ranger-redux/store';
 import {getAreaName} from 'utilities/helpers/maps';
-import {mapboxPrivateToken} from 'services/config';
+import {mapboxPrivateToken, offlineSubmittingMapName} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useCallback} from 'react';
 import {selectNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
@@ -30,24 +30,26 @@ export type TOfflineMapAction = {
   name: string;
   pack: TOfflineMapPack;
   updatingAreaName: string;
+  silent: boolean;
 };
 
 export type TOfflineMapState = {
-  packs: TOfflineMapPack[] | null;
+  packs: TOfflineMapPack[];
   loading: boolean;
   downloadingPack: TDownloadingMapPack | null;
 };
 
 export const offlineMapInitialState: TOfflineMapState = {
-  packs: null,
+  packs: [],
   loading: false,
   downloadingPack: null,
 };
 
 export const CREATE_OFFLINE_MAP_PACK = 'CREATE_OFFLINE_MAP_PACK';
-export const createOfflineMapPack = (downloadingMapPack: TDownloadingMapPack) => ({
+export const createOfflineMapPack = (downloadingMapPack: TDownloadingMapPack, silent: boolean) => ({
   type: CREATE_OFFLINE_MAP_PACK,
   downloadingMapPack,
+  silent,
 });
 
 export const UPDATE_DOWNLOADING_AREA_NAME = 'UPDATE_DOWNLOADING_AREA_NAME';
@@ -117,7 +119,7 @@ export function offlineMap(
   }
 }
 
-export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPack}: TOfflineMapAction) {
+export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPack, silent}: TOfflineMapAction) {
   try {
     const isConnected: boolean = yield selectNetInfo();
     if (isConnected) {
@@ -128,7 +130,9 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
       const hasArea = packs.find(item => item.areaName === areaName);
       if (hasArea) {
         yield put(createOfflineMapPackFailure());
-        toast?.show('offlineMap.isDownloaded', {type: AlertMode.Info, translate: true});
+        if (!silent) {
+          toast?.show('offlineMap.isDownloaded', {type: AlertMode.Info, translate: true});
+        }
       } else {
         yield put(updateAreaName(areaName));
 
@@ -149,7 +153,9 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
         };
         const errorListener = (offlineRegion: MapboxGL.OfflinePack, err: MapboxGL.OfflineProgressError) => {
           store.dispatch(createOfflineMapPackFailure());
-          toast?.show(err.message, {type: AlertMode.Error});
+          if (!silent) {
+            toast?.show(err.message, {type: AlertMode.Error});
+          }
         };
 
         yield MapboxGL.offlineManager.createPack(
@@ -166,11 +172,13 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
       }
     } else {
       yield put(createOfflineMapPackFailure());
-      toast?.show('checkNetwork', {translate: true, type: AlertMode.Error});
+      if (!silent) {
+        toast?.show('checkNetwork', {translate: true, type: AlertMode.Error});
+      }
     }
   } catch (e: any) {
     yield put(createOfflineMapPackFailure());
-    if (e.message) {
+    if (e.message && !silent) {
       toast?.show(e.message, {type: AlertMode.Error});
     }
   }
@@ -185,10 +193,20 @@ export function useOfflineMap() {
   const dispatch = useAppDispatch();
 
   const dispatchCreateOfflineMap = useCallback(
-    (downloadingPack: TDownloadingMapPack) => {
-      dispatch(createOfflineMapPack(downloadingPack));
+    (downloadingPack: TDownloadingMapPack, silent = false) => {
+      dispatch(createOfflineMapPack(downloadingPack, silent));
     },
     [dispatch],
+  );
+
+  const dispatchCreateSubmittingOfflineMap = useCallback(
+    (downloadingPack: TDownloadingMapPack) => {
+      const submittingPacks = state.packs.filter(item => item.name.includes(offlineSubmittingMapName().split('-')[0]));
+      if (submittingPacks && submittingPacks.length < 3) {
+        dispatch(createOfflineMapPack(downloadingPack, true));
+      }
+    },
+    [dispatch, state.packs],
   );
 
   const dispatchDeleteOfflineMap = useCallback(
@@ -202,5 +220,6 @@ export function useOfflineMap() {
     ...state,
     dispatchCreateOfflineMap,
     dispatchDeleteOfflineMap,
+    dispatchCreateSubmittingOfflineMap,
   };
 }

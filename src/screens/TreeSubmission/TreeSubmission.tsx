@@ -17,6 +17,10 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {CreateModel} from 'screens/TreeSubmission/screens/SelectModels/CreateModel';
+import {isWeb} from 'utilities/helpers/web';
+import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {CheckOfflineMaps} from 'screens/TreeSubmission/components/CheckPermissions/CheckOfflineMaps';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -41,6 +45,9 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
 
+  const {packs} = useOfflineMap();
+  const isConnected = useNetInfoConnected();
+
   const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
 
   // this if added to get query to assignedTree works well on submit tree
@@ -58,6 +65,44 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
       navigation.navigate(initRouteName);
     }
   }, [initRouteName, navigation, route.params]);
+
+  if (!isWeb() && !isConnected && packs?.length === 0) {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animationEnabled: true,
+        }}
+      >
+        <Stack.Screen
+          component={CheckOfflineMaps}
+          name={Routes.SelectPlantType}
+          options={{title: screenTitle('Plant Type')}}
+        />
+        <Stack.Screen
+          name={Routes.SelectModels}
+          options={{title: screenTitle('Select Models')}}
+          component={CheckOfflineMaps}
+        />
+        <Stack.Screen
+          name={Routes.CreateModel}
+          options={{title: screenTitle('Create Models')}}
+          component={CheckOfflineMaps}
+        />
+        <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}} component={CheckOfflineMaps} />
+        <Stack.Screen
+          name={Routes.SelectOnMap}
+          options={{title: screenTitle('Location')}}
+          component={CheckOfflineMaps}
+        />
+        <Stack.Screen
+          name={Routes.SubmitTree}
+          options={{title: screenTitle('Submit Tree')}}
+          component={CheckOfflineMaps}
+        />
+      </Stack.Navigator>
+    );
+  }
 
   return (
     <Stack.Navigator

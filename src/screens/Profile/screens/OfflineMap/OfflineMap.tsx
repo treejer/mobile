@@ -15,6 +15,7 @@ import Button from 'components/Button';
 import {colors} from 'constants/values';
 import {AlertMode} from 'utilities/helpers/alert';
 import {Routes} from 'navigation/Navigation';
+import {offlineMapName} from 'services/config';
 
 export type TestOfflineMapProps = {
   navigation: any;
@@ -76,26 +77,6 @@ export function OfflineMapScreen(props: TestOfflineMapProps) {
     }
   };
 
-  const handleCreate = async () => {
-    const progressListener = (offlineRegion, status) => console.log(offlineRegion, status, 'progressListener');
-    const errorListener = (offlineRegion, err) => console.log(offlineRegion, err, 'errorListener');
-
-    const bounds = await MapBoxGLRef.current?.getVisibleBounds();
-    console.log(bounds, 'boundssss');
-
-    await MapboxGL.offlineManager.createPack(
-      {
-        name: `offlinePack-${Date.now()}`,
-        styleURL: 'mapbox://styles/sagararl/ckdfyrsw80y3a1il9eqpecoc7',
-        minZoom: 14,
-        maxZoom: 20,
-        bounds: bounds ? [bounds[0], bounds[1]] : undefined,
-      },
-      progressListener,
-      errorListener,
-    );
-  };
-
   const onPressDownloadArea = async () => {
     try {
       const coords = await MapBoxGLRef.current?.getCenter();
@@ -105,7 +86,7 @@ export function OfflineMapScreen(props: TestOfflineMapProps) {
         dispatchCreateOfflineMap({
           bounds,
           coords,
-          name: `OfflineMap-${Date.now()}`,
+          name: offlineMapName(),
         });
       } else {
         toast?.show('offlineMap.sthWrongWithLocation', {type: AlertMode.Error});

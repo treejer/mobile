@@ -8,7 +8,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ChevronLeft} from 'components/Icons';
 import {useBrowserPlatform} from '../../../../utilities/hooks/useBrowserPlatform';
 
-export default function OfflineMap({navigation}) {
+export function OfflineMapScreen({navigation}) {
   const {t} = useTranslation();
   const browserPlatform = useBrowserPlatform();
 
