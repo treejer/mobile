@@ -363,7 +363,7 @@ function SubmitTree(props: Props) {
             onPress={handleSignTransaction}
             caption={t('confirm')}
             loading={submitting}
-            disabled={true}
+            disabled={submitting}
           />
         </>
       )}
