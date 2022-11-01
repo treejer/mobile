@@ -51,7 +51,7 @@ export async function sendTransactionWithGSN(
 
   const gasPrice = await web3.eth.getGasPrice();
 
-  const web3GSN = new Web3(gsnProvider);
+  const web3GSN = new Web3(gsnProvider as any);
   const ethContract = new web3GSN.eth.Contract(contract.abi as any, contract.address);
 
   console.log('4 - Started sending the transaction', config.isMainnet);

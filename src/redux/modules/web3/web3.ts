@@ -35,7 +35,7 @@ export type TWeb3 = {
 
 const defaultConfig = configs[defaultNetwork];
 const defaultMagic = magicGenerator(configs[defaultNetwork]);
-const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider);
+const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider as any);
 
 const initialState: TWeb3 = {
   wallet: '',
