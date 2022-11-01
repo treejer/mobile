@@ -167,6 +167,14 @@ export const en = {
     offlineSubmittingNotCloseApp: "PLEASE DON'T CLOSE THE APPLICATION",
     hashCopied: 'Hash copied to clipboard',
     minimize: 'Minimize',
+    noOfflineMapToContinue: {
+      title: 'Ooops...',
+      details:
+        "You need to download map to continue planting tree when you are offline and you don't have access to the internet",
+      continue: 'Get back online and',
+      download: 'Download Offline Map',
+      guide: 'Access anytime to the Offline Map Page to\nmanage your saved areas from,\nProfile > Offline Map',
+    },
   },
   success: 'Success',
   failure: 'Failure',

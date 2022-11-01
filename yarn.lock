@@ -3065,10 +3065,9 @@
   resolved "https://registry.yarnpkg.com/@redux-saga/types/-/types-1.2.1.tgz#9403f51c17cae37edf870c6bc0c81c1ece5ccef8"
   integrity sha512-1dgmkh+3so0+LlBWRhGA33ua4MYr7tUOj+a9Si28vUi0IUFNbff1T3sgpeDJI/LaC75bBYnQ0A3wXjn0OrRNBA==
 
-"@rnmapbox/maps@^10.0.0-beta.54":
+"@rnmapbox/maps@rnmapbox/maps#main":
   version "10.0.0-beta.54"
-  resolved "https://registry.yarnpkg.com/@rnmapbox/maps/-/maps-10.0.0-beta.54.tgz#67eb89c1cd79907f7ec624dc7d2a245ef23bea36"
-  integrity sha512-OPNwClHtDUFMhj+d4cpXVl5hQ4WIKDAQjmX/0iHI2O4DUYxJLXqCAlN3tED7v5JO8XZsFTC8ZvdlamjaDaQTsw==
+  resolved "https://codeload.github.com/rnmapbox/maps/tar.gz/4a2b2a5bcb889837b35eeab88a73ca3b4285c639"
   dependencies:
     "@mapbox/geo-viewport" ">= 0.4.0"
     "@turf/along" "6.5.0"

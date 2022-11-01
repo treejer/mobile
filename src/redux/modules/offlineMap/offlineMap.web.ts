@@ -2,7 +2,7 @@ import {TStoreRedux} from 'ranger-redux/store';
 
 export function offlineMap() {
   return {
-    packs: null,
+    packs: [''],
     loading: false,
     downloadingPack: null,
   };

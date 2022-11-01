@@ -1,16 +1,6 @@
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  ListRenderItemInfo,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, Text, FlatList, ListRenderItemInfo, ImageBackground, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {Routes} from 'navigation/index';
@@ -67,19 +57,16 @@ const SavedAreas = ({navigation}) => {
       <ScreenTitle goBack title={t('offlineMap.savedAreas')} />
       <View style={styles.container}>
         <View style={styles.areaListContainer}>
-          {packs && packs?.length ? (
-            <FlatList<TOfflineMapPack>
-              data={packs}
-              renderItem={renderSavedAreaItem}
-              keyExtractor={(_, i) => i.toString()}
-            />
-          ) : packs && packs?.length === 0 ? (
-            <Text style={{alignSelf: 'center', textAlignVertical: 'center', margin: 20}}>
-              {t('offlineMap.noOfflineArea')}
-            </Text>
-          ) : (
-            <ActivityIndicator size="large" color={colors.green} />
-          )}
+          <FlatList<TOfflineMapPack>
+            data={packs}
+            renderItem={renderSavedAreaItem}
+            keyExtractor={(_, i) => i.toString()}
+            ListEmptyComponent={() => (
+              <Text style={{alignSelf: 'center', textAlignVertical: 'center', margin: 20}}>
+                {t('offlineMap.noOfflineArea')}
+              </Text>
+            )}
+          />
         </View>
         <Button
           style={{alignItems: 'center', justifyContent: 'center'}}
