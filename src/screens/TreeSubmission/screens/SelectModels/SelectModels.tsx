@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, RefreshControl, StyleSheet, View} from 'react-native';
+import {RefreshControl, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -82,16 +82,12 @@ export function SelectModels(props: SelectModelsProps) {
       setNewJourney(newJourney);
       navigation.navigate(Routes.SelectPhoto);
     },
-    [selectedModel],
+    [journey, navigation, selectedModel, setNewJourney],
   );
 
   const handleNavigateToCreateModel = useCallback(() => {
     navigation.navigate(Routes.CreateModel);
-  }, []);
-
-  if (showPermissionModal) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
-  }
+  }, [navigation]);
 
   const renderPlantModelItem = useCallback(
     ({item, index}: BigListRenderItemInfo<GetPlantingModelsQueryQueryPartialData.Models>) => {
@@ -100,13 +96,22 @@ export function SelectModels(props: SelectModelsProps) {
         <View
           style={[{justifyContent: 'center', alignItems: 'center', height: isWeb() ? 68 : 73}, globalStyles.screenView]}
         >
-          <PlantModelItem model={item} isSelected={isSelected} onSelect={() => setSelectedModel(item.id as string)} />
+          <PlantModelItem
+            model={item}
+            isSelected={isSelected}
+            onSelect={() => setSelectedModel(item.id as string)}
+            index={index}
+          />
           {plantModels && plantModels?.length - 1 !== index && <Hr styles={{marginTop: 8, width: 360}} />}
         </View>
       );
     },
     [selectedModel, plantModels],
   );
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>

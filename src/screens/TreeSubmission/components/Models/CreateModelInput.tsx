@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ActivityIndicator, StyleSheet, Text, TextInput, View} from 'react-native';
 import {Control, Controller} from 'react-hook-form';
 import Card from 'components/Card';
@@ -41,13 +41,21 @@ export function CreateModelInput(props: TCreateModelInputProps) {
     onCloseCountry,
   } = props;
 
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
+
   const {t} = useTranslation();
+
+  const handleCloseCountryPicker = () => {
+    setShowCountryPicker(false);
+    onCloseCountry?.();
+  };
 
   const renderInput = () => {
     if (name === 'country') {
       return (
         <View style={[styles.inputContainer, {paddingLeft: 0}]}>
           <Text
+            onPress={() => setShowCountryPicker(true)}
             style={[
               styles.input,
               disabled && styles.disableInput,
@@ -58,14 +66,16 @@ export function CreateModelInput(props: TCreateModelInputProps) {
           </Text>
           {availableCountries && availableCountries?.length > 0 ? (
             <CountryPicker
+              visible={showCountryPicker}
               countryCodes={availableCountries}
               countryCode={countryCode || 'US'}
               withFlag
               withAlphaFilter={!isWeb()}
               withFilter
               withEmoji
+              onOpen={() => setShowCountryPicker(true)}
               onSelect={onSelectCountry}
-              onClose={onCloseCountry}
+              onClose={handleCloseCountryPicker}
             />
           ) : (
             <>

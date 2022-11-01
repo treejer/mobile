@@ -1,15 +1,13 @@
 import React, {useMemo} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import moment from 'moment';
 
 import {colors} from 'constants/values';
-import {Hex2Dec} from 'utilities/helpers/hex';
 import {capitalize} from 'utilities/helpers/capitalize';
 import Spacer from 'components/Spacer';
 import {GetPlantingModelsQueryQueryPartialData} from 'screens/TreeSubmission/screens/SelectModels/graphql/getPlantingModelsQuery.graphql';
 import {useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {useCountries} from 'ranger-redux/modules/countris/countries';
-import {TreeImage} from '../../../assets/icons';
 
 export type TPlantModel = GetPlantingModelsQueryQueryPartialData.Models;
 
@@ -17,10 +15,11 @@ export type TPlantModelItemProps = {
   model: TPlantModel;
   isSelected: boolean;
   onSelect: () => void;
+  index: number;
 };
 
 export function PlantModelItem(props: TPlantModelItemProps) {
-  const {model, isSelected, onSelect} = props;
+  const {model, isSelected, index, onSelect} = props;
   const web3 = useWalletWeb3();
   const {countries} = useCountries();
 
@@ -39,7 +38,7 @@ export function PlantModelItem(props: TPlantModelItemProps) {
       style={[styles.row, styles.container, isSelected ? styles.selectedModel : styles.notSelectedModal]}
     >
       <View style={styles.idContainer}>
-        <Text style={styles.id}>{Hex2Dec(model.id as string)}</Text>
+        <Text style={styles.id}>{index + 1}</Text>
       </View>
       <Spacer />
       <View style={styles.details}>
