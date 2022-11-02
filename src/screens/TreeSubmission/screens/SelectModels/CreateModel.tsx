@@ -44,34 +44,37 @@ export function CreateModel(props: CreateModelProps) {
   const toast = useToast();
   const {t} = useTranslation();
 
-  const handleCreateModel = useCallback(async (data: TCreateModelForm) => {
-    try {
-      console.log(data, 'create model form data is here');
-      setLoading(true);
-      const args = [Number(data.countryNumCode), 0, web3.utils.toWei(data.price, 'ether'), data.count];
-      const receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.MarketPlace,
-        web3,
-        wallet,
-        'addModel',
-        args,
-        useGSN,
-      );
-      console.log(receipt.transactionHash, 'create modal transaction hash');
-      toast.show(t('createModel.success'), {
-        type: AlertMode.Success,
-      });
-      navigation.navigate(Routes.SelectModels);
-    } catch (e: any) {
-      console.log(e, 'error is here');
-      toast.show(t('createModel.failed'), {
-        type: AlertMode.Error,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const handleCreateModel = useCallback(
+    async (data: TCreateModelForm) => {
+      try {
+        console.log(data, 'create model form data is here');
+        setLoading(true);
+        const args = [Number(data.countryNumCode), 0, web3.utils.toWei(data.price, 'ether'), data.count];
+        const receipt = await sendTransactionWithGSN(
+          config,
+          ContractType.MarketPlace,
+          web3,
+          wallet,
+          'addModel',
+          args,
+          useGSN,
+        );
+        console.log(receipt.transactionHash, 'create modal transaction hash');
+        toast.show(t('createModel.success'), {
+          type: AlertMode.Success,
+        });
+        navigation.navigate(Routes.SelectModels);
+      } catch (e: any) {
+        console.log(e, 'error is here');
+        toast.show(t('createModel.failed'), {
+          type: AlertMode.Error,
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [config, navigation, t, toast, useGSN, wallet, web3],
+  );
 
   if (showPermissionModal) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;

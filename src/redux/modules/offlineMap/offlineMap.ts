@@ -137,7 +137,7 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
         yield put(updateAreaName(areaName));
 
         const progressListener = (offlineRegion: MapboxGL.OfflinePack, status: MapboxGL.OfflineProgressStatus) => {
-          console.log(JSON.stringify(offlineRegion), status, 'progressListener');
+          // console.log(JSON.stringify(offlineRegion), status, 'progressListener');
           if (status.percentage === 100) {
             store.dispatch(
               createOfflineMapPackSuccess({

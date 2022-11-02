@@ -146,8 +146,8 @@ export default function MapMarking(props: IMapMarkingProps) {
           journey.nurseryContinuedUpdatingLocation ||
           !checkExif(isMainnet, checkMetaData)
         ) {
-          navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
+          navigation.navigate(Routes.SubmitTree);
         } else {
           showAlert({
             title: t('map.newTree.errTitle'),

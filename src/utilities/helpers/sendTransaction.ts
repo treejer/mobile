@@ -23,6 +23,7 @@ export async function sendTransactionWithGSN(
     paymasterAddress: config.contracts.Paymaster.address,
     methodSuffix: '_v4',
     jsonStringifyRequest: true,
+    performDryRunViewRelayCall: false,
     preferredRelays: [config.preferredRelays],
     relayLookupWindowBlocks: Number(config.relayLookupWindowBlocks),
     relayRegistrationLookupBlocks: Number(config.relayRegistrationLookupBlocks),
@@ -47,6 +48,7 @@ export async function sendTransactionWithGSN(
   console.log('3 - Account linked to the relay provider', config.isMainnet);
 
   const gas = await web3.eth.estimateGas({from: wallet});
+
   console.log('Gas estimated', gas);
 
   const gasPrice = await web3.eth.getGasPrice();
@@ -59,8 +61,8 @@ export async function sendTransactionWithGSN(
   console.log(method, 'Method', args, 'args', wallet, 'address');
   return ethContract.methods[method](...args).send({
     from: wallet,
-    gas: 1e6,
-    gasPrice,
+    // gas: 1e6,
+    // gasPrice,
     useGSN,
   }) as TransactionReceipt;
 }

@@ -224,7 +224,7 @@ function SubmitTree(props: Props) {
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;
-  }, [journey.treeIdToPlant, config, web3, wallet, metaDataHash, birthDay, useGSN]);
+  }, [journey.treeIdToPlant, journey.plantingModel, config, web3, wallet, metaDataHash, birthDay, useGSN]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
