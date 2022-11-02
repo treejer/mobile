@@ -451,11 +451,12 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontWeight: '700',
-    fontSize: 20,
+    fontSize: 16,
     color: colors.grayDarker,
     marginBottom: 5,
   },
   statLabel: {
+    fontSize: 12,
     color: colors.grayLight,
     textAlign: 'center',
   },
