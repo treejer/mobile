@@ -36,7 +36,7 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
 
   useEffect(() => {
     (async function () {
-      console.log(query.data, 'data is here');
+      // console.log(query.data, 'data is here');
       if (query.data?.[dataKey] !== undefined) {
         if (keepData && page !== 0) {
           if (query.data?.[dataKey]?.length > 0) {

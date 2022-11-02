@@ -204,6 +204,8 @@ export function TransferScreen() {
     web3,
     wallet,
     useGSN,
+    getBalance,
+    getPlanter,
   ]);
 
   const handleRefetch = useCallback(
@@ -218,7 +220,7 @@ export function TransferScreen() {
           }
         })();
       }),
-    [getPlanter, getBalance, isConnected],
+    [isConnected, getBalance, getPlanter, refetchTxHistory],
   );
 
   const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
