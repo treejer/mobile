@@ -140,7 +140,6 @@ function NoWallet(props: NoWalletProps) {
       if (result) {
         storeMagicToken(result, {email});
         // await refetchUser();
-        console.log(result, 'result is here');
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -167,7 +166,6 @@ function NoWallet(props: NoWalletProps) {
           provider,
           redirectURI: oauthDeepLinkUrl(provider),
         });
-        console.log('result', result);
       } catch (e: any) {
         showAlert({
           title: t('createWallet.failed.title'),

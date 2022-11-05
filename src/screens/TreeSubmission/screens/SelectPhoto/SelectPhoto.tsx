@@ -178,7 +178,6 @@ function SelectPhoto(props: Props) {
   );
 
   const handleContinue = useCallback(() => {
-    console.log(journey, 'journey handleContinue');
     const distance = calcDistanceInMeters(
       {
         latitude: journey?.photoLocation?.latitude || 0,

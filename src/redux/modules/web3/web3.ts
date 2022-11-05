@@ -218,7 +218,6 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
     if (config.isMainnet) {
       yield put(changeCheckMetaData(true));
     }
-    console.log(isConnected, profile, 'isConnected, profile is hereeee');
     if (isConnected && profile) {
       yield put(getBalance());
     }

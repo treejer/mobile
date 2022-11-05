@@ -24,8 +24,6 @@ function UpdateModal() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const {t} = useTranslation();
 
-  console.log(data, 'data is here');
-
   useEffect(() => {
     if (data?.settings?.forceUpdate?.version) {
       setIsShow(checkVersion(data.settings.forceUpdate.version));

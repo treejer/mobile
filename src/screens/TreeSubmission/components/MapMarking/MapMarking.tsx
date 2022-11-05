@@ -111,9 +111,6 @@ export default function MapMarking(props: IMapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(async () => {
-    console.log('====================================');
-    console.log(journey, 'journey is here');
-    console.log('====================================');
     if (verifyProfile && location) {
       onSubmit?.(location);
     } else if (journey && journey?.photoLocation && location) {
@@ -156,7 +153,6 @@ export default function MapMarking(props: IMapMarkingProps) {
           });
         }
       } else {
-        console.log(newJourney, 'newJourney offline tree');
         if (newJourney.isSingle === true) {
           if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
             dispatchAddOfflineTree(newJourney);

@@ -31,7 +31,6 @@ export const useCheckTreePhoto = () => {
           return;
         }
         const {latitude, longitude, ...exif} = await exifr.parse(image64Base);
-        console.log({exif, latitude, longitude}, 'cordinates');
         if (latitude > 0 && longitude > 0) {
           if (userLocation) {
             const imageCoords: TPoint = {
@@ -40,7 +39,6 @@ export const useCheckTreePhoto = () => {
             };
             const distance = calcDistanceInMeters(imageCoords, userLocation);
             const distanceInKiloMeters = distance / 1000;
-            console.log({userLocation, imageCoords, distance});
             if (distanceInKiloMeters < maxDistanceInKiloMeters) {
               successCallback(imageCoords);
             } else {

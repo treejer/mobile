@@ -1,6 +1,6 @@
 import {TStoreRedux} from 'ranger-redux/store';
 
-export function offlineMap() {
+export function useOfflineMap() {
   return {
     packs: [''],
     loading: false,
@@ -9,5 +9,3 @@ export function offlineMap() {
 }
 
 export function* offlineMapSagas(store: TStoreRedux) {}
-
-export function useOfflineMap() {}

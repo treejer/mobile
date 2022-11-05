@@ -414,8 +414,6 @@ function Trees({navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
-      console.log(item, '<===');
-
       const isAssignedTree = item.treeIdToPlant;
       const id = isPlanted
         ? isAssignedTree
@@ -470,7 +468,6 @@ function Trees({navigation, filter}: Props) {
 
     const data = offlineTrees[prop];
 
-    // console.log(offlineTrees[prop], '<====');
     return (
       <View style={[globalStyles.fill]}>
         <Text style={styles.treeLabel}>{t('offlineTrees', {type: t(isPlanted ? 'Planted' : 'Updated')})}</Text>

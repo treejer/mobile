@@ -105,7 +105,6 @@ export function usePlantTreePermissions(
       try {
         await checkPermission();
         await watchUserLocation();
-        console.log('appState');
       } catch (e) {
         console.log(e, 'e inside useEffect AppState change usePlantTreePermissions');
       }
@@ -125,7 +124,6 @@ export function usePlantTreePermissions(
       Geolocation.watchPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          console.log({latitude, longitude}, 'watcher logger');
           setUserLocation({latitude, longitude});
           resolve(position.coords);
         },

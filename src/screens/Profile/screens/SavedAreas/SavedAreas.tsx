@@ -19,10 +19,6 @@ const SavedAreas = ({navigation}) => {
 
   const {t} = useTranslation();
 
-  useEffect(() => {
-    console.log(packs, 'packes');
-  }, [packs]);
-
   const handleDeleteArea = async name => {
     dispatchDeleteOfflineMap(name);
   };

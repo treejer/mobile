@@ -77,8 +77,6 @@ export namespace SubmitTreeData {
 export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
 
-  console.log(tree, 'updateTreeJSON tree');
-
   const birthDay = currentTimestamp();
 
   const updateSpec: SubmitTreeData.JSONDataUpdate = {
@@ -129,15 +127,11 @@ export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
       : [prevLocation];
   }
 
-  console.log(jsonData, 'updateTreeJSON jsonData');
-
   return jsonData;
 }
 
 export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
-
-  console.log(tree, 'assignedTreeJSON tree');
 
   const birthDay = currentTimestamp();
 
@@ -170,8 +164,6 @@ export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
     ...jsonData,
   };
 
-  console.log(jsonData, 'assignedTreeJSON jsonData');
-
   return jsonData;
 }
 
@@ -196,8 +188,6 @@ export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions)
   if (journey.isSingle === false) {
     jsonData.nursery = 'true';
   }
-
-  console.log(jsonData, 'newTreeJSON jsonData');
 
   return jsonData;
 }
@@ -362,13 +352,7 @@ export function useAfterSelectPhotoHandler() {
           setNewJourney(newJourney);
         }
       } else {
-        // console.log('mamamamamamd');
-
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
-
-        console.log(imageLocation, 'image location');
-
-        console.log(distance, 'distance is hereeee');
 
         if (isUpdate && isNursery && !canUpdate) {
           if (

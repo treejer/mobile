@@ -5,7 +5,6 @@ import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Octicons';
 import Web3 from 'web3';
-import BN from 'bn.js';
 
 import {ProfileRouteParamList} from 'types';
 import {isMatic} from 'services/Magic';
@@ -30,9 +29,6 @@ export default function SettingsScreen(props: SettingsScreenProps) {
   const {ether} = useContracts();
   const {locale, useGSN, checkMetaData, changeUseGSN, changeCheckMetaData} = useSettings();
   const {t} = useTranslation();
-
-  console.log(useGSN, 'useGsn');
-  console.log(checkMetaData, 'checkMetaData');
 
   const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
 

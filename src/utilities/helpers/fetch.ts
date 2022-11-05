@@ -58,7 +58,6 @@ export function* sagaFetch<Data, Form = any>(
   _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
 ) {
   const {accessToken, userId} = yield select((state: TReduxState) => state.web3);
-  console.log(accessToken, 'accessToken in fetch');
   const config: NetworkConfig = yield selectConfig();
   let {configUrl, ...options} = _options;
 
@@ -74,9 +73,6 @@ export function* sagaFetch<Data, Form = any>(
     };
   }
 
-  console.log('====================================');
-  console.log(options, 'options in saga fetch');
-  console.log('====================================');
   return yield fetch<Data, Form>(config[configUrl] + url, options);
 }
 
@@ -106,9 +102,6 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
   const {locale}: TReduxState['settings'] = yield selectSettings();
   const {message, status} = handleFetchError(e);
 
-  console.log('====================================');
-  console.log(status, 'statussssss');
-  console.log('====================================');
   if (status === 401 || status === 403) {
     // @logout
     yield put(profileActions.resetCache());

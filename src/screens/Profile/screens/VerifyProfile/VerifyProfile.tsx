@@ -17,7 +17,6 @@ import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Steps from 'components/Steps';
 import RadioButton from 'components/RadioButton/RadioButton';
-import {ChevronLeft} from 'components/Icons';
 import WebCam from 'components/WebCam/WebCam';
 import TextField, {PhoneField} from 'components/TextField';
 import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
@@ -146,9 +145,6 @@ function VerifyProfile(props: Props) {
     return 3;
   })();
 
-  console.log(updateMobileState.data, 'updateMobileState.data');
-  console.log(updateMobileState.error, 'updateMobileState.error');
-
   const submitPhoneNumber = phoneNumberForm.handleSubmit(async ({phoneNumber}) => {
     if (phoneRef.current?.isValidNumber(phoneNumber) === false) {
       phoneNumberForm.setError('phoneNumber', {
@@ -240,7 +236,6 @@ function VerifyProfile(props: Props) {
         longitude: journey?.location?.longitude,
         latitude: journey?.location?.latitude,
       };
-      console.log(input, 'input');
       await verifyProfile({
         variables: {
           input,
@@ -292,9 +287,7 @@ function VerifyProfile(props: Props) {
   };
 
   const handleSelectPhoto = useCallback(async () => {
-    console.log('called');
     const selectedPhoto = await openLibraryHook();
-    console.log(selectedPhoto, '<-====');
     if (selectedPhoto) {
       if (selectedPhoto?.path) {
         if (/file:\//.test(selectedPhoto.path)) {

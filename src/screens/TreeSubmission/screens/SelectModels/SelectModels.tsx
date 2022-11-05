@@ -63,7 +63,6 @@ export function SelectModels(props: SelectModelsProps) {
 
   const handleContinueToPlant = useCallback(
     (nurseryCount: string, single: boolean = false) => {
-      console.log('plant button');
       let newJourney: TreeJourney;
       if (single || Number(nurseryCount) <= 1) {
         newJourney = {

@@ -165,7 +165,6 @@ function SubmitTree(props: Props) {
   const handleSendUpdateTransaction = useCallback(
     async (treeId: number) => {
       console.log(metaDataHash, '====> metaDataHash <====');
-      console.log(treeId, '====> treeId <====');
 
       const receipt = await sendTransactionWithGSN(
         config,

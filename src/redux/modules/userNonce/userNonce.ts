@@ -34,9 +34,6 @@ export function* watchUserNonce(action: TUserNonceAction) {
       searchParams.set('country', loginData.country);
     }
     const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/user/nonce?${searchParams.toString()}`);
-    console.log('====================================');
-    console.log(res, 'result in user nonce');
-    console.log('====================================');
     yield put(UserNonce.actions.loadSuccess(res.result));
   } catch (e: any) {
     yield put(UserNonce.actions.loadFailure(e));

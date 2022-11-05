@@ -274,17 +274,20 @@ function MyProfile(props: MyProfileProps) {
                           variant="tertiary"
                           onPress={handleNavigateWithdraw}
                         />
-                        <Spacer times={4} />
+
                         {!isWeb() ? (
-                          <Button
-                            iconPlace="left"
-                            size="sm"
-                            style={styles.button}
-                            caption={t('offlineMap.title')}
-                            variant="tertiary"
-                            icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
-                            onPress={handleNavigateOfflineMap}
-                          />
+                          <>
+                            <Spacer times={4} />
+                            <Button
+                              iconPlace="left"
+                              size="sm"
+                              style={styles.button}
+                              caption={t('offlineMap.title')}
+                              variant="tertiary"
+                              icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
+                              onPress={handleNavigateOfflineMap}
+                            />
+                          </>
                         ) : (
                           <></>
                         )}

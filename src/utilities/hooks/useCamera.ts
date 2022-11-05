@@ -14,7 +14,6 @@ const useCamera = () => {
         cropping: true,
       });
 
-      console.log(photo, 'a<====');
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
@@ -30,7 +29,6 @@ const useCamera = () => {
         cropping: true,
         ...options,
       });
-      console.log(photo, 'photo');
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');

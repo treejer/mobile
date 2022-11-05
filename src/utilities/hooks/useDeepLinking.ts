@@ -9,7 +9,6 @@ export function useInitialDeepLinking() {
       try {
         // Get the deep link used to open the app
         const initialUrl = await Linking.getInitialURL();
-        console.log(initialUrl, 'initialUrl');
         if (initialUrl) {
           await updateStorage(initialUrl);
         }
@@ -29,7 +28,6 @@ export function useInitialDeepLinking() {
   }, []);
 
   const onReceiveURL = async ({url}) => {
-    console.log(url, '<==============');
     try {
       await updateStorage(url);
     } catch (e) {
@@ -83,7 +81,6 @@ export default function useDeepLinkingValue() {
   };
 
   const onReceiveURL = async ({url}) => {
-    console.log(url, 'url received');
     const {action, value} = convertUrlParams(url);
     if (action === 'referrer') {
       setReferrer(value);

@@ -162,7 +162,6 @@ export function TransferScreen() {
           getBalance();
           await getPlanter();
 
-          console.log('transaction', transaction);
           showAlert({
             title: t('success'),
             message: t('myProfile.withdraw.success'),

@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo, useReducer} from 'react';
+import React, {useCallback, useContext, useMemo, useReducer} from 'react';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 
 export const SET_NEW_JOURNEY = 'SET_NEW_JOURNEY';
@@ -55,12 +55,6 @@ interface currentJourneyProps {
 export default function CurrentJourneyProvider(props: currentJourneyProps) {
   const {children} = props;
   const [journey, dispatch] = useReducer(reducer, initialValue);
-
-  useEffect(() => {
-    console.log('====================================');
-    console.log(journey, '<==== journey is here');
-    console.log('====================================');
-  }, [journey]);
 
   const handleSetNewJourney = useCallback((newJourney: TreeJourney) => {
     dispatch({type: SET_NEW_JOURNEY, payload: newJourney});

@@ -275,7 +275,7 @@ export const networks: Networks = {
   },
 };
 
-export const debugFetch = true;
+export const debugFetch = false;
 export const reduxLogger = false;
 
 export const supportLinks = {
