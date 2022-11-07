@@ -1,12 +1,12 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
 
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useAppState} from 'utilities/hooks/useAppState';
-import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
-import {useBrowserName} from 'utilities/hooks/useBrowserName';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {BrowserName, useBrowserName} from 'utilities/hooks/useBrowserName';
+import {BrowserPlatform, useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {TUsePlantTreePermissions, TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 
 export const getCurrentPositionAsyncWeb = (t: TFunction<'translation', undefined>) => {
   return new Promise<GeolocationPosition['coords']>((resolve, reject) => {
@@ -91,7 +91,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   });
 
   const checkCameraPermission = useCallback(() => {
-    if (browserPlatform !== 'iOS') {
+    if (browserPlatform !== BrowserPlatform.iOS) {
       // @ts-ignore
       navigator.permissions.query({name: 'camera'}).then(({state}) => {
         setCameraPermission(state === 'granted' ? state : 'blocked');
@@ -140,7 +140,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
       showAlert({
         title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
         message: error.code
-          ? browserName === 'Safari'
+          ? browserName === BrowserName.Safari
             ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
             : t(`checkPermission.error.${error.code}`, {message: error.message})
           : t('checkPermission.error.unknownError'),
@@ -160,7 +160,10 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
   }, [watchCurrentPositionAsyncWeb]);
 
   const checkPermission = useCallback(async () => {
-    if (browserPlatform === 'iOS' || (browserName === 'Firefox' && browserPlatform === 'Android')) {
+    if (
+      browserPlatform === BrowserPlatform.iOS ||
+      (browserName === BrowserName.Firefox && browserPlatform === BrowserPlatform.Android)
+    ) {
       getCurrentPositionAsyncWeb(t)
         .then(({latitude, longitude}) => {
           setUserLocation({
@@ -242,7 +245,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
           }
         })
         .catch(error => {
-          if (browserPlatform && browserPlatform !== 'iOS') {
+          if (browserPlatform && browserPlatform !== BrowserPlatform.iOS) {
             showAlert({
               title: t('checkPermission.error.deviceNotFound'),
               message: t('checkPermission.error.deviceNotFound', {message: String(error)}),
@@ -262,7 +265,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         if (isGranted) {
           return;
         }
-        if (browserPlatform !== 'iOS') {
+        if (browserPlatform !== BrowserPlatform.iOS) {
           const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
           if (state === 'granted') {
             const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
@@ -279,7 +282,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
             });
           }
         } else {
-          if (browserName !== 'Chrome') {
+          if (browserName !== BrowserName.Chrome) {
             const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
             setLocationPermission('granted');
             setUserLocation({
@@ -299,7 +302,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         showAlert({
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
-            ? browserName === 'Safari'
+            ? browserName === BrowserName.Safari
               ? t('checkPermission.error.turnOnGPS', {message: error.message})
               : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
@@ -321,13 +324,13 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         return;
       }
       try {
-        if (browserPlatform !== 'iOS') {
+        if (browserPlatform !== BrowserPlatform.iOS) {
           const state = (await navigator?.permissions?.query({name: 'geolocation'})).state;
           if (state !== 'granted') {
             throw {code: 1, message: 'geolocation denied'};
           }
         }
-        if (browserName !== 'Chrome') {
+        if (browserName !== BrowserName.Chrome) {
           await checkUserLocation();
         } else {
           showAlert({
@@ -341,7 +344,7 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
         showAlert({
           title: error.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
           message: error.code
-            ? browserName === 'Safari'
+            ? browserName === BrowserName.Safari
               ? t(`checkPermission.error.GPS.${error.code}`, {message: error.message})
               : t(`checkPermission.error.${error.code}`, {message: error.message})
             : t('checkPermission.error.unknownError'),
@@ -397,6 +400,6 @@ export function usePlantTreePermissions(): TUsePlantTreePermissions {
     cantProceed,
     requested,
     isGranted,
-    showPermissionModal: (!isGranted || isChecking) && browserPlatform !== 'iOS',
+    showPermissionModal: (!isGranted || isChecking) && browserPlatform !== BrowserPlatform.iOS,
   };
 }
