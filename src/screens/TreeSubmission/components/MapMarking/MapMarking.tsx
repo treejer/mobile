@@ -238,6 +238,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     location,
     onSubmit,
     isConnected,
+    dispatchCreateSubmittingOfflineMap,
     isMainnet,
     checkMetaData,
     navigation,
