@@ -1,23 +1,30 @@
 import {useEffect, useState} from 'react';
 
-export type TBrowseName = 'Opera' | 'Chrome' | 'Safari' | 'Firefox' | 'IE' | 'Unknown';
+export enum BrowserName {
+  Opera = 'Opera',
+  Chrome = 'Chrome',
+  Safari = 'Safari',
+  Firefox = 'Firefox',
+  IE = 'IE',
+  Unknown = 'Unknown',
+}
 
 export function useBrowserName() {
-  const [browserName, setBrowserName] = useState<TBrowseName | null>(null);
+  const [browserName, setBrowserName] = useState<BrowserName | null>(null);
 
   useEffect(() => {
     if (/Opera|OPR/.test(window.navigator.userAgent)) {
-      setBrowserName('Opera');
+      setBrowserName(BrowserName.Opera);
     } else if (/Chrome/.test(window.navigator.userAgent)) {
-      setBrowserName('Chrome');
+      setBrowserName(BrowserName.Chrome);
     } else if (/Safari/.test(window.navigator.userAgent)) {
-      setBrowserName('Safari');
+      setBrowserName(BrowserName.Safari);
     } else if (/Firefox/.test(window.navigator.userAgent)) {
-      setBrowserName('Firefox');
+      setBrowserName(BrowserName.Firefox);
     } else if (/IE|MSIE/.test(window.navigator.userAgent)) {
-      setBrowserName('IE');
+      setBrowserName(BrowserName.IE);
     } else {
-      setBrowserName('Unknown');
+      setBrowserName(BrowserName.Unknown);
     }
   }, []);
 

@@ -224,14 +224,6 @@ export function TransferScreen() {
 
   const loading = useMemo(() => contractsLoading || refetching, [refetching, contractsLoading]);
 
-  useEffect(() => {
-    console.log({
-      contractsLoading,
-      refetching,
-      loading,
-    });
-  }, [refetching, contractsLoading, loading]);
-
   const daiBalance = useMemo(() => Number(web3.utils.fromWei(dai as string)), [dai, web3]);
 
   return (

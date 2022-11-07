@@ -203,14 +203,12 @@ export function MoreDetail(props: TMoreDetailProps) {
 
   const {explorerUrl} = useConfig();
 
-  console.log(explorerUrl, 'explorer ');
-
   const handleCopy = useCallback(() => {
     if (txHash) {
       Clipboard.setString(txHash);
     }
-    toast.show(t('myProfile.copied'), {type: AlertMode.Success});
-  }, [txHash]);
+    toast.show('myProfile.copied', {type: AlertMode.Success, translate: true});
+  }, [toast, txHash]);
 
   const handleOpenInBrowser = useCallback(async () => {
     if (isWeb()) {
@@ -248,7 +246,7 @@ export function MoreDetail(props: TMoreDetailProps) {
         },
       });
     }
-  }, []);
+  }, [explorerUrl, txHash]);
 
   return (
     <View style={styles.moreContainer}>

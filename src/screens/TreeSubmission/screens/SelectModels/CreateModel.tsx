@@ -60,20 +60,22 @@ export function CreateModel(props: CreateModelProps) {
           useGSN,
         );
         console.log(receipt.transactionHash, 'create modal transaction hash');
-        toast.show(t('createModel.success'), {
+        toast.show('createModel.success', {
           type: AlertMode.Success,
+          translate: true,
         });
         navigation.navigate(Routes.SelectModels);
       } catch (e: any) {
         console.log(e, 'error is here');
-        toast.show(t('createModel.failed'), {
+        toast.show('createModel.failed', {
           type: AlertMode.Error,
+          translate: true,
         });
       } finally {
         setLoading(false);
       }
     },
-    [config, navigation, t, toast, useGSN, wallet, web3],
+    [config, navigation, toast, useGSN, wallet, web3],
   );
 
   if (showPermissionModal) {

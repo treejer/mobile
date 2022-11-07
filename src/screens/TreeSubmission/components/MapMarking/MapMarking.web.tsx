@@ -1,20 +1,24 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useState} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
-import {Check, Times} from 'components/Icons';
+import {StyleSheet, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
+
+import {Routes} from 'navigation/index';
+import {colors} from 'constants/values';
+import {maxDistanceInMeters} from 'services/config';
+import {useCurrentJourney} from 'services/currentJourney';
 import Map from './Map';
 import Button from 'components/Button';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {colors} from 'constants/values';
-import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
-import {useTranslation} from 'react-i18next';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {Routes} from 'navigation/index';
-import {useCurrentJourney} from 'services/currentJourney';
-import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
-import {maxDistanceInMeters} from 'services/config';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {Check, Times} from 'components/Icons';
 import {isWeb} from 'utilities/helpers/web';
+import {checkExif} from 'utilities/helpers/checkExif';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {BrowserPlatform, useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 export type locationType = {
   lng: number;
@@ -39,6 +43,9 @@ export default function MapMarking(props: MapMarkingProps) {
   // const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const isConnected = useNetInfoConnected();
   const browserPlatform = useBrowserPlatform();
+
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   const handleDismiss = useCallback(() => {
     navigation.goBack();
@@ -71,7 +78,11 @@ export default function MapMarking(props: MapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS')) {
+        if (
+          distance < maxDistanceInMeters ||
+          (isWeb() && browserPlatform === BrowserPlatform.iOS) ||
+          !checkExif(isMainnet, checkMetaData)
+        ) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {
@@ -101,8 +112,20 @@ export default function MapMarking(props: MapMarkingProps) {
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, journey, location, navigation]);
+  }, [
+    accuracyInMeters,
+    browserPlatform,
+    checkMetaData,
+    isConnected,
+    isMainnet,
+    journey,
+    location,
+    navigation,
+    onSubmit,
+    setNewJourney,
+    t,
+    verifyProfile,
+  ]);
 
   return (
     <View style={styles.container}>

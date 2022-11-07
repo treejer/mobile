@@ -53,7 +53,8 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
         }
       }
     })();
-  }, [query.data?.[dataKey]]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataKey, query.data]);
 
   const refetchData = useCallback(
     async (newVariables?: TVariables) => {
@@ -69,7 +70,6 @@ export function usePagination<TQueryData, TVariables, TPersistedData>(
   const refetching = query.networkStatus === NetworkStatus.refetch;
 
   const loadMore = useCallback(async () => {
-    console.log(page, 'page');
     const newPage = page + 1;
     try {
       await query.fetchMore({

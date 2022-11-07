@@ -3,20 +3,15 @@ import BN from 'bn.js';
 import Web3 from 'web3';
 import {Contract} from 'web3-eth-contract';
 import {put, takeEvery} from 'redux-saga/effects';
-import {useToast} from 'react-native-toast-notifications';
-import {ToastOptions} from 'react-native-toast-notifications/lib/typescript/toast';
 
 import {NetworkConfig} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {web3Error} from 'utilities/helpers/web3Error';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
-import {i18next} from '../../../localization';
 import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
+import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
 
 export type TContract = string | number | null;
-
-export type TShow = (message: string | JSX.Element, toastOptions?: ToastOptions | undefined) => string;
 
 export type TContracts = {
   dai: string | BN;
@@ -28,19 +23,14 @@ export type TContracts = {
 
 type TAction = {
   type: string;
-  getBalance?: {
-    show?: TShow;
-  };
   setBalance: {
     dai?: string | BN;
     ether?: string | BN;
-    show?: TShow;
   };
   transaction: {
     form: TTransferFormData;
-    show: TShow;
   };
-  fee: {fee: string | number; show?: TShow};
+  fee: {fee: string | number};
 };
 
 const initialState: TContracts = {
@@ -57,8 +47,8 @@ export function getBalanceFailed() {
 }
 
 export const GET_BALANCE = 'GET_BALANCE';
-export function getBalance(payload?: TAction['getBalance']) {
-  return {type: GET_BALANCE, getBalance: payload};
+export function getBalance() {
+  return {type: GET_BALANCE};
 }
 
 export const SET_BALANCE = 'SET_BALANCE';
@@ -147,8 +137,7 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
   }
 }
 
-export function* watchContracts({getBalance}: TAction) {
-  const show = getBalance?.show;
+export function* watchContracts() {
   try {
     const config: NetworkConfig = yield selectConfig();
     const wallet: string = yield selectWallet();
@@ -167,8 +156,9 @@ export function* watchContracts({getBalance}: TAction) {
 
     yield put(setBalance(contracts));
   } catch (e: any) {
-    toast?.show?.(i18next.t('transfer.error.contractsFailed'), {
+    toast?.show?.('transfer.error.contractsFailed', {
       type: AlertMode.Error,
+      translate: true,
     });
     yield put(getBalanceFailed());
     console.log(e, 'error is here');
@@ -188,7 +178,7 @@ export function asyncTransferDai(daiContract: Contract, from: string, to: string
 }
 
 export function* watchTransaction({transaction}: TAction) {
-  const {show, form} = transaction;
+  const {form} = transaction;
   try {
     const {amount, from, to} = form;
 
@@ -204,7 +194,7 @@ export function* watchTransaction({transaction}: TAction) {
     yield put(cancelTransaction());
     yield put(getBalance());
 
-    toast.show(i18next.t('transfer.success.title'), {type: AlertMode.Success});
+    toast.show('transfer.success.title', {type: AlertMode.Success, translate: true});
   } catch (e: any) {
     yield put(cancelTransaction());
     yield put(getBalance());
@@ -215,7 +205,7 @@ export function* watchTransaction({transaction}: TAction) {
 }
 
 export function* watchEstimateGasPrice({transaction}: TAction) {
-  const {show, form} = transaction;
+  const {form} = transaction;
   try {
     const {amount, from, to} = form;
 
@@ -234,11 +224,11 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
       yield put(transactionFee({fee}));
     } else {
       yield put(cancelTransaction());
-      toast.show?.(i18next.t('transfer.error.fee'), {type: AlertMode.Error});
+      toast.show?.('transfer.error.fee', {type: AlertMode.Error, translate: true});
     }
   } catch (e: any) {
     console.log(e.message);
-    toast.show?.(i18next.t(`transfer.error.${web3Error(e).code}`), {type: AlertMode.Error});
+    toast.show?.(`transfer.error.${web3Error(e).code}`, {type: AlertMode.Error, translate: true});
     yield put(cancelTransaction());
   }
 }
@@ -252,22 +242,21 @@ export function* contractsSagas() {
 export function useContracts() {
   const contracts = useAppSelector(state => state.contracts);
   const dispatch = useAppDispatch();
-  const {show} = useToast();
 
   const dispatchContracts = useCallback(() => {
-    dispatch(getBalance({show}));
+    dispatch(getBalance());
   }, [dispatch]);
 
   const dispatchTransaction = useCallback(
     (data: TTransferFormData) => {
-      dispatch(submitTransaction({form: data, show}));
+      dispatch(submitTransaction({form: data}));
     },
     [dispatch],
   );
 
   const dispatchEstimateGasPrice = useCallback(
     (data: TTransferFormData) => {
-      dispatch(estimateGasPrice({form: data, show}));
+      dispatch(estimateGasPrice({form: data}));
     },
     [dispatch],
   );

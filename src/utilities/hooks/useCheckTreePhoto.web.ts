@@ -4,13 +4,12 @@ import exifr from 'exifr';
 
 import {maxDistanceInKiloMeters} from 'services/config';
 import {checkExif} from 'utilities/helpers/checkExif';
-import {TPoint} from 'utilities/helpers/distanceInMeters';
-import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
-import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
+import {BrowserPlatform, useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {TUserLocation} from './usePlantTreePermissions';
-import {useConfig} from '../../redux/modules/web3/web3';
-import {useSettings} from '../../redux/modules/settings/settings';
 
 export const useCheckTreePhoto = () => {
   const {t} = useTranslation();
@@ -26,7 +25,7 @@ export const useCheckTreePhoto = () => {
       imageLocation: TUserLocation,
     ) => {
       try {
-        if (browserPlatform === 'iOS' || !checkExif(isMainnet, checkMetaData)) {
+        if (browserPlatform === BrowserPlatform.iOS || !checkExif(isMainnet, checkMetaData)) {
           successCallback({latitude: 0, longitude: 0});
           return;
         }
