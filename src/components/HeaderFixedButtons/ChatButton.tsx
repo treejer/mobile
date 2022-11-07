@@ -1,16 +1,18 @@
 import React, {useEffect} from 'react';
-import {chatItem} from 'screens/Profile/components/supportList';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {colors} from 'constants/values';
-import {isWeb} from 'utilities/helpers/web';
 import {useToast} from 'react-native-toast-notifications';
-import {useTranslation} from 'react-i18next';
+
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import Spacer from 'components/Spacer';
 import {ScreenTitleWithoutNavigation} from 'components/ScreenTitle/ScreenTitleWithoutNavigation';
+import {chatItem} from 'screens/Profile/components/supportList';
+import {isWeb} from 'utilities/helpers/web';
+import {AlertMode} from 'utilities/helpers/alert';
 import {useInAppBrowser} from 'utilities/hooks/useInAppBrowser';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import Spacer from 'components/Spacer';
-import globalStyles from 'constants/styles';
 
 export function ChatButton() {
   const {showSupportChat, setShowSupportChat} = useSettings();
@@ -33,7 +35,7 @@ export function ChatButton() {
         await handleOpenLink(chatItem);
       }
     } catch (e: any) {
-      toast.show(e.message, {type: 'danger'});
+      toast.show(e.message, {type: AlertMode.Error});
     }
   };
 

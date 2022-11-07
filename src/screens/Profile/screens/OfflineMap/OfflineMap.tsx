@@ -89,7 +89,7 @@ export function OfflineMapScreen(props: TestOfflineMapProps) {
           name: offlineMapName(),
         });
       } else {
-        toast?.show('offlineMap.sthWrongWithLocation', {type: AlertMode.Error});
+        toast?.show('offlineMap.sthWrongWithLocation', {type: AlertMode.Error, translate: true});
       }
     } catch (e: any) {
       if (e.message) {

@@ -34,7 +34,7 @@ export function FilterList(props: TActivityFilterProps) {
       if (isConnected) {
         onFilterOption(category);
       } else {
-        toast.show('netInfo.filter', {type: AlertMode.Info});
+        toast.show('netInfo.filter', {type: AlertMode.Info, translate: true});
       }
     },
     [isConnected, onFilterOption, toast],
