@@ -263,11 +263,9 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
       const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
 
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
-      console.log(signature, 'signature in web3');
 
       yield put(userSignActions.load({wallet, signature}));
       const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
-      console.log(credentials, 'credentials in web3');
 
       yield put(
         updateMagicToken({

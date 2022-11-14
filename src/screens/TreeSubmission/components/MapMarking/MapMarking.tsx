@@ -13,6 +13,7 @@ import {colors} from 'constants/values';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {TZoomType, ZoomBox} from 'components/Map/ZoomBox';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -60,6 +61,17 @@ export default function MapMarking(props: IMapMarkingProps) {
       setIsCameraRefVisible(true);
     }
   }, [camera, isCameraRefVisible]);
+
+  const handleZoom = useCallback(
+    async (zoomType: TZoomType = TZoomType.In) => {
+      const zoomLevel = await map?.current?.getZoom();
+      if (zoomLevel) {
+        const zoomTo = +zoomLevel + (zoomType === TZoomType.In ? 0.5 : -0.5);
+        camera?.current?.zoomTo(zoomTo);
+      }
+    },
+    [map, camera],
+  );
 
   // recenter the marker to the current coordinates
   const onPressMyLocationIcon = useCallback(
@@ -395,15 +407,20 @@ export default function MapMarking(props: IMapMarkingProps) {
           ) : null}
           {hasLocation ? <Button caption="" icon={Check} variant="success" round onPress={handleSubmit} /> : null}
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            initialMapCamera();
-          }}
-          style={[styles.myLocationIcon]}
-          accessible
-        >
-          <Icon name="my-location" size={24} />
-        </TouchableOpacity>
+        {hasLocation ? (
+          <>
+            <TouchableOpacity
+              onPress={() => {
+                initialMapCamera();
+              }}
+              style={styles.myLocationIcon}
+              accessible
+            >
+              <Icon name="my-location" size={24} />
+            </TouchableOpacity>
+            <ZoomBox onZoom={handleZoom} />
+          </>
+        ) : null}
       </View>
     </View>
   );
