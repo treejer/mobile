@@ -22,6 +22,7 @@ import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {BrowserPlatform, useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {SearchBox} from 'components/Map/SearchBox';
 
 export type locationType = {
   lng: number;
@@ -166,6 +167,7 @@ export default function MapMarking(props: MapMarkingProps) {
     <View style={styles.container}>
       <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} map={map} />
 
+      <SearchBox />
       <View style={[styles.bottom, {width: '100%'}]}>
         {location && (
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

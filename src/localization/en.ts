@@ -512,6 +512,7 @@ export const en = {
     empty: 'Empty',
   },
   mapMarking: {
+    searchPlaceholder: 'Search here (Place, Location, ...)',
     lat: 'lat: {{lat}}',
     long: 'long: {{long}}',
     acc: 'accuracy: {{acc}}',

@@ -1,5 +1,6 @@
 import React, {forwardRef, LegacyRef} from 'react';
 import MapboxGL, {MapViewProps} from '@rnmapbox/maps';
+
 import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
 
 export interface MapProps extends MapViewProps {

@@ -27,6 +27,7 @@ import {checkExif} from 'utilities/helpers/checkExif';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import {SearchBox} from 'components/Map/SearchBox';
 
 interface IMapMarkingProps {
   userLocation?: TUserLocation | null;
@@ -396,6 +397,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     <View style={styles.container}>
       <Map map={map} camera={camera} setLocation={setLocation} />
 
+      <SearchBox />
       <View style={[styles.bottom, {width: '100%'}]}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           {hasLocation ? <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} /> : null}
