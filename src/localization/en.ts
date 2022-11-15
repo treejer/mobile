@@ -511,4 +511,10 @@ export const en = {
     TransferIn: 'Received',
     empty: 'Empty',
   },
+  mapMarking: {
+    lat: 'lat: {{lat}}',
+    long: 'long: {{long}}',
+    acc: 'accuracy: {{acc}}',
+    NA: 'N/A',
+  },
 };

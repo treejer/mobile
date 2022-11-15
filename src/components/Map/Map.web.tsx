@@ -37,6 +37,8 @@ const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: an
       zoom,
     });
 
+    // * mapbox-gl locate to user location control and user heading
+
     const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true,
@@ -44,8 +46,10 @@ const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: an
       trackUserLocation: true,
       showUserHeading: true,
     });
-
     mapRef.current.addControl(geolocate);
+
+    // * mapbox-gl locate to user location control and user heading
+
     mapRef.current.on('load', () => {
       geolocate.trigger();
       const center = mapRef.current.getCenter();

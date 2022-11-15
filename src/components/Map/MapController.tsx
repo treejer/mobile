@@ -1,23 +1,24 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {colors} from 'constants/values';
-import Spacer from 'components/Spacer';
 import {isWeb} from 'utilities/helpers/web';
+import {Hr} from 'components/Common/Hr';
 
 export enum TZoomType {
   In = 'In',
   Out = 'Out',
 }
 
-export type TZoomBoxProps = {
+export type TMapControllerProps = {
   onZoom: (zoomType: TZoomType) => void;
+  onLocate: () => void;
   disabled?: boolean;
 };
 
-export function ZoomBox(props: TZoomBoxProps) {
-  const {onZoom, disabled} = props;
+export function MapController(props: TMapControllerProps) {
+  const {onZoom, onLocate, disabled} = props;
 
   const [isHeld, setIsHeld] = useState<boolean>(false);
   const [zoomType, setZoomType] = useState<TZoomType | null>(null);
@@ -60,9 +61,13 @@ export function ZoomBox(props: TZoomBoxProps) {
         accessible
         disabled={disabled}
       >
-        <Icon name="add" size={24} />
+        <Icon style={styles.controller} name="plus" size={24} />
       </TouchableOpacity>
-      <Spacer />
+      <Hr styles={styles.hr} />
+      <TouchableOpacity onPress={onLocate} style={styles.btn} accessible>
+        <Icon style={styles.myLocation} name="location-arrow" size={24} />
+      </TouchableOpacity>
+      <Hr styles={styles.hr} />
       <TouchableOpacity
         onPress={() => onZoom(TZoomType.Out)}
         onLongPress={() => handleLongPress(TZoomType.Out)}
@@ -71,7 +76,7 @@ export function ZoomBox(props: TZoomBoxProps) {
         accessible
         disabled={disabled}
       >
-        <Icon name="remove" size={24} />
+        <Icon style={styles.controller} name="minus" size={24} />
       </TouchableOpacity>
     </View>
   );
@@ -79,20 +84,31 @@ export function ZoomBox(props: TZoomBoxProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    width: 54,
+    height: 124,
     position: 'absolute',
     bottom: isWeb() ? 95 : 120,
-    paddingHorizontal: isWeb() ? 0 : 20,
+    right: isWeb() ? 4 : 25,
+    backgroundColor: colors.khaki,
+    borderRadius: 6,
+    ...colors.smShadow,
   },
   btn: {
-    width: 45,
-    height: 45,
-    backgroundColor: colors.khaki,
-    borderRadius: 100,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: colors.gray,
+  },
+  hr: {
+    backgroundColor: colors.khakiDark,
+    width: '100%',
+  },
+  myLocation: {
+    fontWeight: '700',
+    color: colors.grayDarker,
+  },
+  controller: {
+    fontWeight: '700',
+    color: colors.grayOpacity,
   },
 });

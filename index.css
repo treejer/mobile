@@ -45,6 +45,7 @@ body {
   bottom: 10vh !important;
   width: 100px !important;
   height: 100px !important;
+  display: none;
 }
 
 @media all and (max-height: 677px) {
