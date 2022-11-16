@@ -104,15 +104,16 @@ export function SearchBox(props: TSearchBoxProps) {
     [handleBlur, handleFocus, isFocus],
   );
 
+  const placesHeight = Dimensions.get('screen').height - 270;
+
   const showPlaces = useMemo(() => {
     return ((!!places && places?.length > 0) || (!!recentPlaces && recentPlaces?.length > 0)) && isFocus;
   }, [isFocus, places, recentPlaces]);
 
-  const placesHeight = Dimensions.get('screen').height - 270;
-
-  console.log({loading, places, search});
-
-  const isEmptyResult = !loading && !places?.length && !!debouncedSearch && !!search;
+  const isEmptyResult = useMemo(
+    () => !loading && !places?.length && !!debouncedSearch && !!search,
+    [debouncedSearch, loading, places?.length, search],
+  );
 
   return (
     <SearchWrapper {...searchWrapperProps}>
