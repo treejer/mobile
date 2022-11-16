@@ -12,10 +12,10 @@ const options = {
   maximumAge: 0,
 };
 
-const RTLAPI = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
+const RTL_API = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
 
 mapboxgl.accessToken = mapboxPublicToken;
-mapboxgl.setRTLTextPlugin(RTLAPI, null, true);
+mapboxgl.setRTLTextPlugin(RTL_API, null, true);
 
 interface MapProps {
   setLocation?: React.Dispatch<React.SetStateAction<locationType>>;

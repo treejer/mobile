@@ -65,15 +65,28 @@ export default function MapMarking(props: MapMarkingProps) {
     [map],
   );
 
-  const handleLocate = useCallback(() => {
+  const handleLocateToUserLocation = useCallback(() => {
     if (userLocation?.latitude && userLocation?.longitude) {
       map.current.flyTo({
         // * 1: longitude, 2: latitude
         center: [userLocation?.longitude, userLocation?.latitude],
         zoom: 16,
+        duration: 2000,
       });
     }
   }, [map, userLocation]);
+
+  const handleLocate = useCallback(
+    (coordinates: number[]) => {
+      map.current.flyTo({
+        // * 1: longitude, 2: latitude
+        center: coordinates,
+        zoom: 12,
+        duration: 1000,
+      });
+    },
+    [map],
+  );
 
   const handleDismiss = useCallback(() => {
     navigation.goBack();
@@ -167,14 +180,14 @@ export default function MapMarking(props: MapMarkingProps) {
     <View style={styles.container}>
       <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} map={map} />
 
-      <SearchBox />
+      <SearchBox onLocate={handleLocate} />
       <View style={[styles.bottom, {width: '100%'}]}>
         {location && (
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} />
             <MapDetail location={locationDetail} accuracyInMeters={accuracyInMeters} />
             <Button caption="" icon={Check} variant="success" round onPress={handleSubmit} />
-            <MapController onZoom={handleZoom} onLocate={handleLocate} />
+            <MapController onZoom={handleZoom} onLocate={handleLocateToUserLocation} />
           </View>
         )}
       </View>

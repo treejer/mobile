@@ -381,6 +381,17 @@ export default function MapMarking(props: IMapMarkingProps) {
       });
   };
 
+  const handleLocate = useCallback(
+    (coordinates: number[]) => {
+      camera?.current?.setCamera({
+        centerCoordinate: coordinates,
+        zoomLevel: 15,
+        animationDuration: 1000,
+      });
+    },
+    [camera],
+  );
+
   const hasLocation = useMemo(
     () => location?.coords?.latitude && location?.coords?.longitude && accuracyInMeters && !loading,
     [accuracyInMeters, loading, location?.coords?.latitude, location?.coords?.longitude],
@@ -397,7 +408,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     <View style={styles.container}>
       <Map map={map} camera={camera} setLocation={setLocation} />
 
-      <SearchBox />
+      <SearchBox onLocate={handleLocate} />
       <View style={[styles.bottom, {width: '100%'}]}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           {hasLocation ? <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} /> : null}

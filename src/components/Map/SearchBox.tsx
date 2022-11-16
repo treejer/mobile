@@ -1,21 +1,54 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Dimensions, Modal, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
+import {mapboxPublicToken} from 'services/config';
 import {colors} from 'constants/values';
+import {useDebounce} from 'utilities/hooks/useDebounce';
 import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
+import {TPlace} from 'components/Map/types';
+import {PlacesList} from 'components/Map/PlacesList';
 
-export function SearchBox() {
+export type TSearchBoxProps = {
+  onLocate: (coordinates: number[]) => void;
+};
+
+export function SearchBox(props: TSearchBoxProps) {
+  const {onLocate} = props;
+
   const [isFocus, setIsFocus] = useState<boolean>(false);
-  const [hasResult, setHasResult] = useState('');
+  const [places, setPlaces] = useState<TPlace[] | null>(null);
+  const [search, setSearch] = useState('');
+
+  const debouncedSearch = useDebounce(search);
 
   const searchRef = useRef<TextInput>(null);
 
-  const resultHeight = Dimensions.get('screen').height - 270;
-
   const {t} = useTranslation();
+
+  const handleFetchPlaces = useCallback(async (place: string) => {
+    try {
+      const {data} = await axios.get(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?proximity=ip&access_token=${mapboxPublicToken}`,
+      );
+      setPlaces(data.features);
+    } catch (e: any) {
+      console.log(e, 'error here');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      (async () => {
+        await handleFetchPlaces(debouncedSearch);
+      })();
+    } else {
+      setPlaces(null);
+    }
+  }, [handleFetchPlaces, debouncedSearch]);
 
   const handleBlur = useCallback(() => {
     setIsFocus(false);
@@ -31,8 +64,16 @@ export function SearchBox() {
 
   const handleClose = useCallback(() => {
     handleBlur();
-    setHasResult('');
+    setPlaces(null);
   }, [handleBlur]);
+
+  const handleSelectPlace = useCallback(
+    (coordinates: number[]) => {
+      setIsFocus(false);
+      onLocate(coordinates);
+    },
+    [onLocate],
+  );
 
   const SearchWrapper = isFocus ? Modal : React.Fragment;
   const searchWrapperProps = isFocus
@@ -43,6 +84,8 @@ export function SearchBox() {
         animated: true,
       }
     : {};
+
+  const placesHeight = Dimensions.get('screen').height - 270;
 
   return (
     <SearchWrapper {...searchWrapperProps}>
@@ -63,16 +106,15 @@ export function SearchBox() {
               style={styles.searchInput}
               placeholderTextColor={colors.grayDarker}
               placeholder={t('mapMarking.searchPlaceholder')}
-              onBlur={handleBlur}
               onFocus={() => setIsFocus(true)}
-              onChangeText={setHasResult}
+              onChangeText={setSearch}
             />
           </TouchableOpacity>
-          {!!hasResult && isFocus && (
+          {!!places && places.length > 0 && isFocus && (
             <>
               <Spacer times={4} />
               <Hr />
-              <View style={{height: resultHeight}} />
+              <PlacesList height={placesHeight} places={places} onLocate={handleSelectPlace} />
             </>
           )}
         </View>
@@ -108,6 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchInput: {
+    flex: 1,
     paddingVertical: 0,
     fontSize: 14,
     color: colors.grayLight,
