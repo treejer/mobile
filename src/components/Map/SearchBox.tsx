@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     color: colors.grayLight,
   },
   empty: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.red,
     borderStyle: 'solid',
   },

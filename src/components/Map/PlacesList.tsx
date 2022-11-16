@@ -2,9 +2,9 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
+import Spacer from 'components/Spacer';
 import {TPlace} from 'components/Map/types';
 import {PlaceItem} from 'components/Map/PlaceItem';
-import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 
 export type TPlacesListProps = {
@@ -19,8 +19,6 @@ export function PlacesList(props: TPlacesListProps) {
   const {places, recentPlaces, height, isEmpty, onLocate} = props;
 
   const {t} = useTranslation();
-
-  console.log(isEmpty, 'isEmpty');
 
   return (
     <ScrollView style={[styles.container, {height}]}>
