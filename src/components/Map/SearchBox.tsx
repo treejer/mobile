@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Dimensions, Modal, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {ActivityIndicator, Dimensions, Modal, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
 import {TPlace} from 'components/Map/types';
 import {PlacesList} from 'components/Map/PlacesList';
+import {useRecentPlaces} from 'ranger-redux/modules/recentPlaces/recentPlaces';
 
 export type TSearchBoxProps = {
   onLocate: (coordinates: number[]) => void;
@@ -22,21 +23,32 @@ export function SearchBox(props: TSearchBoxProps) {
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [places, setPlaces] = useState<TPlace[] | null>(null);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search);
+  const {recentPlaces, dispatchAddNewPlace} = useRecentPlaces();
 
   const searchRef = useRef<TextInput>(null);
 
   const {t} = useTranslation();
 
+  useEffect(() => {
+    if (!search) {
+      setPlaces(null);
+    }
+  }, [search]);
+
   const handleFetchPlaces = useCallback(async (place: string) => {
     try {
+      setLoading(true);
       const {data} = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?proximity=ip&access_token=${mapboxPublicToken}`,
       );
       setPlaces(data.features);
     } catch (e: any) {
       console.log(e, 'error here');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -68,29 +80,44 @@ export function SearchBox(props: TSearchBoxProps) {
   }, [handleBlur]);
 
   const handleSelectPlace = useCallback(
-    (coordinates: number[]) => {
+    (place: TPlace) => {
       setIsFocus(false);
-      onLocate(coordinates);
+      setPlaces(null);
+      setSearch('');
+      onLocate(place.geometry.coordinates);
+      dispatchAddNewPlace(place);
     },
-    [onLocate],
+    [onLocate, dispatchAddNewPlace],
   );
 
-  const SearchWrapper = isFocus ? Modal : React.Fragment;
-  const searchWrapperProps = isFocus
-    ? {
-        onShow: handleFocus,
-        onRequestClose: handleBlur,
-        transparent: true,
-        animated: true,
-      }
-    : {};
+  const SearchWrapper = useMemo(() => (isFocus ? Modal : React.Fragment), [isFocus]);
+  const searchWrapperProps = useMemo(
+    () =>
+      isFocus
+        ? {
+            onShow: handleFocus,
+            onRequestClose: handleBlur,
+            transparent: true,
+            animated: true,
+          }
+        : {},
+    [handleBlur, handleFocus, isFocus],
+  );
+
+  const showPlaces = useMemo(() => {
+    return ((!!places && places?.length > 0) || (!!recentPlaces && recentPlaces?.length > 0)) && isFocus;
+  }, [isFocus, places, recentPlaces]);
 
   const placesHeight = Dimensions.get('screen').height - 270;
+
+  console.log({loading, places, search});
+
+  const isEmptyResult = !loading && !places?.length && !!debouncedSearch && !!search;
 
   return (
     <SearchWrapper {...searchWrapperProps}>
       <View style={[styles.container, isFocus && styles.focusedContainer]}>
-        <View style={styles.searchBox}>
+        <View style={[styles.searchBox, isEmptyResult && styles.empty]}>
           <TouchableOpacity onPress={handleFocus} style={styles.inputWrapper} activeOpacity={1}>
             {isFocus ? (
               <TouchableOpacity onPress={handleClose}>
@@ -109,12 +136,19 @@ export function SearchBox(props: TSearchBoxProps) {
               onFocus={() => setIsFocus(true)}
               onChangeText={setSearch}
             />
+            {loading && <ActivityIndicator size="small" color={colors.khakiDark} />}
           </TouchableOpacity>
-          {!!places && places.length > 0 && isFocus && (
+          {showPlaces && !isEmptyResult && (
             <>
               <Spacer times={4} />
               <Hr />
-              <PlacesList height={placesHeight} places={places} onLocate={handleSelectPlace} />
+              <PlacesList
+                height={placesHeight}
+                places={places}
+                recentPlaces={recentPlaces}
+                onLocate={handleSelectPlace}
+                isEmpty={!loading && !places?.length && !!debouncedSearch && !!search}
+              />
             </>
           )}
         </View>
@@ -154,5 +188,10 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     fontSize: 14,
     color: colors.grayLight,
+  },
+  empty: {
+    borderWidth: 1,
+    borderColor: colors.red,
+    borderStyle: 'solid',
   },
 });

@@ -1,28 +1,33 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IOIcon from 'react-native-vector-icons/Ionicons';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import {colors} from 'constants/values';
-import {isWeb} from 'utilities/helpers/web';
 import Spacer from 'components/Spacer';
-import {TPlace} from 'components/Map/types';
 import {Hr} from 'components/Common/Hr';
+import {TPlace} from 'components/Map/types';
 
 export type TPlaceItemProps = {
   place: TPlace;
   onLocate: () => void;
   isLast: boolean;
+  isRecent: boolean;
 };
 
 export function PlaceItem(props: TPlaceItemProps) {
-  const {place, isLast, onLocate} = props;
+  const {place, isLast, isRecent, onLocate} = props;
 
   return (
     <>
       <TouchableOpacity onPress={onLocate} style={styles.placeItem}>
-        <IOIcon name="ios-location-outline" size={32} />
+        {isRecent ? (
+          <FAIcon name="clock-o" size={32} color={colors.grayDarker} />
+        ) : (
+          <IOIcon name="ios-location-outline" size={32} />
+        )}
         <Spacer />
-        <View style={{paddingHorizontal: 4}}>
+        <View style={styles.placeDetail}>
           <Text style={styles.placeName}>{place.text}</Text>
           <Spacer times={0.5} />
           <Text style={styles.placeAddress} numberOfLines={4}>
@@ -50,6 +55,9 @@ const styles = StyleSheet.create({
   placeAddress: {
     fontSize: 12,
     color: colors.black,
-    maxWidth: isWeb() ? undefined : 250,
+  },
+  placeDetail: {
+    flex: 1,
+    paddingHorizontal: 4,
   },
 });

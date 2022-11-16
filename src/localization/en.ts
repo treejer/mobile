@@ -517,5 +517,7 @@ export const en = {
     long: 'long: {{long}}',
     acc: 'accuracy: {{acc}}',
     NA: 'N/A',
+    recent: 'Recent',
+    empty: "We couldn't find the entered address",
   },
 };
