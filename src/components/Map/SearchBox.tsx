@@ -25,7 +25,7 @@ export function SearchBox(props: TSearchBoxProps) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const debouncedSearch = useDebounce(search);
+  const debouncedSearch = useDebounce(search, 500);
   const {recentPlaces, dispatchAddNewPlace} = useRecentPlaces();
 
   const searchRef = useRef<TextInput>(null);
@@ -76,6 +76,7 @@ export function SearchBox(props: TSearchBoxProps) {
 
   const handleClose = useCallback(() => {
     handleBlur();
+    setSearch('');
     setPlaces(null);
   }, [handleBlur]);
 
@@ -111,8 +112,8 @@ export function SearchBox(props: TSearchBoxProps) {
   }, [isFocus, places, recentPlaces]);
 
   const isEmptyResult = useMemo(
-    () => !loading && !places?.length && !!debouncedSearch && !!search,
-    [debouncedSearch, loading, places?.length, search],
+    () => !loading && !places?.length && !!debouncedSearch && !!search && isFocus,
+    [debouncedSearch, isFocus, loading, places?.length, search],
   );
 
   return (
@@ -135,9 +136,19 @@ export function SearchBox(props: TSearchBoxProps) {
               placeholderTextColor={colors.grayDarker}
               placeholder={t('mapMarking.searchPlaceholder')}
               onFocus={() => setIsFocus(true)}
+              value={search}
               onChangeText={setSearch}
             />
-            {loading && <ActivityIndicator size="small" color={colors.khakiDark} />}
+            <Spacer />
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.khakiDark} />
+            ) : (
+              !!search && (
+                <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
+                  <Icon name="close" size={24} color={colors.khaki} />
+                </TouchableOpacity>
+              )
+            )}
           </TouchableOpacity>
           {showPlaces && !isEmptyResult && (
             <>
@@ -145,9 +156,9 @@ export function SearchBox(props: TSearchBoxProps) {
               <Hr />
               <PlacesList
                 height={placesHeight}
-                places={places}
-                recentPlaces={recentPlaces}
+                places={places || recentPlaces}
                 onLocate={handleSelectPlace}
+                isRecent={!places && !!recentPlaces}
                 isEmpty={!loading && !places?.length && !!debouncedSearch && !!search}
               />
             </>
@@ -194,5 +205,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.red,
     borderStyle: 'solid',
+  },
+  cancelBtn: {
+    backgroundColor: colors.grayDarker,
+    borderRadius: 20,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

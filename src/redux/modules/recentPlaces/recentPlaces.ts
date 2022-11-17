@@ -30,14 +30,21 @@ export function recentPlacesReducer(
 ): TRecentPlacesState {
   switch (action.type) {
     case ADD_NEW_PLACE: {
-      const cloneRecentPlaces = [...(state.recentPlaces || [])];
-      if (cloneRecentPlaces.find(place => place.id === action.newPlace.id)) {
-        return state;
+      let cloneRecentPlaces = [...(state.recentPlaces || [])];
+
+      // * if the searched place was repeated will not add to the recent places list and will move to the begging of the array
+      const isExist = cloneRecentPlaces.some(place => place.id === action.newPlace.id);
+      if (isExist) {
+        cloneRecentPlaces = cloneRecentPlaces.filter(place => place.id !== action.newPlace.id);
+        cloneRecentPlaces.unshift(action.newPlace);
+      } else {
+        // * if array length was greater than 6 (or equal to 7), the last item of array will remove
+        if (cloneRecentPlaces.length > 6) {
+          cloneRecentPlaces.pop();
+        }
+        // * new place will add to the begging of the recent places list
+        cloneRecentPlaces.unshift(action.newPlace);
       }
-      if (cloneRecentPlaces.length === 7) {
-        cloneRecentPlaces.shift();
-      }
-      cloneRecentPlaces.push(action.newPlace);
       return {
         recentPlaces: cloneRecentPlaces,
       };
