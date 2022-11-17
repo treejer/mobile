@@ -71,7 +71,7 @@ export function SearchBox(props: TSearchBoxProps) {
     setIsFocus(true);
     setTimeout(() => {
       searchRef?.current?.focus();
-    }, 100);
+    }, 200);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -99,7 +99,6 @@ export function SearchBox(props: TSearchBoxProps) {
             onShow: handleFocus,
             onRequestClose: handleBlur,
             transparent: true,
-            animated: true,
           }
         : {},
     [handleBlur, handleFocus, isFocus],
@@ -145,7 +144,7 @@ export function SearchBox(props: TSearchBoxProps) {
             ) : (
               !!search && (
                 <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
-                  <Icon name="close" size={24} color={colors.khaki} />
+                  <Icon name="close" size={18} color={colors.khaki} />
                 </TouchableOpacity>
               )
             )}
@@ -209,8 +208,8 @@ const styles = StyleSheet.create({
   cancelBtn: {
     backgroundColor: colors.grayDarker,
     borderRadius: 20,
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
