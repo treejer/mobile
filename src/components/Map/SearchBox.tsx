@@ -74,11 +74,16 @@ export function SearchBox(props: TSearchBoxProps) {
     }, 200);
   }, []);
 
-  const handleClose = useCallback(() => {
-    handleBlur();
-    setSearch('');
-    setPlaces(null);
-  }, [handleBlur]);
+  const handleClose = useCallback(
+    (toClose: boolean = true) => {
+      if (toClose) {
+        handleBlur();
+      }
+      setSearch('');
+      setPlaces(null);
+    },
+    [handleBlur],
+  );
 
   const handleSelectPlace = useCallback(
     (place: TPlace) => {
@@ -121,7 +126,7 @@ export function SearchBox(props: TSearchBoxProps) {
         <View style={[styles.searchBox, isEmptyResult && styles.empty]}>
           <TouchableOpacity onPress={handleFocus} style={styles.inputWrapper} activeOpacity={1}>
             {isFocus ? (
-              <TouchableOpacity onPress={handleClose}>
+              <TouchableOpacity onPress={() => handleClose(true)}>
                 <Icon name="chevron-left" size={24} color={colors.grayDarker} />
               </TouchableOpacity>
             ) : (
@@ -143,7 +148,7 @@ export function SearchBox(props: TSearchBoxProps) {
               <ActivityIndicator size="small" color={colors.khakiDark} />
             ) : (
               !!search && (
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={() => handleClose(false)}>
                   <Icon name="close" size={18} color={colors.khaki} />
                 </TouchableOpacity>
               )
