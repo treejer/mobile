@@ -11,7 +11,7 @@ import {ContractType} from 'services/config';
 import {useCurrentJourney} from 'services/currentJourney';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {sendWeb3Transaction} from 'utilities/helpers/sendTransaction';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {newTreeJSON, photoToUpload} from 'utilities/helpers/submitTree';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -21,7 +21,7 @@ import Tree from 'components/Icons/Tree';
 import Button from 'components/Button/Button';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useConfig, useMagic, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 export type TreeRequests = {loading: boolean; error: string | null; hash: string | null}[];
 
@@ -29,9 +29,10 @@ export default function SubmitTreeModal() {
   const isConnected = useNetInfoConnected();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
+  const magic = useMagic();
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
-  const {useGSN} = useSettings();
+  const {useBiconomy} = useSettings();
   const config = useConfig();
   const {journey, clearJourney} = useCurrentJourney();
 
@@ -65,24 +66,26 @@ export default function SubmitTreeModal() {
 
         let receipt;
         if (treeJourney.plantingModel) {
-          receipt = await sendTransactionWithGSN(
+          receipt = await sendWeb3Transaction(
+            magic,
             config,
             ContractType.TreeFactory,
             web3,
             wallet,
             'plantMarketPlaceTree',
             [metaDataUploadResult.Hash, birthDay, 0, Hex2Dec(treeJourney.plantingModel)],
-            useGSN,
+            useBiconomy,
           );
         } else {
-          receipt = await sendTransactionWithGSN(
+          receipt = await sendWeb3Transaction(
+            magic,
             config,
             ContractType.TreeFactory,
             web3,
             wallet,
             'plantTree',
             [metaDataUploadResult.Hash, birthDay, 0],
-            useGSN,
+            useBiconomy,
           );
         }
 
@@ -93,7 +96,7 @@ export default function SubmitTreeModal() {
         return Promise.reject(e?.message || e.error?.message || t('transactionFailed.tryAgain'));
       }
     },
-    [config, t, useGSN, wallet, web3],
+    [magic, config, t, useBiconomy, wallet, web3],
   );
 
   const handleSubmitAll = useCallback(

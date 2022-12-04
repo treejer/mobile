@@ -57,6 +57,8 @@ export interface NetworkConfig {
   learnMoreLink: string;
   avatarBaseUrl: string;
   magicApiKey: string;
+  biconomyApiKey: string;
+  biconomyAddress: string;
   magicNetwork: BlockchainNetwork;
   chainId: string;
   explorerUrl: string;
@@ -102,6 +104,7 @@ const config: Config = {
         abi: require('../abis/MarketPlace.json'),
       },
     },
+    biconomyAddress: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_MATIC_MAIN_WEB3_NETWORK_ID || 3),
     isMainnet: true,
     web3Url: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PROVIDER || '',
@@ -115,6 +118,7 @@ const config: Config = {
     pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
     learnMoreLink: process.env.REACT_NATIVE_MATIC_MAIN_LEARN_MORE_URL || '',
     avatarBaseUrl: process.env.REACT_NATIVE_MATIC_MAIN_AVATAR_BASE_URL || '',
+    biconomyApiKey: process.env.REACT_NATIVE_MATIC_MAIN_BICONOMY_API_KEY || '',
     magicApiKey: process.env.REACT_NATIVE_MATIC_MAIN_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticMain,
     chainId: process.env.REACT_NATIVE_MATIC_MAIN_CHAIN_ID || '',
@@ -147,6 +151,7 @@ const config: Config = {
         abi: require('../abis/MarketPlace.json'),
       },
     },
+    biconomyAddress: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_MATIC_TEST_WEB3_NETWORK_ID || 3),
     isMainnet: false,
     web3Url: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PROVIDER || '',
@@ -160,6 +165,7 @@ const config: Config = {
     pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
     learnMoreLink: process.env.REACT_NATIVE_MATIC_TEST_LEARN_MORE_URL || '',
     avatarBaseUrl: process.env.REACT_NATIVE_MATIC_TEST_AVATAR_BASE_URL || '',
+    biconomyApiKey: process.env.REACT_NATIVE_MATIC_TEST_BICONOMY_API_KEY || '',
     magicApiKey: process.env.REACT_NATIVE_MATIC_TEST_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.MaticTest,
     chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID || '',
@@ -192,6 +198,7 @@ const config: Config = {
         abi: require('../abis/MarketPlace.json'),
       },
     },
+    biconomyAddress: process.env.REACT_NATIVE_GOERLI_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_GOERLI_WEB3_NETWORK_ID || 3),
     isMainnet: false,
     web3Url: process.env.REACT_NATIVE_GOERLI_WEB3_PROVIDER || '',
@@ -213,6 +220,7 @@ const config: Config = {
     pastEventsQueryMaxPageSize: process.env.REACT_NATIVE_GOERLI_WEB3_PAST_EVENTS_QUERY_MAX_PAGE_SIZE || '',
     learnMoreLink: process.env.REACT_NATIVE_GOERLI_LEARN_MORE_URL || '',
     avatarBaseUrl: process.env.REACT_NATIVE_GOERLI_AVATAR_BASE_URL || '',
+    biconomyApiKey: process.env.REACT_NATIVE_GOERLI_BICONOMY_API_KEY || '',
     magicApiKey: process.env.REACT_NATIVE_GOERLI_MAGIC_API_KEY || '',
     magicNetwork: BlockchainNetwork.Goerli,
     chainId: process.env.REACT_NATIVE_GOERLI_CHAIN_ID || '',

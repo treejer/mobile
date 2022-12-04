@@ -27,7 +27,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
 
   const config = useConfig();
   const {ether} = useContracts();
-  const {locale, useGSN, checkMetaData, changeUseGSN, changeCheckMetaData} = useSettings();
+  const {locale, useBiconomy, checkMetaData, changeUseBiconomy, changeCheckMetaData} = useSettings();
   const {t} = useTranslation();
 
   const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
@@ -38,8 +38,8 @@ export default function SettingsScreen(props: SettingsScreenProps) {
     navigation.navigate('SelectLanguage', {back: true});
   };
 
-  const handleChangeUseGSN = value => {
-    changeUseGSN(value);
+  const handleChangeUseBiconomy = value => {
+    changeUseBiconomy(value);
   };
 
   return (
@@ -55,8 +55,8 @@ export default function SettingsScreen(props: SettingsScreenProps) {
         <Spacer times={4} />
         <Card>
           <View style={styles.settingsItem}>
-            <Text style={styles.text}>{t('settings.useGSN')}</Text>
-            <Switch value={useGSN} onValueChange={handleChangeUseGSN} />
+            <Text style={styles.text}>{t('settings.useBiconomy')}</Text>
+            <Switch value={useBiconomy} onValueChange={handleChangeUseBiconomy} />
           </View>
           <View style={{paddingVertical: 16}}>
             <View style={{flexDirection: 'row', justifyContent: 'center'}}>

@@ -16,7 +16,7 @@ import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {sendWeb3Transaction} from 'utilities/helpers/sendTransaction';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
@@ -40,7 +40,7 @@ import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubm
 import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {useConfig, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useConfig, useMagic, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -55,7 +55,7 @@ function SubmitTree(props: Props) {
 
   const {t} = useTranslation();
 
-  const {useGSN} = useSettings();
+  const {useBiconomy} = useSettings();
 
   const [photoHash, setPhotoHash] = useState<string>();
   const [metaDataHash, setMetaDataHash] = useState<string>();
@@ -75,6 +75,7 @@ function SubmitTree(props: Props) {
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
+  const magic = useMagic();
 
   const updatedTreeQuery = useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
     skip: !isUpdate,
@@ -166,19 +167,20 @@ function SubmitTree(props: Props) {
     async (treeId: number) => {
       console.log(metaDataHash, '====> metaDataHash <====');
 
-      const receipt = await sendTransactionWithGSN(
+      const receipt = await sendWeb3Transaction(
+        magic,
         config,
         ContractType.TreeFactory,
         web3,
         wallet,
         'updateTree',
         [treeId, metaDataHash],
-        useGSN,
+        useBiconomy,
       );
 
       return receipt;
     },
-    [metaDataHash, config, web3, wallet, useGSN],
+    [metaDataHash, magic, config, web3, wallet, useBiconomy],
   );
   const handleSendCreateTransaction = useCallback(async () => {
     let receipt;
@@ -187,35 +189,38 @@ function SubmitTree(props: Props) {
       // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0);
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
-      receipt = await sendTransactionWithGSN(
+      receipt = await sendWeb3Transaction(
+        magic,
         config,
         ContractType.TreeFactory,
         web3,
         wallet,
         'plantAssignedTree',
         [Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0],
-        useGSN,
+        useBiconomy,
       );
     } else {
       if (journey.plantingModel) {
-        receipt = await sendTransactionWithGSN(
+        receipt = await sendWeb3Transaction(
+          magic,
           config,
           ContractType.TreeFactory,
           web3,
           wallet,
           'plantMarketPlaceTree',
           [metaDataHash, birthDay, 0, Hex2Dec(journey.plantingModel)],
-          useGSN,
+          useBiconomy,
         );
       } else {
-        receipt = await sendTransactionWithGSN(
+        receipt = await sendWeb3Transaction(
+          magic,
           config,
           ContractType.TreeFactory,
           web3,
           wallet,
           'plantTree',
           [metaDataHash, birthDay, 0],
-          useGSN,
+          useBiconomy,
         );
       }
     }
@@ -223,7 +228,7 @@ function SubmitTree(props: Props) {
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;
-  }, [journey.treeIdToPlant, journey.plantingModel, config, web3, wallet, metaDataHash, birthDay, useGSN]);
+  }, [journey.treeIdToPlant, journey.plantingModel, magic, config, web3, wallet, metaDataHash, birthDay, useBiconomy]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
