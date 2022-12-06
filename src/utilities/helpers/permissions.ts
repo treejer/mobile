@@ -1,5 +1,6 @@
 import {Platform, PermissionsAndroid, Alert} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import Permissions, {RESULTS, PERMISSIONS} from 'react-native-permissions';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -29,6 +30,52 @@ export const locationPermission = () => {
           resolve(true);
         } else {
           reject(new Error('blocked'));
+        }
+      });
+    }
+  });
+};
+
+export const cameraPermission = () => {
+  return new Promise((resolve, reject) => {
+    if (isAndroid) {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+        .then(granted => {
+          switch (granted) {
+            case PermissionsAndroid.RESULTS.GRANTED:
+              resolve('granted');
+              return true;
+            case PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN:
+              reject(new Error('blocked'));
+              return false;
+            case PermissionsAndroid.RESULTS.DENIED:
+              reject(new Error('denied'));
+              return false;
+            default:
+              return false;
+          }
+        })
+        .catch(err => console.warn(err));
+    } else {
+      Permissions.request(PERMISSIONS.IOS.CAMERA).then(granted => {
+        switch (granted) {
+          case RESULTS.GRANTED:
+            resolve('granted');
+            return true;
+          case RESULTS.BLOCKED:
+            reject(new Error('blocked'));
+            return false;
+          case RESULTS.DENIED:
+            reject(new Error('denied'));
+            return false;
+          case RESULTS.LIMITED:
+            reject(new Error('limited'));
+            return false;
+          case RESULTS.UNAVAILABLE:
+            reject(new Error('unavailable'));
+            return false;
+          default:
+            return false;
         }
       });
     }
