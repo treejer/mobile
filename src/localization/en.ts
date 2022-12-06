@@ -519,5 +519,6 @@ export const en = {
     NA: 'N/A',
     recent: 'Recent',
     empty: "We couldn't find the entered address",
+    km: '{{km}} KM',
   },
 };

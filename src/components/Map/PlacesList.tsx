@@ -6,6 +6,7 @@ import Spacer from 'components/Spacer';
 import {TPlace} from 'components/Map/types';
 import {PlaceItem} from 'components/Map/PlaceItem';
 import {colors} from 'constants/values';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TPlacesListProps = {
   isEmpty: boolean;
@@ -13,10 +14,11 @@ export type TPlacesListProps = {
   height: number;
   places: TPlace[] | null;
   onLocate: (place: TPlace) => void;
+  userLocation?: TUserLocation | null;
 };
 
 export function PlacesList(props: TPlacesListProps) {
-  const {places, height, isEmpty, isRecent, onLocate} = props;
+  const {places, height, isEmpty, isRecent, userLocation, onLocate} = props;
 
   const {t} = useTranslation();
 
@@ -36,6 +38,7 @@ export function PlacesList(props: TPlacesListProps) {
             onLocate={() => onLocate(place)}
             isLast={index === places?.length - 1}
             isRecent={isRecent}
+            userLocation={userLocation}
           />
         );
       })}

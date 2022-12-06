@@ -2,30 +2,31 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {ActivityIndicator, Dimensions, Modal, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
 
-import {mapboxPublicToken} from 'services/config';
 import {colors} from 'constants/values';
 import {useDebounce} from 'utilities/hooks/useDebounce';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
 import {TPlace} from 'components/Map/types';
 import {PlacesList} from 'components/Map/PlacesList';
 import {useRecentPlaces} from 'ranger-redux/modules/recentPlaces/recentPlaces';
+import {useSearchPlaces} from 'ranger-redux/modules/searchPlaces/searchPlaces';
 
 export type TSearchBoxProps = {
   onLocate: (coordinates: number[]) => void;
+  userLocation?: TUserLocation | null;
 };
 
 export function SearchBox(props: TSearchBoxProps) {
-  const {onLocate} = props;
+  const {onLocate, userLocation} = props;
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
-  const [places, setPlaces] = useState<TPlace[] | null>(null);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
+
+  const {searchPlaces, loading, dispatchResetSearchPlaces, dispatchSearchPlaces} = useSearchPlaces();
   const {recentPlaces, dispatchAddNewPlace} = useRecentPlaces();
 
   const searchRef = useRef<TextInput>(null);
@@ -34,33 +35,19 @@ export function SearchBox(props: TSearchBoxProps) {
 
   useEffect(() => {
     if (!search) {
-      setPlaces(null);
+      dispatchResetSearchPlaces();
     }
   }, [search]);
-
-  const handleFetchPlaces = useCallback(async (place: string) => {
-    try {
-      setLoading(true);
-      const {data} = await axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?proximity=ip&access_token=${mapboxPublicToken}`,
-      );
-      setPlaces(data.features);
-    } catch (e: any) {
-      console.log(e, 'error here');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     if (debouncedSearch) {
       (async () => {
-        await handleFetchPlaces(debouncedSearch);
+        dispatchSearchPlaces(debouncedSearch);
       })();
     } else {
-      setPlaces(null);
+      dispatchResetSearchPlaces();
     }
-  }, [handleFetchPlaces, debouncedSearch]);
+  }, [dispatchResetSearchPlaces, dispatchSearchPlaces, debouncedSearch]);
 
   const handleBlur = useCallback(() => {
     setIsFocus(false);
@@ -80,20 +67,20 @@ export function SearchBox(props: TSearchBoxProps) {
         handleBlur();
       }
       setSearch('');
-      setPlaces(null);
+      dispatchResetSearchPlaces();
     },
-    [handleBlur],
+    [dispatchResetSearchPlaces, handleBlur],
   );
 
   const handleSelectPlace = useCallback(
     (place: TPlace) => {
       setIsFocus(false);
-      setPlaces(null);
+      dispatchResetSearchPlaces();
       setSearch('');
       onLocate(place.geometry.coordinates);
       dispatchAddNewPlace(place);
     },
-    [onLocate, dispatchAddNewPlace],
+    [onLocate, dispatchResetSearchPlaces, dispatchAddNewPlace],
   );
 
   const SearchWrapper = useMemo(() => (isFocus ? Modal : React.Fragment), [isFocus]);
@@ -112,12 +99,12 @@ export function SearchBox(props: TSearchBoxProps) {
   const placesHeight = Dimensions.get('screen').height - 270;
 
   const showPlaces = useMemo(() => {
-    return ((!!places && places?.length > 0) || (!!recentPlaces && recentPlaces?.length > 0)) && isFocus;
-  }, [isFocus, places, recentPlaces]);
+    return ((!!searchPlaces && searchPlaces?.length > 0) || (!!recentPlaces && recentPlaces?.length > 0)) && isFocus;
+  }, [isFocus, searchPlaces, recentPlaces]);
 
   const isEmptyResult = useMemo(
-    () => !loading && !places?.length && !!debouncedSearch && !!search && isFocus,
-    [debouncedSearch, isFocus, loading, places?.length, search],
+    () => !loading && !searchPlaces?.length && !!debouncedSearch && !!search && isFocus,
+    [debouncedSearch, isFocus, loading, searchPlaces?.length, search],
   );
 
   return (
@@ -145,7 +132,7 @@ export function SearchBox(props: TSearchBoxProps) {
             />
             <Spacer />
             {loading ? (
-              <ActivityIndicator size="small" color={colors.khakiDark} />
+              <ActivityIndicator size="small" color={colors.green} />
             ) : (
               !!search && (
                 <TouchableOpacity style={styles.cancelBtn} onPress={() => handleClose(false)}>
@@ -159,11 +146,12 @@ export function SearchBox(props: TSearchBoxProps) {
               <Spacer times={4} />
               <Hr />
               <PlacesList
+                userLocation={userLocation}
                 height={placesHeight}
-                places={places || recentPlaces}
+                places={searchPlaces || recentPlaces}
                 onLocate={handleSelectPlace}
-                isRecent={!places && !!recentPlaces}
-                isEmpty={!loading && !places?.length && !!debouncedSearch && !!search}
+                isRecent={!searchPlaces && !!recentPlaces}
+                isEmpty={!loading && !searchPlaces?.length && !!debouncedSearch && !!search}
               />
             </>
           )}

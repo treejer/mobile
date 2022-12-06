@@ -180,7 +180,7 @@ export default function MapMarking(props: MapMarkingProps) {
     <View style={styles.container}>
       <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} map={map} />
 
-      {location ? <SearchBox onLocate={handleLocate} /> : null}
+      {location ? <SearchBox onLocate={handleLocate} userLocation={userLocation} /> : null}
       <View style={[styles.bottom, {width: '100%'}]}>
         {location && (
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

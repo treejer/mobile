@@ -10,3 +10,7 @@ export type TPlace = {
   string;
   type: string;
 };
+
+export type TPlaceForm = {
+  search: string;
+};

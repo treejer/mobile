@@ -37,7 +37,7 @@ interface IMapMarkingProps {
 }
 
 export default function MapMarking(props: IMapMarkingProps) {
-  const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
+  const {onSubmit, verifyProfile, permissionHasLocation = false, userLocation} = props;
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(!permissionHasLocation);
   const [isInitial, setIsInitial] = useState(true);
@@ -408,7 +408,7 @@ export default function MapMarking(props: IMapMarkingProps) {
     <View style={styles.container}>
       <Map map={map} camera={camera} setLocation={setLocation} />
 
-      {hasLocation ? <SearchBox onLocate={handleLocate} /> : null}
+      {hasLocation ? <SearchBox onLocate={handleLocate} userLocation={userLocation} /> : null}
       <View style={[styles.bottom, {width: '100%'}]}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           {hasLocation ? <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} /> : null}
