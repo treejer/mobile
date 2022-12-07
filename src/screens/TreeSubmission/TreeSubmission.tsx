@@ -114,12 +114,12 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
       <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
         {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>
-      <Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>
-        {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}
-      </Stack.Screen>
-      <Stack.Screen name={Routes.CreateModel} options={{title: screenTitle('Create Models')}}>
-        {props => <CreateModel {...props} plantTreePermissions={plantTreePermissions} />}
-      </Stack.Screen>
+      {/*<Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>*/}
+      {/*  {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}*/}
+      {/*</Stack.Screen>*/}
+      {/*<Stack.Screen name={Routes.CreateModel} options={{title: screenTitle('Create Models')}}>*/}
+      {/*  {props => <CreateModel {...props} plantTreePermissions={plantTreePermissions} />}*/}
+      {/*</Stack.Screen>*/}
       <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
         {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>

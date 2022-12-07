@@ -87,7 +87,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     setIsSingle(null);
     navigation.navigate(Routes.SelectModels);
     inputRef?.current?.blur();
-  }, []);
+  }, [navigation]);
 
   const handleFocus = () => {
     setByModel(false);
@@ -142,13 +142,13 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
         size="lg"
         type="nursery"
       />
-      <StartPlantButton
-        caption={t('submitTree.models')}
-        onPress={handleSelectModels}
-        color={modelColor}
-        size="lg"
-        type="model"
-      />
+      {/*<StartPlantButton*/}
+      {/*  caption={t('submitTree.models')}*/}
+      {/*  onPress={handleSelectModels}*/}
+      {/*  color={modelColor}*/}
+      {/*  size="lg"*/}
+      {/*  type="model"*/}
+      {/*/>*/}
       {isSingle === true && (
         <Button
           variant="secondary"

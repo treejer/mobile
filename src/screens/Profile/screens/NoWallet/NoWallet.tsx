@@ -1,29 +1,30 @@
-import globalStyles from 'constants/styles';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {useForm} from 'react-hook-form';
+import PhoneInput from 'react-native-phone-number-input';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+import {RootNavigationProp, Routes} from 'navigation/index';
+import globalStyles from 'constants/styles';
+import {cameraPermission, locationPermission} from 'utilities/helpers/permissions';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
+import {isWeb} from 'utilities/helpers/web';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {validateEmail} from 'utilities/helpers/validators';
+import {oauthDeepLinkUrl} from 'utilities/hooks/useDeepLinking';
+import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
-import {locationPermission} from 'utilities/helpers/permissions';
-import {useTranslation} from 'react-i18next';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import TextField, {PhoneField} from 'components/TextField';
-import {useForm} from 'react-hook-form';
-import PhoneInput from 'react-native-phone-number-input';
-import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
-import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
-import {isWeb} from 'utilities/helpers/web';
-import {RootNavigationProp, Routes} from 'navigation/index';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {validateEmail} from 'utilities/helpers/validators';
 import AppVersion from 'components/AppVersion';
-import {NoWalletImage} from '../../../../../assets/images';
+import TextField, {PhoneField} from 'components/TextField';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useConfig, useMagic, useUserWeb3} from 'ranger-redux/modules/web3/web3';
 import {OAuthRedirectResult} from 'services/Magic';
-import {oauthDeepLinkUrl} from 'utilities/hooks/useDeepLinking';
+import {NoWalletImage} from '../../../../../assets/images';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
@@ -73,6 +74,7 @@ function NoWallet(props: NoWalletProps) {
     (async () => {
       if (!isWeb()) {
         await locationPermission();
+        await cameraPermission();
       }
     })();
   }, []);
