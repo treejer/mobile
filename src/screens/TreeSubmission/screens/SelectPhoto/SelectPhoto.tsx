@@ -272,13 +272,13 @@ function SelectPhoto(props: Props) {
     return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
   }
 
-  if (canPlant === false) {
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30}}>
-        <Text style={{textAlign: 'center', fontSize: 18}}>{t('supplyCapReached')}</Text>
-      </View>
-    );
-  }
+  // if (canPlant === false) {
+  //   return (
+  //     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30}}>
+  //       <Text style={{textAlign: 'center', fontSize: 18}}>{t('supplyCapReached')}</Text>
+  //     </View>
+  //   );
+  // }
 
   if (showWebCam) {
     return (

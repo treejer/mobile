@@ -15,9 +15,9 @@ import Spacer from 'components/Spacer';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {CreateModelForm, TCreateModelForm} from 'screens/TreeSubmission/components/Models/CreateModelForm';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {sendWeb3Transaction} from 'utilities/helpers/sendTransaction';
 import {AlertMode} from 'utilities/helpers/alert';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useConfig, useMagic, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {TreeImage} from '../../../../../assets/icons';
 
@@ -38,8 +38,9 @@ export function CreateModel(props: CreateModelProps) {
 
   const config = useConfig();
   const web3 = useWalletWeb3();
+  const magic = useMagic();
   const wallet = useWalletAccount();
-  const {useGSN} = useSettings();
+  const {useBiconomy} = useSettings();
 
   const toast = useToast();
   const {t} = useTranslation();
@@ -50,14 +51,15 @@ export function CreateModel(props: CreateModelProps) {
         console.log(data, 'create model form data is here');
         setLoading(true);
         const args = [Number(data.countryNumCode), 0, web3.utils.toWei(data.price, 'ether'), data.count];
-        const receipt = await sendTransactionWithGSN(
+        const receipt = await sendWeb3Transaction(
+          magic,
           config,
           ContractType.MarketPlace,
           web3,
           wallet,
           'addModel',
           args,
-          useGSN,
+          useBiconomy,
         );
         console.log(receipt.transactionHash, 'create modal transaction hash');
         toast.show('createModel.success', {
@@ -75,7 +77,7 @@ export function CreateModel(props: CreateModelProps) {
         setLoading(false);
       }
     },
-    [config, navigation, toast, useGSN, wallet, web3],
+    [magic, config, navigation, toast, useBiconomy, wallet, web3],
   );
 
   if (showPermissionModal) {

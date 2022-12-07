@@ -17,15 +17,15 @@ import {WithdrawSection} from 'screens/Withdraw/components/WithdrawSection';
 import {TransferForm} from 'screens/Withdraw/components/TransferForm';
 import {isWeb} from 'utilities/helpers/web';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
+import {sendWeb3Transaction} from 'utilities/helpers/sendTransaction';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useGetTransactionHistory} from 'utilities/hooks/useGetTransactionHistory';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {useConfig, useMagic, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -47,9 +47,10 @@ export function TransferScreen() {
     submitting,
   } = useContracts();
 
-  const {useGSN} = useSettings();
+  const {useBiconomy} = useSettings();
   const wallet = useWalletAccount();
   const web3 = useWalletWeb3();
+  const magic = useMagic();
   const config = useConfig();
   const {profile} = useProfile();
   const planterFundContract = usePlanterFund();
@@ -149,14 +150,15 @@ export function TransferScreen() {
       const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
       if (balance > bnMinBalance) {
         try {
-          const transaction = await sendTransactionWithGSN(
+          const transaction = await sendWeb3Transaction(
+            magic,
             config,
             ContractType.PlanterFund,
             web3,
             wallet,
             'withdrawBalance',
             [planterData?.balance.toString()],
-            useGSN,
+            useBiconomy,
           );
 
           getBalance();
@@ -199,10 +201,11 @@ export function TransferScreen() {
     planterData?.balance,
     minBalance,
     requiredBalance,
+    magic,
     config,
     web3,
     wallet,
-    useGSN,
+    useBiconomy,
     getBalance,
     getPlanter,
   ]);

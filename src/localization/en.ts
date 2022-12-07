@@ -264,7 +264,7 @@ export const en = {
   phoneNumber: 'Phone Number',
   settings: {
     title: 'Settings',
-    useGSN: 'Transaction Fee Sponsorship',
+    useBiconomy: 'Transaction Fee Sponsorship',
     checkMetaData: 'Meta-data checking for tree submission',
     gsnDetails:
       'Treejer sponsors your transaction fees. If your transactions are being failed, you can switch off sponsorship. Please remember you need MATIC token in your wallet send transactions. You may ask your rural ambassador for more help.',

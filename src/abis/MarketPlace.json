@@ -588,6 +588,19 @@
         "type": "address"
       }
     ],
+    "name": "setTrustedForwarder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
     "name": "setDaiTokenAddress",
     "outputs": [],
     "stateMutability": "nonpayable",

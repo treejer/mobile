@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
-  useGSN: boolean;
+  useBiconomy: boolean;
   checkMetaData: boolean;
   showSupportChat: boolean;
 };
@@ -14,14 +14,14 @@ export type TSettings = {
 const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
-  useGSN: true,
+  useBiconomy: true,
   checkMetaData: true,
   showSupportChat: false,
 };
 
 type TSettingsAction = {
   type: string;
-  useGSN: boolean;
+  useBiconomy: boolean;
   checkMetaData: boolean;
   locale: string;
   showSupportChat: boolean;
@@ -42,11 +42,11 @@ export function updateLocale(newLocale: string) {
   return {type: UPDATE_LOCALE, locale: newLocale};
 }
 
-export const CHANGE_USE_GSN = 'CHANGE_USE_GSN';
-export function changeUseGSN(useGSN: boolean) {
+export const CHANGE_USE_BICONOMY = 'CHANGE_USE_BICONOMY';
+export function changeUseBiconomy(useBiconomy: boolean) {
   return {
-    type: CHANGE_USE_GSN,
-    useGSN,
+    type: CHANGE_USE_BICONOMY,
+    useBiconomy,
   };
 }
 
@@ -83,10 +83,10 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
         locale: action.locale,
       };
     }
-    case CHANGE_USE_GSN: {
+    case CHANGE_USE_BICONOMY: {
       return {
         ...state,
-        useGSN: action.useGSN,
+        useBiconomy: action.useBiconomy,
       };
     }
     case CHANGE_CHECK_METADATA: {
@@ -110,7 +110,7 @@ export const settingsReducer = (state: TSettings = initialState, action: TSettin
 export type TUseSettings = TReduxState['settings'] & {
   updateLocale: (newLocale: string) => void;
   markOnBoardingDone: () => void;
-  changeUseGSN: (useGSN: boolean) => void;
+  changeUseBiconomy: (useGSN: boolean) => void;
   changeCheckMetaData: (checkMetaData: boolean) => void;
   resetOnBoardingData: () => void;
   setShowSupportChat: (showSupportChat: boolean) => void;
@@ -132,8 +132,8 @@ export function useSettings(): TUseSettings {
     dispatch(updateLocale(newLocale));
   };
 
-  const handleChangeUseGSN = (useGSN: boolean) => {
-    dispatch(changeUseGSN(useGSN));
+  const handleChangeUseBiconomy = (useBiconomy: boolean) => {
+    dispatch(changeUseBiconomy(useBiconomy));
   };
 
   const handleChangeCheckMetaData = (checkMetaData: boolean) => {
@@ -148,7 +148,7 @@ export function useSettings(): TUseSettings {
     ...settings,
     updateLocale: handleChangeLocale,
     markOnBoardingDone: handleMarkOnBoardingDone,
-    changeUseGSN: handleChangeUseGSN,
+    changeUseBiconomy: handleChangeUseBiconomy,
     resetOnBoardingData: handleResetOnBoarding,
     setShowSupportChat: handleShowSupportChat,
     changeCheckMetaData: handleChangeCheckMetaData,
