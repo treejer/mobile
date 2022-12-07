@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
 
@@ -11,26 +11,33 @@ import {useCurrentJourney} from 'services/currentJourney';
 import Map from './Map';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
+import {MapDetail} from 'components/Map/MapDetail';
+import {TZoomType, MapController} from 'components/Map/MapController';
 import {isWeb} from 'utilities/helpers/web';
 import {checkExif} from 'utilities/helpers/checkExif';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {BrowserPlatform, useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {SearchBox} from 'components/Map/SearchBox';
 
 export type locationType = {
   lng: number;
   lat: number;
 };
 interface MapMarkingProps {
+  userLocation?: TUserLocation | null;
   onSubmit?: (location: Partial<GeoPosition>) => void;
   verifyProfile?: boolean;
   permissionHasLocation?: boolean;
 }
 export default function MapMarking(props: MapMarkingProps) {
-  const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
+  const {onSubmit, userLocation, verifyProfile, permissionHasLocation = false} = props;
+
+  const map = useRef<any>(null);
 
   const {journey, setNewJourney} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
@@ -46,6 +53,40 @@ export default function MapMarking(props: MapMarkingProps) {
 
   const {isMainnet} = useConfig();
   const {checkMetaData} = useSettings();
+
+  const handleZoom = useCallback(
+    async (zoomType: TZoomType = TZoomType.In) => {
+      const zoomLevel = map?.current?.getZoom();
+      if (zoomLevel) {
+        const zoomTo = +zoomLevel + (zoomType === TZoomType.In ? 0.5 : -0.5);
+        map?.current?.zoomTo(zoomTo);
+      }
+    },
+    [map],
+  );
+
+  const handleLocateToUserLocation = useCallback(() => {
+    if (userLocation?.latitude && userLocation?.longitude) {
+      map.current.flyTo({
+        // * 1: longitude, 2: latitude
+        center: [userLocation?.longitude, userLocation?.latitude],
+        zoom: 16,
+        duration: 2000,
+      });
+    }
+  }, [map, userLocation]);
+
+  const handleLocate = useCallback(
+    (coordinates: number[]) => {
+      map.current.flyTo({
+        // * 1: longitude, 2: latitude
+        center: coordinates,
+        zoom: 12,
+        duration: 1000,
+      });
+    },
+    [map],
+  );
 
   const handleDismiss = useCallback(() => {
     navigation.goBack();
@@ -127,32 +168,26 @@ export default function MapMarking(props: MapMarkingProps) {
     verifyProfile,
   ]);
 
+  const locationDetail = useMemo(
+    () => ({
+      latitude: location?.lat || 0,
+      longitude: location?.lng || 0,
+    }),
+    [location],
+  );
+
   return (
     <View style={styles.container}>
-      <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} />
+      <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} map={map} />
 
+      {location ? <SearchBox onLocate={handleLocate} userLocation={userLocation} /> : null}
       <View style={[styles.bottom, {width: '100%'}]}>
         {location && (
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} />
-
-            <View
-              style={{
-                backgroundColor: colors.khaki,
-                flex: 0.9,
-                height: 80,
-                padding: 8,
-                borderRadius: 4,
-                justifyContent: 'space-between',
-              }}
-            >
-              <Text style={{fontSize: 10}}>lat: {location?.lat || 'N/A'}</Text>
-              <Text style={{fontSize: 10}}>long: {location?.lng || 'N/A'}</Text>
-              <Text style={{fontSize: 10}}>
-                accuracy: {accuracyInMeters ? Number(accuracyInMeters).toFixed(2) : 'N/A'}
-              </Text>
-            </View>
+            <MapDetail location={locationDetail} accuracyInMeters={accuracyInMeters} />
             <Button caption="" icon={Check} variant="success" round onPress={handleSubmit} />
+            <MapController onZoom={handleZoom} onLocate={handleLocateToUserLocation} />
           </View>
         )}
       </View>

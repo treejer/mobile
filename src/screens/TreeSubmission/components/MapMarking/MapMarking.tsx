@@ -1,39 +1,43 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import MapboxGL from '@rnmapbox/maps';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
 import Map from './Map';
+import {Routes} from 'navigation/index';
 import {useCurrentJourney} from 'services/currentJourney';
 import {maxDistanceInMeters, offlineSubmittingMapName} from 'services/config';
 import {colors} from 'constants/values';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {MapDetail} from 'components/Map/MapDetail';
+import {TZoomType, MapController} from 'components/Map/MapController';
 import {TreeJourney} from 'screens/TreeSubmission/types';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {locationPermission} from 'utilities/helpers/permissions';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Routes} from 'navigation/index';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {checkExif} from 'utilities/helpers/checkExif';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import {SearchBox} from 'components/Map/SearchBox';
 
 interface IMapMarkingProps {
+  userLocation?: TUserLocation | null;
   onSubmit?: (location: GeoPosition) => void;
   verifyProfile?: boolean;
   permissionHasLocation?: boolean;
 }
 
 export default function MapMarking(props: IMapMarkingProps) {
-  const {onSubmit, verifyProfile, permissionHasLocation = false} = props;
+  const {onSubmit, verifyProfile, permissionHasLocation = false, userLocation} = props;
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(!permissionHasLocation);
   const [isInitial, setIsInitial] = useState(true);
@@ -60,6 +64,17 @@ export default function MapMarking(props: IMapMarkingProps) {
       setIsCameraRefVisible(true);
     }
   }, [camera, isCameraRefVisible]);
+
+  const handleZoom = useCallback(
+    async (zoomType: TZoomType = TZoomType.In) => {
+      const zoomLevel = await map?.current?.getZoom();
+      if (zoomLevel) {
+        const zoomTo = +zoomLevel + (zoomType === TZoomType.In ? 0.5 : -0.5);
+        camera?.current?.zoomTo(zoomTo);
+      }
+    },
+    [map, camera],
+  );
 
   // recenter the marker to the current coordinates
   const onPressMyLocationIcon = useCallback(
@@ -366,44 +381,41 @@ export default function MapMarking(props: IMapMarkingProps) {
       });
   };
 
-  const hasLocation = location?.coords?.latitude && location?.coords?.longitude && accuracyInMeters && !loading;
+  const handleLocate = useCallback(
+    (coordinates: number[]) => {
+      camera?.current?.setCamera({
+        centerCoordinate: coordinates,
+        zoomLevel: 15,
+        animationDuration: 1000,
+      });
+    },
+    [camera],
+  );
+
+  const hasLocation = useMemo(
+    () => location?.coords?.latitude && location?.coords?.longitude && accuracyInMeters && !loading,
+    [accuracyInMeters, loading, location?.coords?.latitude, location?.coords?.longitude],
+  );
+  const locationDetail = useMemo(
+    () => ({
+      latitude: location?.coords.latitude || 0,
+      longitude: location?.coords.longitude || 0,
+    }),
+    [location],
+  );
 
   return (
     <View style={styles.container}>
       <Map map={map} camera={camera} setLocation={setLocation} />
 
+      {hasLocation ? <SearchBox onLocate={handleLocate} userLocation={userLocation} /> : null}
       <View style={[styles.bottom, {width: '100%'}]}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           {hasLocation ? <Button caption="" icon={Times} variant="primary" round onPress={handleDismiss} /> : null}
-          {hasLocation ? (
-            <View
-              style={{
-                backgroundColor: colors.khaki,
-                flex: 0.9,
-                height: 80,
-                padding: 8,
-                borderRadius: 4,
-                justifyContent: 'space-between',
-              }}
-            >
-              <Text style={{fontSize: 10}}>lat: {location?.coords?.latitude || 'N/A'}</Text>
-              <Text style={{fontSize: 10}}>long: {location?.coords?.longitude || 'N/A'}</Text>
-              <Text style={{fontSize: 10}}>
-                accuracy: {accuracyInMeters ? Number(accuracyInMeters).toFixed(2) : 'N/A'}
-              </Text>
-            </View>
-          ) : null}
+          {hasLocation ? <MapDetail location={locationDetail} accuracyInMeters={accuracyInMeters} /> : null}
           {hasLocation ? <Button caption="" icon={Check} variant="success" round onPress={handleSubmit} /> : null}
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            initialMapCamera();
-          }}
-          style={[styles.myLocationIcon]}
-          accessible
-        >
-          <Icon name="my-location" size={24} />
-        </TouchableOpacity>
+        {hasLocation ? <MapController onZoom={handleZoom} onLocate={initialMapCamera} /> : null}
       </View>
     </View>
   );
