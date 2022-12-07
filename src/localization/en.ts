@@ -511,4 +511,14 @@ export const en = {
     TransferIn: 'Received',
     empty: 'Empty',
   },
+  mapMarking: {
+    searchPlaceholder: 'Search for location...',
+    lat: 'lat: {{lat}}',
+    long: 'long: {{long}}',
+    acc: 'accuracy: {{acc}}',
+    NA: 'N/A',
+    recent: 'Recent',
+    empty: "We couldn't find the entered address",
+    km: '{{km}} KM',
+  },
 };

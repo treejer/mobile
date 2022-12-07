@@ -1,7 +1,7 @@
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
-import React, {useMemo} from 'react';
+import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
 import {Routes} from 'navigation/index';
@@ -19,7 +19,7 @@ interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
 
 function SelectOnMap(props: Props) {
   const {plantTreePermissions} = props;
-  const {hasLocation, showPermissionModal} = plantTreePermissions;
+  const {hasLocation, showPermissionModal, userLocation} = plantTreePermissions;
 
   const isConnected = useNetInfoConnected();
 
@@ -31,7 +31,7 @@ function SelectOnMap(props: Props) {
     <SafeAreaView style={globalStyles.fill}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
-        <MapMarking permissionHasLocation={hasLocation} />
+        <MapMarking permissionHasLocation={hasLocation} userLocation={userLocation} />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={MapMarker} />
         </View>
