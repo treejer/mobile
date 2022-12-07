@@ -1,15 +1,17 @@
 import {combineReducers} from 'redux';
 
-import {initReducer} from './modules/init/init';
-import {web3Reducer} from './modules/web3/web3';
-import {netInfoReducer} from './modules/netInfo/netInfo';
-import {settingsReducer} from './modules/settings/settings';
-import {contractsReducer} from './modules/contracts/contracts';
-import {profileReducer} from './modules/profile/profile';
-import {userSignReducer} from './modules/userSign/userSign';
-import {userNonceReducer} from './modules/userNonce/userNonce';
-import {countriesReducer} from './modules/countris/countries';
+import {initReducer} from 'ranger-redux/modules/init/init';
+import {web3Reducer} from 'ranger-redux/modules/web3/web3';
+import {netInfoReducer} from 'ranger-redux/modules/netInfo/netInfo';
+import {settingsReducer} from 'ranger-redux/modules/settings/settings';
+import {contractsReducer} from 'ranger-redux/modules/contracts/contracts';
+import {profileReducer} from 'ranger-redux/modules/profile/profile';
+import {userSignReducer} from 'ranger-redux/modules/userSign/userSign';
+import {userNonceReducer} from 'ranger-redux/modules/userNonce/userNonce';
+import {countriesReducer} from 'ranger-redux/modules/countris/countries';
 import {offlineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import {recentPlacesReducer} from 'ranger-redux/modules/recentPlaces/recentPlaces';
+import {searchPlacesReducer} from 'ranger-redux/modules/searchPlaces/searchPlaces';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -17,10 +19,12 @@ const appReducer = combineReducers({
   netInfo: netInfoReducer,
   settings: settingsReducer,
   contracts: contractsReducer,
+  recentPlaces: recentPlacesReducer,
   profile: profileReducer,
   userSign: userSignReducer,
   userNonce: userNonceReducer,
   countries: countriesReducer,
+  searchPlaces: searchPlacesReducer,
   offlineMap,
 });
 
