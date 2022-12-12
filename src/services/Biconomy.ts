@@ -9,11 +9,11 @@ export type TransactionBiconomyOptions = {
 export function transactionBiconomy(options: TransactionBiconomyOptions) {
   return new Promise<typeof Biconomy>((resolve, reject) => {
     const {apiKey, magic} = options;
-    console.log(apiKey, '<== apikey is hererererererer');
+    // console.log(apiKey, '<== apikey is hererererererer');
 
     const _config = {
       apiKey,
-      debug: true,
+      debug: false,
       strictMode: true,
       // auditorsCount: config.isMainnet ? 1 : 0,
       // methodSuffix: '_v4',

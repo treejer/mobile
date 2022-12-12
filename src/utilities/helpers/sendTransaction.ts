@@ -3,7 +3,7 @@ import {TransactionReceipt} from 'web3-core';
 import Web3, {Magic} from 'services/Magic';
 import {ContractType, NetworkConfig} from 'services/config';
 import {transactionBiconomy} from 'services/Biconomy';
-import {Alert} from 'react-native';
+// import {Alert} from 'react-native';
 
 export async function sendWeb3Transaction(
   magic: Magic,
@@ -17,8 +17,8 @@ export async function sendWeb3Transaction(
 ) {
   const contract = config.contracts[contractType];
   const apiKey = config.biconomyApiKey;
-  Alert.alert('API key Biconomy', apiKey);
-  console.log(apiKey, 'apiKey');
+  // Alert.alert('API key Biconomy', apiKey);
+  // console.log(apiKey, 'apiKey');
   console.log(useBiconomy, 'biconomy <============== send transaction');
   console.log('1 - Is main net?', config.isMainnet);
   console.log(method, '<===== method');

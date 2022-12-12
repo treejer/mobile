@@ -89,9 +89,6 @@ function MyProfile(props: MyProfileProps) {
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
 
-  console.log(planterData, 'planter Data');
-  console.log(profile, 'profile');
-
   const getPlanter = useCallback(async () => {
     if (!isConnected) {
       return;
