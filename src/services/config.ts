@@ -96,7 +96,7 @@ const config: Config = {
         abi: require('../abis/PlanterFund.json'),
       },
       Dai: {
-        address: '0xaD6Db97C844Ec7Bb4c0641d436AA0D395fDD3f45',
+        address: process.env.REACT_NATIVE_MATIC_MAIN_DAI_TOKEN_ADDRESS || '',
         abi: require('../abis/Dai.json'),
       },
       MarketPlace: {
@@ -143,7 +143,7 @@ const config: Config = {
         abi: require('../abis/PlanterFund.json'),
       },
       Dai: {
-        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+        address: process.env.REACT_NATIVE_MATIC_TEST_DAI_TOKEN_ADDRESS || '',
         abi: require('../abis/Dai.json'),
       },
       MarketPlace: {
