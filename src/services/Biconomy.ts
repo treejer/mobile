@@ -9,7 +9,7 @@ export type TransactionBiconomyOptions = {
 export function transactionBiconomy(options: TransactionBiconomyOptions) {
   return new Promise<typeof Biconomy>((resolve, reject) => {
     const {apiKey, magic} = options;
-    console.log(apiKey, '<== apikey is hererererererer');
+    // console.log(apiKey, '<== apikey is hererererererer');
 
     const _config = {
       apiKey,
