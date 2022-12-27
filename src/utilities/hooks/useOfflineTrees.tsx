@@ -177,7 +177,7 @@ export function OfflineTreeProvider({children}) {
   const address = useWalletAccount();
   const config = useConfig();
   const {t} = useTranslation();
-  const {useBiconomy} = useSettings();
+  const {useBiconomy, changeCheckMetaData} = useSettings();
   const web3 = useWeb3();
   const magic = useMagic();
   const isConnected = useNetInfoConnected();
@@ -471,6 +471,9 @@ export function OfflineTreeProvider({children}) {
             }
           }
           Alert.alert(t('offlineTreesSubmitted'));
+          if (config.isMainnet) {
+            changeCheckMetaData(true);
+          }
         } catch (error: any) {
           setLoadingMinimized(false);
           Alert.alert(t('error'), error?.message || t('tryAgain'));
@@ -479,6 +482,8 @@ export function OfflineTreeProvider({children}) {
     },
     [
       alertNoInternet,
+      changeCheckMetaData,
+      config.isMainnet,
       handleSubmitOfflineAssignedTree,
       handleSubmitOfflineTree,
       handleUpdateOfflineTree,

@@ -34,6 +34,7 @@ export default function SubmitTreeModal() {
   const navigation = useNavigation<any>();
   const {useBiconomy} = useSettings();
   const config = useConfig();
+  const {changeCheckMetaData} = useSettings();
   const {journey, clearJourney} = useCurrentJourney();
 
   const [visible, setVisible] = useState<boolean>(true);
@@ -135,9 +136,22 @@ export default function SubmitTreeModal() {
         );
         clearJourney();
         setVisible(false);
+        if (config.isMainnet) {
+          changeCheckMetaData(true);
+        }
       }
     },
-    [alertNoInternet, handleSubmitTree, isConnected, journey, navigation, t, clearJourney],
+    [
+      isConnected,
+      alertNoInternet,
+      t,
+      navigation,
+      clearJourney,
+      config.isMainnet,
+      handleSubmitTree,
+      journey,
+      changeCheckMetaData,
+    ],
   );
 
   useEffect(() => {

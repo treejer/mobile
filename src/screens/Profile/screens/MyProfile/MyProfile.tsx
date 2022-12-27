@@ -218,7 +218,7 @@ function MyProfile(props: MyProfileProps) {
 
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
-                      <Text style={styles.statLabel}>{t('balance')}</Text>
+                      <Text style={styles.statLabel}>{t('claimable')}</Text>
                     </View>
 
                     <Spacer times={4} />

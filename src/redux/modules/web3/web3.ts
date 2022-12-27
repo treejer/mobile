@@ -230,6 +230,9 @@ export function* watchChangeNetwork(action: TWeb3Action) {
   try {
     const {newNetwork} = action;
     yield put(createWeb3(newNetwork));
+    if (newNetwork === BlockchainNetwork.MaticMain) {
+      yield put(changeCheckMetaData(true));
+    }
   } catch (error) {
     console.log(error, 'update web3 error');
   }
