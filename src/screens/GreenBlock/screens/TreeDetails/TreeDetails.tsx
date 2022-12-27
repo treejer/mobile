@@ -134,7 +134,6 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
-    console.log({plantDate: Number(treeDetails?.plantDate), releaseDate});
     if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
