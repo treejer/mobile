@@ -11,6 +11,7 @@ import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
 import {countriesActions} from '../countris/countries';
 import {version} from '../../../../package.json';
+import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -64,9 +65,12 @@ export function* watchInitApp() {
     yield take(UPDATE_WEB3);
     yield put(countriesActions.load());
     console.log('started');
-    const {accessToken, userId}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
+    const {accessToken, userId, config}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
     if (accessToken && userId) {
       yield put(profileActions.load({accessToken, userId}));
+      if (config.isMainnet) {
+        yield put(changeCheckMetaData(true));
+      }
       yield put(initAppCompleted());
     } else {
       console.log('going to end');

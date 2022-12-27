@@ -7,6 +7,7 @@ export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useBiconomy: boolean;
+  releaseDate: number;
   checkMetaData: boolean;
   showSupportChat: boolean;
 };
@@ -14,6 +15,7 @@ export type TSettings = {
 const initialState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
+  releaseDate: 1672159176038,
   useBiconomy: true,
   checkMetaData: true,
   showSupportChat: false,

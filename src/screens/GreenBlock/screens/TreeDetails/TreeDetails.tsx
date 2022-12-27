@@ -1,6 +1,3 @@
-import globalStyles, {space} from 'constants/styles';
-import {colors} from 'constants/values';
-
 import React, {useMemo} from 'react';
 import {
   ActivityIndicator,
@@ -13,11 +10,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import globalStyles, {space} from 'constants/styles';
+import {colors} from 'constants/values';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 import Spacer from 'components/Spacer';
-import {ChevronLeft} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
@@ -27,7 +28,6 @@ import TreeDetailQuery, {
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
-import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
@@ -36,11 +36,12 @@ import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 interface Props {}
 
@@ -51,6 +52,8 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
+  const {releaseDate, changeCheckMetaData} = useSettings();
+  const {isMainnet} = useConfig();
 
   const {setNewJourney} = useCurrentJourney();
 
@@ -131,6 +134,10 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
+    console.log({plantDate: Number(treeDetails?.plantDate), releaseDate});
+    if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
+      changeCheckMetaData(false);
+    }
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
