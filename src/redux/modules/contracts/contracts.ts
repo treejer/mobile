@@ -165,9 +165,16 @@ export function* watchContracts() {
   }
 }
 
-export function asyncTransferDai(daiContract: Contract, from: string, to: string, amount: string) {
+export function asyncTransferDai(
+  daiContract: Contract,
+  from: string,
+  to: string,
+  amount: string,
+  gas: number,
+  gasPrice: number,
+) {
   return new Promise((resolve, reject) => {
-    daiContract.methods.transfer(to, amount).send({from}, (err, res) => {
+    daiContract.methods.transfer(to, amount).send({from, gas, gasPrice}, (err, res) => {
       if (err) {
         reject(err);
         return;
@@ -190,7 +197,10 @@ export function* watchTransaction({transaction}: TAction) {
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const amountInEther = web3.utils.toWei(amount.toString(), 'ether');
 
-    yield asyncTransferDai(daiContract, from, to, amountInEther);
+    const estimatedGas = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
+    const gasPrice = yield web3.eth.getGasPrice();
+
+    yield asyncTransferDai(daiContract, from, to, amountInEther, estimatedGas, gasPrice);
     yield put(cancelTransaction());
     yield put(getBalance());
 
@@ -219,7 +229,6 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
     const gasPrice = yield web3.eth.getGasPrice();
     const fee = gasAmount * gasPrice;
 
-    console.log(fee, 'feeeeeeeeeee');
     if (fee > 0) {
       yield put(transactionFee({fee}));
     } else {

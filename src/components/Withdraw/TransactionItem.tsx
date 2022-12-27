@@ -1,17 +1,18 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FIcon from 'react-native-vector-icons/Feather';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
+import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
 import {MoreDetail} from 'components/Activity/ActivityItem';
 import {GetTransactionHistoryQueryPartialData} from 'screens/Withdraw/screens/WithrawHistory/graphql/getTransactionHistoryQuery.graphql';
 import {useWalletWeb3} from 'ranger-redux/modules/web3/web3';
-import {StableDaiCoin, EthCoin, Tree} from '../../../assets/images';
-import globalStyles from 'constants/styles';
+import {StableDaiCoin} from '../../../assets/images';
 
 export enum TTransactionEvent {
   TransferOut = 'TransferOut',
@@ -44,7 +45,12 @@ export function TransactionItem(props: TTransactionItemProps) {
 
   const amount = useMemo(
     () => (transaction.amount ? Number(web3.utils.fromWei(transaction.amount.toString())).toFixed(2) : null),
-    [transaction.amount],
+    [transaction.amount, web3.utils],
+  );
+
+  const eventColor = useMemo(
+    () => (transaction?.event === TTransactionEvent.TransferIn ? colors.green : colors.red),
+    [transaction.event],
   );
 
   return (
@@ -62,16 +68,24 @@ export function TransactionItem(props: TTransactionItemProps) {
               <Spacer times={0.5} />
               <Text style={styles.date}>{date}</Text>
             </View>
-            <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
-              <Text style={styles.status}>{t(`activities.${transaction.event}`)}</Text>
-              <Spacer />
-              <FIcon
-                style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
-                name="chevron-down"
-                size={20}
-                color={colors.grayLight}
+            <View style={styles.row}>
+              <MIcon
+                name={transaction.event === TTransactionEvent.TransferIn ? 'wallet-plus-outline' : 'bank-transfer-out'}
+                color={eventColor}
+                size={18}
               />
-            </TouchableOpacity>
+              <Spacer />
+              <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
+                <Text style={[styles.status, {color: eventColor}]}>{t(`activities.${transaction.event}`)}</Text>
+                <Spacer />
+                <FIcon
+                  style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
+                  name="chevron-down"
+                  size={20}
+                  color={colors.grayLight}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         {isOpen && (
