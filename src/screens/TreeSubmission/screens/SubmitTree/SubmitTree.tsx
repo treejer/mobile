@@ -55,7 +55,7 @@ function SubmitTree(props: Props) {
 
   const {t} = useTranslation();
 
-  const {useBiconomy} = useSettings();
+  const {useBiconomy, changeCheckMetaData} = useSettings();
 
   const [photoHash, setPhotoHash] = useState<string>();
   const [metaDataHash, setMetaDataHash] = useState<string>();
@@ -289,8 +289,10 @@ function SubmitTree(props: Props) {
           }),
         );
         clearJourney();
+        if (config.isMainnet) {
+          changeCheckMetaData(true);
+        }
       }
-
       // setTxHash(transaction.transactionHash);
 
       // console.log('Transaction: ', transaction);
@@ -318,6 +320,8 @@ function SubmitTree(props: Props) {
     navigation,
     clearJourney,
     handleSendCreateTransaction,
+    config.isMainnet,
+    changeCheckMetaData,
   ]);
 
   useEffect(() => {

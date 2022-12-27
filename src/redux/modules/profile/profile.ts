@@ -12,6 +12,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
+import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
 
 export type TProfile = {
   id: string;
@@ -38,6 +39,7 @@ const Profile = new ReduxFetchState<TProfile, TProfileForm, string>('profile');
 export function* watchProfile() {
   try {
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/user/getme/user');
+    yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
     yield put(Profile.actions.loadFailure(e));

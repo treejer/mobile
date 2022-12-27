@@ -19,6 +19,8 @@ import Button from 'components/Button/Button';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -41,11 +43,18 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
   const [byModel, setByModel] = useState<boolean>(false);
   const [count, setCount] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const {isMainnet} = useConfig();
+  const {changeCheckMetaData} = useSettings();
+
   const isConnected = useNetInfoConnected();
 
   useRefocusEffect(() => {
     clearJourney();
     setCount('');
+    if (isMainnet) {
+      changeCheckMetaData(true);
+    }
   });
 
   const handleStart = useCallback(
