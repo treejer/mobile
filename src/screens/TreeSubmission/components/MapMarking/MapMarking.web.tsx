@@ -119,11 +119,7 @@ export default function MapMarking(props: MapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (
-          distance < maxDistanceInMeters ||
-          (isWeb() && browserPlatform === BrowserPlatform.iOS) ||
-          !checkExif(isMainnet, checkMetaData)
-        ) {
+        if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === BrowserPlatform.iOS) || !checkMetaData) {
           navigation.navigate(Routes.SubmitTree);
           setNewJourney(newJourney);
         } else {

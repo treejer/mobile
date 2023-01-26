@@ -312,11 +312,7 @@ export function useAfterSelectPhotoHandler() {
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          if (
-            distance < maxDistanceInMeters ||
-            (isWeb() && browserPlatform === 'iOS') ||
-            !checkExif(isMainnet, checkMetaData)
-          ) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
             navigation.navigate(Routes.SubmitTree);
             setNewJourney({
               ...newJourney,
@@ -333,11 +329,7 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (
-            distance < maxDistanceInMeters ||
-            (isWeb() && browserPlatform === 'iOS') ||
-            !checkExif(isMainnet, checkMetaData)
-          ) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
             navigation.navigate(Routes.SubmitTree);
           } else {
             showAlert({
@@ -355,11 +347,7 @@ export function useAfterSelectPhotoHandler() {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
 
         if (isUpdate && isNursery && !canUpdate) {
-          if (
-            distance < maxDistanceInMeters ||
-            (isWeb() && browserPlatform === 'iOS') ||
-            !checkExif(isMainnet, checkMetaData)
-          ) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -388,11 +376,7 @@ export function useAfterSelectPhotoHandler() {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          if (
-            distance < maxDistanceInMeters ||
-            (isWeb() && browserPlatform === 'iOS') ||
-            !checkExif(isMainnet, checkMetaData)
-          ) {
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
             dispatchAddOfflineUpdateTree({
               ...newJourney,
               tree: updatedTree,
@@ -423,6 +407,7 @@ export function useAfterSelectPhotoHandler() {
       }
     },
     [
+      checkMetaData,
       browserPlatform,
       clearJourney,
       dispatchAddOfflineUpdateTree,

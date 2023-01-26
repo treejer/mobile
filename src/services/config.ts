@@ -153,7 +153,7 @@ const config: Config = {
     },
     biconomyAddress: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_MATIC_TEST_WEB3_NETWORK_ID || 3),
-    isMainnet: false,
+    isMainnet: true,
     web3Url: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_TREEJER_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_THE_GRAPH_URL),

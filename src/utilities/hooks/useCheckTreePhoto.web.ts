@@ -25,7 +25,7 @@ export const useCheckTreePhoto = () => {
       imageLocation: TUserLocation,
     ) => {
       try {
-        if (browserPlatform === BrowserPlatform.iOS || !checkExif(isMainnet, checkMetaData)) {
+        if (browserPlatform === BrowserPlatform.iOS || !checkMetaData) {
           successCallback({latitude: 0, longitude: 0});
           return;
         }

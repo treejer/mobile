@@ -22,7 +22,7 @@ export const useCheckTreePhoto = () => {
       imageLocation?: TUserLocation,
       fromGallery?: boolean,
     ) => {
-      if (!checkExif(isMainnet, checkMetaData)) {
+      if (!checkMetaData) {
         successCallback({latitude: 0, longitude: 0});
         return;
       }

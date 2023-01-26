@@ -153,11 +153,7 @@ export default function MapMarking(props: IMapMarkingProps) {
         },
       };
       if (isConnected) {
-        if (
-          distance < maxDistanceInMeters ||
-          journey.nurseryContinuedUpdatingLocation ||
-          !checkExif(isMainnet, checkMetaData)
-        ) {
+        if (distance < maxDistanceInMeters || journey.nurseryContinuedUpdatingLocation || !checkMetaData) {
           setNewJourney(newJourney);
           navigation.navigate(Routes.SubmitTree);
         } else {
@@ -169,7 +165,7 @@ export default function MapMarking(props: IMapMarkingProps) {
         }
       } else {
         if (newJourney.isSingle === true) {
-          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
+          if (distance < maxDistanceInMeters || !checkMetaData) {
             dispatchAddOfflineTree(newJourney);
             clearJourney();
             showAlert({
@@ -186,7 +182,7 @@ export default function MapMarking(props: IMapMarkingProps) {
             return;
           }
         } else if (newJourney.isSingle === false && newJourney.nurseryCount) {
-          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
+          if (distance < maxDistanceInMeters || !checkMetaData) {
             const offlineTrees: TreeJourney[] = [];
             for (let i = 0; i < newJourney.nurseryCount; i++) {
               offlineTrees.push({
@@ -210,7 +206,7 @@ export default function MapMarking(props: IMapMarkingProps) {
             return;
           }
         } else if (newJourney?.tree?.treeSpecsEntity?.nursery) {
-          if (distance < maxDistanceInMeters || !checkExif(isMainnet, checkMetaData)) {
+          if (distance < maxDistanceInMeters || !checkMetaData) {
             const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
             dispatchAddOfflineUpdateTree({
               ...newJourney,

@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
-import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, Text, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -141,6 +141,20 @@ function SubmitTree(props: Props) {
 
       const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
 
+      if (Object.keys(jsonData).length === 0) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        showAlert({
+          message: t('emptyTreeSpecs'),
+          mode: AlertMode.Error,
+        });
+        clearJourney();
+      }
+
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
       setMetaDataHash(metaDataUploadResult.Hash);
@@ -153,14 +167,16 @@ function SubmitTree(props: Props) {
       });
     }
   }, [
-    journey,
     isUpdate,
     updateTreeData,
     isAssignedTreeToPlant,
     assignedTreeData,
+    journey,
     t,
     config.ipfsPostURL,
     config.ipfsGetURL,
+    navigation,
+    clearJourney,
   ]);
 
   const handleSendUpdateTransaction = useCallback(

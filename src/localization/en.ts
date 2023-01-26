@@ -522,4 +522,5 @@ export const en = {
     empty: "We couldn't find the entered address",
     km: '{{km}} KM',
   },
+  emptyTreeSpecs: 'TreeSpecs is empty please try again!',
 };
