@@ -189,11 +189,7 @@ function SelectPhoto(props: Props) {
       },
     );
     if (isConnected) {
-      if (
-        distance < maxDistanceInMeters ||
-        (isWeb() && browserPlatform === 'iOS') ||
-        !checkExif(isMainnet, checkMetaData)
-      ) {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
         navigation.navigate(Routes.SubmitTree);
         setNewJourney({
           ...journey,
@@ -208,11 +204,7 @@ function SelectPhoto(props: Props) {
         });
       }
     } else {
-      if (
-        distance < maxDistanceInMeters ||
-        (isWeb() && browserPlatform === 'iOS') ||
-        !checkExif(isMainnet, checkMetaData)
-      ) {
+      if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
         dispatchAddOfflineUpdateTree({
           ...journey,
