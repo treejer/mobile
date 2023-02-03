@@ -266,8 +266,8 @@ export function OfflineTreeProvider({children}) {
   const handleUpdateOfflineTree = useCallback(
     async (treeJourney: Tree & TreeJourney) => {
       if (
-        treeJourney?.treeSpecsEntity == null ||
-        typeof treeJourney?.treeSpecsEntity === 'undefined' ||
+        treeJourney?.tree?.treeSpecsEntity == null ||
+        typeof treeJourney?.tree?.treeSpecsEntity === 'undefined' ||
         !treeJourney.treeIdToUpdate ||
         !treeJourney.tree ||
         !treeJourney.photo

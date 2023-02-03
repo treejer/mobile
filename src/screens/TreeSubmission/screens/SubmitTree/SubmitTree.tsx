@@ -41,6 +41,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig, useMagic, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
@@ -52,6 +53,7 @@ function SubmitTree(props: Props) {
   const {showPermissionModal} = plantTreePermissions;
 
   const {journey, clearJourney} = useCurrentJourney();
+  const {offlineTrees, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
 
   const {t} = useTranslation();
 
@@ -282,6 +284,9 @@ function SubmitTree(props: Props) {
           message: t('submitTree.updated'),
           mode: AlertMode.Success,
         });
+        if (offlineTrees.updated?.some(id => id === journey.treeIdToUpdate)) {
+          dispatchRemoveOfflineUpdateTree(journey.treeIdToUpdate);
+        }
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
