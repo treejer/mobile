@@ -31,6 +31,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {ContractType} from 'services/config';
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
@@ -52,6 +53,7 @@ function SubmitTree(props: Props) {
   const {showPermissionModal} = plantTreePermissions;
 
   const {journey, clearJourney} = useCurrentJourney();
+  const {offlineTrees, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
 
   const {t} = useTranslation();
 
@@ -277,6 +279,9 @@ function SubmitTree(props: Props) {
 
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
+        if (offlineTrees?.updated?.some(item => item.treeIdToUpdate === journey.treeIdToUpdate)) {
+          dispatchRemoveOfflineUpdateTree(journey.treeIdToUpdate);
+        }
         showAlert({
           title: t('success'),
           message: t('submitTree.updated'),
@@ -333,8 +338,10 @@ function SubmitTree(props: Props) {
     sendEvent,
     metaDataHash,
     handleSendUpdateTransaction,
+    offlineTrees?.updated,
     navigation,
     clearJourney,
+    dispatchRemoveOfflineUpdateTree,
     handleSendCreateTransaction,
     config.isMainnet,
     changeCheckMetaData,

@@ -296,7 +296,7 @@ export const supportLinks = {
 export default config;
 
 export const maxDistanceInKiloMeters = 200;
-export const maxDistanceInMeters = 15;
+export const maxDistanceInMeters = 100;
 
 export const offlineMapName = () => `OfflineMap-${Date.now()}`;
 export const offlineSubmittingMapName = () => `OfflineSubmittingMap-${Date.now()}`;
