@@ -420,7 +420,7 @@ PODS:
     - Toast (~> 4.0.0)
   - react-native-splash-screen (3.3.0):
     - React-Core
-  - react-native-webview (11.25.0):
+  - react-native-webview (11.26.0):
     - React-Core
   - React-perflogger (0.68.5)
   - React-RCTActionSheet (0.68.5):
@@ -519,11 +519,11 @@ PODS:
     - TOCropViewController
   - RNInAppBrowser (3.7.0):
     - React-Core
-  - rnmapbox-maps (10.0.0-beta.59):
+  - rnmapbox-maps (10.0.0-beta.64):
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.59)
-  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.59):
+    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.64)
+  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.64):
     - React
     - React-Core
   - RNPermissions (3.6.1):
@@ -910,7 +910,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-simple-toast: bf002828cf816775a6809f7a9ec3907509bce11f
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-webview: a71da846ed2e9085440e1d6659c04e285528834b
+  react-native-webview: 994b9f8fbb504d6314dc40d83f94f27c6831b3bf
   React-perflogger: 0458a87ea9a7342079e7a31b0d32b3734fb8415f
   React-RCTActionSheet: 22538001ea2926dea001111dd2846c13a0730bc9
   React-RCTAnimation: 732ce66878d4aa151d56a0d142b1105aa12fd313
@@ -934,7 +934,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
-  rnmapbox-maps: 073b5930979d7a80262aa0a2098ba3a56310d220
+  rnmapbox-maps: d09068999041c24cc51e8e5662a06334097e173d
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 0ff5e7f619a7524d237848ecb4c47650c4946f71
   RNScreens: 4d83613b50b74ed277026375dc0810893b0c347f

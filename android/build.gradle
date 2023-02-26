@@ -6,6 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 31
         targetSdkVersion = 31
+        kotlinVersion = '1.5.31'
 
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -48,6 +49,8 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0'
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -74,6 +77,9 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
         maven { url 'https://maven.google.com' }
+        maven {
+          url("$rootDir/../node_modules/detox/Detox-android")
+        }
         mavenLocal()
         maven {
             url 'https://api.mapbox.com/downloads/v2/releases/maven'
