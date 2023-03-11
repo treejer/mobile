@@ -82,4 +82,8 @@ module.exports = {
       app: 'android.release',
     },
   },
+  session: {
+    autoStart: true,
+    server: 'ws://0.0.0.0:8100',
+  },
 };
