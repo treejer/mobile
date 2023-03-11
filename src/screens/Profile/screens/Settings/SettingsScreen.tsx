@@ -1,97 +1,62 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {ActivityIndicator, Dimensions, Switch, Text, TouchableOpacity, View} from 'react-native';
-import Button from 'components/Button';
+import React, {useMemo} from 'react';
+import {ActivityIndicator, StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {ProfileRouteParamList} from 'types';
 import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import globalStyles from 'constants/styles';
-import Spacer from 'components/Spacer/Spacer';
-import {useSettings} from 'services/settings';
 import Icon from 'react-native-vector-icons/Octicons';
-import {colors} from 'constants/values';
-import {useConfig, useWalletAccount, useWeb3} from 'services/web3';
+import Web3 from 'web3';
+
+import {ProfileRouteParamList} from 'types';
 import {isMatic} from 'services/Magic';
-import {ChevronLeft} from 'components/Icons';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import Card from 'components/Card';
+import Spacer from 'components/Spacer/Spacer';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {treejerLanguages} from 'utilities/helpers/language';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
 }
 
-const {width} = Dimensions.get('window');
-
 export default function SettingsScreen(props: SettingsScreenProps) {
   const {navigation} = props;
 
-  const [ether, setEther] = useState<string>('');
-
-  const {useGSN, changeUseGsn} = useSettings();
-  const web3 = useWeb3();
-  const walletAccount = useWalletAccount();
   const config = useConfig();
-
-  console.log(useGSN, 'useGsn');
-
-  const fullWidth = useMemo(() => width - 80, []);
+  const {ether} = useContracts();
+  const {locale, useBiconomy, checkMetaData, changeUseBiconomy, changeCheckMetaData} = useSettings();
   const {t} = useTranslation();
+
+  const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
+
+  const selectedLocale = useMemo(() => treejerLanguages.find(language => language.locale === locale)?.name, [locale]);
 
   const handleSelectLanguage = () => {
     navigation.navigate('SelectLanguage', {back: true});
   };
 
-  const handleChangeUseGSN = value => {
-    changeUseGsn(value);
+  const handleChangeUseBiconomy = value => {
+    changeUseBiconomy(value);
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const balance = await web3.eth.getBalance(walletAccount);
-        const _balance = web3.utils.fromWei(balance);
-        setEther(_balance);
-      } catch (e) {
-        console.log(e, 'e inside getBalance');
-      }
-    })();
-  }, []);
-
   return (
-    <SafeAreaView style={[{flex: 1}, globalStyles.screenView, globalStyles.p1]}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <TouchableOpacity style={[globalStyles.p1]} onPress={() => navigation.goBack()}>
-          <ChevronLeft />
-        </TouchableOpacity>
-        <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>{t('settings.title')}</Text>
-      </View>
-      <Spacer times={4} />
-      <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 16}}>
-        <Button style={{width: '100%'}} caption={t('language')} variant="tertiary" onPress={handleSelectLanguage} />
+    <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
+      <ScreenTitle title={t('settings.title')} goBack />
+      <View style={[globalStyles.p1, {flex: 1, alignItems: 'center', paddingHorizontal: 16}]}>
+        <Card style={styles.btnContainer}>
+          <TouchableOpacity style={styles.changeLngBtn} onPress={handleSelectLanguage}>
+            <Text style={styles.text}>{t('language')}</Text>
+            <Text style={styles.text}>{selectedLocale}</Text>
+          </TouchableOpacity>
+        </Card>
         <Spacer times={4} />
-        <View
-          style={{
-            backgroundColor: 'white',
-            paddingVertical: 12,
-            paddingHorizontal: 20,
-            borderRadius: 10,
-            shadowOffset: {
-              width: 2,
-              height: 6,
-            },
-            shadowRadius: 20,
-            shadowColor: 'black',
-            shadowOpacity: 0.15,
-            elevation: 6,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text>{t('settings.useGSN')}</Text>
-            <Switch value={useGSN} onValueChange={handleChangeUseGSN} />
+        <Card>
+          <View style={styles.settingsItem}>
+            <Text style={styles.text}>{t('settings.useBiconomy')}</Text>
+            <Switch value={useBiconomy} onValueChange={handleChangeUseBiconomy} />
           </View>
           <View style={{paddingVertical: 16}}>
             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -104,11 +69,45 @@ export default function SettingsScreen(props: SettingsScreenProps) {
           <View
             style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
           >
-            <Text>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
-            {ether ? <Text>{Number(ether).toFixed(7)}</Text> : <ActivityIndicator color={colors.gray} />}
+            <Text style={styles.text}>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
+            {etherBalance ? (
+              <Text style={styles.text}>{Number(etherBalance).toFixed(etherBalance ? 7 : 0)}</Text>
+            ) : (
+              <ActivityIndicator color={colors.gray} />
+            )}
           </View>
-        </View>
+          {!config.isMainnet && (
+            <>
+              <Spacer />
+              <View style={styles.settingsItem}>
+                <Text style={styles.text}>{t('settings.checkMetaData')}</Text>
+                <Switch value={checkMetaData} onValueChange={changeCheckMetaData} />
+              </View>
+            </>
+          )}
+        </Card>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  btnContainer: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+  changeLngBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
+  text: {
+    color: colors.grayDarker,
+  },
+});

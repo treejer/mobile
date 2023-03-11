@@ -1,6 +1,3 @@
-import globalStyles, {space} from 'constants/styles';
-import {colors} from 'constants/values';
-
 import React, {useMemo} from 'react';
 import {
   ActivityIndicator,
@@ -13,11 +10,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
 import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import globalStyles, {space} from 'constants/styles';
+import {colors} from 'constants/values';
+import RefreshControl from 'components/RefreshControl/RefreshControl';
 import Spacer from 'components/Spacer';
-import {ChevronLeft} from 'components/Icons';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import Button from 'components/Button';
@@ -27,19 +28,20 @@ import TreeDetailQuery, {
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
-import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {TreeImage} from 'components/TreeList/TreeImage';
 import {diffUpdateTime, isUpdatePended, treeColor, treeDiffUpdateHumanized} from 'utilities/helpers/tree';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
-import {Routes} from 'navigation';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import {Routes} from 'navigation/index';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useCurrentJourney} from 'services/currentJourney';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 interface Props {}
 
@@ -50,6 +52,8 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
+  const {releaseDate, changeCheckMetaData} = useSettings();
+  const {isMainnet} = useConfig();
 
   const {setNewJourney} = useCurrentJourney();
 
@@ -66,7 +70,6 @@ function TreeDetails(_: Props) {
   const treeUpdateInterval = useTreeUpdateInterval();
 
   const treeDetails = useMemo(() => data?.tree || tree, [data?.tree, tree]);
-  console.log(treeDetails, 'treeDetails');
 
   // console.log(new Date(Number(treeDetails?.birthDate) * 1000), '====> treeDetails?.birthDate <====');
   // console.log(treeDetails?.birthDate, '====> treeDetails?.birthDate <====');
@@ -131,7 +134,9 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
-
+    if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
+      changeCheckMetaData(false);
+    }
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -165,6 +170,7 @@ function TreeDetails(_: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+      <ScreenTitle goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={
@@ -175,14 +181,6 @@ function TreeDetails(_: Props) {
       >
         <PullToRefresh onRefresh={() => refetch()}>
           <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
-            <View style={[globalStyles.horizontalStack, globalStyles.alignItemsCenter, globalStyles.p3]}>
-              <TouchableOpacity style={{paddingHorizontal: 16, paddingVertical: 8}} onPress={() => navigation.goBack()}>
-                <ChevronLeft />
-              </TouchableOpacity>
-              <View style={globalStyles.fill} />
-              <Avatar size={40} type="active" />
-            </View>
-
             {treeDetails ? (
               <TreeImage
                 color={colors.green}

@@ -1,20 +1,16 @@
 import {useCallback} from 'react';
 import ImagePicker, {Image, Options} from 'react-native-image-crop-picker';
-import {useTranslation} from 'react-i18next';
 
 const useCamera = () => {
-  const {t} = useTranslation();
-
   const openLibrary = useCallback(async () => {
     try {
       const photo = await ImagePicker.openPicker({
         includeExif: true,
         mediaType: 'photo',
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.1,
         cropping: true,
       });
 
-      console.log(photo, 'a<====');
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
@@ -26,11 +22,10 @@ const useCamera = () => {
       const photo = await ImagePicker.openCamera({
         includeExif: true,
         mediaType: 'photo',
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.1,
         cropping: true,
         ...options,
       });
-      console.log(photo, 'photo');
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');

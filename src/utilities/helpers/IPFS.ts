@@ -41,8 +41,6 @@ export async function upload(url: string, uri: string | File, type = 'image/jpg'
 export async function uploadContent(url: string, content: string): Promise<IPFSUploadResponse> {
   const formData = new FormData();
 
-  console.log(content, 'content');
-
   formData.append('file', content);
 
   const response = await callUploadEndpoint(url, formData, false);

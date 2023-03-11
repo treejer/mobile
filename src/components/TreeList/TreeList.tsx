@@ -13,33 +13,41 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
-import {GreenBlockRouteParamList, Tree} from 'types';
-import {useWalletAccount} from 'services/web3';
-import {Hex2Dec} from 'utilities/helpers/hex';
-
-import Button from '../Button';
-import Spacer from '../Spacer';
-import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
-import {TreeJourney} from 'screens/TreeSubmission/types';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import NoInternetTrees from 'components/TreeList/NoInternetTrees';
-import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
-import useTempTrees from 'utilities/hooks/useTempTrees';
 import {useTranslation} from 'react-i18next';
-import {colors} from 'constants/values';
-import {TreeImage} from 'components/TreeList/TreeImage';
-import {Routes} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
-import {isWeb} from 'utilities/helpers/web';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
+
+import {Routes} from 'navigation/index';
+import {GreenBlockRouteParamList, Tree} from 'types';
+import {colors} from 'constants/values';
+import NoInternetTrees from 'components/TreeList/NoInternetTrees';
+import {TreeImage} from 'components/TreeList/TreeImage';
 import {TreeFilter, TreeFilterButton, TreeFilterItem} from 'components/TreeList/TreeFilterItem';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import {isWeb} from 'utilities/helpers/web';
+import {usePagination} from 'utilities/hooks/usePagination';
 import {useCurrentJourney} from 'services/currentJourney';
 import TreeSymbol from './TreeSymbol';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {TreeColorsInfoModal} from 'components/TreeList/TreeColorsInfoModal';
+import Button from '../Button';
+import Spacer from '../Spacer';
+import TempTreesQuery, {
+  TempTreesQueryQueryData,
+  TempTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/TempTreesQuery.graphql';
+import planterTreeQuery, {
+  PlanterTreesQueryQueryData,
+  PlanterTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {TreeJourney} from 'screens/TreeSubmission/types';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   route?: RouteProp<GreenBlockRouteParamList, Routes.TreeList>;
@@ -47,8 +55,7 @@ interface Props {
   filter?: TreeFilter;
 }
 
-function Trees({route, navigation, filter}: Props) {
-  // const navigation = useNavigation();
+function Trees({navigation, filter}: Props) {
   const [initialFilter, setInitialFilter] = useState<TreeFilter | null>(filter || null);
   const [treeColorsModalVisible, setTreeColorModalVisible] = useState<boolean>(false);
   const {t} = useTranslation();
@@ -81,20 +88,42 @@ function Trees({route, navigation, filter}: Props) {
   const treeUpdateInterval = useTreeUpdateInterval();
 
   const {
-    tempTreesQuery,
-    tempTrees,
-    refetchTempTrees,
+    persistedData: tempTrees,
+    query: tempTreeQuery,
     refetching: tempTreesRefetching,
+    refetchData: refetchTempTrees,
     loadMore: tempLoadMore,
-  } = useTempTrees(address);
+  } = usePagination<
+    TempTreesQueryQueryData,
+    TempTreesQueryQueryData.Variables,
+    TempTreesQueryQueryPartialData.TempTrees[]
+  >(
+    TempTreesQuery,
+    {
+      address: address.toString().toLocaleLowerCase(),
+    },
+    'tempTrees',
+    TreeFilter.Temp,
+  );
 
   const {
-    plantedTrees,
-    plantedTreesQuery,
-    refetchPlantedTrees,
+    persistedData: plantedTrees,
+    query: plantedTreesQuery,
+    refetchData: refetchPlantedTrees,
     refetching: plantedRefetching,
     loadMore: plantedLoadMore,
-  } = usePlantedTrees(address);
+  } = usePagination<
+    PlanterTreesQueryQueryData,
+    PlanterTreesQueryQueryData.Variables,
+    PlanterTreesQueryQueryPartialData.Trees[]
+  >(
+    planterTreeQuery,
+    {
+      address: address.toString().toLocaleLowerCase(),
+    },
+    'trees',
+    TreeFilter.Submitted,
+  );
 
   const {
     offlineTrees,
@@ -110,7 +139,7 @@ function Trees({route, navigation, filter}: Props) {
 
   const dim = useWindowDimensions();
 
-  const allLoading = plantedTreesQuery.loading || tempTreesQuery.loading;
+  const allLoading = plantedTreesQuery.loading || tempTreeQuery.loading;
   const offlineLoading = Boolean(offlineLoadings?.length || offlineUpdateLoadings?.length);
   const showLoadingModal = offlineLoading && !loadingMinimized;
 
@@ -385,8 +414,6 @@ function Trees({route, navigation, filter}: Props) {
     const prop = isPlanted ? 'planted' : 'updated';
 
     const renderItem = ({item, index}: {item: TreeJourney; index: number}) => {
-      console.log(item, '<===');
-
       const isAssignedTree = item.treeIdToPlant;
       const id = isPlanted
         ? isAssignedTree
@@ -441,7 +468,6 @@ function Trees({route, navigation, filter}: Props) {
 
     const data = offlineTrees[prop];
 
-    // console.log(offlineTrees[prop], '<====');
     return (
       <View style={[globalStyles.fill]}>
         <Text style={styles.treeLabel}>{t('offlineTrees', {type: t(isPlanted ? 'Planted' : 'Updated')})}</Text>
@@ -515,6 +541,7 @@ function Trees({route, navigation, filter}: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
+      <ScreenTitle title={t('treeInventory.title')} />
       <View
         style={[
           globalStyles.screenView,
@@ -526,9 +553,7 @@ function Trees({route, navigation, filter}: Props) {
         ]}
       >
         {renderLoadingModal()}
-        <Spacer times={6} />
-        <Text style={[globalStyles.h3, globalStyles.textCenter]}>{t('treeInventory.title')}</Text>
-        <Spacer times={4} />
+        <Spacer times={2} />
         <View
           style={[
             globalStyles.horizontalStack,

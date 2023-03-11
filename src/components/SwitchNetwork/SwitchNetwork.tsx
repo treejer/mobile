@@ -1,26 +1,23 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {colors} from 'constants/values';
-import Card from 'components/Card/Card';
+import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useChangeNetwork, useConfig} from 'services/web3';
-import {BlockchainNetwork} from 'services/config';
+import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+
+import Card from 'components/Card/Card';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
 import {ConfirmationNetwork} from 'components/SwitchNetwork/ConfirmationNetwork';
-import RNRestart from 'react-native-restart';
-import {useCurrentUser} from 'services/currentUser';
-import {isWeb} from 'utilities/helpers/web';
+import {colors} from 'constants/values';
+import {BlockchainNetwork} from 'services/config';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
+import {useUserWeb3, useConfig} from 'ranger-redux/modules/web3/web3';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const insets = useSafeAreaInsets();
 
   const config = useConfig();
   const [confirming, setConfirming] = useState<BlockchainNetwork | null>(null);
-  const changeNetwork = useChangeNetwork();
+  const {changeNetwork} = useUserWeb3();
 
-  const {handleLogout} = useCurrentUser();
+  const {handleLogout} = useProfile();
 
   const {t} = useTranslation();
 
@@ -38,13 +35,14 @@ export function SwitchNetwork() {
     setConfirming(null);
   }, []);
   const handleConfirmNetwork = useCallback(
-    (network: BlockchainNetwork) => {
-      changeNetwork(network);
-      setConfirming(null);
-      setShowModal(false);
-      handleLogout();
-      if (!isWeb()) {
-        RNRestart.Restart();
+    async (network: BlockchainNetwork) => {
+      try {
+        await handleLogout(true);
+        changeNetwork(network);
+        setConfirming(null);
+        setShowModal(false);
+      } catch (e: any) {
+        console.log(e, 'error is here');
       }
     },
     [changeNetwork, handleLogout],
@@ -80,7 +78,7 @@ export function SwitchNetwork() {
       <TouchableOpacity
         activeOpacity={0.7}
         hitSlop={{top: 8, right: 32, bottom: 8, left: 32}}
-        style={[styles.container, {top: insets.top + 4, right: insets.right + 44}]}
+        style={styles.container}
         onPress={handleOpenModal}
       >
         <Card style={[styles.card]}>
@@ -93,13 +91,10 @@ export function SwitchNetwork() {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
     flexDirection: 'row',
-    alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
     width: -1,
-    zIndex: 9,
   },
   card: {
     width: -1,

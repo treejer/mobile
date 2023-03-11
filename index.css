@@ -45,6 +45,7 @@ body {
   bottom: 10vh !important;
   width: 100px !important;
   height: 100px !important;
+  display: none;
 }
 
 @media all and (max-height: 677px) {
@@ -89,4 +90,9 @@ input {
   .Toastify__toast-container--top-right {
     right: calc(100vw - 768px - calc(50vw - 392px));
   }
+}
+
+
+#ptr-parent{
+  width: 100% !important;
 }

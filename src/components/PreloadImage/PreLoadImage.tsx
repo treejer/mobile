@@ -1,13 +1,12 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image as NativeImage} from 'react-native';
-import {useWalletAccount} from 'services/web3';
+
 import {isWeb} from 'utilities/helpers/web';
 import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
 import {
   EastWoodMessage,
   MaticLogo,
   NoWalletImage,
-  RinkebyLogo,
   RotateIcon,
   SingUp,
   TreejerIcon,
@@ -17,6 +16,13 @@ import {
   onBoardingTwo,
 } from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
+import {usePagination} from 'utilities/hooks/usePagination';
+import planterTreeQuery, {
+  PlanterTreesQueryQueryData,
+  PlanterTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 
 const staticImages = [
   MapMarker,
@@ -24,7 +30,6 @@ const staticImages = [
   EastWoodMessage,
   MaticLogo,
   NoWalletImage,
-  RinkebyLogo,
   RotateIcon,
   SingUp,
   TreejerIcon,
@@ -36,7 +41,18 @@ const staticImages = [
 
 function PreLoadImage() {
   const address = useWalletAccount();
-  const {plantedTrees} = usePlantedTrees(address);
+  const {persistedData: plantedTrees} = usePagination<
+    PlanterTreesQueryQueryData,
+    PlanterTreesQueryQueryData.Variables,
+    PlanterTreesQueryQueryPartialData.Trees[]
+  >(
+    planterTreeQuery,
+    {
+      address: address.toString().toLocaleLowerCase(),
+    },
+    'trees',
+    TreeFilter.Submitted,
+  );
 
   useEffect(() => {
     if (isWeb()) {
@@ -44,27 +60,28 @@ function PreLoadImage() {
     } else {
       preFetchTreeImages();
     }
-  }, [plantedTrees]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const treeImagesUrl = useMemo(
-    () => plantedTrees?.map(tree => tree.treeSpecsEntity.imageFs).filter(Boolean),
+    () => plantedTrees?.map(tree => tree?.treeSpecsEntity?.imageFs).filter(Boolean),
     [plantedTrees],
   );
 
-  const allImages = useMemo(() => [...staticImages, ...(treeImagesUrl || [])], [plantedTrees, treeImagesUrl]);
+  const allImages = useMemo(() => [...staticImages, ...(treeImagesUrl || [])], [treeImagesUrl]);
 
   const preFetchTreeImages = useCallback(() => {
     treeImagesUrl?.forEach(image => {
       NativeImage.prefetch(String(image));
     });
-  }, [plantedTrees, treeImagesUrl]);
+  }, [treeImagesUrl]);
 
   const preFetchTreeImagesWeb = useCallback(() => {
     allImages?.forEach(image => {
       const img = new Image();
       img.src = image;
     });
-  }, [plantedTrees, allImages]);
+  }, [allImages]);
 
   if (isWeb()) {
     return <></>;

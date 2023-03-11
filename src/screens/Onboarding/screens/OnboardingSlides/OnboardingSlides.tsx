@@ -1,15 +1,15 @@
-import globalStyles from 'constants/styles';
-
 import React, {useCallback, useRef, useState} from 'react';
 import {Image, ListRenderItem, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
-import Carousel from 'react-native-snap-carousel';
-import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
-import Button from 'components/Button';
-import {Tree} from 'components/Icons';
-import ProgressCircles from 'components/ProgressCircles';
-import {useSettings} from 'services/settings';
 import {useTranslation} from 'react-i18next';
+import Carousel from 'react-native-snap-carousel';
 import {SafeAreaView} from 'react-native-safe-area-context';
+
+import globalStyles from 'constants/styles';
+import {Tree} from 'components/Icons';
+import Button from 'components/Button';
+import ProgressCircles from 'components/ProgressCircles';
+import BackgroundEntropy from 'components/BackgroundEntropy/BackgroundEntropy';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {onBoardingOne, onBoardingTwo, onBoardingThree} from '../../../../../assets/images';
 
 export type OnboardingKey = 'step-1' | 'step-2' | 'step-3';
@@ -45,7 +45,7 @@ function OnboardingScreen() {
   ];
   const isEnd = currentStep === onboardingData.length - 1;
   const currentStepForRenderItem = currentStep;
-  const {markOnboardingAsDone} = useSettings();
+  const {markOnBoardingDone} = useSettings();
 
   const renderItem: ListRenderItem<OnboardingData> = useCallback(
     ({item, index}) => {
@@ -67,10 +67,10 @@ function OnboardingScreen() {
 
   const nextItem = useCallback(async () => {
     if (isEnd) {
-      return markOnboardingAsDone();
+      return markOnBoardingDone();
     }
     carouselRef.current?.snapToNext();
-  }, [isEnd, markOnboardingAsDone]);
+  }, [isEnd, markOnBoardingDone]);
 
   const onSnapToItem = useCallback((newIndex: number) => {
     setCurrentStep(newIndex);

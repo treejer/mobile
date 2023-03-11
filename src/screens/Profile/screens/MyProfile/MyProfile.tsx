@@ -1,31 +1,34 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import FAIcon from 'react-native-vector-icons/FontAwesome5';
+import IoIcon from 'react-native-vector-icons/Ionicons';
+import ADIcon from 'react-native-vector-icons/AntDesign';
+
+import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation/index';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
 import Avatar from 'components/Avatar';
-import {useConfig, usePlanterFund, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {useCurrentUser, UserStatus} from 'services/currentUser';
-import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
-import {useTranslation} from 'react-i18next';
-import Invite from 'screens/Profile/screens/MyProfile/Invite';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import Clipboard from '@react-native-clipboard/clipboard';
+import Card from 'components/Card';
 import AppVersion from 'components/AppVersion';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useSettings} from 'services/settings';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import {ContractType} from 'services/config';
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {isWeb} from 'utilities/helpers/web';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {useTreeUpdateInterval} from 'utilities/hooks/treeUpdateInterval';
-import useRefer from 'utilities/hooks/useDeepLinking';
+import {ProfileMagicWallet} from 'components/MagicWallet/ProfileMagicWallet';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {isWeb} from 'utilities/helpers/web';
+import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import Invite from 'screens/Profile/screens/MyProfile/Invite';
+import {useContracts} from 'ranger-redux/modules/contracts/contracts';
+import {UserStatus, useProfile} from 'ranger-redux/modules/profile/profile';
+import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -38,10 +41,13 @@ function MyProfile(props: MyProfileProps) {
   const requiredBalance = useMemo(() => 500000000000000000, []);
   const [minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
-  const config = useConfig();
+  const {getBalance, loading: contractsLoading} = useContracts();
   useTreeUpdateInterval();
 
-  const {referrer, organization, hasRefer} = useRefer();
+  // const user = useCurrentUser();
+  // console.log(user, 'user>++');
+
+  const {referrer, organization, hasRefer} = useDeepLinkingValue();
 
   const getMinBalance = useCallback(() => {
     // @here
@@ -55,28 +61,25 @@ function MyProfile(props: MyProfileProps) {
         console.log(e, 'e inside get minWithdrawable');
         setMinBalance(requiredBalance);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // @here This useEffect should be a hook or fix minBalanceQuery method
   useEffect(() => {
     getMinBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
-  const {useGSN} = useSettings();
 
   const {sendEvent} = useAnalytics();
 
-  const {data, loading, status, refetchUser, handleLogout} = useCurrentUser({didMount: true});
-  const isVerified = data?.user?.isVerified;
+  const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
+
+  const isVerified = profile?.isVerified;
 
   const isConnected = useNetInfoConnected();
-
-  // const minBalanceQuery = useQuery<PlanterMinWithdrawableBalanceQueryQueryData>(planterMinWithdrawQuery, {
-  //   variables: {},
-  //   fetchPolicy: 'cache-first',
-  // });
 
   const skipStats = !wallet || !isVerified;
 
@@ -85,21 +88,6 @@ function MyProfile(props: MyProfileProps) {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
-
-  // const planterTreesCountResult = useQuery<PlanterTreesCountQueryData>(planterTreesCountQuery, {
-  //   variables: {
-  //     address,
-  //   },
-  //   skip: skipStats,
-  // });
-
-  // const planterWithdrawableBalanceResult = useQuery(planterWithdrawableBalanceQuery, {
-  //   variables: {
-  //     address,
-  //   },
-  //   fetchPolicy: 'cache-first',
-  //   skip: skipStats,
-  // });
 
   const getPlanter = useCallback(async () => {
     if (!isConnected) {
@@ -122,96 +110,27 @@ function MyProfile(props: MyProfileProps) {
     // if (wallet && isConnected) {
     getPlanter().then(() => {});
     // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const [submiting, setSubmitting] = useState(false);
-  const handleWithdrawPlanterBalance = useCallback(async () => {
-    if (!isConnected) {
-      showAlert({
-        title: t('netInfo.error'),
-        message: t('netInfo.details'),
-        mode: AlertMode.Error,
-      });
-      return;
-    }
-    setSubmitting(true);
-    sendEvent('withdraw');
-    try {
-      // balance
-      const balance = parseBalance(planterData?.balance?.toString() || '0');
-      const bnMinBalance = parseBalance((minBalance || requiredBalance).toString());
-      if (balance > bnMinBalance) {
-        try {
-          const transaction = await sendTransactionWithGSN(
-            config,
-            ContractType.PlanterFund,
-            web3,
-            wallet,
-            'withdrawBalance',
-            [planterData?.balance.toString()],
-            useGSN,
-          );
-
-          console.log('transaction', transaction);
-          showAlert({
-            title: t('success'),
-            message: t('myProfile.withdraw.success'),
-            mode: AlertMode.Success,
-          });
-        } catch (e: any) {
-          showAlert({
-            title: t('failure'),
-            message: e?.message || t('sthWrong'),
-            mode: AlertMode.Error,
-          });
-        }
-      } else {
-        showAlert({
-          title: t('myProfile.attention'),
-          message: t('myProfile.lessBalance', {amount: parseBalance(minBalance?.toString())}),
-          mode: AlertMode.Info,
-        });
-      }
-    } catch (error: any) {
-      showAlert({
-        title: t('error'),
-        message: error?.message,
-        mode: AlertMode.Error,
-      });
-      console.warn('Error', error);
-    } finally {
-      setSubmitting(false);
-    }
-  }, [
-    isConnected,
-    sendEvent,
-    t,
-    parseBalance,
-    planterData?.balance,
-    minBalance,
-    requiredBalance,
-    config,
-    web3,
-    wallet,
-    useGSN,
-  ]);
 
   const onRefetch = () =>
     new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        (async function () {
-          await getPlanter();
-          await refetchUser();
-        })();
+      return (async () => {
+        getBalance();
+        await getPlanter();
+        await dispatchProfile();
         resolve();
-      }, 700);
+      })();
     });
 
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
 
+  const planterProjectedBalance =
+    Number(planterData?.balanceProjected) > 0 ? parseBalance(planterData?.balanceProjected.toString() || '0') : 0;
+
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  const profileLoading = loading || !data?.user;
+  const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
       style={{
@@ -229,9 +148,16 @@ function MyProfile(props: MyProfileProps) {
     </>
   );
 
-  const handleOpenHelp = () => {
-    sendEvent('help');
-    return Linking.openURL('https://discuss.treejer.com/group/planters');
+  const handleNavigateSupport = () => {
+    sendEvent('Support');
+    // return Linking.openURL('https://discuss.treejer.com/group/planters');
+    // @ts-ignore
+    navigation.navigate(Routes.Support);
+  };
+
+  const handleNavigateActivity = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Activity);
   };
 
   const handleNavigateOfflineMap = () => {
@@ -245,27 +171,25 @@ function MyProfile(props: MyProfileProps) {
     navigation.navigate(Routes.Settings);
   };
 
-  const handleCopyWalletAddress = useCallback(() => {
-    if (wallet) {
-      Clipboard.setString(wallet);
-      showAlert({
-        message: t('myProfile.copied'),
-        mode: AlertMode.Success,
-      });
-    }
-  }, [t, wallet]);
+  const handleNavigateWithdraw = () => {
+    // @ts-ignore
+    navigation.navigate(Routes.Withdraw);
+  };
 
   return (
     <SafeAreaView style={[{flex: 1}, globalStyles.screenView]}>
       <PullToRefresh onRefresh={onRefetch}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={
-            isWeb() ? undefined : <RefreshControl refreshing={profileLoading || refetching} onRefresh={onRefetch} />
+            isWeb() ? undefined : (
+              <RefreshControl refreshing={profileLoading || refetching || contractsLoading} onRefresh={onRefetch} />
+            )
           }
         >
           <View style={[globalStyles.screenView, globalStyles.alignItemsCenter]}>
-            <Spacer times={8} />
+            <Spacer times={10} />
             {avatarMarkup}
             <Spacer times={4} />
 
@@ -277,27 +201,27 @@ function MyProfile(props: MyProfileProps) {
               </View>
             ) : null}
             {!profileLoading && (
-              <>
-                {data?.user?.firstName ? <Text style={globalStyles.h4}>{data.user.firstName}</Text> : null}
+              <View style={styles.maxWidthWrapper}>
+                {profile?.firstName ? <Text style={globalStyles.h4}>{profile.firstName}</Text> : null}
 
-                {data?.user?.firstName ? <Spacer times={4} /> : null}
-                {wallet ? (
-                  <TouchableOpacity onPress={handleCopyWalletAddress}>
-                    <Text numberOfLines={1} style={styles.addressBox}>
-                      {wallet.slice(0, 15)}...
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
+                {profile?.firstName ? <Spacer times={4} /> : null}
                 <Spacer times={4} />
 
                 {planterData && (
-                  <View style={[globalStyles.horizontalStack, styles.statsContainer]}>
+                  <Card style={[globalStyles.horizontalStack, styles.statsContainer]}>
                     <View style={styles.statContainer}>
-                      <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
-                      <Text style={styles.statLabel}>{t('balance')}</Text>
+                      <Text style={styles.statValue}>{planterProjectedBalance}</Text>
+                      <Text style={styles.statLabel}>{t('projected')}</Text>
                     </View>
 
-                    <Spacer times={6} />
+                    <Spacer times={4} />
+
+                    <View style={styles.statContainer}>
+                      <Text style={styles.statValue}>{planterWithdrawableBalance}</Text>
+                      <Text style={styles.statLabel}>{t('claimable')}</Text>
+                    </View>
+
+                    <Spacer times={4} />
 
                     <View style={styles.statContainer}>
                       <Text style={styles.statValue}>{planterData?.plantedCount}</Text>
@@ -310,44 +234,71 @@ function MyProfile(props: MyProfileProps) {
                     {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
                     {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
                     {/*</View>*/}
-                  </View>
+                  </Card>
+                )}
+                <Spacer times={4} />
+
+                {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
+                <Spacer times={5} />
+
+                {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
+                  <ProfileGroupButton>
+                    <Button
+                      textAlign="center"
+                      iconPlace="left"
+                      icon={() => <ADIcon name="adduser" size={20} color={colors.grayLight} />}
+                      style={styles.button}
+                      caption={t('getVerified')}
+                      variant="tertiary"
+                      onPress={() => {
+                        sendEvent('get_verified');
+                        if (profile) {
+                          // @ts-ignore
+                          navigation.navigate(Routes.VerifyProfile);
+                        }
+                      }}
+                    />
+                  </ProfileGroupButton>
                 )}
 
-                <View style={[globalStyles.alignItemsCenter, {padding: 16}]}>
-                  {planterWithdrawableBalance > 0 && Boolean(minBalance) && Boolean(planterData?.balance) && (
+                <View style={[globalStyles.alignItemsCenter, {paddingVertical: 16}]}>
+                  {profile.isVerified ? (
                     <>
-                      <Button
-                        style={styles.button}
-                        caption={t('withdraw')}
-                        variant="tertiary"
-                        loading={submiting}
-                        onPress={handleWithdrawPlanterBalance}
-                      />
+                      <ProfileGroupButton>
+                        <Button
+                          iconPlace="left"
+                          size="sm"
+                          style={styles.button}
+                          icon={() => <FAIcon name="wallet" size={20} color={colors.grayLight} />}
+                          caption={t('withdraw')}
+                          variant="tertiary"
+                          onPress={handleNavigateWithdraw}
+                        />
+
+                        {!isWeb() ? (
+                          <>
+                            <Spacer times={4} />
+                            <Button
+                              iconPlace="left"
+                              size="sm"
+                              style={styles.button}
+                              caption={t('offlineMap.title')}
+                              variant="tertiary"
+                              icon={() => <FAIcon name="map-marked-alt" size={20} color={colors.grayLight} />}
+                              onPress={handleNavigateOfflineMap}
+                            />
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </ProfileGroupButton>
                       <Spacer times={4} />
                     </>
-                  )}
+                  ) : null}
                   {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                       <Spacer times={6} />
-                    </>
-                  )}
-
-                  {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
-                    <>
-                      <Button
-                        style={styles.button}
-                        caption={t('getVerified')}
-                        variant="tertiary"
-                        onPress={() => {
-                          sendEvent('get_verified');
-                          if (data?.user) {
-                            // @ts-ignore
-                            navigation.navigate(Routes.VerifyProfile);
-                          }
-                        }}
-                      />
-                      <Spacer times={4} />
                     </>
                   )}
 
@@ -357,7 +308,7 @@ function MyProfile(props: MyProfileProps) {
                         style={styles.getVerifiedRefer}
                         onPress={() => {
                           sendEvent('get_verified');
-                          if (data?.user) {
+                          if (profile) {
                             // @ts-ignore
                             navigation.navigate(Routes.VerifyProfile);
                           }
@@ -367,7 +318,15 @@ function MyProfile(props: MyProfileProps) {
                         <Text>{t(referrer ? 'joiningReferrer' : 'joiningOrganization')}</Text>
                         <Text style={globalStyles.tiny}>{referrer || organization}</Text>
                         <Spacer times={4} />
-                        <Text style={[globalStyles.h5, {color: colors.green, fontWeight: 'bold'}]}>
+                        <Text
+                          style={[
+                            globalStyles.h5,
+                            {
+                              color: colors.green,
+                              fontWeight: 'bold',
+                            },
+                          ]}
+                        >
                           {t(referrer ? 'getVerified' : 'joinAndGetVerified')}
                         </Text>
                         <Spacer times={2} />
@@ -376,59 +335,95 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
 
-                  {!route.params?.unVerified && !isWeb() ? (
+                  {/*{!route.params?.unVerified && !isWeb() ? (*/}
+                  {/*  <>*/}
+                  {/*    <Button*/}
+                  {/*      style={styles.button}*/}
+                  {/*      caption={t('offlineMap.title')}*/}
+                  {/*      variant="tertiary"*/}
+                  {/*      onPress={handleNavigateOfflineMap}*/}
+                  {/*    />*/}
+                  {/*    <Spacer times={4} />*/}
+                  {/*  </>*/}
+                  {/*) : null}*/}
+
+                  {planterData?.planterType && !!wallet ? (
                     <>
-                      <Button
-                        style={styles.button}
-                        caption={t('offlineMap.title')}
-                        variant="tertiary"
-                        onPress={handleNavigateOfflineMap}
-                      />
+                      <ProfileGroupButton>
+                        <Invite
+                          caption={''}
+                          iconPlace="left"
+                          size="sm"
+                          icon={() => <ADIcon name="addusergroup" size={20} color={colors.grayLight} />}
+                          style={styles.button}
+                          address={wallet}
+                          planterType={Number(planterData?.planterType)}
+                        />
+                        <Spacer times={4} />
+                        <Button
+                          iconPlace="left"
+                          size="sm"
+                          icon={() => <FAIcon name="list-alt" size={20} color={colors.grayLight} />}
+                          style={styles.button}
+                          caption={t('activity')}
+                          variant="tertiary"
+                          onPress={handleNavigateActivity}
+                        />
+                      </ProfileGroupButton>
                       <Spacer times={4} />
                     </>
                   ) : null}
 
-                  {planterData?.planterType && !!wallet ? (
-                    <Invite style={styles.button} address={wallet} planterType={Number(planterData?.planterType)} />
-                  ) : null}
-
-                  {/* {!wallet && (
-                <>
-                  <Button
-                    style={styles.button}
-                    caption={t('createWallet.title')}
-                    variant="tertiary"
-                    onPress={() => {
-                      navigation.navigate('CreateWallet');
-                    }}
-                    disabled
-                  />
-                  <Spacer times={4} />
-                </>
-              )} */}
-
-                  <Button
-                    style={styles.button}
-                    caption={t('settings.title')}
-                    variant="tertiary"
-                    onPress={handleNavigateSettings}
-                  />
-                  <Spacer times={4} />
-                  <Button style={styles.button} caption={t('help')} variant="tertiary" onPress={handleOpenHelp} />
-                  <Spacer times={4} />
-                  <Button
-                    style={styles.button}
-                    caption={t('logout')}
-                    variant="tertiary"
-                    onPress={() => {
-                      sendEvent('logout');
-                      handleLogout(true);
-                    }}
-                  />
+                  <ProfileGroupButton>
+                    <Button
+                      iconPlace="left"
+                      size="sm"
+                      icon={() => <IoIcon name="settings-outline" size={20} color={colors.grayLight} />}
+                      style={styles.button}
+                      caption={t('settings.title')}
+                      variant="tertiary"
+                      onPress={handleNavigateSettings}
+                    />
+                    <Spacer times={4} />
+                    <Button
+                      iconPlace="left"
+                      size="sm"
+                      style={styles.button}
+                      icon={() => <FAIcon name="rocketchat" size={20} color={colors.grayLight} />}
+                      caption={t('support')}
+                      variant="tertiary"
+                      onPress={handleNavigateSupport}
+                    />
+                  </ProfileGroupButton>
+                  <Spacer times={6} />
+                  <ProfileGroupButton>
+                    <Button
+                      textAlign="center"
+                      iconPlace="left"
+                      size="sm"
+                      icon={() => (
+                        <FAIcon
+                          name="sign-out-alt"
+                          size={20}
+                          color={colors.red}
+                          style={{transform: [{rotate: '180deg'}]}}
+                        />
+                      )}
+                      style={styles.button}
+                      textStyle={{color: colors.red}}
+                      caption={t('logout')}
+                      variant="tertiary"
+                      onPress={() => {
+                        sendEvent('logout');
+                        handleLogout(true);
+                      }}
+                    />
+                  </ProfileGroupButton>
                   <Spacer times={4} />
                   <AppVersion />
+                  <Spacer times={4} />
                 </View>
-              </>
+              </View>
             )}
           </View>
           <Spacer times={4} />
@@ -439,43 +434,42 @@ function MyProfile(props: MyProfileProps) {
 }
 
 const styles = StyleSheet.create({
-  addressBox: {
-    backgroundColor: colors.khakiDark,
-    textAlign: 'center',
-    borderColor: 'white',
-    overflow: 'hidden',
-    width: 180,
-    borderWidth: 2,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
   button: {
-    width: 180,
+    flex: 1,
   },
   helpWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
   },
+  maxWidthWrapper: {
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    maxWidth: 540,
+    width: '100%',
+  },
   statContainer: {
+    flex: 1,
     alignItems: 'center',
   },
   statValue: {
     fontWeight: '700',
-    fontSize: 20,
+    fontSize: 16,
     color: colors.grayDarker,
     marginBottom: 5,
   },
   statLabel: {
+    fontSize: 12,
     color: colors.grayLight,
+    textAlign: 'center',
   },
   statsContainer: {
+    width: '100%',
     paddingBottom: 20,
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: colors.grayLighter,
+    justifyContent: 'center',
   },
   getVerifiedRefer: {
     width: 280,

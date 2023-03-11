@@ -8,7 +8,7 @@ import Svg, {Path} from 'react-native-svg';
 
 import {GreenBlock, Tree, User} from '../Icons';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {analyticsTabEvents, Routes} from 'navigation';
+import {analyticsTabEvents, Routes} from 'navigation/index';
 
 interface Props extends BottomTabBarProps {}
 

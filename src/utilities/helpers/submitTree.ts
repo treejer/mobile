@@ -1,18 +1,27 @@
-import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
-import {currentTimestamp} from 'utilities/helpers/date';
+import {useCallback} from 'react';
+import {useTranslation} from 'react-i18next';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import {Image} from 'react-native-image-crop-picker';
+
+import {useCurrentJourney} from 'services/currentJourney';
+import {maxDistanceInMeters} from 'services/config';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeJourney} from 'screens/TreeSubmission/types';
-import {Routes} from 'navigation';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {Routes} from 'navigation/index';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {getHttpDownloadUrl} from 'utilities/helpers/IPFS';
+import {currentTimestamp} from 'utilities/helpers/date';
 import {usePersistedPlantedTrees} from 'utilities/hooks/usePlantedTrees';
-import {Image} from 'react-native-image-crop-picker';
-import {useTranslation} from 'react-i18next';
-import {useCallback} from 'react';
-import {useNetInfo} from '@react-native-community/netinfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useCurrentJourney} from 'services/currentJourney';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
+import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
+import {checkExif} from 'utilities/helpers/checkExif';
+import {isWeb} from './web';
+import {calcDistanceInMeters} from './distanceInMeters';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 export namespace SubmitTreeData {
   export interface Options {
@@ -68,8 +77,6 @@ export namespace SubmitTreeData {
 export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
 
-  console.log(tree, 'updateTreeJSON tree');
-
   const birthDay = currentTimestamp();
 
   const updateSpec: SubmitTreeData.JSONDataUpdate = {
@@ -120,15 +127,11 @@ export function updateTreeJSON(url: string, options: SubmitTreeData.Options) {
       : [prevLocation];
   }
 
-  console.log(jsonData, 'updateTreeJSON jsonData');
-
   return jsonData;
 }
 
 export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
   const {photoUploadHash, tree, journey} = options;
-
-  console.log(tree, 'assignedTreeJSON tree');
 
   const birthDay = currentTimestamp();
 
@@ -161,8 +164,6 @@ export function assignedTreeJSON(url: string, options: SubmitTreeData.Options) {
     ...jsonData,
   };
 
-  console.log(jsonData, 'assignedTreeJSON jsonData');
-
   return jsonData;
 }
 
@@ -187,8 +188,6 @@ export function newTreeJSON(url: string, options: SubmitTreeData.NewTreeOptions)
   if (journey.isSingle === false) {
     jsonData.nursery = 'true';
   }
-
-  console.log(jsonData, 'newTreeJSON jsonData');
 
   return jsonData;
 }
@@ -274,6 +273,7 @@ export type AfterSelectPhotoHandler = {
   isNursery: boolean;
   canUpdate: boolean;
   setPhoto?: (photo: File | Image) => void;
+  imageLocation: TUserLocation;
 };
 
 export function useAfterSelectPhotoHandler() {
@@ -282,32 +282,62 @@ export function useAfterSelectPhotoHandler() {
 
   const {dispatchAddOfflineUpdateTree} = useOfflineTrees();
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
+  const browserPlatform = useBrowserPlatform();
+  const isConnected = useNetInfoConnected();
+  const {isMainnet} = useConfig();
+  const {checkMetaData} = useSettings();
 
   const {t} = useTranslation();
 
-  const isConnected = useNetInfo();
-
   return useCallback(
     (options: AfterSelectPhotoHandler) => {
-      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto} = options;
+      const {selectedPhoto, isUpdate, isNursery, canUpdate, setPhoto, imageLocation} = options;
 
       const newJourney = {
         ...(journey ?? {}),
         photo: selectedPhoto,
+        photoLocation: imageLocation,
       };
+
+      const distance = calcDistanceInMeters(
+        {
+          latitude: Number(journey.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+          longitude: Number(journey.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        },
+        {
+          latitude: imageLocation?.latitude,
+          longitude: imageLocation?.longitude,
+        },
+      );
 
       if (isConnected) {
         if (isUpdate && isNursery && !canUpdate) {
-          navigation.navigate(Routes.SubmitTree);
-          setNewJourney({
-            ...newJourney,
-            nurseryContinuedUpdatingLocation: true,
-          });
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
+            navigation.navigate(Routes.SubmitTree);
+            setNewJourney({
+              ...newJourney,
+              nurseryContinuedUpdatingLocation: true,
+            });
+          } else {
+            showAlert({
+              title: t('map.newTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.newTree.errMessage'),
+            });
+          }
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          navigation.navigate(Routes.SubmitTree);
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
+            navigation.navigate(Routes.SubmitTree);
+          } else {
+            showAlert({
+              title: t('map.updateSingleTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.updateSingleTree.errMessage', {plantType: t('tree')}),
+            });
+          }
           setNewJourney(newJourney);
         } else if (!isUpdate) {
           navigation.navigate(Routes.SelectOnMap);
@@ -315,44 +345,61 @@ export function useAfterSelectPhotoHandler() {
         }
       } else {
         const updatedTree = persistedPlantedTrees?.find(item => item.id === journey.treeIdToUpdate);
+
         if (isUpdate && isNursery && !canUpdate) {
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-            mode: AlertMode.Success,
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.MyProfile}],
-            }),
-          );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          clearJourney();
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+              mode: AlertMode.Success,
+            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.MyProfile}],
+              }),
+            );
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+          } else {
+            showAlert({
+              title: t('map.updateSingleTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.updateSingleTree.errMessage', {plantType: t('nursery')}),
+            });
+          }
         } else if (isUpdate && isNursery) {
           // @here
           setPhoto?.(selectedPhoto);
         } else if (isUpdate && !isNursery) {
-          dispatchAddOfflineUpdateTree({
-            ...newJourney,
-            tree: updatedTree,
-          });
-          showAlert({
-            title: t('treeInventory.updateTitle'),
-            message: t('submitWhenOnline'),
-          });
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{name: Routes.MyProfile}],
-            }),
-          );
-          navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
-          clearJourney();
+          if (distance < maxDistanceInMeters || (isWeb() && browserPlatform === 'iOS') || !checkMetaData) {
+            dispatchAddOfflineUpdateTree({
+              ...newJourney,
+              tree: updatedTree,
+            });
+            showAlert({
+              title: t('treeInventory.updateTitle'),
+              message: t('submitWhenOnline'),
+            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: Routes.MyProfile}],
+              }),
+            );
+            navigation.navigate(Routes.GreenBlock, {filter: TreeFilter.OfflineUpdate});
+            clearJourney();
+          } else {
+            showAlert({
+              title: t('map.updateSingleTree.errTitle'),
+              mode: AlertMode.Error,
+              message: t('map.updateSingleTree.errMessage', {plantType: t('tree')}),
+            });
+          }
         } else if (!isUpdate) {
           navigation.navigate(Routes.SelectOnMap);
           setNewJourney(newJourney);
@@ -360,6 +407,8 @@ export function useAfterSelectPhotoHandler() {
       }
     },
     [
+      checkMetaData,
+      browserPlatform,
       clearJourney,
       dispatchAddOfflineUpdateTree,
       isConnected,

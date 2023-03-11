@@ -59,6 +59,7 @@ type planter {
   countryCode: String
   balance: Int!
   plantedCount: Int!
+  balanceProjected: Int!
   supplyCap: Int!
 }
 
@@ -162,10 +163,12 @@ type Query {
   PlanterFund: PlanterFund
 
   planter(id: String): planter
-  tempTrees(address: String, first: Int, skip: Int, where: whereType): [tempTrees!]
-  trees(address: String, first: Int, skip: Int, where: whereType): [trees!]
-
+  tempTrees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [tempTrees!]
+  trees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [trees!]
   settings: Settings
+  addressHistories(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereAddressHistories): [addressHistoriesResponse!]
+  models(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereModels): [Models!]
+  erc20Histories(first: Int, skip: Int, orderBy: String, orderDirection: String, where: WhereTransactionHistory): [transactionHistoryResponse!]
 }
 
 #input ApplyInput {
@@ -215,4 +218,61 @@ type ForceUpdateSetting {
 type Settings {
   id: String
   forceUpdate: ForceUpdateSetting
+}
+
+type Models {
+  id: ID!
+  planter: planter!
+  country: Int!
+  species: Int!
+  status: Int!
+  price: Int!
+  count: Int!
+  start: Int!
+  lastFund: Int!
+  lastPlant: Int!
+  lastReservePlant: Int!
+  createdAt: Int!
+  updatedAt: Int!
+}
+
+input WhereModels {
+  planter: String!
+}
+
+type addressHistoriesResponse {
+  id: ID!
+  address: String!
+  event: String!
+  from: String!
+  transactionHash: String!
+  blockNumber: Int!
+  type: String!
+  typeId: String!
+  value: Int!
+  count: Int!
+  createdAt: Int!
+}
+
+input WhereAddressHistories {
+  address: String!,
+  event_in: [String]
+}
+
+type transactionHistoryResponse {
+  id: ID!
+  address: String!
+  amount: Int!
+  token: String!
+  from: String!
+  to: String!
+  event: String!
+  transactionHash: String!
+  blockNumber: Int!
+  createdAt: Int!
+}
+
+input WhereTransactionHistory {
+  address: String!,
+  event_in: [String]
 }

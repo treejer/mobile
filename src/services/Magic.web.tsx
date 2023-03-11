@@ -3,17 +3,15 @@ import {Magic} from 'magic-sdk';
 import Web3 from 'web3';
 
 export function isMatic(config: NetworkConfig) {
-  return config.magicNetwork !== BlockchainNetwork.Rinkeby;
+  return config.magicNetwork !== BlockchainNetwork.Goerli;
 }
 
 export function magicGenerator(config: NetworkConfig) {
   return new Magic(config.magicApiKey, {
-    network: isMatic(config)
-      ? {
-          rpcUrl: config.web3Url,
-          chainId: Number(config.chainId),
-        }
-      : 'rinkeby',
+    network: {
+      rpcUrl: config.web3Url,
+      chainId: Number(config.chainId),
+    },
   });
 }
 

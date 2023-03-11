@@ -252,6 +252,19 @@
   },
   {
     "inputs": [],
+    "name": "marketPlace",
+    "outputs": [
+      {
+        "internalType": "contract IMarketPlace",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "planterContract",
     "outputs": [
       {
@@ -315,6 +328,25 @@
         "internalType": "string",
         "name": "treeSpecs",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "tempTreesModel",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -511,6 +543,19 @@
       }
     ],
     "name": "setTreeTokenAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "setMarketPlaceAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -797,6 +842,34 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_treeSpecs",
+        "type": "string"
+      },
+      {
+        "internalType": "uint64",
+        "name": "_birthDate",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_countryCode",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_modelId",
+        "type": "uint256"
+      }
+    ],
+    "name": "plantMarketPlaceTree",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_lastRegualarTreeId",
         "type": "uint256"
@@ -846,6 +919,29 @@
         "type": "uint256"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_count",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_funder",
+        "type": "address"
+      }
+    ],
+    "name": "mintTreeMarketPlace",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

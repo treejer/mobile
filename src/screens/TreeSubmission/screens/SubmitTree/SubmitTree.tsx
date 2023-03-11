@@ -1,29 +1,25 @@
-import globalStyles from 'constants/styles';
-import {colors} from 'constants/values';
-
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
-import {CommonActions, RouteProp, useRoute} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import {useQuery} from '@apollo/client';
 import {TransactionReceipt} from 'web3-core';
+import {ActivityIndicator, Alert, ScrollView, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {Routes} from 'navigation/index';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import {useConfig, useWalletAccount, useWalletWeb3} from 'services/web3';
-import {upload, uploadContent} from 'utilities/helpers/IPFS';
-import {TreeSubmissionRouteParamList} from 'types';
-import {ContractType} from 'services/config';
-import {sendTransactionWithGSN} from 'utilities/helpers/sendTransaction';
-import TreeDetailQuery, {
-  TreeDetailQueryQueryData,
-} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
-import {Hex2Dec} from 'utilities/helpers/hex';
-import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
-import {currentTimestamp} from 'utilities/helpers/date';
-import {useTranslation} from 'react-i18next';
-import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import SubmitTreeModal from 'components/SubmitTreeModal/SubmitTreeModal';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {useSettings} from 'services/settings';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
+import {sendWeb3Transaction} from 'utilities/helpers/sendTransaction';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {currentTimestamp} from 'utilities/helpers/date';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {
   assignedTreeJSON,
   canUpdateTreeLocation,
@@ -31,28 +27,37 @@ import {
   photoToUpload,
   updateTreeJSON,
 } from 'utilities/helpers/submitTree';
-import {Routes} from 'navigation';
-import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
+import {calcDistanceInMeters} from 'utilities/helpers/distanceInMeters';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {ContractType} from 'services/config';
+import TreeDetailQuery, {
+  TreeDetailQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import TreeSubmissionStepper from 'screens/TreeSubmission/components/TreeSubmissionStepper';
+import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubmission';
 import {useCurrentJourney} from 'services/currentJourney';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {useConfig, useMagic, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 function SubmitTree(props: Props) {
-  const {navigation} = props;
+  const {navigation, plantTreePermissions} = props;
+  const {showPermissionModal} = plantTreePermissions;
+
   const {journey, clearJourney} = useCurrentJourney();
-  // const {
-  //   params: {journey},
-  // } = useRoute<RouteProp<TreeSubmissionRouteParamList, 'SelectOnMap'>>();
+  const {offlineTrees, dispatchRemoveOfflineUpdateTree} = useOfflineTrees();
 
   const {t} = useTranslation();
 
-  const {useGSN} = useSettings();
+  const {useBiconomy, changeCheckMetaData} = useSettings();
 
   const [photoHash, setPhotoHash] = useState<string>();
   const [metaDataHash, setMetaDataHash] = useState<string>();
@@ -61,6 +66,7 @@ function SubmitTree(props: Props) {
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
   const isConnected = useNetInfoConnected();
+  const treeFactory = useTreeFactory();
 
   const birthDay = currentTimestamp();
 
@@ -71,6 +77,7 @@ function SubmitTree(props: Props) {
 
   const web3 = useWalletWeb3();
   const wallet = useWalletAccount();
+  const magic = useMagic();
 
   const updatedTreeQuery = useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
     skip: !isUpdate,
@@ -84,11 +91,6 @@ function SubmitTree(props: Props) {
   });
   const assignedTreeData = assignedTreeQuery?.data?.tree;
 
-  // const treeListQuery = useQuery<TreesQueryQueryData, TreesQueryQueryData.Variables>(TempTreeDetail, {
-  //   variables: {
-  //     address: wallet.address,
-  //   },
-  // });
   const handleUploadToIpfs = useCallback(async () => {
     if (
       isUpdate &&
@@ -141,10 +143,23 @@ function SubmitTree(props: Props) {
 
       const metaDataUploadResult = await uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
 
+      if (Object.keys(jsonData).length === 0) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.MyProfile}],
+          }),
+        );
+        showAlert({
+          message: t('emptyTreeSpecs'),
+          mode: AlertMode.Error,
+        });
+        clearJourney();
+      }
+
       console.log(metaDataUploadResult.Hash, 'metaDataUploadResult.Hash');
 
       setMetaDataHash(metaDataUploadResult.Hash);
-      // }
 
       setIsReadyToSubmit(true);
     } catch (e: any) {
@@ -154,67 +169,84 @@ function SubmitTree(props: Props) {
       });
     }
   }, [
-    journey,
     isUpdate,
     updateTreeData,
     isAssignedTreeToPlant,
     assignedTreeData,
+    journey,
     t,
     config.ipfsPostURL,
     config.ipfsGetURL,
+    navigation,
+    clearJourney,
   ]);
 
   const handleSendUpdateTransaction = useCallback(
     async (treeId: number) => {
       console.log(metaDataHash, '====> metaDataHash <====');
-      console.log(treeId, '====> treeId <====');
 
-      const receipt = await sendTransactionWithGSN(
+      const receipt = await sendWeb3Transaction(
+        magic,
         config,
         ContractType.TreeFactory,
         web3,
         wallet,
         'updateTree',
         [treeId, metaDataHash],
-        useGSN,
+        useBiconomy,
       );
 
       return receipt;
     },
-    [metaDataHash, config, web3, wallet, useGSN],
+    [metaDataHash, magic, config, web3, wallet, useBiconomy],
   );
   const handleSendCreateTransaction = useCallback(async () => {
     let receipt;
     if (typeof journey?.treeIdToPlant !== 'undefined') {
       console.log('here plant tree', Hex2Dec(journey.treeIdToPlant));
-      // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant),metaDataHash, birthDay, 0);
+      // const tx = await treeFactory.methods.plantAssignedTree(Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0);
       // receipt =  await sendTransactionWithWallet(web3, tx, config.contracts.TreeFactory.address, wallet);
 
-      receipt = await sendTransactionWithGSN(
+      receipt = await sendWeb3Transaction(
+        magic,
         config,
         ContractType.TreeFactory,
         web3,
         wallet,
         'plantAssignedTree',
         [Hex2Dec(journey.treeIdToPlant), metaDataHash, birthDay, 0],
-        useGSN,
+        useBiconomy,
       );
     } else {
-      receipt = await sendTransactionWithGSN(
-        config,
-        ContractType.TreeFactory,
-        web3,
-        wallet,
-        'plantTree',
-        [metaDataHash, birthDay, 0],
-        useGSN,
-      );
+      if (journey.plantingModel) {
+        receipt = await sendWeb3Transaction(
+          magic,
+          config,
+          ContractType.TreeFactory,
+          web3,
+          wallet,
+          'plantMarketPlaceTree',
+          [metaDataHash, birthDay, 0, Hex2Dec(journey.plantingModel)],
+          useBiconomy,
+        );
+      } else {
+        receipt = await sendWeb3Transaction(
+          magic,
+          config,
+          ContractType.TreeFactory,
+          web3,
+          wallet,
+          'plantTree',
+          [metaDataHash, birthDay, 0],
+          useBiconomy,
+        );
+      }
     }
 
     console.log(receipt.transactionHash, 'receipt.transactionHash');
 
     return receipt;
-  }, [journey.treeIdToPlant, config, web3, wallet, metaDataHash, birthDay, useGSN]);
+  }, [journey.treeIdToPlant, journey.plantingModel, magic, config, web3, wallet, metaDataHash, birthDay, useBiconomy]);
 
   const handleSignTransaction = useCallback(async () => {
     if (!wallet) {
@@ -234,8 +266,22 @@ function SubmitTree(props: Props) {
       if (journey.treeIdToUpdate) {
         sendEvent('update_tree_confirm');
         console.log(metaDataHash, '====> metaDataHash <====');
+        const distance = calcDistanceInMeters(
+          {
+            latitude: journey?.photoLocation?.latitude || 0,
+            longitude: journey?.photoLocation?.longitude || 0,
+          },
+          {
+            latitude: Number(journey?.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+            longitude: Number(journey?.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+          },
+        );
+
         transaction = await handleSendUpdateTransaction(Number(journey.treeIdToUpdate));
 
+        if (offlineTrees?.updated?.some(item => item.treeIdToUpdate === journey.treeIdToUpdate)) {
+          dispatchRemoveOfflineUpdateTree(journey.treeIdToUpdate);
+        }
         showAlert({
           title: t('success'),
           message: t('submitTree.updated'),
@@ -264,8 +310,10 @@ function SubmitTree(props: Props) {
           }),
         );
         clearJourney();
+        if (config.isMainnet) {
+          changeCheckMetaData(true);
+        }
       }
-
       // setTxHash(transaction.transactionHash);
 
       // console.log('Transaction: ', transaction);
@@ -276,18 +324,27 @@ function SubmitTree(props: Props) {
         mode: AlertMode.Error,
       });
       console.warn('Error', error);
+      console.log('Error', error);
     }
     setSubmitting(false);
   }, [
     wallet,
     t,
     journey.treeIdToUpdate,
+    journey?.photoLocation?.latitude,
+    journey?.photoLocation?.longitude,
+    journey?.tree?.treeSpecsEntity?.latitude,
+    journey?.tree?.treeSpecsEntity?.longitude,
     sendEvent,
     metaDataHash,
     handleSendUpdateTransaction,
+    offlineTrees?.updated,
     navigation,
     clearJourney,
+    dispatchRemoveOfflineUpdateTree,
     handleSendCreateTransaction,
+    config.isMainnet,
+    changeCheckMetaData,
   ]);
 
   useEffect(() => {
@@ -303,7 +360,25 @@ function SubmitTree(props: Props) {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [journey.photo]);
+
+  const isNursery = journey?.tree?.treeSpecsEntity?.nursery === 'true';
+  const canUpdateLocation = canUpdateTreeLocation(journey, isNursery);
+  const isSingle = journey?.isSingle;
+  const count = journey?.nurseryCount;
+
+  const title = isSingle
+    ? 'submitTree.submitTree'
+    : isSingle === false
+    ? 'submitTree.nurseryCount'
+    : isUpdate
+    ? 'submitTree.updateTree'
+    : 'submitTree.submitTree';
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   const contentMarkup = isReadyToSubmit ? (
     <TreeSubmissionStepper currentStep={4}>
@@ -338,10 +413,10 @@ function SubmitTree(props: Props) {
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
+      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         {journey.isSingle === false && <SubmitTreeModal />}
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
-          <Spacer times={10} />
           {contentMarkup}
         </View>
       </ScrollView>

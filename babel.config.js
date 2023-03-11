@@ -3,7 +3,7 @@ module.exports = function (api) {
   api.cache(true);
   return {
     // eslint-disable-next-line no-process-env
-    presets: [process.env.REACT_APP_WEB ? 'babel-preset-expo' : 'module:metro-react-native-babel-preset'],
+    presets: ['babel-preset-expo'],
     plugins: [
       'inline-dotenv',
       [
@@ -17,10 +17,14 @@ module.exports = function (api) {
             constants: './src/constants',
             utilities: './src/utilities',
             navigation: './src/navigation',
+            types: './src/types',
+            'ranger-redux': './src/redux',
           },
         },
       ],
       'import-graphql',
+      '@babel/plugin-proposal-export-namespace-from',
+      'react-native-reanimated/plugin',
     ],
   };
 };

@@ -14,4 +14,22 @@ export const colors = {
   claimed: '#72B791',
   yellow: '#d9caa9',
   black: '#1a1a1a',
+  success: '#66B28A',
+  error: '#D04F45',
+  warning: '#d9caa9',
+  white: '#FFF',
+  info: '#424242',
+  smShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowBlur: 4,
+    elevation: 2,
+  },
+  placeholder: '#C7C7CD',
+  loadingOpacity: '#00000022',
 };

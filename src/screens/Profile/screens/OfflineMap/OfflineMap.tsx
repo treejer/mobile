@@ -1,50 +1,37 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, Alert, Modal, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Geolocation from 'react-native-geolocation-service';
-import {createOfflineMap, getAllOfflineMaps, getAreaName} from 'utilities/helpers/maps';
+import {ActivityIndicator, Alert, Modal, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import MapboxGL from '@rnmapbox/maps';
+import Map from 'components/Map';
 import {locationPermission} from 'utilities/helpers/permissions';
-import Map from 'components/Map/Map';
-import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
-import Button from 'components/Button';
-import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import Spacer from 'components/Spacer';
-import {ChevronLeft} from 'components/Icons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Geolocation from 'react-native-geolocation-service';
 import {useTranslation} from 'react-i18next';
-import {Routes} from 'navigation';
-import {mapboxPrivateToken} from 'services/config';
+import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
+import globalStyles from 'constants/styles';
+import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import Spacer from 'components/Spacer';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Button from 'components/Button';
+import {colors} from 'constants/values';
+import {AlertMode} from 'utilities/helpers/alert';
+import {Routes} from 'navigation/Navigation';
+import {offlineMapName} from 'services/config';
 
-const OfflineMap = ({navigation}) => {
-  const [isLoaderShow, setIsLoaderShow] = useState(false);
-  const [areaName, setAreaName] = useState('');
-  const [numberOfOfflineMaps, setNumberOfOfflineMaps] = useState(0);
+export type TestOfflineMapProps = {
+  navigation: any;
+};
+
+export function OfflineMapScreen(props: TestOfflineMapProps) {
+  const {navigation} = props;
+
   const [zoomLevel, setZoomLevel] = useState(0);
   const [isPermissionBlockedAlertShow, setIsPermissionBlockedAlertShow] = useState(false);
-  const isConnected = useNetInfoConnected();
   const {t} = useTranslation();
 
   const MapBoxGLRef = useRef<MapboxGL.MapView>(null);
   const camera = useRef<MapboxGL.Camera>(null);
 
-  const getAllOfflineMapsLocal = useCallback(() => {
-    getAllOfflineMaps()
-      .then(offlineMaps => {
-        setNumberOfOfflineMaps(offlineMaps.length);
-        initialMapCamera();
-      })
-      .catch(e => {
-        console.log(e, 'e inside getAllOfflineMapsLocal');
-      });
-  }, []);
-
-  useEffect(() => {
-    navigation.addListener('focus', () => {
-      getAllOfflineMapsLocal();
-    });
-  }, [getAllOfflineMapsLocal, navigation]);
+  const {packs, downloadingPack, dispatchCreateOfflineMap, loading} = useOfflineMap();
 
   const initialMapCamera = () => {
     locationPermission()
@@ -91,78 +78,33 @@ const OfflineMap = ({navigation}) => {
   };
 
   const onPressDownloadArea = async () => {
-    const offlineMapId = `TreeMapper-offline-map-id-${Date.now()}`;
-    if (isConnected) {
-      setIsLoaderShow(true);
+    try {
       const coords = await MapBoxGLRef.current?.getCenter();
       const bounds = await MapBoxGLRef.current?.getVisibleBounds();
-      getAreaName({coords}, mapboxPrivateToken)
-        .then(async areaName => {
-          setAreaName(areaName);
-          const progressListener = (offlineRegion, status) => {
-            if (status.percentage == 100) {
-              createOfflineMap({
-                name: offlineMapId,
-                size: status.completedTileSize,
-                areaName,
-              })
-                .then(() => {
-                  setIsLoaderShow(false);
-                  setTimeout(() => Alert.alert(t('offlineMap.downloaded')), 1000);
-                  getAllOfflineMapsLocal();
-                  setAreaName('');
-                })
-                .catch(err => {
-                  console.log({
-                    logType: 'other',
-                    message: 'Error while creating Offline Map',
-                    logStack: JSON.stringify(err),
-                  });
-                  setIsLoaderShow(false);
-                  setAreaName('');
-                  Alert.alert(t('offlineMap.isDownloaded'));
-                });
-            }
-          };
-          const errorListener = (offlineRegion, err) => {
-            if (err.message !== 'timeout') {
-              setIsLoaderShow(false);
-              setAreaName('');
-              Alert.alert(err.message);
-            }
-          };
-          await MapboxGL.offlineManager.createPack(
-            {
-              name: offlineMapId,
-              styleURL: 'mapbox://styles/sagararl/ckdfyrsw80y3a1il9eqpecoc7',
-              minZoom: 14,
-              maxZoom: 20,
-              bounds: bounds ? [bounds[0], bounds[1]] : undefined,
-            },
-            progressListener,
-            errorListener,
-          );
-        })
-        .catch(err => {
-          console.log({
-            logType: 'other',
-            message: 'Error while getting area name',
-            logStack: JSON.stringify(err),
-          });
-          setIsLoaderShow(false);
-          setAreaName('');
-          Alert.alert(t('offlineMap.failed'));
+
+      if (coords && bounds) {
+        dispatchCreateOfflineMap({
+          bounds,
+          coords,
+          name: offlineMapName(),
         });
+      } else {
+        toast?.show('offlineMap.sthWrongWithLocation', {type: AlertMode.Error, translate: true});
+      }
+    } catch (e: any) {
+      if (e.message) {
+        toast?.show(e.message, {type: AlertMode.Error});
+      }
     }
   };
 
   const renderLoaderModal = () => {
     return (
-      <Modal transparent visible={isLoaderShow}>
+      <Modal transparent visible={loading}>
         <View style={styles.dowloadModalContainer}>
           <View style={styles.contentContainer}>
             <ActivityIndicator size="large" color={colors.green} style={styles.loader} />
-            <Text style={styles.areaName}>{areaName}</Text>
+            <Text style={styles.areaName}>{downloadingPack?.areaName}</Text>
           </View>
         </View>
       </Modal>
@@ -175,16 +117,9 @@ const OfflineMap = ({navigation}) => {
 
   return (
     <SafeAreaView style={[styles.mainContainer, globalStyles.screenViewBottom, {flex: 1}]}>
+      <ScreenTitle title={t('offlineMap.downloadArea')} goBack />
       <View style={styles.container}>
         <Spacer times={2} />
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity style={[globalStyles.pv1, globalStyles.pr1]} onPress={() => navigation.goBack()}>
-            <ChevronLeft />
-          </TouchableOpacity>
-          <Text style={[globalStyles.h5, globalStyles.textCenter, {marginHorizontal: 24}]}>
-            {t('offlineMap.downloadArea')}
-          </Text>
-        </View>
         <View style={styles.mapViewContainer}>
           <Map
             onDidFinishRenderingMapFully={initialMapCamera}
@@ -207,7 +142,7 @@ const OfflineMap = ({navigation}) => {
             </View>
           </TouchableOpacity>
         </View>
-        {numberOfOfflineMaps == 0 ? (
+        {packs?.length === 0 ? (
           <Button
             style={{alignItems: 'center', justifyContent: 'center'}}
             variant="success"
@@ -231,8 +166,7 @@ const OfflineMap = ({navigation}) => {
       {renderLoaderModal()}
     </SafeAreaView>
   );
-};
-export default OfflineMap;
+}
 
 const styles = StyleSheet.create({
   container: {

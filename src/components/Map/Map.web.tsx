@@ -1,7 +1,8 @@
-import mapboxgl from 'mapbox-gl';
-import React, {useEffect, useRef, useState} from 'react';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
 import {mapboxPublicToken} from 'services/config';
 import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
 
@@ -11,31 +12,32 @@ const options = {
   maximumAge: 0,
 };
 
-const RTLAPI = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
+const RTL_API = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js';
 
 mapboxgl.accessToken = mapboxPublicToken;
-mapboxgl.setRTLTextPlugin(RTLAPI, null, true);
+mapboxgl.setRTLTextPlugin(RTL_API, null, true);
 
 interface MapProps {
   setLocation?: React.Dispatch<React.SetStateAction<locationType>>;
   setAccuracyInMeters?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Map({setLocation, setAccuracyInMeters}: MapProps) {
+const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: any) => {
   const mapContainer = useRef<any>(null);
-  const map = useRef<any>(null);
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
 
   useEffect(() => {
-    if (map.current) return;
-    map.current = new mapboxgl.Map({
+    if (mapRef.current) return;
+    mapRef.current = new mapboxgl.Map({
       container: mapContainer.current as unknown as HTMLElement,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
       zoom,
     });
+
+    // * mapbox-gl locate to user location control and user heading
 
     const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
@@ -44,11 +46,13 @@ export default function Map({setLocation, setAccuracyInMeters}: MapProps) {
       trackUserLocation: true,
       showUserHeading: true,
     });
+    mapRef.current.addControl(geolocate);
 
-    map.current.addControl(geolocate);
-    map.current.on('load', () => {
+    // * mapbox-gl locate to user location control and user heading
+
+    mapRef.current.on('load', () => {
       geolocate.trigger();
-      const center = map.current.getCenter();
+      const center = mapRef.current.getCenter();
       if (setLocation) {
         setLocation({
           lng: center.lng,
@@ -70,12 +74,12 @@ export default function Map({setLocation, setAccuracyInMeters}: MapProps) {
     }
     navigator.geolocation.watchPosition(success, error, options);
 
-    if (!map.current) return;
-    map.current.on('move', () => {
-      const center = map.current.getCenter();
+    if (!mapRef.current) return;
+    mapRef.current.on('move', () => {
+      const center = mapRef.current.getCenter();
       setLng(center.lng);
       setLat(center.lat);
-      setZoom(map.current.getZoom().toFixed(2));
+      setZoom(mapRef.current.getZoom().toFixed(2));
       if (setLocation) {
         setLocation({
           lng: center.lng,
@@ -90,4 +94,6 @@ export default function Map({setLocation, setAccuracyInMeters}: MapProps) {
       <div ref={mapContainer} style={{height: '100vh', width: '100vw'}} />
     </View>
   );
-}
+});
+
+export default Map;

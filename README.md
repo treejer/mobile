@@ -1,8 +1,33 @@
-# Treejer Ranger
+# RangerTreejer
 
 > In a world full of indifference, a grand movement is rising to stand for the future. You might be the next link within this green chain. Adopt your unique tree and let locals plant it!
 
-## Build Setup
+<img src="./assets/images/splash.png" width="370px">
+
+- ## [Navigation](./src/navigation)
+- ## [Screens](./src/screens)
+- ## [Components](./src/components)
+- ## [Hooks](./src/utilities/hooks)
+- ## [Helpers](./src/utilities/helpers)
+- ## [Localization](./src/localization)
+- ## [GlobalStyles](./src/constants)
+- ## [Services](./src/services)
+- ## [Redux](./src/redux)
+
+# App.tsx
+
+> Wrapper, global components, and init navigation are in [App.tsx](./App.tsx)
+
+## components:
+
+- InitNavigation: process state of the application, and global data providers
+- ### Contexts
+  - Provider: react-redux provider for wrapping store around the application
+  - PersistGate: redux-persist wrapper
+  - I18nextProvider: Multiple language
+  - SafeAreaProvider: Safe area view for react-navigation
+
+# Build Setup
 
 ```bash
 # install dependencies

@@ -2,14 +2,39 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.2"
+        buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 30
-        targetSdkVersion = 30
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+
+        if (System.properties['os.arch'] == "aarch64") {
+            // For M1 Users we need to use the NDK 24 which added support for aarch64
+            ndkVersion = "24.0.8215888"
+        } else {
+            // Otherwise we default to the side-by-side NDK version from AGP.
+            ndkVersion = "21.4.7075529"
+        }
+
         ndkVersion = "21.4.7075529"
         androidXCore = "1.7.0"
         firebaseIidVersion = "19.0.1"
         googlePlayServicesVersion = "17.0.0"
+        androidXAnnotation = "1.2.0"
+        androidXBrowser = "1.3.0"
+
+        RNMapboxMapsImpl = "mapbox-gl"
+
+        // ... stuff
+        RNMapboxMapsLibs = {
+            implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.7.1'
+            implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0'
+            implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.8.0'
+            implementation 'com.mapbox.mapboxsdk:mapbox-android-gestures:0.7.0'
+
+            implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.8.0'
+            implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-localization-v9:0.14.0'
+            implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v9:0.4.0'
+        }
     }
     repositories {
         google()
@@ -17,9 +42,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:4.1.2")
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -28,9 +56,6 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        maven { url 'https://maven.google.com' }
-        mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url("$rootDir/../node_modules/react-native/android")
@@ -46,7 +71,22 @@ allprojects {
                 excludeGroup "com.facebook.react"
             }
         }
+        google()
         maven { url 'https://www.jitpack.io' }
-        jcenter()
+        maven { url 'https://maven.google.com' }
+        mavenLocal()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                // Do not change the username below.
+                // This should always be `mapbox` (not your username).
+                username = 'mapbox'
+                // Use the secret token you stored in gradle.properties as the password
+                password = project.properties['MAPBOX_RANGER_TREEJER_DOWNLOADS_TOKEN'] ?: ""
+            }
+        }
     }
 }

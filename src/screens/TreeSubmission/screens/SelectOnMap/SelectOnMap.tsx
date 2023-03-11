@@ -4,23 +4,34 @@ import globalStyles from 'constants/styles';
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
-import {Routes} from 'navigation';
+import {Routes} from 'navigation/index';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {TreeSubmissionStackScreenProps} from 'screens/TreeSubmission/TreeSubmission';
 import {MapMarker} from '../../../../../assets/icons/index';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
-interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {}
+interface Props extends TreeSubmissionStackScreenProps<Routes.SelectOnMap> {
+  plantTreePermissions: TUsePlantTreePermissions;
+}
 
-function SelectOnMap(_: Props) {
+function SelectOnMap(props: Props) {
+  const {plantTreePermissions} = props;
+  const {hasLocation, showPermissionModal, userLocation} = plantTreePermissions;
+
   const isConnected = useNetInfoConnected();
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
+  }
 
   return (
     <SafeAreaView style={globalStyles.fill}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <View style={globalStyles.fill}>
-        <MapMarking />
+        <MapMarking permissionHasLocation={hasLocation} userLocation={userLocation} />
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={MapMarker} />
         </View>

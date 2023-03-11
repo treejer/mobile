@@ -1,9 +1,7 @@
 import React, {forwardRef, LegacyRef} from 'react';
-import MapboxGL, {MapViewProps} from '@react-native-mapbox-gl/maps';
-import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
-import {mapboxPrivateToken} from 'services/config';
+import MapboxGL, {MapViewProps} from '@rnmapbox/maps';
 
-MapboxGL.setAccessToken(mapboxPrivateToken);
+import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
 
 export interface MapProps extends MapViewProps {
   // children?: ReactNode | Element;

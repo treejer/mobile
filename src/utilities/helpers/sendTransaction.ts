@@ -1,59 +1,72 @@
-import {RelayProvider} from '@opengsn/provider';
-import {ContractType, NetworkConfig} from 'services/config';
-import Web3 from 'services/Magic';
 import {TransactionReceipt} from 'web3-core';
 
-export async function sendTransactionWithGSN(
+import Web3, {Magic} from 'services/Magic';
+import {ContractType, NetworkConfig} from 'services/config';
+import {transactionBiconomy} from 'services/Biconomy';
+// import {Alert} from 'react-native';
+
+export async function sendWeb3Transaction(
+  magic: Magic,
   config: NetworkConfig,
   contractType: ContractType,
   web3: Web3,
   wallet: string,
   method: string,
   args: any[] = [],
-  useGSN = true,
+  useBiconomy = true,
 ) {
   const contract = config.contracts[contractType];
-  console.log(useGSN, 'useGSN <============== send transaction');
+  const apiKey = config.biconomyApiKey;
+  // Alert.alert('API key Biconomy', apiKey);
+  // console.log(apiKey, 'apiKey');
+  console.log(useBiconomy, 'biconomy <============== send transaction');
   console.log('1 - Is main net?', config.isMainnet);
+  console.log(method, '<===== method');
 
-  const _config = {
-    auditorsCount: config.isMainnet ? 1 : 0,
-    paymasterAddress: config.contracts.Paymaster.address,
-    methodSuffix: '_v4',
-    jsonStringifyRequest: true,
-    preferredRelays: [config.preferredRelays],
-    relayLookupWindowBlocks: Number(config.relayLookupWindowBlocks),
-    relayRegistrationLookupBlocks: Number(config.relayRegistrationLookupBlocks),
-    pastEventsQueryMaxPageSize: Number(config.pastEventsQueryMaxPageSize),
-    // preferredRelays: ['https://rinkeby-gsn-relayer.treejer.com'],
-    // preferredRelays: ['https://ropsten-gsn-relayer.treejer.com/gsn1/getaddr'],
-  };
-  console.log(_config, '<== config sendTransactionWithGSN');
+  if (!useBiconomy) {
+    return sendTransactionWithoutBiconomy(config, contractType, web3, wallet, args, method);
+  }
 
-  const gsnProvider = await RelayProvider.newProvider({
-    provider: web3.currentProvider as any,
-    config: _config,
-  }).init();
+  const biconomy = await transactionBiconomy({apiKey, magic});
+  const web3Biconomy = new Web3(biconomy as any);
+  const ethContract = new web3Biconomy.eth.Contract(contract.abi as any, contract.address);
+
   console.log('2 - Relay provider created', config.isMainnet);
 
-  // gsnProvider.addAccount(wallet);
+  return ethContract.methods[method](...args).send('eth_sendTransaction', {
+    from: wallet,
+    signatureType: 'PERSONAL_SIGN',
+    domainName: 'Powered by Biconomy',
+  });
+}
+
+export async function sendTransactionWithoutBiconomy(
+  config: NetworkConfig,
+  contractType: ContractType,
+  web3: Web3,
+  wallet: string,
+  args: any,
+  method: string,
+) {
+  console.log('planting without BICONOMY');
+
+  console.log('2 - Relay provider created', config.isMainnet);
+
   console.log('3 - Account linked to the relay provider', config.isMainnet);
 
   const gas = await web3.eth.estimateGas({from: wallet});
+
   console.log('Gas estimated', gas);
 
   const gasPrice = await web3.eth.getGasPrice();
 
-  const web3GSN = new Web3(gsnProvider);
-  const ethContract = new web3GSN.eth.Contract(contract.abi as any, contract.address);
-
   console.log('4 - Started sending the transaction', config.isMainnet);
-  // Sends the transaction via the GSN
-  console.log(method, 'Method', args, 'args', wallet, 'address');
+
+  const contract = config.contracts[contractType];
+  const ethContract = new web3.eth.Contract(contract.abi, contract.address);
   return ethContract.methods[method](...args).send({
     from: wallet,
     gas: 1e6,
     gasPrice,
-    useGSN,
   }) as TransactionReceipt;
 }
