@@ -7,6 +7,9 @@ import {mapboxPrivateToken, offlineSubmittingMapName} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useCallback} from 'react';
 import {selectNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import OfflinePack from '@rnmapbox/maps/lib/typescript/modules/offline/OfflinePack';
+import {OfflineProgressStatus} from '@rnmapbox/maps/lib/typescript/modules/offline/offlineManager';
+import {OfflinePackError} from '@rnmapbox/maps/javascript/modules/offline/offlineManager';
 
 export type Position = number[];
 
@@ -122,9 +125,9 @@ export function offlineMap(
 export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPack, silent}: TOfflineMapAction) {
   try {
     const isConnected: boolean = yield selectNetInfo();
-    if (isConnected) {
-      const {bounds, name, coords} = downloadingMapPack || {};
+    const {bounds, name, coords} = downloadingMapPack || {};
 
+    if (isConnected && bounds) {
       const packs = yield select((state: TReduxState) => state.offlineMap.packs);
       const areaName = yield getAreaName(coords, mapboxPrivateToken);
       const hasArea = packs.find(item => item.areaName === areaName);
@@ -136,7 +139,7 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
       } else {
         yield put(updateAreaName(areaName));
 
-        const progressListener = (offlineRegion: MapboxGL.OfflinePack, status: MapboxGL.OfflineProgressStatus) => {
+        const progressListener = (offlineRegion: OfflinePack, status: OfflineProgressStatus) => {
           // console.log(JSON.stringify(offlineRegion), status, 'progressListener');
           if (status.percentage === 100) {
             store.dispatch(
@@ -154,7 +157,7 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
             }
           }
         };
-        const errorListener = (offlineRegion: MapboxGL.OfflinePack, err: MapboxGL.OfflineProgressError) => {
+        const errorListener = (offlineRegion: OfflinePack, err: OfflinePackError) => {
           store.dispatch(createOfflineMapPackFailure());
           if (!silent) {
             toast?.show(err.message, {type: AlertMode.Error});
@@ -167,7 +170,7 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
             styleURL: 'mapbox://styles/sagararl/ckdfyrsw80y3a1il9eqpecoc7',
             minZoom: 14,
             maxZoom: 20,
-            bounds: bounds ? [bounds[0], bounds[1]] : undefined,
+            bounds: [bounds[0], bounds[1]],
           },
           progressListener,
           errorListener,

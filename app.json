@@ -1,12 +1,10 @@
 {
   "name": "RangerTreejer",
-  "displayName": "Treejer Ranger",
   "scheme": "com.treejer.ranger",
   "icon": "./assets/images/icon.png",
   "splash": {
     "backgroundColor": "#FAF8F0",
     "image": "./assets/images/splash.png",
     "resizeMode": "contain"
-  },
-  "startUrl": "/"
+  }
 }

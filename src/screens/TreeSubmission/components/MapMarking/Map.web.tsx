@@ -13,7 +13,7 @@ interface MapProps {
 export default function Map({setLocation, setAccuracyInMeters, map}: MapProps) {
   return (
     <View>
-      <MapBox ref={map} setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} />
+      <MapBox ref={map} setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} compassEnabled />
     </View>
   );
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Treejer Ranger</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiaGl0cmVlamVyIiwiYSI6ImNsMHRnMHdnNjBscG0zaW5tczFrdnF4YWwifQ.AqbxyvJkWNxg_Qyl1k4sFA</string>
 </resources>

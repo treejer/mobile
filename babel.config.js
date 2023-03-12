@@ -3,7 +3,7 @@ module.exports = function (api) {
   api.cache(true);
   return {
     // eslint-disable-next-line no-process-env
-    presets: ['babel-preset-expo'],
+    presets: ['babel-preset-expo', ['@babel/preset-env', {targets: {node: 'current'}}], '@babel/preset-typescript'],
     plugins: [
       'inline-dotenv',
       [

@@ -87,6 +87,7 @@ export default function Map({map, camera, setLocation}: IMapProps) {
         ref={map}
         style={styles.container}
         onRegionDidChange={onChangeRegionComplete}
+        compassEnabled
       >
         <>
           <MapboxGL.UserLocation visible showsUserHeadingIndicator />

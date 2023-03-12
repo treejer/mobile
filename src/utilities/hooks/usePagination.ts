@@ -1,8 +1,8 @@
 import {Dispatch, useCallback, useEffect, useMemo, useState} from 'react';
-import {useQuery, NetworkStatus} from '@apollo/client';
+import { useQuery, NetworkStatus, OperationVariables } from "@apollo/client";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export function usePagination<TQueryData, TVariables, TPersistedData>(
+export function usePagination<TQueryData, TVariables extends OperationVariables, TPersistedData>(
   Query: any,
   variables: TVariables,
   dataKey: string,

@@ -18,14 +18,16 @@
 		<string>6.0</string>
 		<key>CFBundleName</key>
 		<string>$(PRODUCT_NAME)</string>
+		<key>MBXAccessToken</key>
+    <string>pk.eyJ1IjoiaGl0cmVlamVyIiwiYSI6ImNsMHRnMHdnNjBscG0zaW5tczFrdnF4YWwifQ.AqbxyvJkWNxg_Qyl1k4sFA</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.0</string>
+	  <string>$(MARKETING_VERSION)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1</string>
+		<string>$(CURRENT_PROJECT_VERSION)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSAppTransportSecurity</key>
