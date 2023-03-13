@@ -12,6 +12,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MapboxGL from '@rnmapbox/maps';
 import {mapboxPrivateToken} from 'services/config';
 import {i18next} from './localization';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 MapboxGL.setAccessToken(mapboxPrivateToken);
 
@@ -31,15 +32,17 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor} loading={null}>
-        {/* @ts-ignore */}
-        <I18nextProvider i18n={i18next}>
-          <SafeAreaProvider>
-            <InitNavigation />
-          </SafeAreaProvider>
-        </I18nextProvider>
-      </PersistGate>
-    </Provider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Provider store={store}>
+        <PersistGate persistor={persistor} loading={null}>
+          {/* @ts-ignore */}
+          <I18nextProvider i18n={i18next}>
+            <SafeAreaProvider>
+              <InitNavigation />
+            </SafeAreaProvider>
+          </I18nextProvider>
+        </PersistGate>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
