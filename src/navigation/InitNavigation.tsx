@@ -34,7 +34,7 @@ const config = {
             [Routes.TreeDetails]: {
               path: 'trees/:tree_id/:tree',
               parse: {
-                tree: tree => (tree ? JSON.parse(tree) : ''),
+                tree: (tree: any) => (tree ? JSON.parse(tree) : ''),
               },
               stringify: {
                 tree: () => '',
@@ -95,12 +95,10 @@ export function InitNavigation() {
           {isWeb() ? <ToastContainer /> : <></>}
           {isWeb() ? <LandScapeModal /> : <></>}
           {!isWeb() ? <UpdateModal /> : <></>}
-          <ToastContainer>
-            <NavigationContainer linking={linking}>
-              <RootNavigation />
-            </NavigationContainer>
-            <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
-          </ToastContainer>
+          <NavigationContainer linking={linking}>
+            <RootNavigation />
+          </NavigationContainer>
+          <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
         </CurrentJourneyProvider>
       </OfflineTreeProvider>
     </ApolloProvider>

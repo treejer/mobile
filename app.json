@@ -1,12 +1,32 @@
 {
-  "name": "RangerTreejer",
-  "displayName": "Treejer Ranger",
-  "scheme": "com.treejer.ranger",
-  "icon": "./assets/images/icon.png",
-  "splash": {
-    "backgroundColor": "#FAF8F0",
-    "image": "./assets/images/splash.png",
-    "resizeMode": "contain"
-  },
-  "startUrl": "/"
+  "expo": {
+    "name": "RangerTreejer",
+    "slug": "RangerTreejerV2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FBF9F2"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.treejer.ranger"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FBF9F2"
+      },
+      "package": "com.treejer.ranger"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
 }

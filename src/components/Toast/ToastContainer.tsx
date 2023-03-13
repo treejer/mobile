@@ -5,6 +5,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AlertMode} from 'utilities/helpers/alert';
 import {CustomToast} from 'components/Toast/CustomToast';
 import {ToastIcon} from 'components/Icons';
+import {ToastProps} from 'react-native-toast-notifications/lib/typescript/toast';
 
 export type ToastContainerProps = {
   children?: ReactNode;
@@ -14,31 +15,31 @@ export const toastProviderProps = {
   placement: 'top' as 'top' | 'bottom' | 'center' | undefined,
   swipeEnabled: true,
   renderType: {
-    [AlertMode.Success]: toastOptions => (
+    [AlertMode.Success]: (toastOptions: ToastProps) => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="tree" />}}
         mode={AlertMode.Success}
       />
     ),
-    [AlertMode.Warning]: toastOptions => (
+    [AlertMode.Warning]: (toastOptions: ToastProps) => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="exclamation-triangle" />}}
         mode={AlertMode.Warning}
       />
     ),
-    [AlertMode.Info]: toastOptions => (
+    [AlertMode.Info]: (toastOptions: ToastProps) => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="info" />}}
         mode={AlertMode.Info}
       />
     ),
-    normal: toastOptions => (
+    normal: (toastOptions: ToastProps) => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="info" />}}
         mode={AlertMode.Info}
       />
     ),
-    [AlertMode.Error]: toastOptions => (
+    [AlertMode.Error]: (toastOptions: ToastProps) => (
       <CustomToast
         toastOptions={{...toastOptions, icon: toastOptions.icon ?? <ToastIcon name="exclamation-circle" />}}
         mode={AlertMode.Error}

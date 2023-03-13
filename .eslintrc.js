@@ -1,12 +1,6 @@
 module.exports = {
   root: true,
-  extends: [
-    // 'plugin:@shopify/typescript',
-    // 'plugin:@shopify/graphql',
-    // 'plugin:@shopify/react',
-    // 'plugin:@shopify/prettier',
-    '@react-native-community',
-  ],
+  extends: ['@react-native-community'],
   plugins: ['unused-imports'],
   rules: {
     'no-shadow': 'off',
