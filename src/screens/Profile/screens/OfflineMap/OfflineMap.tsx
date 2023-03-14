@@ -126,6 +126,7 @@ export function OfflineMapScreen(props: TestOfflineMapProps) {
             onWillStartRenderingFrame={zoomLevelChanged}
             ref={MapBoxGLRef}
             style={styles.cont}
+            compassEnabled
           >
             <MapboxGL.UserLocation showsUserHeadingIndicator />
             <MapboxGL.Camera ref={camera} />

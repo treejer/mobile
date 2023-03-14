@@ -142,6 +142,8 @@ export function SelectModels(props: SelectModelsProps) {
                       <RefreshControl refreshing={plantModelsRefetching} onRefresh={refetchPlantModels} />
                     )
                   }
+                  renderHeader={() => <></>}
+                  renderFooter={() => <></>}
                 />
               </View>
             </PullToRefresh>

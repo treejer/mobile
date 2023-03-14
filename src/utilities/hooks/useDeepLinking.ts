@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
+import {EmitterSubscription} from 'react-native/Libraries/vendor/emitter/EventEmitter';
 
 export function useInitialDeepLinking() {
   useEffect(() => {
@@ -19,10 +20,10 @@ export function useInitialDeepLinking() {
   }, []);
 
   useEffect(() => {
-    Linking.addEventListener('url', onReceiveURL);
+    const listener = Linking.addEventListener('url', onReceiveURL);
 
     return () => {
-      Linking.removeEventListener('url', onReceiveURL);
+      listener.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -56,13 +57,14 @@ export default function useDeepLinkingValue() {
   const [oauthProvider, setOauthProvider] = useState<string | null>(null);
 
   useEffect(() => {
+    let listener: EmitterSubscription;
     (async function () {
-      Linking.addEventListener('url', onReceiveURL);
+      listener = Linking.addEventListener('url', onReceiveURL);
       await setCachedValues();
     })();
 
     return () => {
-      Linking.removeEventListener('url', onReceiveURL);
+      listener?.remove();
     };
   }, []);
 

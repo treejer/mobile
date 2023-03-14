@@ -1,9 +1,16 @@
 module.exports = function (api) {
-  console.log(process.env.REACT_APP_WEB, 'process.env.REACT_APP_WEB');
   api.cache(true);
   return {
-    // eslint-disable-next-line no-process-env
-    presets: ['babel-preset-expo', ['@babel/preset-env', {targets: {node: 'current'}}], '@babel/preset-typescript'],
+    presets: [
+      'babel-preset-expo',
+      [
+        '@babel/preset-env',
+        {
+          targets: {node: 'current'},
+        },
+      ],
+      '@babel/preset-typescript',
+    ],
     plugins: [
       'inline-dotenv',
       [
@@ -25,7 +32,6 @@ module.exports = function (api) {
       'import-graphql',
       '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
-      ['@babel/plugin-proposal-private-methods', {loose: true}],
     ],
   };
 };
