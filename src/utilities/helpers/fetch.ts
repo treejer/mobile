@@ -114,7 +114,7 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
       mode: AlertMode.Error,
       buttons: [
         {
-          text: i18next.t('ok', {lng: locale}),
+          text: i18next.t('ok', {lng: locale}) as string,
         },
       ],
     });

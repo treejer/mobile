@@ -113,7 +113,7 @@ function CheckPermissions(props: TCheckPermissionsProps) {
   );
 
   return (
-    <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
+    <SafeAreaView testID="permission-modal" style={[globalStyles.screenView, globalStyles.fill]}>
       <ScrollView>
         <View style={[globalStyles.fill, !cantProceed && styles.flexCenter, globalStyles.p1]}>
           <Spacer times={4} />

@@ -37,6 +37,7 @@ export function magicGenerator(config: NetworkConfig) {
       rpcUrl: config.web3Url,
       chainId: Number(config.chainId),
     },
+    //@ts-ignore
     extensions: [new OAuthExtension()],
   });
 }

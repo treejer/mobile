@@ -1,4 +1,5 @@
 import {Alert, AlertButton, AlertOptions} from 'react-native';
+import {DefaultTFuncReturn} from 'i18next';
 
 export function asyncAlert(
   title: string,
@@ -28,8 +29,8 @@ export function asyncAlert(
 }
 
 export type ShowAlertOptions = {
-  message: string;
-  title?: string;
+  message: string | DefaultTFuncReturn;
+  title?: string | DefaultTFuncReturn;
   mode?: AlertMode;
   buttons?: AlertButton[];
   alertOptions?: AlertOptions;
