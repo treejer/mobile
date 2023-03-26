@@ -7,9 +7,9 @@ interface Props extends TouchableOpacityProps {
   style?: ViewProps['style'];
 }
 
-const Card = React.forwardRef<View, Props>(({children, style}, ref) => {
+const Card = React.forwardRef<View, Props>(({children, style, testID}, ref) => {
   return (
-    <View ref={ref} style={[styles.container, style]}>
+    <View ref={ref} style={[styles.container, style]} testID={testID}>
       {children}
     </View>
   );

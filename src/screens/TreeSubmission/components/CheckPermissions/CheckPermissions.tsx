@@ -34,12 +34,6 @@ function CheckPermissions(props: TCheckPermissionsProps) {
 
   const {t} = useTranslation();
 
-  useEffect(() => {
-    console.log({cantProceed, isChecking}, 'check');
-    console.log({hasLocation, isGPSEnabled}, 'GPS');
-    console.log({isCameraGranted, isLocationGranted}, 'permissions');
-  }, [cantProceed, hasLocation, isCameraGranted, isChecking, isGPSEnabled, isLocationGranted]);
-
   const permissions: TPermissionItem['permission'][] = useMemo(
     () => [
       {
@@ -119,11 +113,11 @@ function CheckPermissions(props: TCheckPermissionsProps) {
           <Spacer times={4} />
           {!isChecking && cantProceed && (
             <>
-              <BlockedPermissions permissions={permissions} />
+              <BlockedPermissions testID="blocked-permissions-cpt" permissions={permissions} />
               <Spacer times={14} />
             </>
           )}
-          <CheckingPermissions permissions={permissions} cantProceed={cantProceed} />
+          <CheckingPermissions testID="checking-permissions-cpt" permissions={permissions} cantProceed={cantProceed} />
         </View>
       </ScrollView>
     </SafeAreaView>

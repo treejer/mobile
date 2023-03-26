@@ -9,29 +9,32 @@ import {PermissionItem, TPermissionItem} from 'components/CheckingPermissions/Pe
 import Spacer from 'components/Spacer';
 
 export type TCheckingPermissions = {
+  testID?: string;
   cantProceed: boolean;
   permissions: TPermissionItem['permission'][];
 };
 
 function CheckingPermissions(props: TCheckingPermissions) {
-  const {cantProceed, permissions} = props;
+  const {cantProceed, permissions, testID} = props;
   const {t} = useTranslation();
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <View style={styles.title}>
-        <Text style={globalStyles.h4}>
+        <Text style={globalStyles.h4} testID="checkingPermissions-title">
           {cantProceed ? t('checkPermission.wrong') : t('checkPermission.checkingTitle')}
         </Text>
         {cantProceed && (
           <>
             <Spacer />
-            <Text style={globalStyles.h6}>{t('checkPermission.toBeSure')}</Text>
+            <Text style={globalStyles.h6} testID="checkingPermissions-be-sure">
+              {t('checkPermission.toBeSure')}
+            </Text>
           </>
         )}
       </View>
       <Spacer />
-      <Card style={styles.cardPadding}>
+      <Card testID="permissions-list" style={styles.cardPadding}>
         {permissions.map((permission, index) => (
           <React.Fragment key={permission.name}>
             <PermissionItem permission={permission} />

@@ -1,7 +1,15 @@
+import {View} from 'react-native';
+
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
 
 jest.mock('react-native-device-info', () => mockRNDeviceInfo);
 
+jest.mock('react-native-reanimated', () => {
+  return {
+    createAnimatedComponent: jest.fn(),
+    addWhitelistedNativeProps: jest.fn(),
+  };
+});
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
@@ -34,15 +42,35 @@ jest.mock('react-native-geolocation-service', () => {});
 
 jest.mock('@react-native-firebase/analytics', () => {});
 
-jest.mock('react-native-vector-icons/FontAwesome5', () => {});
-jest.mock('react-native-vector-icons/FontAwesome', () => {});
-jest.mock('react-native-vector-icons/Feather', () => {});
-jest.mock('react-native-vector-icons/MaterialIcons', () => {});
-jest.mock('react-native-vector-icons/Octicons', () => {});
-jest.mock('react-native-vector-icons/Ionicons', () => {});
-jest.mock('react-native-vector-icons/AntDesign', () => {});
-jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => {});
-jest.mock('react-native-vector-icons/Entypo', () => {});
+const Icon = () => <View />;
+
+jest.mock('react-native-vector-icons/FontAwesome5', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/FontAwesome', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/Feather', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/MaterialIcons', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/Octicons', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/AntDesign', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => {
+  return Icon;
+});
+jest.mock('react-native-vector-icons/Entypo', () => {
+  return Icon;
+});
 
 jest.mock('@magic-sdk/react-native', () => {
   return {
@@ -82,3 +110,20 @@ jest.mock('expo-barcode-scanner', () => {
     BarCodeScanner: jest.fn(),
   };
 });
+
+jest.mock('react-i18next', () => ({
+  // this mock makes sure any components using the translate hook can use it without a warning being shown
+  useTranslation: () => {
+    return {
+      t: str => str,
+    };
+  },
+}));
+
+jest.mock('i18next', () => ({
+  use: jest.fn(() => {
+    return {
+      init: jest.fn(),
+    };
+  }),
+}));

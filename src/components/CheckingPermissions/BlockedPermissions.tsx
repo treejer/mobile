@@ -8,11 +8,12 @@ import {PermissionItem, TPermissionItem} from 'components/CheckingPermissions/Pe
 import {useTranslation} from 'react-i18next';
 
 export type TBlockedPermissions = {
+  testID?: string;
   permissions: TPermissionItem['permission'][];
 };
 
 function BlockedPermissions(props: TBlockedPermissions) {
-  const {permissions} = props;
+  const {permissions, testID} = props;
 
   const {t} = useTranslation();
 
@@ -20,13 +21,17 @@ function BlockedPermissions(props: TBlockedPermissions) {
   const grantedPermissions = useMemo(() => permissions.filter(permission => permission.isGranted), [permissions]);
 
   return (
-    <Card>
-      <Text style={globalStyles.h4}>{t('checkPermission.cantProceed')}</Text>
+    <Card testID={testID}>
+      <Text style={globalStyles.h4} testID="cantProceed-title">
+        {t('checkPermission.cantProceed')}
+      </Text>
       <Spacer />
-      <Text style={globalStyles.h6}>{t('checkPermission.cantProceedDesc')}</Text>
+      <Text style={globalStyles.h6} testID="cantProceed-desc">
+        {t('checkPermission.cantProceedDesc')}
+      </Text>
       <Spacer times={4} />
       <View style={styles.flexBetween}>
-        <View style={styles.flexRow}>
+        <View style={styles.flexRow} testID="blocked-permission-items">
           {blockedPermissions.map(permission => (
             <React.Fragment key={permission.name}>
               <PermissionItem permission={permission} col />
@@ -34,7 +39,7 @@ function BlockedPermissions(props: TBlockedPermissions) {
             </React.Fragment>
           ))}
         </View>
-        <View style={styles.flexRow}>
+        <View style={styles.flexRow} testID="granted-permission-items">
           {grantedPermissions.map(permission => (
             <React.Fragment key={permission.name}>
               <Spacer times={4} />
