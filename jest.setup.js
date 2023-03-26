@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
 
@@ -111,6 +111,8 @@ jest.mock('expo-barcode-scanner', () => {
   };
 });
 
+const TransComponent = testProp => <Text {...testProp} />;
+
 jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate hook can use it without a warning being shown
   useTranslation: () => {
@@ -118,6 +120,7 @@ jest.mock('react-i18next', () => ({
       t: str => str,
     };
   },
+  Trans: TransComponent,
 }));
 
 jest.mock('i18next', () => ({

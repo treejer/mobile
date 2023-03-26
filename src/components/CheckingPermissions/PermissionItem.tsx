@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Spacer from 'components/Spacer';
@@ -21,11 +21,10 @@ export type TPermissionItem = {
 export function PermissionItem(props: TPermissionItem) {
   const {permission, col, testID} = props;
 
-  console.log(permission);
-
   const permissionStyles = useMemo(
     () => ({
-      text: permission.isExist ? (permission.isGranted ? styles.isGranted : styles.isBlocked) : {},
+      statusText: permission.isExist ? (permission.isGranted ? styles.isGranted : styles.isBlocked) : {},
+      text: permission.isExist ? styles.whiteText : {},
       iconBox: permission.isExist
         ? permission.isGranted
           ? styles.iconBoxGranted
@@ -36,37 +35,29 @@ export function PermissionItem(props: TPermissionItem) {
   );
 
   return (
-    <View
-      testID={testID}
-      style={[styles.flexBetween, col && styles.col, col && permission.isGranted && styles.smaller]}
-    >
+    <View testID={testID} style={[styles.flexBetween, col && styles.col]}>
       <TouchableOpacity
         testID="permission-btn-container"
         onPress={() => permission.onPress(permission.isGranted)}
         activeOpacity={permission.isGranted ? 1 : undefined}
         style={col ? styles.col : styles.flexRow}
       >
-        <View style={[styles.iconBox, styles.flexCenter, permissionStyles.iconBox]}>
-          <Icon testID="permission-icon" style={permissionStyles.text} name={permission.icon} size={24} />
-        </View>
-        <Spacer times={col ? 1 : 2} />
-        <Text style={permissionStyles.text} testID="permission-name">
+        <Text style={styles.blackText} testID="permission-name">
           {permission.name}
         </Text>
-      </TouchableOpacity>
-      {!col && (
-        <Text style={permissionStyles.text} testID="permission-status">
+        <Spacer times={col ? 1 : 2} />
+        <View testID="permission-icon-container" style={[styles.iconBox, styles.flexCenter, permissionStyles.iconBox]}>
+          <Icon testID="permission-icon" style={permissionStyles.text} name={permission.icon} size={24} />
+        </View>
+        <Text style={permissionStyles.statusText} testID="permission-status">
           {permission.status}
         </Text>
-      )}
+      </TouchableOpacity>
     </View>
   );
 }
 
 export const styles = StyleSheet.create({
-  smaller: {
-    transform: [{scale: 0.8}],
-  },
   col: {
     paddingVertical: 0,
     justifyContent: 'center',
@@ -80,36 +71,41 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 24,
-  },
-  title: {
-    width: '100%',
-    marginBottom: 16,
   },
   flexRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconBox: {
-    borderWidth: 2,
-    borderStyle: 'solid',
     borderRadius: 50,
-    width: 40,
-    height: 40,
+    width: 64,
+    height: 64,
   },
   iconBoxGranted: {
-    borderColor: colors.green,
+    backgroundColor: colors.green,
   },
   iconBoxBlocked: {
-    borderColor: colors.red,
+    backgroundColor: colors.red,
   },
   iconBoxChecking: {
-    borderColor: colors.gray,
+    backgroundColor: colors.gray,
+  },
+  blackText: {
+    fontWeight: '400',
+    fontSize: 14,
+    color: colors.black,
+  },
+  whiteText: {
+    color: colors.khaki,
   },
   isGranted: {
     color: colors.green,
+    fontSize: 14,
+    fontWeight: '300',
   },
   isBlocked: {
     color: colors.red,
+    fontSize: 14,
+    fontWeight: '300',
   },
 });

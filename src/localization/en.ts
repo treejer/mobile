@@ -523,4 +523,10 @@ export const en = {
     km: '{{km}} KM',
   },
   emptyTreeSpecs: 'TreeSpecs is empty please try again!',
+  permissionBox: {
+    grantToContinue: 'We need these permission to continue',
+    guide: '* Click on each <Red>red</Red> item to <Grant>grant</Grant> the permission',
+    allGranted: 'Permissions are Granted',
+    submissionSettings: 'Tree Submission Settings',
+  },
 };

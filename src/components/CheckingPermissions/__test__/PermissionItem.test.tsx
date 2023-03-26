@@ -2,6 +2,7 @@ import {PermissionItem} from 'components/CheckingPermissions/PermissionItem';
 import {render} from '@testing-library/react-native';
 import {mockBlockedAllPermissions} from 'screens/TreeSubmission/components/CheckPermissions/__test__/mock';
 import {OpenSettingsButton} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {colors} from 'constants/values';
 
 describe('openSettingsButton component', () => {
   it('OpenSettingsButton should be defined', () => {
@@ -41,6 +42,7 @@ describe('PermissionItem component', () => {
       permissionBtnContainer,
       permissionName,
       permissionIcon,
+      permissionIconContainer,
       openSettingBtn,
       permissionStatus;
     beforeEach(() => {
@@ -48,6 +50,7 @@ describe('PermissionItem component', () => {
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
       permissionBtnContainer = getElementByTestId('permission-btn-container');
+      permissionIconContainer = getElementByTestId('permission-icon-container');
       permissionIcon = getElementByTestId('permission-icon');
       permissionName = getElementByTestId('permission-name');
       permissionStatus = queryElementByTestId('permission-status');
@@ -58,6 +61,17 @@ describe('PermissionItem component', () => {
       expect(permissionBtnContainer).toBeTruthy();
       expect(permissionName.props.children).toBe(location.name);
       expect(permissionIcon.props.name).toBe(location.icon);
+      const permissionIconContainerStyles = permissionIconContainer.props.style.reduce((acc, item) => {
+        return {
+          ...acc,
+          ...item,
+        };
+      }, {});
+
+      expect(permissionIconContainerStyles.backgroundColor).toBe(
+        !location.isExist ? colors.gray : location.isGranted ? colors.green : colors.red,
+      );
+
       if (col) {
         expect(permissionStatus).toBeFalsy();
         expect(permissionStatus).toBeNull();

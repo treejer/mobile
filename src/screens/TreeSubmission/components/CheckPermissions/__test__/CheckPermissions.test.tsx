@@ -33,16 +33,21 @@ describe('CheckPermissions component', () => {
   });
 
   describe('check permissions', () => {
-    let getElementByTestId;
+    let getElementByTestId, queryElementByTestId;
 
     beforeEach(async () => {
       const element = render(<CheckPermissions plantTreePermissions={mockPlantTreePermissions} />);
       getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
     });
 
-    it('BlockedPermissions should be defined', () => {
-      const blockedPermissionsCpt = getElementByTestId('blocked-permissions-cpt');
-      expect(blockedPermissionsCpt).toBeTruthy();
+    it('BlockedPermissions should be defined in cant proceed state', () => {
+      const blockedPermissionsCpt = queryElementByTestId('blocked-permissions-cpt');
+      if (mockPlantTreePermissions.cantProceed) {
+        expect(blockedPermissionsCpt).toBeTruthy();
+      } else {
+        expect(blockedPermissionsCpt).toBeFalsy();
+      }
     });
 
     it('CheckingPermissions always should be defined', () => {
