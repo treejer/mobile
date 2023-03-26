@@ -134,7 +134,7 @@ export type TOpenSettingsButtonProps = {
 export function OpenSettingsButton(props: TOpenSettingsButtonProps) {
   const {caption, onPress} = props;
 
-  return <Button variant="secondary" caption={caption} onPress={onPress} />;
+  return <Button testID="open-setting-btn" variant="secondary" caption={caption} onPress={onPress} />;
 }
 
 const styles = StyleSheet.create({

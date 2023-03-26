@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
@@ -6,6 +6,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 
 export type TPermissionItem = {
+  testID?: string;
   permission: {
     name: string;
     isExist: string | boolean | null;
@@ -18,7 +19,9 @@ export type TPermissionItem = {
 };
 
 export function PermissionItem(props: TPermissionItem) {
-  const {permission, col} = props;
+  const {permission, col, testID} = props;
+
+  console.log(permission);
 
   const permissionStyles = useMemo(
     () => ({
@@ -33,19 +36,29 @@ export function PermissionItem(props: TPermissionItem) {
   );
 
   return (
-    <View style={[styles.flexBetween, col && styles.col, col && permission.isGranted && styles.smaller]}>
+    <View
+      testID={testID}
+      style={[styles.flexBetween, col && styles.col, col && permission.isGranted && styles.smaller]}
+    >
       <TouchableOpacity
+        testID="permission-btn-container"
         onPress={() => permission.onPress(permission.isGranted)}
         activeOpacity={permission.isGranted ? 1 : undefined}
         style={col ? styles.col : styles.flexRow}
       >
         <View style={[styles.iconBox, styles.flexCenter, permissionStyles.iconBox]}>
-          <Icon style={permissionStyles.text} name={permission.icon} size={24} />
+          <Icon testID="permission-icon" style={permissionStyles.text} name={permission.icon} size={24} />
         </View>
         <Spacer times={col ? 1 : 2} />
-        <Text style={permissionStyles.text}>{permission.name}</Text>
+        <Text style={permissionStyles.text} testID="permission-name">
+          {permission.name}
+        </Text>
       </TouchableOpacity>
-      {!col && <Text style={permissionStyles.text}>{permission.status}</Text>}
+      {!col && (
+        <Text style={permissionStyles.text} testID="permission-status">
+          {permission.status}
+        </Text>
+      )}
     </View>
   );
 }

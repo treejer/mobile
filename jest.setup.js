@@ -42,7 +42,7 @@ jest.mock('react-native-geolocation-service', () => {});
 
 jest.mock('@react-native-firebase/analytics', () => {});
 
-const Icon = () => <View />;
+const Icon = testProp => <View {...testProp} />;
 
 jest.mock('react-native-vector-icons/FontAwesome5', () => {
   return Icon;
