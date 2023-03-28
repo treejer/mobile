@@ -37,7 +37,7 @@ const defaultConfig = configs[defaultNetwork];
 const defaultMagic = magicGenerator(configs[defaultNetwork]);
 const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider as any);
 
-const initialState: TWeb3 = {
+export const initialWeb3State: TWeb3 = {
   wallet: '',
   accessToken: '',
   magicToken: '',
@@ -123,7 +123,7 @@ export function clearUserNonce() {
   return {type: CLEAR_USER_NONCE};
 }
 
-export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): TWeb3 => {
+export const web3Reducer = (state: TWeb3 = initialWeb3State, action: TWeb3Action): TWeb3 => {
   switch (action.type) {
     case CREATE_WEB3: {
       return {
@@ -210,6 +210,7 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
       config = configs[newNetwork];
     }
     const magic: any = magicGenerator(config);
+    console.log(magic.rpcProvider, 'magic.rpcProvider');
     const web3 = new Web3(magic.rpcProvider);
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);

@@ -1,8 +1,9 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useMemo, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation, Trans} from 'react-i18next';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome';
 import IoIcon from 'react-native-vector-icons/Ionicons';
+import Animated, {useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
 
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {PermissionItem, TPermissionItem} from 'components/CheckingPermissions/PermissionItem';
@@ -12,6 +13,10 @@ import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import {Hr} from 'components/Common/Hr';
+import {permissionsList} from 'utilities/helpers/permissionsList';
+import {SubmissionSettings} from 'components/SubmissionSettings/SubmissionSettings';
+
+const AnimatedCard = isWeb() ? Card : Animated.createAnimatedComponent(Card);
 
 export type TCheckPermissionsProps = {
   testID?: string;
@@ -19,82 +24,36 @@ export type TCheckPermissionsProps = {
 };
 
 export function CheckPermissionsV2(props: TCheckPermissionsProps) {
-  const {
-    cameraPermission,
-    locationPermission,
-    isLocationGranted,
-    isCameraGranted,
-    isGPSEnabled,
-    cantProceed,
-    isChecking,
-    isGranted,
-    hasLocation,
-    openPermissionsSettings,
-    requestCameraPermission,
-    requestLocationPermission,
-    openGpsRequest,
-  } = props.plantTreePermissions;
+  const {cantProceed, isChecking, isGranted} = props.plantTreePermissions;
+
+  const [openSettings, setOpenSettings] = useState(false);
+
+  const sharedStylesValue = useSharedValue({height: 94});
+  const animationStyles = useAnimatedStyle(() => ({
+    height: withTiming(sharedStylesValue.value.height),
+  }));
 
   const {t} = useTranslation();
 
+  const handleToggleSettingsBox = useCallback(() => {
+    setOpenSettings(prevState => {
+      sharedStylesValue.value = {height: prevState ? 94 : 348};
+      return !prevState;
+    });
+  }, [sharedStylesValue.value]);
+
   const permissions: TPermissionItem['permission'][] = useMemo(
-    () => [
-      {
-        name: t('checkPermission.permissions.location'),
-        status: locationPermission
-          ? isLocationGranted
-            ? t('checkPermission.granted')
-            : t('checkPermission.blocked')
-          : t('checkPermission.checking'),
-        onPress: isWeb() ? requestLocationPermission : openPermissionsSettings,
-        icon: 'location-arrow',
-        isExist: locationPermission,
-        isGranted: isLocationGranted,
-      },
-      {
-        name: t('checkPermission.permissions.camera'),
-        status: cameraPermission
-          ? isCameraGranted
-            ? t('checkPermission.granted')
-            : t('checkPermission.blocked')
-          : t('checkPermission.checking'),
-        onPress: isWeb() ? requestCameraPermission : openPermissionsSettings,
-        icon: 'camera',
-        isExist: cameraPermission,
-        isGranted: isCameraGranted,
-      },
-      {
-        name: t('checkPermission.permissions.GPS'),
-        status: isGPSEnabled
-          ? hasLocation
-            ? t('checkPermission.enabled')
-            : t('checkPermission.blocked')
-          : t('checkPermission.checking'),
-        onPress: openGpsRequest,
-        icon: 'map-marker-alt',
-        isExist: isGPSEnabled,
-        isGranted: hasLocation,
-      },
-    ],
-    [
-      t,
-      locationPermission,
-      isLocationGranted,
-      requestLocationPermission,
-      openPermissionsSettings,
-      cameraPermission,
-      isCameraGranted,
-      requestCameraPermission,
-      isGPSEnabled,
-      hasLocation,
-      openGpsRequest,
-    ],
+    () => permissionsList(props.plantTreePermissions, t),
+    [props.plantTreePermissions],
   );
 
   // TODO:  loading state
 
   return (
-    <Card testID={props?.testID} style={[globalStyles.screenView, styles.container]}>
+    <AnimatedCard
+      testID={props?.testID}
+      style={[globalStyles.screenView, styles.container, isGranted ? [{height: 94}, animationStyles] : {}]}
+    >
       <View style={[styles.flexRow, styles.boxesPadding]}>
         {!isChecking ? (
           <Fa5Icon
@@ -134,7 +93,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
           </Text>
         </View>
       ) : (
-        <View testID="permission-box-plant-settings" style={styles.boxesPadding}>
+        <View testID="permission-box-plant-settings" style={{paddingHorizontal: 4}}>
           <View style={[styles.flexBetween, {paddingVertical: 0}]}>
             <View style={styles.flexRow}>
               <IoIcon testID="settings-icon" name="settings-outline" size={24} color={colors.grayDarker} />
@@ -143,11 +102,29 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
                 {t('permissionBox.submissionSettings')}
               </Text>
             </View>
-            <IoIcon testID="settings-chevron-icon" name="chevron-forward" size={24} color={colors.grayDarker} />
+            <TouchableOpacity testID="toggle-settings-btn" onPress={handleToggleSettingsBox}>
+              <IoIcon
+                testID="settings-chevron-icon"
+                name="chevron-forward"
+                size={24}
+                color={colors.grayDarker}
+                style={{transform: [{rotate: openSettings ? '90deg' : '0deg'}]}}
+              />
+            </TouchableOpacity>
           </View>
+          {isGranted ? (
+            <>
+              <Spacer />
+              <SubmissionSettings
+                testID="submission-settings-cpt"
+                shadow={false}
+                cardStyle={{backgroundColor: colors.khaki}}
+              />
+            </>
+          ) : null}
         </View>
       )}
-    </Card>
+    </AnimatedCard>
   );
 }
 
@@ -155,6 +132,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
     paddingHorizontal: 0,
+    overflow: 'hidden',
   },
   boxesPadding: {
     paddingHorizontal: 12,

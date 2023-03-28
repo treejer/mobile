@@ -1,22 +1,18 @@
 import React, {useMemo} from 'react';
-import {ActivityIndicator, StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Octicons';
-import Web3 from 'web3';
 
 import {ProfileRouteParamList} from 'types';
-import {isMatic} from 'services/Magic';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {treejerLanguages} from 'utilities/helpers/language';
+import {SubmissionSettings} from 'components/SubmissionSettings/SubmissionSettings';
 
 export interface SettingsScreenProps {
   navigation: NavigationProp<ProfileRouteParamList>;
@@ -25,21 +21,13 @@ export interface SettingsScreenProps {
 export default function SettingsScreen(props: SettingsScreenProps) {
   const {navigation} = props;
 
-  const config = useConfig();
-  const {ether} = useContracts();
-  const {locale, useBiconomy, checkMetaData, changeUseBiconomy, changeCheckMetaData} = useSettings();
+  const {locale} = useSettings();
   const {t} = useTranslation();
-
-  const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
 
   const selectedLocale = useMemo(() => treejerLanguages.find(language => language.locale === locale)?.name, [locale]);
 
   const handleSelectLanguage = () => {
     navigation.navigate('SelectLanguage', {back: true});
-  };
-
-  const handleChangeUseBiconomy = value => {
-    changeUseBiconomy(value);
   };
 
   return (
@@ -53,39 +41,7 @@ export default function SettingsScreen(props: SettingsScreenProps) {
           </TouchableOpacity>
         </Card>
         <Spacer times={4} />
-        <Card>
-          <View style={styles.settingsItem}>
-            <Text style={styles.text}>{t('settings.useBiconomy')}</Text>
-            <Switch value={useBiconomy} onValueChange={handleChangeUseBiconomy} />
-          </View>
-          <View style={{paddingVertical: 16}}>
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <Icon name="note" size={20} style={{marginVertical: 2}} color={colors.red} />
-              <Text style={{textAlign: 'justify', paddingHorizontal: 8, color: colors.red}}>
-                {t('settings.gsnDetails')}
-              </Text>
-            </View>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
-          >
-            <Text style={styles.text}>{t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}</Text>
-            {etherBalance ? (
-              <Text style={styles.text}>{Number(etherBalance).toFixed(etherBalance ? 7 : 0)}</Text>
-            ) : (
-              <ActivityIndicator color={colors.gray} />
-            )}
-          </View>
-          {!config.isMainnet && (
-            <>
-              <Spacer />
-              <View style={styles.settingsItem}>
-                <Text style={styles.text}>{t('settings.checkMetaData')}</Text>
-                <Switch value={checkMetaData} onValueChange={changeCheckMetaData} />
-              </View>
-            </>
-          )}
-        </Card>
+        <SubmissionSettings />
       </View>
     </SafeAreaView>
   );

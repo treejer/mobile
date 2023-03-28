@@ -5,11 +5,12 @@ import {colors} from 'constants/values';
 interface Props extends TouchableOpacityProps {
   children: React.ReactNode;
   style?: ViewProps['style'];
+  shadow?: boolean;
 }
 
-const Card = React.forwardRef<View, Props>(({children, style, testID}, ref) => {
+const Card = React.forwardRef<View, Props>(({children, style, testID, shadow = true}, ref) => {
   return (
-    <View ref={ref} style={[styles.container, style]} testID={testID}>
+    <View ref={ref} style={[styles.container, shadow ? colors.smShadow : {}, style]} testID={testID}>
       {children}
     </View>
   );
@@ -20,7 +21,6 @@ Card.displayName = 'Card';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    ...colors.smShadow,
     width: '100%',
     paddingVertical: 24,
     paddingHorizontal: 18,

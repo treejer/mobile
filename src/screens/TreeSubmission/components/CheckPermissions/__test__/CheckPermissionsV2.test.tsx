@@ -1,7 +1,8 @@
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
-import {render} from '@testing-library/react-native';
+import {render} from 'ranger-testUtils/testingLibrary';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {CheckPermissionsV2} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissionsV2';
+import {maticReducers} from 'components/SubmissionSettings/__test__/mock';
 
 const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {
   cameraPermission: 'blocked',
@@ -66,6 +67,7 @@ describe('CheckPermissions component', () => {
     beforeEach(async () => {
       const element = render(
         <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsBlocked} />,
+        maticReducers,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -77,6 +79,11 @@ describe('CheckPermissions component', () => {
 
       expect(permissionBoxTitle.props.children).toBe('permissionBox.grantToContinue');
       expect(permissionBoxIcon.props.name).toBe('warning');
+    });
+
+    it('submission settings box should not be defined', () => {
+      const settingsCpt = queryElementByTestId('submission-settings-cpt');
+      expect(settingsCpt).toBeFalsy();
     });
 
     it('permissions list length must be 3', () => {
@@ -100,6 +107,7 @@ describe('CheckPermissions component', () => {
     beforeEach(async () => {
       const element = render(
         <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsGranted} />,
+        maticReducers,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -125,16 +133,20 @@ describe('CheckPermissions component', () => {
       expect(guideText).toBeFalsy();
     });
 
-    it('submission settings section should be defined', () => {
+    it('submission settings elements should be defined', async () => {
       const settingsBox = getElementByTestId('permission-box-plant-settings');
       const openSettingsText = getElementByTestId('permission-box-open-settings-text');
+      const toggleSettingsBtn = getElementByTestId('toggle-settings-btn');
       const settingsIcon = getElementByTestId('settings-icon');
       const chevronIcon = getElementByTestId('settings-chevron-icon');
+      const settingsCpt = getElementByTestId('submission-settings-cpt');
 
       expect(settingsBox).toBeTruthy();
       expect(openSettingsText).toBeTruthy();
       expect(settingsIcon).toBeTruthy();
       expect(chevronIcon).toBeTruthy();
+      expect(toggleSettingsBtn).toBeTruthy();
+      expect(settingsCpt).toBeTruthy();
 
       expect(settingsIcon.props.name).toBe('settings-outline');
       expect(openSettingsText.props.children).toBe('permissionBox.submissionSettings');

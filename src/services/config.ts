@@ -4,7 +4,9 @@ import {ImageURISource} from 'react-native';
 
 import {MaticLogo, GoerliLogo} from '../../assets/images';
 
-console.log(process.env);
+if (process.env.NODE_ENV !== 'test') {
+  console.log(process.env);
+}
 
 export enum ContractType {
   TreeFactory = 'TreeFactory',

@@ -2,6 +2,7 @@ import {PermissionItem} from 'components/CheckingPermissions/PermissionItem';
 import {render} from '@testing-library/react-native';
 import {mockBlockedAllPermissions} from 'screens/TreeSubmission/components/CheckPermissions/__test__/mock';
 import {OpenSettingsButton} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 import {colors} from 'constants/values';
 
 describe('openSettingsButton component', () => {
@@ -61,12 +62,7 @@ describe('PermissionItem component', () => {
       expect(permissionBtnContainer).toBeTruthy();
       expect(permissionName.props.children).toBe(location.name);
       expect(permissionIcon.props.name).toBe(location.icon);
-      const permissionIconContainerStyles = permissionIconContainer.props.style.reduce((acc, item) => {
-        return {
-          ...acc,
-          ...item,
-        };
-      }, {});
+      const permissionIconContainerStyles = stylesToOneObject(permissionIconContainer.props.style);
 
       expect(permissionIconContainerStyles.backgroundColor).toBe(
         !location.isExist ? colors.gray : location.isGranted ? colors.green : colors.red,

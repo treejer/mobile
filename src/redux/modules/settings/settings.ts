@@ -12,7 +12,7 @@ export type TSettings = {
   showSupportChat: boolean;
 };
 
-const initialState: TSettings = {
+export const initialSettingsState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
   releaseDate: 1672159176038,
@@ -65,7 +65,7 @@ export function setShowSupportChat(showSupportChat: boolean) {
   return {type: SET_SHOW_SUPPORT_CHAT, showSupportChat};
 }
 
-export const settingsReducer = (state: TSettings = initialState, action: TSettingsAction): TSettings => {
+export const settingsReducer = (state: TSettings = initialSettingsState, action: TSettingsAction): TSettings => {
   switch (action.type) {
     case MARK_ONBOARDING_DONE: {
       return {

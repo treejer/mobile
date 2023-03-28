@@ -33,7 +33,7 @@ type TAction = {
   fee: {fee: string | number};
 };
 
-const initialState: TContracts = {
+export const initialContractsState: TContracts = {
   dai: '',
   ether: '',
   fee: null,
@@ -81,7 +81,7 @@ export function cancelTransaction() {
   return {type: CANCEL_TRANSACTION};
 }
 
-export function contractsReducer(state: TContracts = initialState, action: TAction): TContracts {
+export function contractsReducer(state: TContracts = initialContractsState, action: TAction): TContracts {
   switch (action.type) {
     case GET_BALANCE: {
       return {
@@ -129,7 +129,7 @@ export function contractsReducer(state: TContracts = initialState, action: TActi
       };
     }
     case RESET_BALANCE: {
-      return initialState;
+      return initialContractsState;
     }
     default: {
       return state;

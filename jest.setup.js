@@ -5,11 +5,15 @@ import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-
 jest.mock('react-native-device-info', () => mockRNDeviceInfo);
 
 jest.mock('react-native-reanimated', () => {
-  return {
-    createAnimatedComponent: jest.fn(),
-    addWhitelistedNativeProps: jest.fn(),
-  };
+  const Reanimated = require('react-native-reanimated/mock');
+
+  // The mock for `call` immediately calls the callback which is incorrect
+  // So we override it with a no-op
+  Reanimated.default.call = () => {};
+
+  return Reanimated;
 });
+
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
@@ -31,6 +35,11 @@ jest.mock('@react-navigation/stack', () => {
     },
   };
 });
+
+jest.mock('@react-navigation/native/lib/commonjs/useLinking.native', () => ({
+  default: () => ({getInitialState: {then: jest.fn()}}),
+  __esModule: true,
+}));
 
 jest.mock('react-native-gesture-handler', () => {});
 
@@ -83,15 +92,26 @@ jest.mock('web3', () => {
       eth: {
         Contract: jest.fn(),
       },
+      utils: {
+        fromWei: str => str,
+      },
     };
   };
 });
+
 jest.mock('@magic-ext/react-native-oauth', () => {
   return {
     OAuthExtension: jest.fn(),
   };
 });
-jest.mock('@react-native-community/netinfo', () => {});
+jest.mock('@react-native-community/netinfo', () => {
+  return {
+    useNetInfo: () => ({
+      isConnected: true,
+      isInternetReachable: true,
+    }),
+  };
+});
 jest.mock('react-native-image-crop-picker', () => {
   return {
     Image: jest.fn(),
@@ -130,3 +150,11 @@ jest.mock('i18next', () => ({
     };
   }),
 }));
+
+jest.mock('redux-persist', () => {
+  const real = jest.requireActual('redux-persist');
+  return {
+    ...real,
+    persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
+  };
+});
