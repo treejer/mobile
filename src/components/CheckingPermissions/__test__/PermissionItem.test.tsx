@@ -21,7 +21,7 @@ describe('openSettingsButton component', () => {
     });
 
     it('caption Text value should be like the caption prop value', () => {
-      const captionText = getElementByTestId('open-setting-btn-text');
+      const captionText = getElementByTestId('caption-text');
       expect(captionText.props.children).toBe(mockCaption);
     });
   });

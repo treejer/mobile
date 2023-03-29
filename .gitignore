@@ -19,3 +19,5 @@ web-build/
 .idea/
 
 .env
+
+/coverage/

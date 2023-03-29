@@ -64,12 +64,13 @@ function Button({
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: styles[`${variant}Text`].color ?? 'white',
+            testID: 'icon-left',
           })}
         </View>
       )}
       {!round && Boolean(caption) ? (
         <Text
-          testID={testID ? `${testID}-text` : undefined}
+          testID="caption-text"
           style={[
             styles[`${variant}Text`],
             textStyle,
@@ -85,11 +86,13 @@ function Button({
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: styles[`${variant}Text`].color ?? 'white',
+            testID: 'icon-right',
           })}
         </View>
       )}
       {loading && (
         <ActivityIndicator
+          testID="loading-indicator"
           style={{marginHorizontal: 10}}
           color={styles[`${variant}Text`].color ?? 'white'}
           size="small"

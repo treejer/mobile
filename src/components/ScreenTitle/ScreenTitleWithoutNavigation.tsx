@@ -5,6 +5,7 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
 export type TScreenTitleWithoutNavigation = {
+  testID?: string;
   goBack?: boolean;
   handleGoBack?: () => void;
   title?: string;
@@ -12,10 +13,10 @@ export type TScreenTitleWithoutNavigation = {
 };
 
 export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigation) {
-  const {goBack, title, rightContent, handleGoBack} = props;
+  const {testID, goBack, title, rightContent, handleGoBack} = props;
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       {goBack && handleGoBack ? (
         <TouchableOpacity
           style={[globalStyles.fill, globalStyles.justifyContentCenter, {alignSelf: 'stretch'}]}

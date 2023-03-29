@@ -18,6 +18,7 @@ import Tree from 'components/Icons/Tree';
 import {TreeImage} from '../../../assets/icons';
 
 export type TStartPlantButtonProps = {
+  testID?: string;
   onPress: () => void;
   color: string;
   size: 'sm' | 'lg';
@@ -35,6 +36,7 @@ export type TStartPlantButtonProps = {
 
 export function StartPlantButton(props: TStartPlantButtonProps) {
   const {
+    testID,
     color,
     size,
     caption,
@@ -66,14 +68,14 @@ export function StartPlantButton(props: TStartPlantButtonProps) {
     const nurserySize = size === 'lg' ? 24 : 16;
     const modelSize = size === 'lg' ? 48 : 32;
     return type === 'single' ? (
-      <Image source={TreeImage} style={{...imageSize, tintColor: color}} />
+      <Image testID="tree-image" source={TreeImage} style={{...imageSize, tintColor: color}} />
     ) : type === 'nursery' ? (
       <View style={styles.treesWrapper}>
         <View style={styles.trees}>
-          <Tree color={color} size={nurserySize} />
-          <Tree color={color} size={nurserySize} />
+          <Tree testID="tree" color={color} size={nurserySize} />
+          <Tree testID="tree" color={color} size={nurserySize} />
         </View>
-        <Tree color={color} size={nurserySize} />
+        <Tree testID="tree" color={color} size={nurserySize} />
       </View>
     ) : (
       <ModelIcon name="th" size={modelSize} color={color} />
@@ -81,13 +83,20 @@ export function StartPlantButton(props: TStartPlantButtonProps) {
   }, [type, color]);
 
   return (
-    <TouchableOpacity style={[{borderColor: color}, styles[`${size}PlantType`], containerStyle]} onPress={onPress}>
+    <TouchableOpacity
+      testID={testID}
+      style={[{borderColor: color}, styles[`${size}PlantType`], containerStyle]}
+      onPress={onPress}
+    >
       {hasIcon && plantIcon()}
-      <View style={{flex: 1, paddingHorizontal: size === 'lg' ? 16 : 8}}>
+      <View testID="inner-view" style={{flex: 1, paddingHorizontal: size === 'lg' ? 16 : 8}}>
         {type !== 'nursery' ? (
-          <Text style={[styles[`${size}Text`], {color: color}]}>{caption}</Text>
+          <Text testID="btn-caption" style={[styles[`${size}Text`], {color: color}]}>
+            {caption}
+          </Text>
         ) : (
           <TextInput
+            testID="count-input"
             placeholderTextColor={color}
             placeholder={placeholder}
             style={[styles[`${size}Text`], styles.nurseryInput]}

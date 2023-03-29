@@ -5,6 +5,7 @@ import {Routes} from 'navigation/index';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 
 export type TScreenTitle = {
+  testID?: string;
   goBack?: boolean;
   title?: string;
   rightContent?: React.ReactElement;

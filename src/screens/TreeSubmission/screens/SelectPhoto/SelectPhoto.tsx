@@ -306,7 +306,10 @@ function SelectPhoto(props: Props) {
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
-      <ScreenTitle title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`} />
+      <ScreenTitle
+        testID="select-photo-header"
+        title={`${t(title, {count})} ${isUpdate ? `#${Hex2Dec(journey.tree?.id!)}` : ''}`}
+      />
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea, {paddingHorizontal: 30}]}>
           <TreeSubmissionStepper currentStep={canUpdate && photo ? 2 : 1}>

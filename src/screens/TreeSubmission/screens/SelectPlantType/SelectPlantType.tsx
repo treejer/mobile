@@ -1,10 +1,9 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import ModelIcon from 'react-native-vector-icons/FontAwesome';
 
 import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
@@ -14,11 +13,9 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useCurrentJourney} from 'services/currentJourney';
 import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import Button from 'components/Button/Button';
 import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/SubmitTreeOfflineWebModal';
 import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
-import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 
@@ -28,12 +25,12 @@ export type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Route
 export interface SelectPlantTypeProps {
   navigation: NavigationProps;
   route: RouteNavigationProps;
-  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
-  const {navigation, plantTreePermissions} = props;
-  const {showPermissionModal} = plantTreePermissions;
+  const {navigation} = props;
+
+  console.log(navigation);
 
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const inputRef = useRef<TextInput>(null);
@@ -125,14 +122,11 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     [isFocused],
   );
 
-  if (showPermissionModal) {
-    return <CheckPermissions plantTreePermissions={plantTreePermissions} />;
-  }
-
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <StartPlantButton
+        testID="single-tree-btn-cpt"
         caption={t('submitTree.singleTree')}
         onPress={handleSelectSingle}
         color={singleColor}
@@ -140,6 +134,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
         type="single"
       />
       <StartPlantButton
+        testID="nursery-btn-cpt"
         placeholder={t(nurseryPlaceholder)}
         onPress={handleSelectNursery}
         color={nurseryColor}
@@ -160,6 +155,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       {/*/>*/}
       {isSingle === true && (
         <Button
+          testID="single-submit-tree"
           variant="secondary"
           caption={t('submitTree.startToPlant')}
           onPress={() => handleStart(isSingle, count)}
@@ -167,6 +163,7 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       )}
       {isSingle === false && count ? (
         <Button
+          testID="nursery-submit-tree"
           variant="secondary"
           caption={t('submitTree.startToPlantNursery', {count: Number(count)})}
           onPress={() => handleStart(isSingle, count)}
