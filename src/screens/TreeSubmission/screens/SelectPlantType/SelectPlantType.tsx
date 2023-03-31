@@ -18,6 +18,8 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 
 export type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
 export type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
@@ -25,9 +27,11 @@ export type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Route
 export interface SelectPlantTypeProps {
   navigation: NavigationProps;
   route: RouteNavigationProps;
+  plantTreePermissions: TUsePlantTreePermissions;
 }
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
+  const {showPermissionModal} = props.plantTreePermissions;
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
   const {isMainnet} = useConfig();
@@ -120,6 +124,10 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     () => (isFocused ? 'submitTree.focusedNursery' : 'submitTree.nursery'),
     [isFocused],
   );
+
+  if (showPermissionModal) {
+    return <CheckPermissions plantTreePermissions={props.plantTreePermissions} />;
+  }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
