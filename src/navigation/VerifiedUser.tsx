@@ -11,6 +11,8 @@ import TreeSubmission from 'screens/TreeSubmission';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import TreeSubmissionV2 from 'screens/TreeSubmissionV2';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -38,6 +40,8 @@ const VerifiedUserStack = createBottomTabNavigator<VerifiedUserNavigationParamLi
 
 export function VerifiedUserNavigation() {
   const plantTreePermissions = usePlantTreePermissions();
+  const {useV1Submission} = useConfig();
+
   return (
     <VerifiedUserStack.Navigator tabBar={props => <TabBar {...props} />} screenOptions={{headerShown: false}}>
       <VerifiedUserStack.Screen
@@ -46,7 +50,13 @@ export function VerifiedUserNavigation() {
         options={{title: screenTitle('Profile')}}
       />
       <VerifiedUserStack.Screen name={Routes.TreeSubmission}>
-        {props => <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />}
+        {props =>
+          false ? (
+            <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />
+          ) : (
+            <TreeSubmissionV2 {...props} plantTreePermissions={plantTreePermissions} />
+          )
+        }
       </VerifiedUserStack.Screen>
       <VerifiedUserStack.Screen name={Routes.GreenBlock} component={GreenBlock} />
       <VerifiedUserStack.Screen name={Routes.Withdraw} component={Withdraw} />

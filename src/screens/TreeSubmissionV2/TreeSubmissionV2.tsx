@@ -16,6 +16,7 @@ import {isWeb} from 'utilities/helpers/web';
 import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {CheckOfflineMaps} from 'screens/TreeSubmission/components/CheckPermissions/CheckOfflineMaps';
+import TestScreen from 'screens/TestScreen';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -70,29 +71,8 @@ function TreeSubmissionV2({route, navigation}: Props) {
         }}
       >
         <Stack.Screen
-          name={Routes.SelectPlantType}
-          options={{title: screenTitle('Plant Type')}}
-          component={CheckOfflineMaps}
-        />
-        <Stack.Screen
-          name={Routes.SelectModels}
-          options={{title: screenTitle('Select Models')}}
-          component={CheckOfflineMaps}
-        />
-        <Stack.Screen
-          name={Routes.CreateModel}
-          options={{title: screenTitle('Create Models')}}
-          component={CheckOfflineMaps}
-        />
-        <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}} component={CheckOfflineMaps} />
-        <Stack.Screen
-          name={Routes.SelectOnMap}
-          options={{title: screenTitle('Location')}}
-          component={CheckOfflineMaps}
-        />
-        <Stack.Screen
-          name={Routes.SubmitTree}
-          options={{title: screenTitle('Submit Tree')}}
+          name={Routes.SelectPlantTypeV2}
+          options={{title: screenTitle('Select Type')}}
           component={CheckOfflineMaps}
         />
       </Stack.Navigator>
@@ -106,15 +86,12 @@ function TreeSubmissionV2({route, navigation}: Props) {
         animationEnabled: true,
       }}
     >
-      <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
-        {props => <SelectPlantTypeV2 {...props} />}
+      <Stack.Screen name={Routes.SelectPlantTypeV2} options={{title: screenTitle('Plant Type')}}>
+        {() => <SelectPlantTypeV2 />}
       </Stack.Screen>
-      {/*<Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>*/}
-      {/*  {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}*/}
-      {/*</Stack.Screen>*/}
-      {/*<Stack.Screen name={Routes.CreateModel} options={{title: screenTitle('Create Models')}}>*/}
-      {/*  {props => <CreateModel {...props} plantTreePermissions={plantTreePermissions} />}*/}
-      {/*</Stack.Screen>*/}
+      <Stack.Screen name={Routes.SubmitTreeV2} options={{title: screenTitle('Submit Tree')}}>
+        {() => <TestScreen />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
