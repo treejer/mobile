@@ -1,21 +1,18 @@
-import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType';
 import {render} from 'ranger-testUtils/testingLibrary';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
-import {act, fireEvent, waitFor, screen} from '@testing-library/react-native';
+import {act, fireEvent, waitFor} from '@testing-library/react-native';
+import SelectPlantTypeV2 from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantTypeV2';
 
-describe('SelectPlantType screen', () => {
+describe('SelectPlantTypeV2 screen', () => {
   it('select plant type page should be defined', () => {
-    expect(SelectPlantType).toBeDefined();
-    expect(typeof SelectPlantType).toBe('function');
+    expect(SelectPlantTypeV2).toBeDefined();
+    expect(typeof SelectPlantTypeV2).toBe('function');
   });
 
-  describe('SelectPlantType', () => {
+  describe('SelectPlantTypeV2', () => {
     let getElementByTestId, queryElementByTestId, findElementByTestId;
     beforeEach(() => {
-      const element = render(
-        <SelectPlantType navigation={jest.fn() as any} route={jest.fn() as any} />,
-        goerliReducers,
-      );
+      const element = render(<SelectPlantTypeV2 />, goerliReducers);
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
       findElementByTestId = element.findByTestId;

@@ -2,11 +2,9 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {RouteProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
 
 import {Routes} from 'navigation/index';
-import {TreeSubmissionRouteParamList} from 'types';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -19,15 +17,7 @@ import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 
-export type NavigationProps = NativeStackNavigationProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
-export type RouteNavigationProps = RouteProp<TreeSubmissionRouteParamList, Routes.SelectPlantType>;
-
-export interface SelectPlantTypeProps {
-  navigation: NavigationProps;
-  route: RouteNavigationProps;
-}
-
-export default function SelectPlantType(props: SelectPlantTypeProps) {
+export default function SelectPlantTypeV2() {
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
   const {isMainnet} = useConfig();
