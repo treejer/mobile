@@ -5,10 +5,7 @@ import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@reac
 
 import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
-import SubmitTree from './screens/SubmitTree';
-import SelectPhoto from './screens/SelectPhoto/SelectPhoto';
-import SelectPlantType from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
-import SelectOnMap from 'screens/TreeSubmission/screens/SelectOnMap';
+import SelectPlantTypeV2 from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
@@ -38,7 +35,7 @@ interface Props {
   plantTreePermissions: TUsePlantTreePermissions;
 }
 
-function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
+function TreeSubmissionV2({route, navigation}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
@@ -110,7 +107,7 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
       }}
     >
       <Stack.Screen name={Routes.SelectPlantType} options={{title: screenTitle('Plant Type')}}>
-        {props => <SelectPlantType {...props} plantTreePermissions={plantTreePermissions} />}
+        {props => <SelectPlantTypeV2 {...props} />}
       </Stack.Screen>
       {/*<Stack.Screen name={Routes.SelectModels} options={{title: screenTitle('Select Models')}}>*/}
       {/*  {props => <SelectModels {...props} plantTreePermissions={plantTreePermissions} />}*/}
@@ -118,17 +115,8 @@ function TreeSubmission({route, navigation, plantTreePermissions}: Props) {
       {/*<Stack.Screen name={Routes.CreateModel} options={{title: screenTitle('Create Models')}}>*/}
       {/*  {props => <CreateModel {...props} plantTreePermissions={plantTreePermissions} />}*/}
       {/*</Stack.Screen>*/}
-      <Stack.Screen name={Routes.SelectPhoto} options={{title: screenTitle('Photo')}}>
-        {props => <SelectPhoto {...props} plantTreePermissions={plantTreePermissions} />}
-      </Stack.Screen>
-      <Stack.Screen name={Routes.SelectOnMap} options={{title: screenTitle('Location')}}>
-        {props => <SelectOnMap {...props} plantTreePermissions={plantTreePermissions} />}
-      </Stack.Screen>
-      <Stack.Screen name={Routes.SubmitTree} options={{title: screenTitle('Submit Tree')}}>
-        {props => <SubmitTree {...props} plantTreePermissions={plantTreePermissions} />}
-      </Stack.Screen>
     </Stack.Navigator>
   );
 }
 
-export default TreeSubmission;
+export default TreeSubmissionV2;

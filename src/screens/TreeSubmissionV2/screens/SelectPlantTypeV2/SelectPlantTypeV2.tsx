@@ -16,8 +16,14 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {NavigationProps, RouteNavigationProps} from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantType';
 
-export default function SelectPlantTypeV2() {
+export interface SelectPlantTypeV2Props {
+  navigation?: NavigationProps;
+  route?: RouteNavigationProps;
+}
+
+export default function SelectPlantTypeV2(props: SelectPlantTypeV2Props) {
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
   const {isMainnet} = useConfig();

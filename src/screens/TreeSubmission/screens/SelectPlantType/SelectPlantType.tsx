@@ -32,6 +32,7 @@ export interface SelectPlantTypeProps {
 
 export default function SelectPlantType(props: SelectPlantTypeProps) {
   const {showPermissionModal} = props.plantTreePermissions;
+
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
   const {isMainnet} = useConfig();
@@ -133,7 +134,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill, styles.container]}>
       {isConnected === false ? <SubmitTreeOfflineWebModal /> : null}
       <StartPlantButton
-        testID="single-tree-btn-cpt"
         caption={t('submitTree.singleTree')}
         onPress={handleSelectSingle}
         color={singleColor}
@@ -141,7 +141,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
         type="single"
       />
       <StartPlantButton
-        testID="nursery-btn-cpt"
         placeholder={t(nurseryPlaceholder)}
         onPress={handleSelectNursery}
         color={nurseryColor}
@@ -162,7 +161,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       {/*/>*/}
       {isSingle === true && (
         <Button
-          testID="single-submit-tree"
           variant="secondary"
           caption={t('submitTree.startToPlant')}
           onPress={() => handleStart(isSingle, count)}
@@ -170,7 +168,6 @@ export default function SelectPlantType(props: SelectPlantTypeProps) {
       )}
       {isSingle === false && count ? (
         <Button
-          testID="nursery-submit-tree"
           variant="secondary"
           caption={t('submitTree.startToPlantNursery', {count: Number(count)})}
           onPress={() => handleStart(isSingle, count)}

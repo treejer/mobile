@@ -4,5 +4,5 @@
 
 - [SelectOnMap](./SelectOnMap)
 - [SelectPhoto](./SelectPhoto)
-- [SelectPlantType](./SelectPlantType)
+- [SelectPlantType](./SelectPlantTypeV2)
 - [SubmitTree](./SubmitTree)

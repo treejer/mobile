@@ -1,7 +1,7 @@
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {render} from 'ranger-testUtils/testingLibrary';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import {CheckPermissionsV2} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissionsV2';
+import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {maticReducers} from 'components/SubmissionSettings/__test__/mock';
 
 const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {

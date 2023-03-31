@@ -1,7 +1,7 @@
 import {render} from 'ranger-testUtils/testingLibrary';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
 import {act, fireEvent, waitFor} from '@testing-library/react-native';
-import SelectPlantTypeV2 from 'screens/TreeSubmission/screens/SelectPlantType/SelectPlantTypeV2';
+import SelectPlantTypeV2 from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
 
 describe('SelectPlantTypeV2 screen', () => {
   it('select plant type page should be defined', () => {
