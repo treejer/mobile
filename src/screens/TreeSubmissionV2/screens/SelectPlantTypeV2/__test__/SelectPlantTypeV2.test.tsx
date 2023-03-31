@@ -1,7 +1,9 @@
 import {render} from 'ranger-testUtils/testingLibrary';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
-import {act, fireEvent, waitFor} from '@testing-library/react-native';
+import {act, screen, fireEvent, waitFor} from '@testing-library/react-native';
 import SelectPlantTypeV2 from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
+import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
+import {Routes} from 'navigation/Navigation';
 
 describe('SelectPlantTypeV2 screen', () => {
   it('select plant type page should be defined', () => {
@@ -12,7 +14,10 @@ describe('SelectPlantTypeV2 screen', () => {
   describe('SelectPlantTypeV2', () => {
     let getElementByTestId, queryElementByTestId, findElementByTestId;
     beforeEach(() => {
-      const element = render(<SelectPlantTypeV2 />, goerliReducers);
+      const element = render(
+        <TestSubmissionStack name={Routes.SelectPlantTypeV2} component={SelectPlantTypeV2} />,
+        goerliReducers,
+      );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
       findElementByTestId = element.findByTestId;
@@ -36,24 +41,38 @@ describe('SelectPlantTypeV2 screen', () => {
       await act(async () => {
         await fireEvent.press(singleTreeBtn);
       });
-      await waitFor(() => {
-        const toPlantSingleBtn = getElementByTestId('single-submit-tree');
-        expect(toPlantSingleBtn).toBeTruthy();
+      await waitFor(async () => {
+        const checkPermissionBox = await screen.getByTestId('check-permissions-box');
+        // const toPlantSingleBtn = getElementByTestId('single-submit-tree');
+
+        // expect(toPlantSingleBtn).toBeTruthy();
+        expect(checkPermissionBox).toBeTruthy();
       });
     });
 
     it('nursery to plant button should be defined after select its button', async () => {
       const nurseryBtn = getElementByTestId('nursery-btn-cpt');
       const countInput = getElementByTestId('count-input');
-
+      let toPlantNurseryBtn;
       await act(async () => {
         await fireEvent.press(nurseryBtn);
         await fireEvent.changeText(countInput, 2);
       });
       await waitFor(async () => {
-        const toPlantNurseryBtn = queryElementByTestId('nursery-submit-tree');
+        toPlantNurseryBtn = queryElementByTestId('nursery-submit-tree');
         expect(countInput.props.value).toBe('2');
         expect(toPlantNurseryBtn).toBeTruthy();
+      });
+
+      await act(async () => {
+        await fireEvent.press(toPlantNurseryBtn);
+      });
+      await waitFor(async () => {
+        const checkPermissionBox = await screen.getByTestId('check-permissions-box');
+        // const toPlantSingleBtn = getElementByTestId('single-submit-tree');
+
+        // expect(toPlantSingleBtn).toBeTruthy();
+        expect(checkPermissionBox).toBeTruthy();
       });
     });
   });

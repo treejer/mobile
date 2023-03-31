@@ -19,42 +19,42 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
-  return {
-    ...actualNav,
-    useNavigation: () => ({
-      navigate: jest.fn(),
-      dispatch: jest.fn(),
-    }),
-  };
-});
+// jest.mock('@react-navigation/native', () => {
+//   const actualNav = jest.requireActual('@react-navigation/native');
+//   return {
+//     ...actualNav,
+//     useNavigation: () => ({
+//       navigate: jest.fn(),
+//       dispatch: jest.fn(),
+//     }),
+//   };
+// });
 
-jest.mock('@react-navigation/stack', () => {
-  return {
-    createAppContainer: jest.fn().mockReturnValue(function NavigationContainer(props) {
-      return null;
-    }),
-    createBottomTabNavigator: jest.fn(),
-    createDrawerNavigator: jest.fn(),
-    createMaterialTopTabNavigator: jest.fn(),
-    createStackNavigator: jest.fn(),
-    StackActions: {
-      push: jest.fn().mockImplementation(x => ({...x, type: 'Navigation/PUSH'})),
-      replace: jest.fn().mockImplementation(x => ({...x, type: 'Navigation/REPLACE'})),
-    },
-    NavigationActions: {
-      navigate: jest.fn().mockImplementation(x => x),
-    },
-  };
-});
+// jest.mock('@react-navigation/stack', () => {
+//   return {
+//     createAppContainer: jest.fn().mockReturnValue(function NavigationContainer(props) {
+//       return null;
+//     }),
+//     createBottomTabNavigator: jest.fn(),
+//     createDrawerNavigator: jest.fn(),
+//     createMaterialTopTabNavigator: jest.fn(),
+//     createStackNavigator: jest.fn(),
+//     StackActions: {
+//       push: jest.fn().mockImplementation(x => ({...x, type: 'Navigation/PUSH'})),
+//       replace: jest.fn().mockImplementation(x => ({...x, type: 'Navigation/REPLACE'})),
+//     },
+//     NavigationActions: {
+//       navigate: jest.fn().mockImplementation(x => x),
+//     },
+//   };
+// });
 
 jest.mock('@react-navigation/native/lib/commonjs/useLinking.native', () => ({
   default: () => ({getInitialState: {then: jest.fn()}}),
   __esModule: true,
 }));
 
-jest.mock('react-native-gesture-handler', () => {});
+// jest.mock('react-native-gesture-handler', () => {});
 
 jest.mock('react-native-permissions', () => {
   return require('react-native-permissions/mock');
