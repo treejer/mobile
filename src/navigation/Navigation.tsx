@@ -17,7 +17,6 @@ import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useUserWeb3} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
-import TestScreen from 'screens/TestScreen';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -58,14 +57,15 @@ export enum Routes {
   SavedAreas = 'SavedAreas',
   SelectOnMap = 'SelectOnMap',
   TreeSubmission = 'TreeSubmission',
+  TreeSubmission_V2 = 'TreeSubmission_V2',
   GreenBlock = 'GreenBlock',
   SelectPhoto = 'SelectPhoto',
   SelectPlantType = 'SelectPlantType',
-  SelectPlantTypeV2 = 'SelectPlantTypeV2',
+  SelectPlantType_V2 = 'SelectPlantType_V2',
   SelectModels = 'SelectModels',
   CreateModel = 'CreateModel',
   SubmitTree = 'SubmitTree',
-  SubmitTreeV2 = 'SubmitTreeV2',
+  SubmitTree_V2 = 'SubmitTree_V2',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
@@ -89,7 +89,6 @@ export function RootNavigation() {
       {isWeb() ? null : magic ? <magic.Relayer /> : null}
       {isWeb() ? <PwaModal /> : null}
       <RootStack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
-        {/*<RootStack.Screen name="test" component={TestScreen} />*/}
         {loading ? (
           <RootStack.Screen name={Routes.Init} options={{title: screenTitle('Loading')}} component={AppLoading} />
         ) : null}

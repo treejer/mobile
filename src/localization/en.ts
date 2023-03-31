@@ -529,4 +529,15 @@ export const en = {
     allGranted: 'Permissions are Granted',
     submissionSettings: 'Tree Submission Settings',
   },
+  lockedField: {
+    location: 'Location',
+    camera: 'Camera',
+    defTitle: 'Locked',
+    defDesc: 'Grant above permissions',
+  },
+  submitTreeV2: {
+    location: 'Location',
+    selectOnMap: 'Select the tree location\nfrom <Map>Map</Map>',
+    map: 'Map',
+  },
 };

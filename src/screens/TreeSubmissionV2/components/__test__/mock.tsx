@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {OpenSettingsButton} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
+import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 
 export const mockBlockedAllPermissions = [
   {
@@ -109,3 +110,54 @@ export const mockGrantedAllPermissions = [
     isGranted: true,
   },
 ];
+
+export const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {
+  cameraPermission: 'blocked',
+  locationPermission: 'blocked',
+  userLocation: null,
+  checkPermission: () => {},
+  requestPermission: () => {},
+  checkUserLocation: () => {},
+  openPermissionsSettings: (isGranted?: boolean) => {},
+  openGpsRequest: (isGranted?: boolean) => {},
+  requestCameraPermission: (isGranted?: boolean) => {},
+  requestLocationPermission: (isGranted?: boolean) => {},
+  isCameraBlocked: true,
+  isLocationBlocked: true,
+  isCameraGranted: false,
+  isLocationGranted: false,
+  isGPSEnabled: false,
+  hasLocation: false,
+  isChecking: false,
+  isGranted: false,
+  cantProceed: true,
+  requested: true,
+  showPermissionModal: true,
+};
+
+export const mockPlantTreePermissionsGranted: TUsePlantTreePermissions = {
+  cameraPermission: 'granted',
+  locationPermission: 'granted',
+  userLocation: {
+    latitude: 23213213,
+    longitude: 332424324,
+  },
+  checkPermission: () => {},
+  requestPermission: () => {},
+  checkUserLocation: () => {},
+  openPermissionsSettings: (isGranted?: boolean) => {},
+  openGpsRequest: (isGranted?: boolean) => {},
+  requestCameraPermission: (isGranted?: boolean) => {},
+  requestLocationPermission: (isGranted?: boolean) => {},
+  isCameraBlocked: false,
+  isLocationBlocked: false,
+  isCameraGranted: true,
+  isLocationGranted: true,
+  isGPSEnabled: true,
+  hasLocation: true,
+  isChecking: false,
+  isGranted: true,
+  cantProceed: false,
+  requested: true,
+  showPermissionModal: false,
+};

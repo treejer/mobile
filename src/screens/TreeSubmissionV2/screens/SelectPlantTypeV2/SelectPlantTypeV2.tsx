@@ -17,7 +17,7 @@ import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 
-export default function SelectPlantTypeV2() {
+export function SelectPlantTypeV2() {
   const {journey, setNewJourney, clearJourney} = useCurrentJourney();
   const {t} = useTranslation();
   const {isMainnet} = useConfig();
@@ -56,7 +56,7 @@ export default function SelectPlantTypeV2() {
         };
       }
       //@ts-ignore
-      navigation.navigate(Routes.SubmitTreeV2);
+      navigation.navigate(Routes.SubmitTree_V2);
       setNewJourney(newJourney);
     },
     [navigation, setNewJourney, journey],

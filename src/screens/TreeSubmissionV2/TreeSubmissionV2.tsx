@@ -5,18 +5,18 @@ import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@reac
 
 import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
-import SelectPlantTypeV2 from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
-import TreeDetailQuery, {
-  TreeDetailQueryQueryData,
-} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {useCurrentJourney} from 'services/currentJourney';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {isWeb} from 'utilities/helpers/web';
-import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
+import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {CheckOfflineMaps} from 'screens/TreeSubmission/components/CheckPermissions/CheckOfflineMaps';
-import TestScreen from 'screens/TestScreen';
+import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
+import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
+import TreeDetailQuery, {
+  TreeDetailQueryQueryData,
+} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -36,7 +36,7 @@ interface Props {
   plantTreePermissions: TUsePlantTreePermissions;
 }
 
-function TreeSubmissionV2({route, navigation}: Props) {
+function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
   const {journey} = useCurrentJourney();
@@ -71,7 +71,7 @@ function TreeSubmissionV2({route, navigation}: Props) {
         }}
       >
         <Stack.Screen
-          name={Routes.SelectPlantTypeV2}
+          name={Routes.SelectPlantType_V2}
           options={{title: screenTitle('Select Type')}}
           component={CheckOfflineMaps}
         />
@@ -86,11 +86,11 @@ function TreeSubmissionV2({route, navigation}: Props) {
         animationEnabled: true,
       }}
     >
-      <Stack.Screen name={Routes.SelectPlantTypeV2} options={{title: screenTitle('Plant Type')}}>
+      <Stack.Screen name={Routes.SelectPlantType_V2} options={{title: screenTitle('Plant Type')}}>
         {() => <SelectPlantTypeV2 />}
       </Stack.Screen>
-      <Stack.Screen name={Routes.SubmitTreeV2} options={{title: screenTitle('Submit Tree')}}>
-        {() => <TestScreen />}
+      <Stack.Screen name={Routes.SubmitTree_V2} options={{title: screenTitle('Submit Tree')}}>
+        {() => <SubmitTreeV2 plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>
     </Stack.Navigator>
   );

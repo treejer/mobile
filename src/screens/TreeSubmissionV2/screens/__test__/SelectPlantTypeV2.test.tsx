@@ -1,7 +1,8 @@
+import {act, screen, fireEvent, waitFor} from '@testing-library/react-native';
+
 import {render} from 'ranger-testUtils/testingLibrary';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
-import {act, screen, fireEvent, waitFor} from '@testing-library/react-native';
-import SelectPlantTypeV2 from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
+import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
 import {Routes} from 'navigation/Navigation';
 
@@ -15,7 +16,7 @@ describe('SelectPlantTypeV2 screen', () => {
     let getElementByTestId, queryElementByTestId, findElementByTestId;
     beforeEach(() => {
       const element = render(
-        <TestSubmissionStack name={Routes.SelectPlantTypeV2} component={SelectPlantTypeV2} />,
+        <TestSubmissionStack name={Routes.SelectPlantType_V2} component={<SelectPlantTypeV2 />} />,
         goerliReducers,
       );
       getElementByTestId = element.getByTestId;

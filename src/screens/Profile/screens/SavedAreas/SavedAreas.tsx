@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Text, FlatList, ListRenderItemInfo, ImageBackground, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {Routes} from 'navigation/index';
 import Button from 'components/Button';
@@ -11,7 +12,6 @@ import globalStyles, {fontBold, fontMedium} from 'constants/styles';
 import {TOfflineMapPack, useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {mapboxPrivateToken} from 'services/config';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Spacer from 'components/Spacer';
 
 const SavedAreas = ({navigation}) => {

@@ -20,6 +20,7 @@ export type VerifiedUserNavigationParamList = {
     unVerified?: boolean;
   };
   [Routes.TreeSubmission]: undefined;
+  [Routes.TreeSubmission_V2]: undefined;
   [Routes.GreenBlock]: {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
@@ -49,7 +50,7 @@ export function VerifiedUserNavigation() {
         component={MyProfile}
         options={{title: screenTitle('Profile')}}
       />
-      <VerifiedUserStack.Screen name={Routes.TreeSubmission}>
+      <VerifiedUserStack.Screen name={false ? Routes.TreeSubmission : Routes.TreeSubmission_V2}>
         {props =>
           false ? (
             <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />

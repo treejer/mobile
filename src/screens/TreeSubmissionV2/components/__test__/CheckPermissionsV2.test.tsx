@@ -1,59 +1,11 @@
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {render} from 'ranger-testUtils/testingLibrary';
-import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {maticReducers} from 'components/SubmissionSettings/__test__/mock';
-
-const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {
-  cameraPermission: 'blocked',
-  locationPermission: 'blocked',
-  userLocation: null,
-  checkPermission: () => {},
-  requestPermission: () => {},
-  checkUserLocation: () => {},
-  openPermissionsSettings: (isGranted?: boolean) => {},
-  openGpsRequest: (isGranted?: boolean) => {},
-  requestCameraPermission: (isGranted?: boolean) => {},
-  requestLocationPermission: (isGranted?: boolean) => {},
-  isCameraBlocked: true,
-  isLocationBlocked: true,
-  isCameraGranted: false,
-  isLocationGranted: false,
-  isGPSEnabled: false,
-  hasLocation: false,
-  isChecking: false,
-  isGranted: false,
-  cantProceed: true,
-  requested: true,
-  showPermissionModal: true,
-};
-
-const mockPlantTreePermissionsGranted: TUsePlantTreePermissions = {
-  cameraPermission: 'granted',
-  locationPermission: 'granted',
-  userLocation: {
-    latitude: 23213213,
-    longitude: 332424324,
-  },
-  checkPermission: () => {},
-  requestPermission: () => {},
-  checkUserLocation: () => {},
-  openPermissionsSettings: (isGranted?: boolean) => {},
-  openGpsRequest: (isGranted?: boolean) => {},
-  requestCameraPermission: (isGranted?: boolean) => {},
-  requestLocationPermission: (isGranted?: boolean) => {},
-  isCameraBlocked: false,
-  isLocationBlocked: false,
-  isCameraGranted: true,
-  isLocationGranted: true,
-  isGPSEnabled: true,
-  hasLocation: true,
-  isChecking: false,
-  isGranted: true,
-  cantProceed: false,
-  requested: true,
-  showPermissionModal: false,
-};
+import {
+  mockPlantTreePermissionsBlocked,
+  mockPlantTreePermissionsGranted,
+} from 'screens/TreeSubmissionV2/components/__test__/mock';
 
 describe('CheckPermissions component', () => {
   it('CheckPermissions component should exist', () => {

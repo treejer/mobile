@@ -6,15 +6,21 @@ import Icon from 'react-native-vector-icons/Entypo';
 
 export interface SelectPhotoButtonPropsType {
   icon?: string;
+  disabled?: boolean;
   onPress: (e?: any) => void;
   caption: string;
 }
 
 function SelectPhotoButton(props: SelectPhotoButtonPropsType) {
-  const {icon, onPress, caption} = props;
+  const {icon, onPress, caption, disabled} = props;
 
   return (
-    <TouchableOpacity style={[styles.button]} onPress={onPress}>
+    <TouchableOpacity
+      disabled={disabled}
+      activeOpacity={disabled ? 1 : undefined}
+      style={[styles.button]}
+      onPress={onPress}
+    >
       {icon && <Icon name={icon} size={14} color="white" />}
       <Text style={styles.secondaryText}>{caption}</Text>
     </TouchableOpacity>
