@@ -9,7 +9,7 @@ import CheckingPermissions from 'components/CheckingPermissions/CheckingPermissi
 import Spacer from 'components/Spacer';
 import Button from 'components/Button';
 import BlockedPermissions from 'components/CheckingPermissions/BlockedPermissions';
-import {TPermissionItem} from 'components/CheckingPermissions/PermissionItem';
+import {TPermissionItem} from 'components/CheckingPermissions/PermissionItemV2';
 import {isWeb} from 'utilities/helpers/web';
 
 export type TCheckPermissionsProps = {

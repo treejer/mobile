@@ -6,7 +6,7 @@ import IoIcon from 'react-native-vector-icons/Ionicons';
 import Animated, {useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
 
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import {PermissionItem, TPermissionItem} from 'components/CheckingPermissions/PermissionItem';
+import {PermissionItemV2, TPermissionItem} from 'components/CheckingPermissions/PermissionItemV2';
 import {isWeb} from 'utilities/helpers/web';
 import Card from 'components/Card';
 import globalStyles from 'constants/styles';
@@ -73,7 +73,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
       {cantProceed ? (
         <View testID="permissions-list" style={[styles.flexBetween, styles.boxesPadding]}>
           {permissions.map(permission => (
-            <PermissionItem key={permission.name} permission={permission} col />
+            <PermissionItemV2 key={permission.name} permission={permission} />
           ))}
         </View>
       ) : (
