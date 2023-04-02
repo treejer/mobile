@@ -1,9 +1,10 @@
-import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
 import {render} from '@testing-library/react-native';
+
+import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
 import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
-import {colors} from 'constants/values';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {mapboxPrivateToken} from 'services/config';
+import {colors} from 'constants/values';
 
 describe('SelectTreeLocation component', () => {
   it('SelectTreeLocation component should be defined', () => {
@@ -21,6 +22,8 @@ describe('SelectTreeLocation component', () => {
 
     it('components/elements should be defined', () => {
       const container = getElementByTestId('select-location-cpt');
+      const contentContainer = getElementByTestId('select-location-content');
+      const textsContainer = getElementByTestId('select-tree-photo-text-container');
       const locationImage = queryElementByTestId('select-location-image');
       const locationText = getElementByTestId('select-location-title');
       const locationDesc = getElementByTestId('select-location-desc');
@@ -29,8 +32,15 @@ describe('SelectTreeLocation component', () => {
       const selectLocationBtn = getElementByTestId('select-location-button');
 
       expect(container).toBeTruthy();
-      expect(stylesToOneObject(container.props.style).backgroundColor).toBe(colors.khaki);
       expect(stylesToOneObject(container.props.style).height).toBe(104);
+
+      expect(contentContainer).toBeTruthy();
+      expect(stylesToOneObject(contentContainer.props.style).backgroundColor).toBe(colors.khaki);
+
+      expect(textsContainer).toBeTruthy();
+      expect(stylesToOneObject(textsContainer.props.style).height).toBe(74);
+      expect(stylesToOneObject(textsContainer.props.style).minWidth).toBe(178);
+      expect(stylesToOneObject(textsContainer.props.style).backgroundColor).toBe('transparent');
 
       expect(locationImage).toBeFalsy();
 
@@ -80,6 +90,8 @@ describe('SelectTreeLocation component', () => {
 
     it('components/elements should be defined', () => {
       const container = getElementByTestId('select-location-cpt');
+      const contentContainer = getElementByTestId('select-location-content');
+      const textsContainer = getElementByTestId('select-tree-photo-text-container');
       const locationImage = getElementByTestId('select-location-image');
       const locationText = getElementByTestId('select-location-title');
       const locationDesc = getElementByTestId('select-location-desc');
@@ -88,8 +100,15 @@ describe('SelectTreeLocation component', () => {
       const selectLocationBtn = getElementByTestId('select-location-button');
 
       expect(container).toBeTruthy();
-      expect(stylesToOneObject(container.props.style).backgroundColor).toBe('transparent');
       expect(stylesToOneObject(container.props.style).height).toBe(104);
+
+      expect(contentContainer).toBeTruthy();
+      expect(stylesToOneObject(contentContainer.props.style).backgroundColor).toBe(colors.darkOpacity);
+
+      expect(textsContainer).toBeTruthy();
+      expect(stylesToOneObject(textsContainer.props.style).height).toBe(74);
+      expect(stylesToOneObject(textsContainer.props.style).minWidth).toBe(178);
+      expect(stylesToOneObject(textsContainer.props.style).backgroundColor).toBe(colors.khakiOpacity);
 
       expect(locationImage).toBeTruthy();
       expect(locationImage.props.source.uri).toBe(imageUrl);
@@ -140,6 +159,8 @@ describe('SelectTreeLocation component', () => {
 
     it('components/elements should be defined', () => {
       const container = getElementByTestId('select-location-cpt');
+      const contentContainer = getElementByTestId('select-location-content');
+      const textsContainer = getElementByTestId('select-tree-photo-text-container');
       const locationImage = getElementByTestId('select-location-image');
       const locationText = getElementByTestId('select-location-title');
       const locationDesc = getElementByTestId('select-location-desc');
@@ -148,8 +169,15 @@ describe('SelectTreeLocation component', () => {
       const selectLocationBtn = getElementByTestId('select-location-button');
 
       expect(container).toBeTruthy();
-      expect(stylesToOneObject(container.props.style).backgroundColor).toBe('transparent');
       expect(stylesToOneObject(container.props.style).height).toBe(104);
+
+      expect(contentContainer).toBeTruthy();
+      expect(stylesToOneObject(contentContainer.props.style).backgroundColor).toBe(colors.darkOpacity);
+
+      expect(textsContainer).toBeTruthy();
+      expect(stylesToOneObject(textsContainer.props.style).height).toBe(74);
+      expect(stylesToOneObject(textsContainer.props.style).minWidth).toBe(178);
+      expect(stylesToOneObject(textsContainer.props.style).backgroundColor).toBe(colors.khakiOpacity);
 
       expect(locationImage).toBeTruthy();
       expect(locationImage.props.source.uri).toBe(imageUrl);

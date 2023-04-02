@@ -19,10 +19,11 @@ export type SelectTreeLocationProps = {
     canUpdate?: boolean;
   };
   onSelect: () => void;
+  disabled?: boolean;
 };
 
 export function SelectTreeLocation(props: SelectTreeLocationProps) {
-  const {testID, hasLocation, onSelect} = props;
+  const {testID, hasLocation, disabled, onSelect} = props;
 
   const {t} = useTranslation();
 
@@ -35,13 +36,12 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
   );
 
   const Wrapper = useMemo(() => (hasLocation && imageUrl ? ImageBackground : React.Fragment), [hasLocation, imageUrl]);
-
-  return (
-    //@ts-ignore
-    <Wrapper
-      {...(hasLocation && imageUrl
+  const WrapperProps = useMemo(
+    () =>
+      hasLocation && imageUrl
         ? {
             testID: 'select-location-image',
+            imageStyle: styles.bgStyle,
             source: {
               uri: imageUrl,
               imageStyle: {
@@ -49,50 +49,81 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
               },
             },
           }
-        : {})}
-    >
-      <Card testID={testID} style={[styles.container, {backgroundColor: hasLocation ? 'transparent' : colors.khaki}]}>
-        <View>
-          <Text testID="select-location-title" style={styles.title}>
-            {t('submitTreeV2.location')}
-          </Text>
-          <Spacer times={3} />
-          <Text style={styles.desc}>
-            <Trans
-              testID="select-location-desc"
-              i18nKey={hasLocation ? 'submitTreeV2.SelectOnMapToChange' : 'submitTreeV2.selectOnMap'}
-              components={{Map: <Text style={styles.bold} />}}
-            />
-          </Text>
-        </View>
-        <Spacer />
-        <View>
-          <TouchableOpacity
-            testID="select-location-button"
-            style={styles.button}
-            disabled={hasLocation ? !hasLocation?.canUpdate : false}
-            onPress={onSelect}
+        : {},
+    [hasLocation, imageUrl],
+  );
+
+  return (
+    <Card testID={testID} style={styles.container}>
+      {/*//@ts-ignore*/}
+      <Wrapper {...WrapperProps}>
+        <View
+          testID="select-location-content"
+          style={[styles.contentContainer, {backgroundColor: hasLocation ? colors.darkOpacity : colors.khaki}]}
+        >
+          <View
+            testID="select-tree-photo-text-container"
+            style={[styles.textContainer, {backgroundColor: hasLocation ? colors.khakiOpacity : 'transparent'}]}
           >
-            <Icon testID="select-location-icon" name="map-marked-alt" color={colors.khaki} size={18} />
-            <Spacer times={3} />
-            <Text testID="select-location-map" style={styles.btnText}>
-              {t('submitTreeV2.map')}
+            <Text testID="select-location-title" style={styles.title}>
+              {t('submitTreeV2.location')}
             </Text>
-          </TouchableOpacity>
+            <Spacer times={1} />
+            <Text style={styles.desc}>
+              <Trans
+                testID="select-location-desc"
+                i18nKey={hasLocation ? 'submitTreeV2.SelectOnMapToChange' : 'submitTreeV2.selectOnMap'}
+                components={{Map: <Text style={styles.bold} />}}
+              />
+            </Text>
+          </View>
+          <Spacer />
+          <View>
+            <TouchableOpacity
+              testID="select-location-button"
+              style={[styles.button, {backgroundColor: hasLocation ? colors.grayDarkerOpacity : colors.grayDarker}]}
+              disabled={disabled || (hasLocation ? !hasLocation?.canUpdate : false)}
+              onPress={onSelect}
+            >
+              <Icon testID="select-location-icon" name="map-marked-alt" color={colors.khaki} size={18} />
+              <Spacer times={3} />
+              <Text testID="select-location-map" style={styles.btnText}>
+                {t('submitTreeV2.map')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </Card>
-    </Wrapper>
+      </Wrapper>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    backgroundColor: colors.khaki,
+    overflow: 'hidden',
+    height: 104,
+  },
+  bgStyle: {
+    borderRadius: 10,
+    opacity: 0.5,
+  },
+  textContainer: {
+    height: 74,
+    minWidth: 178,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  contentContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 104,
+    overflow: 'hidden',
   },
   title: {
     color: colors.grayDarker,
@@ -101,10 +132,10 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 12,
   },
   desc: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.grayDarker,
   },
   btnText: {

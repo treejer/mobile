@@ -538,6 +538,12 @@ export const en = {
   submitTreeV2: {
     location: 'Location',
     selectOnMap: 'Select the tree location\nfrom <Map>Map</Map>',
+    SelectOnMapToChange: 'Change the tree location\nfrom <Map>Map</Map>',
     map: 'Map',
+    camera: 'Camera',
+    gallery: 'Gallery',
+    photo: 'Photo',
+    selectPhoto: 'Select the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
+    changePhoto: 'Change the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
   },
 };

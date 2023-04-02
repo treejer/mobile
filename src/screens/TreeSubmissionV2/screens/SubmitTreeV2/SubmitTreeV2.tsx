@@ -7,6 +7,8 @@ import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions'
 import Spacer from 'components/Spacer';
 import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubmissionField';
 import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
+import {SelectTreePhoto} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
+import {onBoardingTwo} from '../../../../../assets/images';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -15,6 +17,14 @@ export type SubmitTreeV2Props = {
 export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const {plantTreePermissions} = props;
 
+  const hasLocation = {
+    coords: {
+      latitude: 35.7022048,
+      longitude: 51.4517922,
+    },
+    canUpdate: false,
+  };
+
   return (
     <SafeAreaView
       style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill, globalStyles.p1, globalStyles.pt3]}
@@ -22,12 +32,24 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
       <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={plantTreePermissions} />
       <Spacer times={8} />
       {plantTreePermissions.isLocationGranted ? (
-        <SelectTreeLocation testID="select-tree-location-cpt" onSelect={() => console.log('select tree location')} />
+        <SelectTreeLocation
+          // hasLocation={hasLocation}
+          testID="select-tree-location-cpt"
+          onSelect={() => console.log('select tree location')}
+        />
       ) : (
         <LockedSubmissionField testID="locked-location-cpt" title="lockedField.location" />
       )}
       <Spacer times={3} />
-      <LockedSubmissionField testID="locked-camera-cpt" title="lockedField.camera" />
+      {plantTreePermissions?.isCameraGranted ? (
+        <SelectTreePhoto
+          // treePhoto={onBoardingTwo}
+          testID="select-tree-photo-cpt"
+          onSelect={() => console.log('select tree photo')}
+        />
+      ) : (
+        <LockedSubmissionField testID="locked-camera-cpt" title="lockedField.camera" />
+      )}
     </SafeAreaView>
   );
 }
