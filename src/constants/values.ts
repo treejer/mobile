@@ -33,6 +33,17 @@ export const colors = {
     shadowBlur: 4,
     elevation: 2,
   },
+  boxInBoxShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowBlur: 4,
+    elevation: 0.0001,
+  },
   placeholder: '#C7C7CD',
   loadingOpacity: '#00000022',
 };

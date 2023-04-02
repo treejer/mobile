@@ -1,115 +1,6 @@
 import React from 'react';
 
-import {OpenSettingsButton} from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-
-export const mockBlockedAllPermissions = [
-  {
-    name: 'checkPermission.permissions.location',
-    status: <OpenSettingsButton caption={'checkPermission.grantNow'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'md-location-outline',
-    isExist: false,
-    isGranted: false,
-  },
-  {
-    name: 'checkPermission.permissions.camera',
-    status: <OpenSettingsButton caption={'checkPermission.grantNow'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'camera-outline',
-    isExist: false,
-    isGranted: false,
-  },
-  {
-    name: 'checkPermission.permissions.GPS',
-    status: <OpenSettingsButton caption={'checkPermission.turnOn'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'locate',
-    isExist: false,
-    isGranted: false,
-  },
-];
-
-export const mockBlockedOnePermissions = [
-  {
-    name: 'checkPermission.permissions.location',
-    status: <OpenSettingsButton caption={'checkPermission.grantNow'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'md-location-outline',
-    isExist: false,
-    isGranted: false,
-  },
-  {
-    name: 'checkPermission.permissions.camera',
-    status: 'checkPermission.granted',
-    onPress: () => {},
-    icon: 'camera-outline',
-    isExist: true,
-    isGranted: true,
-  },
-  {
-    name: 'checkPermission.permissions.GPS',
-    status: 'checkPermission.enabled',
-    onPress: () => {},
-    icon: 'locate',
-    isExist: true,
-    isGranted: true,
-  },
-];
-
-export const mockBlockedTwoPermissions = [
-  {
-    name: 'checkPermission.permissions.location',
-    status: <OpenSettingsButton caption={'checkPermission.grantNow'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'md-location-outline',
-    isExist: false,
-    isGranted: false,
-  },
-  {
-    name: 'checkPermission.permissions.camera',
-    status: <OpenSettingsButton caption={'checkPermission.grantNow'} onPress={() => {}} />,
-    onPress: () => {},
-    icon: 'camera-outline',
-    isExist: false,
-    isGranted: false,
-  },
-  {
-    name: 'checkPermission.permissions.GPS',
-    status: 'checkPermission.enabled',
-    onPress: () => {},
-    icon: 'locate',
-    isExist: true,
-    isGranted: true,
-  },
-];
-
-export const mockGrantedAllPermissions = [
-  {
-    name: 'checkPermission.permissions.location',
-    status: 'checkPermission.granted',
-    onPress: () => {},
-    icon: 'md-location-outline',
-    isExist: true,
-    isGranted: true,
-  },
-  {
-    name: 'checkPermission.permissions.camera',
-    status: 'checkPermission.granted',
-    onPress: () => {},
-    icon: 'camera-outline',
-    isExist: true,
-    isGranted: true,
-  },
-  {
-    name: 'checkPermission.permissions.GPS',
-    status: 'checkPermission.enabled',
-    onPress: () => {},
-    icon: 'locate',
-    isExist: true,
-    isGranted: true,
-  },
-];
 
 export const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {
   cameraPermission: 'blocked',
@@ -132,6 +23,30 @@ export const mockPlantTreePermissionsBlocked: TUsePlantTreePermissions = {
   isGranted: false,
   cantProceed: true,
   requested: true,
+  showPermissionModal: true,
+};
+
+export const mockPlantTreePermissionsChecking: TUsePlantTreePermissions = {
+  cameraPermission: null,
+  locationPermission: null,
+  userLocation: null,
+  checkPermission: () => {},
+  requestPermission: () => {},
+  checkUserLocation: () => {},
+  openPermissionsSettings: (isGranted?: boolean) => {},
+  openGpsRequest: (isGranted?: boolean) => {},
+  requestCameraPermission: (isGranted?: boolean) => {},
+  requestLocationPermission: (isGranted?: boolean) => {},
+  isCameraBlocked: false,
+  isLocationBlocked: false,
+  isCameraGranted: false,
+  isLocationGranted: false,
+  isGPSEnabled: false,
+  hasLocation: false,
+  isChecking: true,
+  isGranted: false,
+  cantProceed: false,
+  requested: false,
   showPermissionModal: true,
 };
 

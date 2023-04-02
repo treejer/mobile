@@ -53,7 +53,11 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         >
           <View
             testID="select-tree-photo-text-container"
-            style={[styles.textContainer, {backgroundColor: treePhoto ? colors.khakiOpacity : 'transparent'}]}
+            style={[
+              styles.textContainer,
+              {backgroundColor: treePhoto ? colors.khakiOpacity : 'transparent'},
+              treePhoto ? colors.boxInBoxShadow : {},
+            ]}
           >
             <Text testID="photo-title" style={styles.title}>
               {t('submitTreeV2.photo')}

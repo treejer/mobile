@@ -9,6 +9,7 @@ import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubm
 import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
 import {SelectTreePhoto} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {onBoardingTwo} from '../../../../../assets/images';
+import {mockPlantTreePermissionsChecking} from 'screens/TreeSubmissionV2/components/__test__/mock';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -29,11 +30,11 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     <SafeAreaView
       style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill, globalStyles.p1, globalStyles.pt3]}
     >
-      <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={plantTreePermissions} />
+      <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsChecking} />
       <Spacer times={8} />
       {plantTreePermissions.isLocationGranted ? (
         <SelectTreeLocation
-          // hasLocation={hasLocation}
+          hasLocation={hasLocation}
           testID="select-tree-location-cpt"
           onSelect={() => console.log('select tree location')}
         />
@@ -43,7 +44,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
       <Spacer times={3} />
       {plantTreePermissions?.isCameraGranted ? (
         <SelectTreePhoto
-          // treePhoto={onBoardingTwo}
+          treePhoto={onBoardingTwo}
           testID="select-tree-photo-cpt"
           onSelect={() => console.log('select tree photo')}
         />

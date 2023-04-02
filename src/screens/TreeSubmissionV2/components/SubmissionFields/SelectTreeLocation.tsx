@@ -63,7 +63,11 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
         >
           <View
             testID="select-tree-photo-text-container"
-            style={[styles.textContainer, {backgroundColor: hasLocation ? colors.khakiOpacity : 'transparent'}]}
+            style={[
+              styles.textContainer,
+              {backgroundColor: hasLocation ? colors.khakiOpacity : 'transparent'},
+              hasLocation ? colors.boxInBoxShadow : {},
+            ]}
           >
             <Text testID="select-location-title" style={styles.title}>
               {t('submitTreeV2.location')}

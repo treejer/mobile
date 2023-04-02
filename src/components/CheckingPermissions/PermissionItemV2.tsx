@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
@@ -20,9 +21,11 @@ export type TPermissionItem = {
 export function PermissionItemV2(props: TPermissionItem) {
   const {permission, testID} = props;
 
+  const {t} = useTranslation();
+
   const permissionStyles = useMemo(
     () => ({
-      statusText: permission.isExist ? (permission.isGranted ? styles.isGranted : styles.isBlocked) : {},
+      statusText: permission.isExist ? (permission.isGranted ? styles.isGranted : styles.isBlocked) : styles.isChecking,
       text: permission.isExist ? styles.whiteText : {},
       iconBox: permission.isExist
         ? permission.isGranted
@@ -38,18 +41,18 @@ export function PermissionItemV2(props: TPermissionItem) {
       <TouchableOpacity
         testID="permission-btn-container"
         onPress={() => permission.onPress(permission.isGranted)}
-        activeOpacity={permission.isGranted ? 1 : undefined}
+        activeOpacity={permission.isGranted || !permission.isExist ? 1 : undefined}
         style={styles.col}
       >
         <Text style={styles.blackText} testID="permission-name">
-          {permission.name}
+          {t(permission.name)}
         </Text>
         <Spacer times={1} />
         <View testID="permission-icon-container" style={[styles.iconBox, styles.flexCenter, permissionStyles.iconBox]}>
           <Icon testID="permission-icon" style={permissionStyles.text} name={permission.icon} size={24} />
         </View>
         <Text style={permissionStyles.statusText} testID="permission-status">
-          {permission.status}
+          {t(permission.status)}
         </Text>
       </TouchableOpacity>
     </View>
@@ -87,7 +90,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.red,
   },
   iconBoxChecking: {
-    backgroundColor: colors.gray,
+    backgroundColor: colors.grayLighter,
   },
   blackText: {
     fontWeight: '400',
@@ -104,6 +107,11 @@ export const styles = StyleSheet.create({
   },
   isBlocked: {
     color: colors.red,
+    fontSize: 14,
+    fontWeight: '300',
+  },
+  isChecking: {
+    color: colors.grayDarker,
     fontSize: 14,
     fontWeight: '300',
   },

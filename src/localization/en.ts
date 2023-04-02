@@ -326,6 +326,7 @@ export const en = {
     longDistance: "You can't upload this image because distance between your location and image are too far.",
   },
   checkPermission: {
+    dottedChecking: '...',
     permissions: {
       location: 'Location',
       camera: 'Camera',
@@ -527,6 +528,7 @@ export const en = {
     grantToContinue: 'We need these permission to continue',
     guide: '* Click on each <Red>red</Red> item to <Grant>grant</Grant> the permission',
     allGranted: 'Permissions are Granted',
+    isChecking: 'Checking...',
     submissionSettings: 'Tree Submission Settings',
   },
   lockedField: {

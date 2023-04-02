@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation, Trans} from 'react-i18next';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome';
 import IoIcon from 'react-native-vector-icons/Ionicons';
@@ -43,7 +43,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
   }, [sharedStylesValue.value]);
 
   const permissions: TPermissionItem['permission'][] = useMemo(
-    () => permissionsList(props.plantTreePermissions, t),
+    () => permissionsList(props.plantTreePermissions),
     [props.plantTreePermissions],
   );
 
@@ -62,15 +62,23 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
             name={cantProceed ? 'warning' : 'check-circle'}
             size={cantProceed ? 24 : 26}
           />
-        ) : null}
+        ) : (
+          <ActivityIndicator testID="permission-box-checking-indicator" color={colors.grayDarker} size="small" />
+        )}
         <Spacer />
         <Text testID="permission-box-title" style={[styles.title, isGranted ? styles.greenTextColor : null]}>
-          {t(cantProceed ? 'permissionBox.grantToContinue' : 'permissionBox.allGranted')}
+          {t(
+            isChecking
+              ? 'permissionBox.isChecking'
+              : cantProceed
+              ? 'permissionBox.grantToContinue'
+              : 'permissionBox.allGranted',
+          )}
         </Text>
       </View>
       <Spacer />
       <Hr />
-      {cantProceed ? (
+      {cantProceed || isChecking ? (
         <View testID="permissions-list" style={[styles.flexBetween, styles.boxesPadding]}>
           {permissions.map(permission => (
             <PermissionItemV2 key={permission.name} permission={permission} />
@@ -92,7 +100,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
             />
           </Text>
         </View>
-      ) : (
+      ) : isGranted ? (
         <View testID="permission-box-plant-settings" style={{paddingHorizontal: 4}}>
           <View style={[styles.flexBetween, {paddingVertical: 0}]}>
             <View style={styles.flexRow}>
@@ -123,7 +131,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
             </>
           ) : null}
         </View>
-      )}
+      ) : null}
     </AnimatedCard>
   );
 }
