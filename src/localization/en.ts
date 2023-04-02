@@ -547,5 +547,11 @@ export const en = {
     photo: 'Photo',
     selectPhoto: 'Select the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
     changePhoto: 'Change the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
+    titles: {
+      plantSingle: 'Submit a new Tree',
+      plantNursery: 'Submit a new Nursery',
+      updateSingle: 'Update <ID>#{{treeId}}</ID> tree',
+      updateNursery: 'Update <ID>#{{treeId}}</ID> nursery',
+    },
   },
 };

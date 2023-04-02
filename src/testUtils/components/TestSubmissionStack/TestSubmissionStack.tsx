@@ -17,7 +17,7 @@ export function TestSubmissionStack(props: TestSubmissionStackProps) {
   const {name, component: Component} = props;
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName={name}>
       <Stack.Screen name={Routes.SelectPlantType_V2}>
         {() => (name === Routes.SelectPlantType_V2 ? Component : <SelectPlantTypeV2 />)}
       </Stack.Screen>
