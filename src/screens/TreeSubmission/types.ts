@@ -1,5 +1,6 @@
-import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {Image} from 'react-native-image-crop-picker';
+
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {Tree} from 'types';
 
 export interface TreeJourney {

@@ -1,18 +1,14 @@
-// @ts-ignore
 import React from 'react';
 import {I18nextProvider} from 'react-i18next';
-import {useInitialDeepLinking} from 'utilities/hooks/useDeepLinking';
-import {Provider} from 'react-redux';
-import {persistor, store} from 'ranger-redux/store';
-import {PersistGate} from 'redux-persist/integration/react';
-import {InitNavigation} from 'navigation/InitNavigation';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import MapboxGL from '@rnmapbox/maps';
-import {mapboxPrivateToken} from 'services/config';
-import {i18next} from './localization';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-MapboxGL.setAccessToken(mapboxPrivateToken);
+import {useInitialDeepLinking} from 'utilities/hooks/useDeepLinking';
+import {persistor, store} from 'ranger-redux/store';
+import {InitNavigation} from 'navigation/InitNavigation';
+import {i18next} from './localization';
 
 export default function App() {
   useInitialDeepLinking();

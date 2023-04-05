@@ -134,7 +134,12 @@ jest.mock('react-native-image-crop-picker', () => {
   };
 });
 
-jest.mock('@rnmapbox/maps', () => {});
+jest.mock('@rnmapbox/maps', () => {
+  return {
+    setAccessToken: jest.fn(),
+    setWellKnownTileServer: jest.fn(),
+  };
+});
 jest.mock('react-native-snap-carousel', () => {});
 jest.mock('@react-native-clipboard/clipboard', () => {});
 

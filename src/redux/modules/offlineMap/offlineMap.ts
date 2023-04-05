@@ -7,8 +7,11 @@ import {mapboxPrivateToken, offlineSubmittingMapName} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useCallback} from 'react';
 import {selectNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
-import OfflinePack from '@rnmapbox/maps/lib/typescript/modules/offline/OfflinePack';
-import {OfflineProgressStatus} from '@rnmapbox/maps/lib/typescript/modules/offline/offlineManager';
+
+// import OfflinePack from '@rnmapbox/maps/lib/typescript/modules/offline/OfflinePack';
+// import {OfflineProgressStatus} from '@rnmapbox/maps/lib/typescript/modules/offline/offlineManager'
+import OfflinePack from '@rnmapbox/maps/lib/module/modules/offline/OfflinePack';
+import {OfflineProgressStatus} from '@rnmapbox/maps/lib/module/modules/offline/offlineManager';
 import {OfflinePackError} from '@rnmapbox/maps/javascript/modules/offline/offlineManager';
 
 export type Position = number[];

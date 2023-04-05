@@ -284,7 +284,6 @@ export function useAfterSelectPhotoHandler() {
   const [persistedPlantedTrees] = usePersistedPlantedTrees();
   const browserPlatform = useBrowserPlatform();
   const isConnected = useNetInfoConnected();
-  const {isMainnet} = useConfig();
   const {checkMetaData} = useSettings();
 
   const {t} = useTranslation();

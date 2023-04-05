@@ -1,9 +1,13 @@
 import React, {forwardRef, LegacyRef} from 'react';
-import MapboxGL from '@rnmapbox/maps';
+import MapboxGL, {MapViewProps} from '@rnmapbox/maps';
+import {mapboxPrivateToken} from 'services/config';
 
 import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
 
-type Props = typeof MapboxGL.MapView.defaultProps;
+MapboxGL.setWellKnownTileServer('Mapbox');
+MapboxGL.setAccessToken(mapboxPrivateToken);
+
+type Props = MapViewProps;
 
 export interface MapProps extends Props {
   children?: any;

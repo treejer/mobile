@@ -1,13 +1,13 @@
-// @ts-ignore
-import React, {useEffect} from 'react';
-import {i18next} from './localization';
-import {I18nextProvider} from 'react-i18next';
-import {useInitialDeepLinking} from 'utilities/hooks/useDeepLinking';
+import React from 'react';
 import {Provider} from 'react-redux';
-import {persistor, store} from 'ranger-redux/store';
+import {I18nextProvider} from 'react-i18next';
 import {PersistGate} from 'redux-persist/integration/react';
-import {InitNavigation} from 'navigation/InitNavigation';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+import {i18next} from './localization';
+import {persistor, store} from 'ranger-redux/store';
+import {InitNavigation} from 'navigation/InitNavigation';
+import {useInitialDeepLinking} from 'utilities/hooks/useDeepLinking';
 
 export default function App() {
   useInitialDeepLinking();

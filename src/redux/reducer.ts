@@ -12,6 +12,7 @@ import {countriesReducer} from 'ranger-redux/modules/countris/countries';
 import {offlineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {recentPlacesReducer} from 'ranger-redux/modules/recentPlaces/recentPlaces';
 import {searchPlacesReducer} from 'ranger-redux/modules/searchPlaces/searchPlaces';
+import {currentJourneyReducer} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   userNonce: userNonceReducer,
   countries: countriesReducer,
   searchPlaces: searchPlacesReducer,
+  currentJourney: currentJourneyReducer,
   offlineMap,
 });
 
