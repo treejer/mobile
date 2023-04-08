@@ -4,12 +4,7 @@ import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
 import {onBoardingOne} from '../../../../../assets/images';
 
 describe('currentJourney reducer', () => {
-  const initialState = {
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-  };
+  const initialState = {};
 
   it('should return the initial state', () => {
     expect(currentJourneyReducer(initialState, {type: ''})).toEqual(initialState);
@@ -42,10 +37,7 @@ describe('currentJourney reducer', () => {
   it('should handle START_PLANT_NURSERY', () => {
     const nurseryCount = 3;
     const expectedValue = {
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      ...initialState,
       isUpdate: false,
       isNursery: true,
       isSingle: false,
@@ -125,5 +117,8 @@ describe('currentJourney reducer', () => {
         actionsList.setTreeDetailToUpdate({tree: treeDetail as any, treeIdToUpdate: treeDetail.id, location: coords}),
       ),
     ).toEqual(expectedValue);
+  });
+  it('should handle CLEAR_JOURNEY', () => {
+    expect(currentJourneyReducer(initialState, actionsList.clearJourney())).toEqual(initialState);
   });
 });

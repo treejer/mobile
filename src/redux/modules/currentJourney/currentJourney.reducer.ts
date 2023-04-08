@@ -1,9 +1,21 @@
+import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {Tree} from 'types';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
+import {
+  clearJourney,
+  setTreeLocation,
+  SetTreeLocationArgs,
+  setTreePhoto,
+  SetTreePhotoArgs,
+  startPlantNursery,
+  StartPlantNurseryArgs,
+  startPlantSingleTree,
+} from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
 export type TCurrentJourney = TreeJourney_V2;
 
@@ -19,12 +31,7 @@ export type CurrentJourneyAction = {
   treeIdToPlant?: string;
 };
 
-export const currentJourneyInitialState: TCurrentJourney = {
-  location: {
-    latitude: 0,
-    longitude: 0,
-  },
-};
+export const currentJourneyInitialState: TCurrentJourney = {};
 
 export const currentJourneyReducer = (
   state: TCurrentJourney = currentJourneyInitialState,
@@ -72,15 +79,60 @@ export const currentJourneyReducer = (
         ...state,
         nurseryContinuedUpdatingLocation: true,
       };
-    case actionsList.SET_TREE_DETAIL_TO_UPDATE: {
+    case actionsList.SET_TREE_DETAIL_TO_UPDATE:
       return {
         ...state,
         treeIdToUpdate: action.treeIdToUpdate,
         tree: action.tree,
         location: action.location,
       };
-    }
+
+    case actionsList.CLEAR_JOURNEY:
+      return currentJourneyInitialState;
     default:
       return state;
   }
 };
+
+export function useCurrentJourney() {
+  const journey = useAppSelector(state => state.currentJourney);
+  const dispatch = useAppDispatch();
+
+  const dispatchStartPlantSingleTree = useCallback(() => {
+    dispatch(startPlantSingleTree());
+  }, [dispatch]);
+
+  const dispatchStartPlantNursery = useCallback(
+    (args: StartPlantNurseryArgs) => {
+      dispatch(startPlantNursery(args));
+    },
+    [dispatch],
+  );
+
+  const dispatchClearJourney = useCallback(() => {
+    dispatch(clearJourney());
+  }, [dispatch]);
+
+  const dispatchSelectTreeLocation = useCallback(
+    (args: SetTreeLocationArgs) => {
+      dispatch(setTreeLocation(args));
+    },
+    [dispatch],
+  );
+
+  const dispatchSelectTreePhoto = useCallback(
+    (args: SetTreePhotoArgs) => {
+      dispatch(setTreePhoto(args));
+    },
+    [dispatch],
+  );
+
+  return {
+    journey,
+    dispatchClearJourney,
+    dispatchStartPlantSingleTree,
+    dispatchStartPlantNursery,
+    dispatchSelectTreeLocation,
+    dispatchSelectTreePhoto,
+  };
+}

@@ -5,6 +5,12 @@ import configs, {BlockchainNetwork} from 'services/config';
 import Web3, {magicGenerator} from 'services/Magic';
 
 export const maticReducers = {
+  currentJourney: {
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+  },
   web3: {
     ...initialWeb3State,
     accessToken:
@@ -53,6 +59,12 @@ const goerliMagic = magicGenerator(configs[BlockchainNetwork.Goerli]);
 const georliWeb3 = new Web3(magicGenerator(configs[BlockchainNetwork.Goerli]).rpcProvider as any);
 
 export const goerliReducers = {
+  currentJourney: {
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+  },
   web3: {
     ...initialWeb3State,
     config: goerliConfig,
@@ -70,7 +82,7 @@ export const goerliReducers = {
   },
   profile: {
     data: {
-      _id: '635d4b9593937e910007325d',
+      id: '635d4b9593937e910007325d',
       createdAt: '2022-10-29T15:49:41.349Z',
       email: null,
       emailVerifiedAt: null,

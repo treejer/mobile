@@ -60,7 +60,13 @@ jest.mock('react-native-permissions', () => {
   return require('react-native-permissions/mock');
 });
 
-jest.mock('react-native-geolocation-service', () => {});
+jest.mock('react-native-geolocation-service', () => {
+  return {
+    watchPosition: jest.fn(),
+    clearWatch: jest.fn(),
+    getCurrentPosition: jest.fn(),
+  };
+});
 
 jest.mock('@react-native-firebase/analytics', () => {});
 
@@ -138,6 +144,9 @@ jest.mock('@rnmapbox/maps', () => {
   return {
     setAccessToken: jest.fn(),
     setWellKnownTileServer: jest.fn(),
+    MapView: TransComponent,
+    Camera: TransComponent,
+    UserLocation: TransComponent,
   };
 });
 jest.mock('react-native-snap-carousel', () => {});

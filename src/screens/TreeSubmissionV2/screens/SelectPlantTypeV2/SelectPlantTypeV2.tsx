@@ -8,7 +8,6 @@ import {Routes} from 'navigation/index';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
-import {useCurrentJourney} from 'services/currentJourney';
 import {isNumber} from 'utilities/helpers/validators';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import Button from 'components/Button/Button';
@@ -16,9 +15,11 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {StartPlantButton} from 'components/StartPlantButton/StartPlantButton';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export function SelectPlantTypeV2() {
-  const {journey, setNewJourney, clearJourney} = useCurrentJourney();
+  const {dispatchClearJourney, dispatchStartPlantSingleTree, dispatchStartPlantNursery} = useCurrentJourney();
+
   const {t} = useTranslation();
   const {isMainnet} = useConfig();
   const {changeCheckMetaData} = useSettings();
@@ -33,7 +34,7 @@ export function SelectPlantTypeV2() {
   const navigation = useNavigation();
 
   useRefocusEffect(() => {
-    clearJourney();
+    dispatchClearJourney();
     setCount('');
     if (isMainnet) {
       changeCheckMetaData(true);
@@ -42,24 +43,15 @@ export function SelectPlantTypeV2() {
 
   const handleStart = useCallback(
     (single: boolean | null, nurseryCount: string) => {
-      let newJourney;
-      if (Number(nurseryCount) <= 1) {
-        newJourney = {
-          ...journey,
-          isSingle: true,
-        };
+      if (single || Number(nurseryCount) <= 1) {
+        dispatchStartPlantSingleTree();
       } else {
-        newJourney = {
-          ...journey,
-          isSingle: single,
-          nurseryCount: Number(nurseryCount),
-        };
+        dispatchStartPlantNursery({count: +nurseryCount});
       }
       //@ts-ignore
       navigation.navigate(Routes.SubmitTree_V2);
-      setNewJourney(newJourney);
     },
-    [navigation, setNewJourney, journey],
+    [navigation, dispatchStartPlantSingleTree, dispatchStartPlantNursery],
   );
 
   const handleSelectNursery = useCallback(() => {
@@ -75,14 +67,14 @@ export function SelectPlantTypeV2() {
     inputRef?.current?.blur();
   }, [count, handleStart]);
 
-  const handleSelectModels = useCallback(() => {
-    setByModel(true);
-    setIsSingle(null);
-
-    //@ts-ignore
-    navigation.navigate(Routes.SelectModels);
-    inputRef?.current?.blur();
-  }, [navigation]);
+  // const handleSelectModels = useCallback(() => {
+  //   setByModel(true);
+  //   setIsSingle(null);
+  //
+  //   //@ts-ignore
+  //   navigation.navigate(Routes.SelectModels);
+  //   inputRef?.current?.blur();
+  // }, [navigation]);
 
   const handleFocus = () => {
     setByModel(false);
@@ -101,7 +93,7 @@ export function SelectPlantTypeV2() {
   };
 
   const singleColor = useMemo(() => (isSingle ? colors.green : colors.grayLight), [isSingle]);
-  const modelColor = useMemo(() => (byModel ? colors.green : colors.grayLight), [byModel]);
+  // const modelColor = useMemo(() => (byModel ? colors.green : colors.grayLight), [byModel]);
   const nurseryColor = useMemo(
     () => (isSingle === null ? colors.grayLight : isSingle === false ? colors.green : colors.grayLight),
     [isSingle],

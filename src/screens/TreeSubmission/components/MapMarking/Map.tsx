@@ -1,5 +1,4 @@
 import MapboxGL from '@rnmapbox/maps';
-// import Logger from '@rnmapbox/maps/javascript/utils/Logger';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import MapKit from 'components/Map/Map';
@@ -8,26 +7,15 @@ import globalStyles, {fontBold} from 'constants/styles';
 import {locationPermission} from 'utilities/helpers/permissions';
 import Geolocation from 'react-native-geolocation-service';
 
-// Logger.setLogCallback(log => {
-//   const {message} = log;
-//   // expected warnings - see https://github.com/mapbox/mapbox-gl-native/issues/15341#issuecomment-522889062
-//   if (
-//     message.match('Request failed due to a permanent error: Canceled') ||
-//     message.match('Request failed due to a permanent error: Socket Closed')
-//   ) {
-//     return true;
-//   }
-//   return false;
-// });
-
 interface IMapProps {
+  testID?: string;
   map?: any;
   camera?: any;
   setLocation?: any;
   setAccuracyInMeters?: any;
 }
 
-export default function Map({map, camera, setLocation}: IMapProps) {
+export default function Map({map, camera, setLocation, testID}: IMapProps) {
   const onChangeRegionComplete = updatedRegion => {
     const {geometry} = updatedRegion;
     setLocation({
@@ -81,7 +69,7 @@ export default function Map({map, camera, setLocation}: IMapProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <MapKit
         onDidFinishRenderingMapFully={initialMapCamera}
         ref={map}

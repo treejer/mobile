@@ -9,7 +9,12 @@ import {StyleSheet, Text, TouchableOpacity, View, Modal} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useCurrentJourney} from 'services/currentJourney';
 
-function SubmitTreeOfflineWebModal() {
+export type SubmitTreeOfflineWebModalProps = {
+  testID?: string;
+};
+
+function SubmitTreeOfflineWebModal(props: SubmitTreeOfflineWebModalProps) {
+  const {testID} = props;
   const navigation = useNavigation();
   const {t} = useTranslation();
 
@@ -30,7 +35,7 @@ function SubmitTreeOfflineWebModal() {
   };
 
   return isWeb() ? (
-    <Modal visible transparent>
+    <Modal testID={testID} visible transparent>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modal}>
           <Text style={[{textAlign: 'center'}, globalStyles.h4, globalStyles.mb1]}>

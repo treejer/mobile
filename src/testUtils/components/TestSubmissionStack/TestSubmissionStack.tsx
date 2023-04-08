@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Routes} from 'navigation/Navigation';
 import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
 import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
+import {SelectOnMapV2} from 'screens/TreeSubmissionV2/screens/SelectOnMapV2/SelectOnMapV2';
 import {mockPlantTreePermissionsGranted} from 'screens/TreeSubmissionV2/components/__test__/mock';
 
 export type TestSubmissionStackProps = {
@@ -27,6 +28,15 @@ export function TestSubmissionStack(props: TestSubmissionStackProps) {
             Component
           ) : (
             <SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectOnMap_V2}>
+        {() =>
+          name === Routes.SelectOnMap_V2 ? (
+            Component
+          ) : (
+            <SelectOnMapV2 plantTreePermissions={mockPlantTreePermissionsGranted} />
           )
         }
       </Stack.Screen>

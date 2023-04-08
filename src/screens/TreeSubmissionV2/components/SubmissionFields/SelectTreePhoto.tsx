@@ -1,34 +1,62 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {Image} from 'react-native-image-crop-picker';
-import {ImageBackground, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Modal} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
 import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
+import useCamera from 'utilities/hooks/useCamera';
+import {isWeb} from 'utilities/helpers/web';
 
 export type SelectTreePhotoProps = {
   testID?: string;
   treePhoto?: Image | File;
-  onSelect: (photo?: Image | File) => void;
   disabled?: boolean;
+  onSelect: (photo: Image | File) => void;
 };
 
 export function SelectTreePhoto(props: SelectTreePhotoProps) {
   const {testID, disabled, treePhoto, onSelect} = props;
 
+  const {openCameraHook, openLibraryHook} = useCamera();
+  const [showCamera, setShowCamera] = useState(false);
+  const [pickedPhoto, setPickedPhoto] = useState();
+
   const {t} = useTranslation();
 
-  const handleOpenCamera = useCallback(() => {
+  const handleOpenCamera = useCallback(async () => {
     console.log('open camera button');
-    onSelect();
-  }, [onSelect]);
 
-  const handleOpenGallery = useCallback(() => {
-    console.log('open gallery button');
-    onSelect();
-  }, [onSelect]);
+    let selectedPhoto;
+
+    if (isWeb()) {
+      setShowCamera(true);
+      return;
+    } else {
+      selectedPhoto = await openCameraHook();
+    }
+
+    onSelect(selectedPhoto);
+  }, [onSelect, openCameraHook]);
+
+  const handleOpenGallery = useCallback(
+    async e => {
+      console.log('open gallery button');
+
+      let selectedPhoto;
+
+      if (isWeb()) {
+        setPickedPhoto(e.target.files[0]);
+      } else {
+        selectedPhoto = await openLibraryHook();
+      }
+
+      onSelect(selectedPhoto);
+    },
+    [onSelect, openLibraryHook],
+  );
 
   const Wrapper = useMemo(() => (treePhoto ? ImageBackground : React.Fragment), [treePhoto]);
   const WrapperProps = useMemo(
@@ -36,8 +64,8 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
       treePhoto
         ? {
             testID: 'select-tree-photo-bg',
-            imageStyle: styles.bgStyle,
             source: treePhoto,
+            imageStyle: styles.bgStyle,
           }
         : {},
     [treePhoto],

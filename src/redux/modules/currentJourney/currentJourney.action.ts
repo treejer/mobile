@@ -67,3 +67,8 @@ export const setTreeDetailToUpdate = ({treeIdToUpdate, tree, location}: TreeDeta
   tree,
   location,
 });
+
+export const CLEAR_JOURNEY = 'CLEAR_JOURNEY';
+export const clearJourney = () => ({
+  type: CLEAR_JOURNEY,
+});

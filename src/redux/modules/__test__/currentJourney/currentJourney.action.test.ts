@@ -95,4 +95,10 @@ describe('currentJourney actions', () => {
       }),
     ).toEqual(expectedAction);
   });
+  it('clear journey', () => {
+    const expectedAction = {
+      type: actionsList.CLEAR_JOURNEY,
+    };
+    expect(actionsList.clearJourney()).toEqual(expectedAction);
+  });
 });

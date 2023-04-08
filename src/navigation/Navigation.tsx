@@ -66,6 +66,7 @@ export enum Routes {
   CreateModel = 'CreateModel',
   SubmitTree = 'SubmitTree',
   SubmitTree_V2 = 'SubmitTree_V2',
+  SelectOnMap_V2 = 'SelectOnMap_v2',
   TreeList = 'TreeList',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',

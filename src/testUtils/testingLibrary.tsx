@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {render} from '@testing-library/react-native';
 import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
-import {reducerInitiator, storeGenerator} from 'ranger-redux/store';
+
 // import ApolloProvider from 'services/apollo';
 // import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
-import CurrentJourneyProvider from 'services/currentJourney';
-import {initialWeb3State} from 'ranger-redux/modules/web3/web3';
 import appReducer from 'ranger-redux/reducer';
+import {initialWeb3State} from 'ranger-redux/modules/web3/web3';
+import {reducerInitiator, storeGenerator} from 'ranger-redux/store';
+import CurrentJourneyProvider from 'services/currentJourney';
 import {navigationContainerRef} from 'navigation/navigationRef';
 
 type AppReducer = Partial<ReturnType<typeof appReducer>>;
@@ -87,7 +88,7 @@ const reducers = {
   web: initialWeb3State,
 };
 
-const AllTheProviders = ({children, initialState}: Props) => {
+export const AllTheProviders = ({children, initialState}: Props) => {
   const [store, setStore] = useState<any>();
 
   useEffect(() => {
@@ -100,9 +101,9 @@ const AllTheProviders = ({children, initialState}: Props) => {
   return (
     <Provider store={store}>
       {/*<ApolloProvider>*/}
-      <CurrentJourneyProvider>
-        <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
-      </CurrentJourneyProvider>
+      {/*<CurrentJourneyProvider>*/}
+      <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
+      {/*</CurrentJourneyProvider>*/}
       {/*</ApolloProvider>*/}
     </Provider>
   );

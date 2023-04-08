@@ -12,7 +12,7 @@ import {mapboxPrivateToken} from 'services/config';
 export type SelectTreeLocationProps = {
   testID?: string;
   hasLocation?: {
-    coords: {
+    coords?: {
       latitude: number;
       longitude: number;
     };
@@ -35,10 +35,13 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
     300,
   );
 
-  const Wrapper = useMemo(() => (hasLocation && imageUrl ? ImageBackground : React.Fragment), [hasLocation, imageUrl]);
+  const Wrapper = useMemo(
+    () => (hasLocation?.coords && imageUrl ? ImageBackground : React.Fragment),
+    [hasLocation, imageUrl],
+  );
   const WrapperProps = useMemo(
     () =>
-      hasLocation && imageUrl
+      hasLocation?.coords && imageUrl
         ? {
             testID: 'select-location-image',
             imageStyle: styles.bgStyle,
@@ -59,14 +62,14 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
       <Wrapper {...WrapperProps}>
         <View
           testID="select-location-content"
-          style={[styles.contentContainer, {backgroundColor: hasLocation ? colors.darkOpacity : colors.khaki}]}
+          style={[styles.contentContainer, {backgroundColor: hasLocation?.coords ? colors.darkOpacity : colors.khaki}]}
         >
           <View
             testID="select-tree-photo-text-container"
             style={[
               styles.textContainer,
-              {backgroundColor: hasLocation ? colors.khakiOpacity : 'transparent'},
-              hasLocation ? colors.boxInBoxShadow : {},
+              {backgroundColor: hasLocation?.coords ? colors.khakiOpacity : 'transparent'},
+              hasLocation?.coords ? colors.boxInBoxShadow : {},
             ]}
           >
             <Text testID="select-location-title" style={styles.title}>
@@ -76,7 +79,7 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
             <Text style={styles.desc}>
               <Trans
                 testID="select-location-desc"
-                i18nKey={hasLocation ? 'submitTreeV2.SelectOnMapToChange' : 'submitTreeV2.selectOnMap'}
+                i18nKey={hasLocation?.coords ? 'submitTreeV2.SelectOnMapToChange' : 'submitTreeV2.selectOnMap'}
                 components={{Map: <Text style={styles.bold} />}}
               />
             </Text>
@@ -85,8 +88,11 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
           <View>
             <TouchableOpacity
               testID="select-location-button"
-              style={[styles.button, {backgroundColor: hasLocation ? colors.grayDarkerOpacity : colors.grayDarker}]}
-              disabled={disabled || (hasLocation ? !hasLocation?.canUpdate : false)}
+              style={[
+                styles.button,
+                {backgroundColor: hasLocation?.coords ? colors.grayDarkerOpacity : colors.grayDarker},
+              ]}
+              disabled={disabled || (hasLocation?.coords ? !hasLocation?.canUpdate : false)}
               onPress={onSelect}
             >
               <Icon testID="select-location-icon" name="map-marked-alt" color={colors.khaki} size={18} />

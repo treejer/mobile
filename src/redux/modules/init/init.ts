@@ -12,6 +12,7 @@ import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo'
 import {countriesActions} from '../countris/countries';
 import {version} from '../../../../package.json';
 import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {processBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.action';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -59,6 +60,7 @@ export function* initSagas() {
 
 export function* watchInitApp() {
   try {
+    yield put(processBrowserPlatform());
     yield put(startWatchConnection());
     yield take(UPDATE_WATCH_CONNECTION);
     yield put(createWeb3());

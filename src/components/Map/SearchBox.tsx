@@ -14,12 +14,13 @@ import {useRecentPlaces} from 'ranger-redux/modules/recentPlaces/recentPlaces';
 import {useSearchPlaces} from 'ranger-redux/modules/searchPlaces/searchPlaces';
 
 export type TSearchBoxProps = {
+  testID?: string;
   onLocate: (coordinates: number[]) => void;
   userLocation?: TUserLocation | null;
 };
 
 export function SearchBox(props: TSearchBoxProps) {
-  const {onLocate, userLocation} = props;
+  const {onLocate, userLocation, testID} = props;
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [search, setSearch] = useState('');
@@ -88,11 +89,14 @@ export function SearchBox(props: TSearchBoxProps) {
     () =>
       isFocus
         ? {
+            testID,
             onShow: handleFocus,
             onRequestClose: handleBlur,
             transparent: true,
           }
-        : {},
+        : {
+            // testID,
+          },
     [handleBlur, handleFocus, isFocus],
   );
 

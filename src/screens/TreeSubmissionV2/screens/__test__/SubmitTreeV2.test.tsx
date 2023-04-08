@@ -1,5 +1,5 @@
 import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
-import {render} from 'ranger-testUtils/testingLibrary';
+import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
 import {Routes} from 'navigation/Navigation';
@@ -46,6 +46,18 @@ describe('SubmitTreeV2 component', () => {
       expect(draftButton).toBeFalsy();
       expect(previewButton).toBeFalsy();
       expect(submitButton).toBeFalsy();
+    });
+
+    it('after press select-tree-location should navigate', async () => {
+      const locationBtn = getElementByTestId('select-location-button');
+
+      await act(() => {
+        fireEvent.press(locationBtn);
+      });
+      await waitFor(() => {
+        const mapMarking = getElementByTestId('map-marking-cpt');
+        expect(mapMarking).toBeTruthy();
+      });
     });
   });
   describe('SubmitTreeV2, permissions = location granted', () => {

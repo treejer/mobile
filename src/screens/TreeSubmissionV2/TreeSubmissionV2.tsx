@@ -17,6 +17,7 @@ import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTyp
 import TreeDetailQuery, {
   TreeDetailQueryQueryData,
 } from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
+import {SelectOnMapV2} from 'screens/TreeSubmissionV2/screens/SelectOnMapV2/SelectOnMapV2';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -91,6 +92,9 @@ function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
       </Stack.Screen>
       <Stack.Screen name={Routes.SubmitTree_V2} options={{title: screenTitle('Submit Tree')}}>
         {() => <SubmitTreeV2 plantTreePermissions={plantTreePermissions} />}
+      </Stack.Screen>
+      <Stack.Screen name={Routes.SelectOnMap_V2} options={{title: screenTitle('Select On Map')}}>
+        {() => <SelectOnMapV2 plantTreePermissions={plantTreePermissions} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
