@@ -6,15 +6,20 @@ import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourne
 import {BrowserPlatformState} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
 import {TSettings} from 'ranger-redux/modules/settings/settings';
 import {checkTreePhoto} from 'utilities/helpers/checkTreePhoto/checkTreePhoto';
-import {TPoint} from 'utilities/helpers/distanceInMeters';
-import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 import * as actionsList from './currentJourney.action';
 import {showSagaAlert} from 'utilities/helpers/alert';
+import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLocation';
+import {navigationRef} from 'navigation/navigationRef';
+import {Routes} from 'navigation/Navigation';
 
 export const getSettings = (state: TReduxState) => state.settings;
 export const getBrowserPlatform = (state: TReduxState) => state.browserPlatform;
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
+
+export type AssignJourneyTreePhotoAction = {
+  type: string;
+} & actionsList.AssignJourneyTreePhotoPayload;
 
 export function* watchAssignJourneyTreePhoto({
   photo,
@@ -22,15 +27,15 @@ export function* watchAssignJourneyTreePhoto({
   userLocation,
   imageBase64,
   fromGallery,
-}: actionsList.AssignJourneyTreePhotoAction & {type: string}) {
+}: AssignJourneyTreePhotoAction) {
   try {
     const {checkMetaData}: TSettings = yield select(getSettings);
     const {platform}: BrowserPlatformState = yield select(getBrowserPlatform);
     const journey: TCurrentJourney = yield select(getCurrentJourney);
 
     const photoCoords = yield checkTreePhoto({
-      imageCoords: photoLocation as TPoint,
-      userLocation: userLocation as TUserLocation,
+      imageCoords: photoLocation,
+      userLocation: userLocation,
       checkMetaData,
       options: {
         imageBase64,
@@ -38,6 +43,16 @@ export function* watchAssignJourneyTreePhoto({
         fromGallery,
       },
     });
+
+    if (journey.location) {
+      yield checkTreeLocation({
+        photoLocation,
+        submittedLocation: journey.location,
+        checkMetaData,
+        browserPlatform: platform,
+        isUpdate: journey.isUpdate,
+      });
+    }
 
     const discardUpdateLocation = journey.isUpdate && canUpdateTreeLocation(journey, !!journey?.isNursery);
     yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords, discardUpdateLocation}));
@@ -50,6 +65,40 @@ export function* watchAssignJourneyTreePhoto({
   }
 }
 
+export type AssignJourneyTreeLocationAction = {
+  type: string;
+} & actionsList.AssignJourneyTreeLocationPayload;
+
+export function* watchAssignJourneyTreeLocation({location}: AssignJourneyTreeLocationAction) {
+  try {
+    const {checkMetaData}: TSettings = yield select(getSettings);
+    const {platform}: BrowserPlatformState = yield select(getBrowserPlatform);
+    const {photo, photoLocation, isUpdate}: TCurrentJourney = yield select(getCurrentJourney);
+
+    if (!photo && !photoLocation && location) {
+      yield put(actionsList.setTreeLocation({coords: location}));
+    } else {
+      const coords = yield checkTreeLocation({
+        checkMetaData,
+        submittedLocation: location,
+        photoLocation,
+        isUpdate: !!isUpdate,
+        browserPlatform: platform,
+      });
+      yield put(actionsList.setTreeLocation({coords}));
+    }
+    //@ts-ignore
+    navigationRef()?.navigate(Routes.SubmitTree_V2);
+  } catch (e: any) {
+    yield showSagaAlert({
+      title: i18next.t(e?.title),
+      mode: e?.mode,
+      message: i18next.t(e?.message),
+    });
+  }
+}
+
 export function* currentJourneySagas() {
   yield takeEvery(actionsList.ASSIGN_JOURNEY_TREE_PHOTO_WATCHER, watchAssignJourneyTreePhoto);
+  yield takeEvery(actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, watchAssignJourneyTreeLocation);
 }

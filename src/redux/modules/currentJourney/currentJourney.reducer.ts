@@ -2,33 +2,33 @@ import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
-import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {Tree} from 'types';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {
-  AssignJourneyTreePhotoAction,
+  AssignJourneyTreeLocationPayload,
+  assignJourneyTreeLocationWatcher,
+  AssignJourneyTreePhotoPayload,
   assignJourneyTreePhotoWatcher,
   clearJourney,
-  setTreeLocation,
-  SetTreeLocationArgs,
   startPlantNursery,
   StartPlantNurseryArgs,
   startPlantSingleTree,
 } from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 
 export type TCurrentJourney = TreeJourney_V2;
 
 export type CurrentJourneyAction = {
   type: string;
   nurseryCount?: number;
-  location?: TUserLocation;
+  location?: TPoint;
   photo?: Image | File;
   discardUpdateLocation?: boolean;
   imageBase64?: string;
   fromGallery?: boolean;
-  userLocation?: TUserLocation;
-  photoLocation?: TUserLocation;
+  userLocation?: TPoint;
+  photoLocation?: TPoint;
   tree?: Tree;
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
@@ -116,16 +116,16 @@ export function useCurrentJourney() {
     dispatch(clearJourney());
   }, [dispatch]);
 
-  const dispatchSelectTreeLocation = useCallback(
-    (args: SetTreeLocationArgs) => {
-      dispatch(setTreeLocation(args));
+  const dispatchSelectTreePhoto = useCallback(
+    (args: AssignJourneyTreePhotoPayload) => {
+      dispatch(assignJourneyTreePhotoWatcher(args));
     },
     [dispatch],
   );
 
-  const dispatchSelectTreePhoto = useCallback(
-    (args: AssignJourneyTreePhotoAction) => {
-      dispatch(assignJourneyTreePhotoWatcher(args));
+  const dispatchSelectTreeLocation = useCallback(
+    (args: AssignJourneyTreeLocationPayload) => {
+      dispatch(assignJourneyTreeLocationWatcher(args));
     },
     [dispatch],
   );

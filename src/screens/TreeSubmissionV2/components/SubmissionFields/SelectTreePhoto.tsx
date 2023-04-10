@@ -84,7 +84,7 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         ? {
             testID: 'select-tree-photo-bg',
             // @ts-ignore
-            source: treePhoto.hasOwnProperty('path') ? {uri: reePhoto?.path} : treePhoto,
+            source: treePhoto?.hasOwnProperty('path') ? {uri: treePhoto?.path} : treePhoto,
             imageStyle: styles.bgStyle,
           }
         : {},

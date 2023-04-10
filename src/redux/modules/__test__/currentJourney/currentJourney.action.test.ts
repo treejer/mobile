@@ -19,6 +19,40 @@ describe('currentJourney actions', () => {
       expectedAction,
     );
   });
+  it('assign tree photo watcher action', () => {
+    const location = {
+      latitude: 22000,
+      longitude: 3213213123,
+    };
+    const expectedAction = {
+      type: actionsList.ASSIGN_JOURNEY_TREE_PHOTO_WATCHER,
+      photo: onBoardingOne,
+      photoLocation: location,
+      userLocation: location,
+      fromGallery: false,
+      imageBase64: '',
+    };
+    expect(
+      actionsList.assignJourneyTreePhotoWatcher({
+        photo: onBoardingOne,
+        photoLocation: location,
+        userLocation: location,
+        fromGallery: false,
+        imageBase64: '',
+      }),
+    ).toEqual(expectedAction);
+  });
+  it('assign tree location watcher action', () => {
+    const location = {
+      latitude: 22000,
+      longitude: 3213213123,
+    };
+    const expectedAction = {
+      type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER,
+      location,
+    };
+    expect(actionsList.assignJourneyTreeLocationWatcher({location})).toEqual(expectedAction);
+  });
   it('start to plant nursery', () => {
     const count = 3;
     const expectedAction = {

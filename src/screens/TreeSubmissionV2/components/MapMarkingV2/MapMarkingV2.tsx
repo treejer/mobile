@@ -105,17 +105,16 @@ export function MapMarkingV2(props: MapMarkingProps) {
       dispatchCreateSubmittingOfflineMap({coords, name: offlineSubmittingMapName(), bounds, areaName: ''});
     }
 
-    console.log(location);
     if (location?.coords) {
-      const treeLocation = {
+      const submittedLocation = {
         latitude: location?.coords?.latitude,
         longitude: location?.coords?.longitude,
       };
 
-      dispatchSelectTreeLocation({coords: treeLocation});
-      navigation.navigate(Routes.SubmitTree_V2);
+      dispatchSelectTreeLocation({location: submittedLocation});
+      // navigation.navigate(Routes.SubmitTree_V2);
     }
-  }, [dispatchCreateSubmittingOfflineMap, navigation, dispatchSelectTreeLocation, location]);
+  }, [dispatchCreateSubmittingOfflineMap, dispatchSelectTreeLocation, location]);
 
   useEffect(() => {
     const watchId = Geolocation.watchPosition(

@@ -76,7 +76,7 @@ export const clearJourney = () => ({
 });
 
 // * saga watcher actions
-export type AssignJourneyTreePhotoAction = Pick<
+export type AssignJourneyTreePhotoPayload = Pick<
   CurrentJourneyAction,
   'imageBase64' | 'photo' | 'photoLocation' | 'userLocation' | 'fromGallery'
 >;
@@ -87,11 +87,18 @@ export const assignJourneyTreePhotoWatcher = ({
   userLocation,
   fromGallery,
   imageBase64,
-}: AssignJourneyTreePhotoAction) => ({
+}: AssignJourneyTreePhotoPayload) => ({
   type: ASSIGN_JOURNEY_TREE_PHOTO_WATCHER,
   photo,
   photoLocation,
   userLocation,
   fromGallery,
   imageBase64,
+});
+
+export type AssignJourneyTreeLocationPayload = Pick<CurrentJourneyAction, 'location'>;
+export const ASSIGN_JOURNEY_TREE_LOCATION_WATCHER = 'ASSIGN_JOURNEY_TREE_LOCATION_WATCHER';
+export const assignJourneyTreeLocationWatcher = ({location}: AssignJourneyTreeLocationPayload) => ({
+  type: ASSIGN_JOURNEY_TREE_LOCATION_WATCHER,
+  location,
 });

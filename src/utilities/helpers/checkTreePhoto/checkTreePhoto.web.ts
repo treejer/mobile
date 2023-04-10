@@ -5,7 +5,7 @@ import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {maxDistanceInKiloMeters} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
-import {allCoordsIsExist} from 'utilities/helpers/checkTreePhoto/checkTreePhoto';
+import {allCoordsAreExist} from 'utilities/helpers/allCoordsAreExist';
 
 export type CheckTreePhotoArgs = {
   userLocation: TUserLocation;
@@ -26,7 +26,7 @@ export async function checkTreePhoto({checkMetaData, userLocation, options}: Che
         return resolve({latitude: 0, longitude: 0});
       } else {
         const {latitude, longitude} = await exifr.parse(imageBase64 || '');
-        if (allCoordsIsExist({imageCoords: {latitude, longitude}, userLocation})) {
+        if (allCoordsAreExist({imageCoords: {latitude, longitude}, userLocation})) {
           const distanceInKiloMeters = calcDistanceInMeters({latitude, longitude}, userLocation) / 1000;
           if (distanceInKiloMeters < maxDistanceInKiloMeters) {
             return resolve({latitude, longitude});

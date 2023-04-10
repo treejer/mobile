@@ -363,7 +363,7 @@ export const en = {
     checkingTitle: 'We are checking permissions to continue...',
     cantProceed: "We can't proceed",
     cantProceedDesc:
-      'To plant a tree and nursery or upload a tree we need location, camera, and media permissions to acuurateyour activities and detect fraud.',
+      'To plant a tree and nursery or upload a tree we need location, camera, and media permissions to accurate your activities and detect fraud.',
   },
   map: {
     newTree: {

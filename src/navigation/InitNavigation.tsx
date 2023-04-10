@@ -16,7 +16,7 @@ import {ToastContainer, toastProviderProps} from 'components/Toast/ToastContaine
 import CurrentJourneyProvider from 'services/currentJourney';
 import {useInit} from 'ranger-redux/modules/init/init';
 import {HeaderFixedButtons} from 'components/HeaderFixedButtons/HeaderFixedButtons';
-import {navigationRef} from 'navigation/navigationRef';
+import {navigationContainerRef} from 'navigation/navigationRef';
 
 const config = {
   screens: {
@@ -96,7 +96,7 @@ export function InitNavigation() {
           {isWeb() ? <ToastContainer /> : <></>}
           {isWeb() ? <LandScapeModal /> : <></>}
           {!isWeb() ? <UpdateModal /> : <></>}
-          <NavigationContainer ref={navigationRef} linking={linking}>
+          <NavigationContainer ref={navigationContainerRef} linking={linking}>
             <RootNavigation />
           </NavigationContainer>
           <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
