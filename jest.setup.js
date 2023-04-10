@@ -13,6 +13,11 @@ jest.mock('react-native-reanimated', () => {
 
   return Reanimated;
 });
+
+global.toast = {
+  show: jest.fn(),
+};
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 jest.mock('@react-native-async-storage/async-storage', () =>
@@ -171,6 +176,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('i18next', () => ({
+  t: str => str,
   use: jest.fn(() => {
     return {
       init: jest.fn(),

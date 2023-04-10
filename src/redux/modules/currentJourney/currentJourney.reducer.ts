@@ -7,11 +7,11 @@ import {Tree} from 'types';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {
+  AssignJourneyTreePhotoAction,
+  assignJourneyTreePhotoWatcher,
   clearJourney,
   setTreeLocation,
   SetTreeLocationArgs,
-  setTreePhoto,
-  SetTreePhotoArgs,
   startPlantNursery,
   StartPlantNurseryArgs,
   startPlantSingleTree,
@@ -25,6 +25,9 @@ export type CurrentJourneyAction = {
   location?: TUserLocation;
   photo?: Image | File;
   discardUpdateLocation?: boolean;
+  imageBase64?: string;
+  fromGallery?: boolean;
+  userLocation?: TUserLocation;
   photoLocation?: TUserLocation;
   tree?: Tree;
   treeIdToUpdate?: string;
@@ -121,8 +124,8 @@ export function useCurrentJourney() {
   );
 
   const dispatchSelectTreePhoto = useCallback(
-    (args: SetTreePhotoArgs) => {
-      dispatch(setTreePhoto(args));
+    (args: AssignJourneyTreePhotoAction) => {
+      dispatch(assignJourneyTreePhotoWatcher(args));
     },
     [dispatch],
   );

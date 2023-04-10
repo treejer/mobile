@@ -9,12 +9,13 @@ import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
 import useCamera from 'utilities/hooks/useCamera';
 import {isWeb} from 'utilities/helpers/web';
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 
 export type SelectTreePhotoProps = {
   testID?: string;
   treePhoto?: Image | File;
   disabled?: boolean;
-  onSelect: (photo: Image | File) => void;
+  onSelect: (args: {photo: Image | File; fromGallery: boolean; photoLocation?: TPoint; imageBase64?: string}) => void;
 };
 
 export function SelectTreePhoto(props: SelectTreePhotoProps) {
@@ -27,33 +28,51 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
   const {t} = useTranslation();
 
   const handleOpenCamera = useCallback(async () => {
-    console.log('open camera button');
+    try {
+      let selectedPhoto;
+      let photoLocation;
+      let imageBase64;
 
-    let selectedPhoto;
+      if (isWeb()) {
+        setShowCamera(true);
+        return;
+      } else {
+        selectedPhoto = await openCameraHook();
+        photoLocation = {
+          latitude: selectedPhoto.exif.latitude,
+          longitude: selectedPhoto.exif.longitude,
+        };
+      }
 
-    if (isWeb()) {
-      setShowCamera(true);
-      return;
-    } else {
-      selectedPhoto = await openCameraHook();
+      onSelect({photo: selectedPhoto, fromGallery: false, photoLocation, imageBase64});
+    } catch (e) {
+      console.log(e, 'error in open camera');
     }
-
-    onSelect(selectedPhoto);
   }, [onSelect, openCameraHook]);
 
   const handleOpenGallery = useCallback(
     async e => {
-      console.log('open gallery button');
+      try {
+        console.log('open gallery button');
 
-      let selectedPhoto;
+        let selectedPhoto;
+        let photoLocation;
+        let imageBase64;
 
-      if (isWeb()) {
-        setPickedPhoto(e.target.files[0]);
-      } else {
-        selectedPhoto = await openLibraryHook();
+        if (isWeb()) {
+          setPickedPhoto(e.target.files[0]);
+        } else {
+          selectedPhoto = await openLibraryHook();
+          photoLocation = {
+            latitude: selectedPhoto.exif.latitude,
+            longitude: selectedPhoto.exif.longitude,
+          };
+        }
+
+        onSelect({photo: selectedPhoto, fromGallery: true, photoLocation, imageBase64});
+      } catch (e) {
+        console.log(e, 'error i pick from gallery');
       }
-
-      onSelect(selectedPhoto);
     },
     [onSelect, openLibraryHook],
   );
@@ -64,7 +83,8 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
       treePhoto
         ? {
             testID: 'select-tree-photo-bg',
-            source: treePhoto,
+            // @ts-ignore
+            source: treePhoto.hasOwnProperty('path') ? {uri: reePhoto?.path} : treePhoto,
             imageStyle: styles.bgStyle,
           }
         : {},

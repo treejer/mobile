@@ -2,6 +2,7 @@ import {Image} from 'react-native-image-crop-picker';
 
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {Tree} from 'types';
+import {CurrentJourneyAction} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export const START_PLANT_SINGLE_TREE = 'START_PLANT_SINGLE_TREE';
 export const startPlantSingleTree = () => ({
@@ -38,10 +39,11 @@ export const setTreeLocation = ({coords}: SetTreeLocationArgs) => ({
 });
 
 export type SetTreePhotoArgs = {
-  photo: Image | File;
+  photo?: Image | File;
+  photoLocation?: TUserLocation;
   discardUpdateLocation?: boolean;
-  photoLocation: TUserLocation;
 };
+
 export const SET_TREE_PHOTO = 'SET_TREE_PHOTO';
 export const setTreePhoto = ({photo, photoLocation, discardUpdateLocation = false}: SetTreePhotoArgs) => ({
   type: SET_TREE_PHOTO,
@@ -71,4 +73,25 @@ export const setTreeDetailToUpdate = ({treeIdToUpdate, tree, location}: TreeDeta
 export const CLEAR_JOURNEY = 'CLEAR_JOURNEY';
 export const clearJourney = () => ({
   type: CLEAR_JOURNEY,
+});
+
+// * saga watcher actions
+export type AssignJourneyTreePhotoAction = Pick<
+  CurrentJourneyAction,
+  'imageBase64' | 'photo' | 'photoLocation' | 'userLocation' | 'fromGallery'
+>;
+export const ASSIGN_JOURNEY_TREE_PHOTO_WATCHER = 'ASSIGN_JOURNEY_TREE_PHOTO_WATCHER';
+export const assignJourneyTreePhotoWatcher = ({
+  photo,
+  photoLocation,
+  userLocation,
+  fromGallery,
+  imageBase64,
+}: AssignJourneyTreePhotoAction) => ({
+  type: ASSIGN_JOURNEY_TREE_PHOTO_WATCHER,
+  photo,
+  photoLocation,
+  userLocation,
+  fromGallery,
+  imageBase64,
 });

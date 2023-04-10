@@ -2,6 +2,8 @@ import React, {useCallback} from 'react';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
+import {Image} from 'react-native-image-crop-picker';
 
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import globalStyles from 'constants/styles';
@@ -12,11 +14,8 @@ import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/Submission
 import {SelectTreePhoto} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {colors} from 'constants/values';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {useNavigation} from '@react-navigation/native';
 import {Routes} from 'navigation/Navigation';
-import {Image} from 'react-native-image-crop-picker';
-import {useCheckTreePhoto} from 'utilities/hooks/useCheckTreePhoto';
-import {useBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -27,15 +26,19 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const {userLocation} = plantTreePermissions;
 
   const {journey, dispatchSelectTreePhoto} = useCurrentJourney();
-  const checkTreePhotoLocation = useCheckTreePhoto();
+
+  console.log(journey, 'journey is here');
 
   const navigation = useNavigation<any>();
 
   const handleSelectPhoto = useCallback(
-    (photo: Image | File) => {
-      console.log(photo, 'photo is here');
+    (args: {photo: Image | File; fromGallery: boolean; photoLocation?: TPoint; imageBase64?: string}) => {
+      if (userLocation) {
+        console.log(args, 'args');
+        dispatchSelectTreePhoto({...args, userLocation});
+      }
     },
-    [dispatchSelectTreePhoto, checkTreePhotoLocation, userLocation],
+    [dispatchSelectTreePhoto, userLocation],
   );
 
   const handleNavigateToMap = useCallback(() => {
@@ -55,7 +58,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           </Text>
           <Spacer times={4} />
           {plantTreePermissions?.isCameraGranted ? (
-            <SelectTreePhoto testID="select-tree-photo-cpt" onSelect={handleSelectPhoto} />
+            <SelectTreePhoto testID="select-tree-photo-cpt" treePhoto={journey?.photo} onSelect={handleSelectPhoto} />
           ) : (
             <LockedSubmissionField testID="locked-camera-cpt" title="lockedField.camera" />
           )}
@@ -64,7 +67,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             <SelectTreeLocation
               hasLocation={{
                 coords: journey?.location,
-                canUpdate: !journey.isUpdate || journey.canUpdate,
+                canUpdate: !journey.isUpdate || journey.canUpdateLocation,
               }}
               testID="select-tree-location-cpt"
               onSelect={handleNavigateToMap}

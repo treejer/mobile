@@ -1,6 +1,6 @@
 import {render} from '@testing-library/react-native';
-import {onBoardingTwo} from '../../../../../assets/images';
 
+import {onBoardingTwo} from '../../../../../assets/images';
 import {SelectTreePhoto} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 import {colors} from 'constants/values';
@@ -95,7 +95,7 @@ describe('SelectTreePhoto component', () => {
       expect(stylesToOneObject(contentContainer.props.style).backgroundColor).toBe(colors.darkOpacity);
 
       expect(treeImageBg).toBeTruthy();
-      expect(treeImageBg.props.source).toBe(treePhoto);
+      expect(treeImageBg.props.source).toBe(treePhoto.hasOwnProperty('path') ? {uri: treePhoto.path} : treePhoto);
 
       expect(textsContainer).toBeTruthy();
       expect(stylesToOneObject(textsContainer.props.style).height).toBe(74);

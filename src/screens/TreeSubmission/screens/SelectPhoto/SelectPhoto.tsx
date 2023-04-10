@@ -17,7 +17,6 @@ import SubmitTreeOfflineWebModal from 'components/SubmitTreeOfflineWebModal/Subm
 import {isWeb} from 'utilities/helpers/web';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {useCamera} from 'utilities/hooks';
-import {checkExif} from 'utilities/helpers/checkExif';
 import getCroppedImg from 'utilities/helpers/cropImage';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
@@ -161,7 +160,6 @@ function SelectPhoto(props: Props) {
     async (image, croppedAreaPixels, rotation) => {
       const file = await getCroppedImg(image, pickedImage?.name, croppedAreaPixels, rotation);
       setPickedImage(null);
-
       checkTreePhoto(image, userLocation, imageLocation => {
         handleAfterSelectPhoto({
           selectedPhoto: file,

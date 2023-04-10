@@ -19,5 +19,5 @@ export interface TreeJourney_V2 {
   nurseryContinuedUpdatingLocation?: boolean;
   plantingModel?: string;
   isUpdate?: boolean;
-  canUpdate?: boolean;
+  canUpdateLocation?: boolean;
 }

@@ -10,11 +10,13 @@ import {contractsSagas} from './modules/contracts/contracts';
 import {countriesSagas} from './modules/countris/countries';
 import {offlineMapSagas} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {searchPlacesSagas} from 'ranger-redux/modules/searchPlaces/searchPlaces';
+import {currentJourneySagas} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
 
 export default function* root(store: TStoreRedux) {
   yield all([
     initSagas(),
     web3Sagas(store),
+    currentJourneySagas(),
     userNonceSagas(),
     userSignSagas(),
     netInfoSagas(store),

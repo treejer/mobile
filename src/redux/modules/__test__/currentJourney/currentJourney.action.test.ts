@@ -66,7 +66,11 @@ describe('currentJourney actions', () => {
       discardUpdateLocation: true,
     };
     expect(
-      actionsList.setTreePhoto({photo: treePhoto, photoLocation: treeCoordsLocation, discardUpdateLocation: true}),
+      actionsList.setTreePhoto({
+        photo: treePhoto,
+        photoLocation: treeCoordsLocation,
+        discardUpdateLocation: true,
+      }),
     ).toEqual(expectedAction);
   });
   it('discard update nursery location', () => {
