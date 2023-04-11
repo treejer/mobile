@@ -11,12 +11,14 @@ import {countriesSagas} from './modules/countris/countries';
 import {offlineMapSagas} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {searchPlacesSagas} from 'ranger-redux/modules/searchPlaces/searchPlaces';
 import {currentJourneySagas} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
+import {draftedJourneysSagas} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
 
 export default function* root(store: TStoreRedux) {
   yield all([
     initSagas(),
     web3Sagas(store),
     currentJourneySagas(),
+    draftedJourneysSagas(),
     userNonceSagas(),
     userSignSagas(),
     netInfoSagas(store),

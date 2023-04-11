@@ -136,4 +136,17 @@ describe('currentJourney reducer', () => {
     };
     expect(currentJourneyReducer(initialState, actionsList.removeJourneyLocation())).toEqual(expectedValue);
   });
+  it('should handle SET_JOURNEY_FROM_DRAFTS', () => {
+    const expectedValue = {
+      ...initialState,
+      location: {
+        latitude: 2000,
+        longitude: 2000,
+      },
+      isSingle: true,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.setJourneyFromDrafts({journey: expectedValue}))).toEqual(
+      expectedValue,
+    );
+  });
 });

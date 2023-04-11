@@ -149,4 +149,19 @@ describe('currentJourney actions', () => {
     };
     expect(actionsList.removeJourneyLocation()).toEqual(expectedAction);
   });
+  it('set journey from drafts', () => {
+    const expectedAction = {
+      type: actionsList.SET_JOURNEY_FROM_DRAFTS,
+      journey: {
+        location: {
+          latitude: 2000,
+          longitude: 232323,
+        },
+        isNursery: false,
+        isSingle: true,
+        isUpdate: false,
+      },
+    };
+    expect(actionsList.setJourneyFromDrafts({journey: expectedAction.journey})).toEqual(expectedAction);
+  });
 });

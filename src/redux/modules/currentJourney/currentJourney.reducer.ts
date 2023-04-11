@@ -5,16 +5,6 @@ import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {Tree} from 'types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {
-  AssignJourneyTreeLocationPayload,
-  assignJourneyTreeLocationWatcher,
-  AssignJourneyTreePhotoPayload,
-  assignJourneyTreePhotoWatcher,
-  clearJourney,
-  startPlantNursery,
-  StartPlantNurseryArgs,
-  startPlantSingleTree,
-} from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
 export enum JourneyMetadata {
@@ -37,6 +27,7 @@ export type CurrentJourneyAction = {
   tree?: Tree;
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
+  journey?: TCurrentJourney;
 };
 
 export const currentJourneyInitialState: TCurrentJourney = {};
@@ -107,6 +98,8 @@ export const currentJourneyReducer = (
         photo: undefined,
         photoLocation: undefined,
       };
+    case actionsList.SET_JOURNEY_FROM_DRAFTS:
+      return action.journey || state;
     case actionsList.CLEAR_JOURNEY:
       return currentJourneyInitialState;
     default:
@@ -119,30 +112,30 @@ export function useCurrentJourney() {
   const dispatch = useAppDispatch();
 
   const dispatchStartPlantSingleTree = useCallback(() => {
-    dispatch(startPlantSingleTree());
+    dispatch(actionsList.startPlantSingleTree());
   }, [dispatch]);
 
   const dispatchStartPlantNursery = useCallback(
-    (args: StartPlantNurseryArgs) => {
-      dispatch(startPlantNursery(args));
+    (args: actionsList.StartPlantNurseryArgs) => {
+      dispatch(actionsList.startPlantNursery(args));
     },
     [dispatch],
   );
 
   const dispatchClearJourney = useCallback(() => {
-    dispatch(clearJourney());
+    dispatch(actionsList.clearJourney());
   }, [dispatch]);
 
   const dispatchSelectTreePhoto = useCallback(
-    (args: AssignJourneyTreePhotoPayload) => {
-      dispatch(assignJourneyTreePhotoWatcher(args));
+    (args: actionsList.AssignJourneyTreePhotoPayload) => {
+      dispatch(actionsList.assignJourneyTreePhotoWatcher(args));
     },
     [dispatch],
   );
 
   const dispatchSelectTreeLocation = useCallback(
-    (args: AssignJourneyTreeLocationPayload) => {
-      dispatch(assignJourneyTreeLocationWatcher(args));
+    (args: actionsList.AssignJourneyTreeLocationPayload) => {
+      dispatch(actionsList.assignJourneyTreeLocationWatcher(args));
     },
     [dispatch],
   );

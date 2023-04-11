@@ -20,4 +20,5 @@ export interface TreeJourney_V2 {
   plantingModel?: string;
   isUpdate?: boolean;
   canUpdateLocation?: boolean;
+  draftId?: string;
 }

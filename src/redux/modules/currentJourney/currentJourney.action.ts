@@ -2,7 +2,7 @@ import {Image} from 'react-native-image-crop-picker';
 
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {Tree} from 'types';
-import {CurrentJourneyAction} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {CurrentJourneyAction, TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export const START_PLANT_SINGLE_TREE = 'START_PLANT_SINGLE_TREE';
 export const startPlantSingleTree = () => ({
@@ -83,6 +83,15 @@ export const removeJourneyPhoto = () => ({
 export const REMOVE_JOURNEY_LOCATION = 'REMOVE_JOURNEY_LOCATION';
 export const removeJourneyLocation = () => ({
   type: REMOVE_JOURNEY_LOCATION,
+});
+
+export type SetJourneyFromDraftsArgs = {
+  journey: TCurrentJourney;
+};
+export const SET_JOURNEY_FROM_DRAFTS = 'SET_JOURNEY_FROM_DRAFTS';
+export const setJourneyFromDrafts = ({journey}: SetJourneyFromDraftsArgs) => ({
+  type: SET_JOURNEY_FROM_DRAFTS,
+  journey,
 });
 
 // * saga watcher actions
