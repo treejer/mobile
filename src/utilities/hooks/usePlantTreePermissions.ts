@@ -10,7 +10,7 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useConfig} from '../../redux/modules/web3/web3';
 import {useSettings} from '../../redux/modules/settings/settings';
 
-export type PermissionResult = typeof RESULTS[keyof typeof RESULTS];
+export type PermissionResult = (typeof RESULTS)[keyof typeof RESULTS];
 
 const treejerPermissions = Platform.select({
   android: [PERMISSIONS.ANDROID.CAMERA, PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION],
@@ -229,7 +229,7 @@ export function usePlantTreePermissions(
     }
   }, [watchCurrentPositionAsync]);
 
-  const openPermissionsSettings = useCallback(async (isGranted?: boolean) => {
+  const openPermissionsSettings = useCallback((isGranted?: boolean) => {
     if (isGranted) {
       return;
     }

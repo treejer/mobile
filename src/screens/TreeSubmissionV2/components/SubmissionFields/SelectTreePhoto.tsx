@@ -11,11 +11,18 @@ import useCamera from 'utilities/hooks/useCamera';
 import {isWeb} from 'utilities/helpers/web';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 
+export type TOnSelectTree = {
+  photo: Image | File;
+  fromGallery: boolean;
+  photoLocation?: TPoint;
+  imageBase64?: string;
+};
+
 export type SelectTreePhotoProps = {
   testID?: string;
   treePhoto?: Image | File;
   disabled?: boolean;
-  onSelect: (args: {photo: Image | File; fromGallery: boolean; photoLocation?: TPoint; imageBase64?: string}) => void;
+  onSelect: (args: TOnSelectTree) => void;
 };
 
 export function SelectTreePhoto(props: SelectTreePhotoProps) {

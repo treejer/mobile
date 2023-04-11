@@ -30,7 +30,6 @@ describe('currentJourney actions', () => {
       photoLocation: location,
       userLocation: location,
       fromGallery: false,
-      imageBase64: '',
     };
     expect(
       actionsList.assignJourneyTreePhotoWatcher({
@@ -38,7 +37,6 @@ describe('currentJourney actions', () => {
         photoLocation: location,
         userLocation: location,
         fromGallery: false,
-        imageBase64: '',
       }),
     ).toEqual(expectedAction);
   });
@@ -138,5 +136,17 @@ describe('currentJourney actions', () => {
       type: actionsList.CLEAR_JOURNEY,
     };
     expect(actionsList.clearJourney()).toEqual(expectedAction);
+  });
+  it('remove journey photo', () => {
+    const expectedAction = {
+      type: actionsList.REMOVE_JOURNEY_PHOTO,
+    };
+    expect(actionsList.removeJourneyPhoto()).toEqual(expectedAction);
+  });
+  it('remove journey location', () => {
+    const expectedAction = {
+      type: actionsList.REMOVE_JOURNEY_LOCATION,
+    };
+    expect(actionsList.removeJourneyLocation()).toEqual(expectedAction);
   });
 });

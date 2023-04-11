@@ -30,7 +30,7 @@ export const startPlantNursery = ({count}: StartPlantNurseryArgs) => ({
 });
 
 export type SetTreeLocationArgs = {
-  coords: TUserLocation;
+  coords?: TUserLocation;
 };
 export const SET_TREE_LOCATION = 'SET_TREE_LOCATION';
 export const setTreeLocation = ({coords}: SetTreeLocationArgs) => ({
@@ -73,6 +73,16 @@ export const setTreeDetailToUpdate = ({treeIdToUpdate, tree, location}: TreeDeta
 export const CLEAR_JOURNEY = 'CLEAR_JOURNEY';
 export const clearJourney = () => ({
   type: CLEAR_JOURNEY,
+});
+
+export const REMOVE_JOURNEY_PHOTO = 'REMOVE_JOURNEY_PHOTO';
+export const removeJourneyPhoto = () => ({
+  type: REMOVE_JOURNEY_PHOTO,
+});
+
+export const REMOVE_JOURNEY_LOCATION = 'REMOVE_JOURNEY_LOCATION';
+export const removeJourneyLocation = () => ({
+  type: REMOVE_JOURNEY_LOCATION,
 });
 
 // * saga watcher actions

@@ -3,7 +3,7 @@ import {Image} from 'react-native-image-crop-picker';
 
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {Tree} from 'types';
-import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {
   AssignJourneyTreeLocationPayload,
@@ -15,7 +15,12 @@ import {
   StartPlantNurseryArgs,
   startPlantSingleTree,
 } from 'ranger-redux/modules/currentJourney/currentJourney.action';
-import {TPoint} from 'utilities/helpers/distanceInMeters';
+import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
+
+export enum JourneyMetadata {
+  Photo = 'photo',
+  Location = 'location',
+}
 
 export type TCurrentJourney = TreeJourney_V2;
 
@@ -90,6 +95,18 @@ export const currentJourneyReducer = (
         location: action.location,
       };
 
+    case actionsList.REMOVE_JOURNEY_LOCATION:
+      return {
+        ...state,
+        location: undefined,
+      };
+
+    case actionsList.REMOVE_JOURNEY_PHOTO:
+      return {
+        ...state,
+        photo: undefined,
+        photoLocation: undefined,
+      };
     case actionsList.CLEAR_JOURNEY:
       return currentJourneyInitialState;
     default:

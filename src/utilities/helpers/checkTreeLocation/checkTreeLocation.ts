@@ -3,8 +3,10 @@ import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInMeters} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {allCoordsAreExist} from 'utilities/helpers/allCoordsAreExist';
+import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export type CheckTreeLocationArgs = {
+  inCheck?: boolean;
   isUpdate?: boolean;
   submittedLocation?: TPoint;
   photoLocation?: TPoint | null;
@@ -18,6 +20,7 @@ export function checkTreeLocation({
   submittedLocation,
   photoLocation: imageCoords,
   isUpdate,
+  inCheck,
 }: CheckTreeLocationArgs) {
   return new Promise((resolve, reject) => {
     const error = isUpdate ? 'updateSingleTree' : 'newTree';
@@ -34,6 +37,7 @@ export function checkTreeLocation({
         resolve(submittedLocation);
       } else {
         reject({
+          data: inCheck && JourneyMetadata.Location,
           title: `map.${error}.errTitle`,
           mode: AlertMode.Error,
           message: `map.${error}.errMessage`,
@@ -41,6 +45,7 @@ export function checkTreeLocation({
       }
     } catch (e) {
       reject({
+        data: inCheck && JourneyMetadata.Location,
         title: `map.${error}.errTitle`,
         mode: AlertMode.Error,
         message: `map.${error}.errMessage`,

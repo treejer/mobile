@@ -121,4 +121,19 @@ describe('currentJourney reducer', () => {
   it('should handle CLEAR_JOURNEY', () => {
     expect(currentJourneyReducer(initialState, actionsList.clearJourney())).toEqual(initialState);
   });
+  it('should handle REMOVE_JOURNEY_PHOTO', () => {
+    const expectedValue = {
+      ...initialState,
+      photo: undefined,
+      photoLocation: undefined,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.removeJourneyPhoto())).toEqual(expectedValue);
+  });
+  it('should handle REMOVE_JOURNEY_LOCATION', () => {
+    const expectedValue = {
+      ...initialState,
+      location: undefined,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.removeJourneyLocation())).toEqual(expectedValue);
+  });
 });

@@ -23,6 +23,7 @@ describe('currentJourney sagas', () => {
   it('functions should be defined', () => {
     expect(currentJourneySagas).toBeDefined();
     expect(watchAssignJourneyTreePhoto).toBeDefined();
+    expect(watchAssignJourneyTreeLocation).toBeDefined();
   });
 
   it('currentJourney sagas', () => {
@@ -218,7 +219,6 @@ describe('currentJourney sagas', () => {
       assert.deepEqual(gen.throw(error).value, showSagaAlert(error));
     });
   });
-
   describe('watchAssignJourneyTreeLocation', () => {
     it('watchAssignJourneyTreeLocation success, without photo', () => {
       const location = {

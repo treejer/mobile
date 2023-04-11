@@ -34,18 +34,14 @@ describe('SubmitTreeV2 component', () => {
       const submissionTitle = getElementByTestId('submission-title');
       const selectTreePhoto = getElementByTestId('select-tree-photo-cpt');
       const selectTreeLocation = getElementByTestId('select-tree-location-cpt');
-      const draftButton = queryElementByTestId('draft-submission');
-      const previewButton = queryElementByTestId('preview-submission');
-      const submitButton = queryElementByTestId('submit-submission');
+      const submissionButtons = queryElementByTestId('submission-buttons');
 
       expect(permissionBox).toBeTruthy();
       expect(submissionTitle).toBeTruthy();
       expect(selectTreePhoto).toBeTruthy();
       expect(selectTreeLocation).toBeTruthy();
 
-      expect(draftButton).toBeFalsy();
-      expect(previewButton).toBeFalsy();
-      expect(submitButton).toBeFalsy();
+      expect(submissionButtons).toBeFalsy();
     });
 
     it('after press select-tree-location should navigate', async () => {
@@ -81,9 +77,7 @@ describe('SubmitTreeV2 component', () => {
       const blockedTreePhotoField = getElementByTestId('locked-camera-cpt');
       const selectTreePhoto = queryElementByTestId('select-tree-photo-cpt');
       const selectTreeLocation = getElementByTestId('select-tree-location-cpt');
-      const draftButton = queryElementByTestId('draft-submission');
-      const previewButton = queryElementByTestId('preview-submission');
-      const submitButton = queryElementByTestId('submit-submission');
+      const submissionButtons = queryElementByTestId('submission-buttons');
 
       expect(permissionBox).toBeTruthy();
       expect(submissionTitle).toBeTruthy();
@@ -91,12 +85,9 @@ describe('SubmitTreeV2 component', () => {
       expect(selectTreePhoto).toBeFalsy();
       expect(selectTreeLocation).toBeTruthy();
 
-      expect(draftButton).toBeFalsy();
-      expect(previewButton).toBeFalsy();
-      expect(submitButton).toBeFalsy();
+      expect(submissionButtons).toBeTruthy();
     });
   });
-
   describe('SubmitTreeV2, permissions = camera granted', () => {
     let getElementByTestId, queryElementByTestId;
 
@@ -106,7 +97,16 @@ describe('SubmitTreeV2 component', () => {
           name={Routes.SubmitTree_V2}
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsCameraGranted} />}
         />,
-        goerliReducers,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isSingle: true,
+            location: {
+              latitude: 20000,
+              longitude: 2000,
+            },
+          },
+        },
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -118,9 +118,7 @@ describe('SubmitTreeV2 component', () => {
       const selectTreePhoto = queryElementByTestId('select-tree-photo-cpt');
       const selectTreeLocation = queryElementByTestId('select-tree-location-cpt');
       const blockedTreeLocationField = getElementByTestId('locked-location-cpt');
-      const draftButton = queryElementByTestId('draft-submission');
-      const previewButton = queryElementByTestId('preview-submission');
-      const submitButton = queryElementByTestId('submit-submission');
+      const submissionButton = queryElementByTestId('submission-buttons');
 
       expect(permissionBox).toBeTruthy();
       expect(submissionTitle).toBeTruthy();
@@ -128,9 +126,7 @@ describe('SubmitTreeV2 component', () => {
       expect(selectTreeLocation).toBeFalsy();
       expect(blockedTreeLocationField).toBeTruthy();
 
-      expect(draftButton).toBeFalsy();
-      expect(previewButton).toBeFalsy();
-      expect(submitButton).toBeFalsy();
+      expect(submissionButton).toBeTruthy();
     });
   });
 });

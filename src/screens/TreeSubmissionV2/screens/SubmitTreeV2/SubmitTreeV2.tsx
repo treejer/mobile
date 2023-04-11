@@ -1,21 +1,21 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import {Image} from 'react-native-image-crop-picker';
 
-import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
+import {Routes} from 'navigation/Navigation';
+import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
-import Spacer from 'components/Spacer';
-import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubmissionField';
+import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
+import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
-import {SelectTreePhoto} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
-import {colors} from 'constants/values';
+import {SelectTreePhoto, TOnSelectTree} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {Routes} from 'navigation/Navigation';
-import {TPoint} from 'utilities/helpers/distanceInMeters';
+import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubmissionField';
+import {RenderIf} from 'components/Common/RenderIf';
+import Spacer from 'components/Spacer';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -30,12 +30,13 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   console.log(journey, 'journey is here');
 
   const navigation = useNavigation<any>();
+  const {t} = useTranslation();
 
   const handleSelectPhoto = useCallback(
-    (args: {photo: Image | File; fromGallery: boolean; photoLocation?: TPoint; imageBase64?: string}) => {
+    (photoArgs: TOnSelectTree) => {
       if (userLocation) {
-        console.log(args, 'args');
-        dispatchSelectTreePhoto({...args, userLocation});
+        console.log(photoArgs, 'photoArgs');
+        dispatchSelectTreePhoto({...photoArgs, userLocation});
       }
     },
     [dispatchSelectTreePhoto, userLocation],
@@ -45,7 +46,20 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     navigation.navigate(Routes.SelectOnMap_V2);
   }, [navigation]);
 
-  const {t} = useTranslation();
+  const canDraft = useMemo(
+    () => !!(!!(journey.photo && journey.photoLocation) || journey.location),
+    [journey.photo, journey.photoLocation, journey.location],
+  );
+
+  const canSubmit = useMemo(
+    () => !!(journey.photo && journey.photoLocation && journey.location),
+    [journey.photo, journey.photoLocation, journey.location],
+  );
+
+  const submissionTitle = useMemo(
+    () => (journey.isUpdate ? 'update' : 'plant') + (journey.isSingle ? 'Single' : 'Nursery'),
+    [],
+  );
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
@@ -54,7 +68,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={plantTreePermissions} />
           <Spacer times={6} />
           <Text testID="submission-title" style={styles.title}>
-            {t('submitTreeV2.titles.plantSingle')}
+            {t(`submitTreeV2.titles.${submissionTitle}`)}
           </Text>
           <Spacer times={4} />
           {plantTreePermissions?.isCameraGranted ? (
@@ -77,6 +91,23 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           )}
         </View>
       </ScrollView>
+      <RenderIf condition={canDraft || plantTreePermissions.cantProceed}>
+        <View style={[globalStyles.p1, globalStyles.pt1]}>
+          <SubmissionButtons
+            testID="submission-buttons"
+            hasNoPermission={plantTreePermissions.cantProceed}
+            canDraft={canDraft}
+            canSubmit={canSubmit}
+            isSingle={!!journey.isSingle}
+            isUpdate={!!journey.isUpdate}
+            onGrant={() => plantTreePermissions.openPermissionsSettings()}
+            onDraft={() => console.log('on draft')}
+            onSubmit={() => console.log('on submit')}
+            onReview={() => console.log('on review')}
+          />
+        </View>
+        <Spacer times={6} />
+      </RenderIf>
     </SafeAreaView>
   );
 }

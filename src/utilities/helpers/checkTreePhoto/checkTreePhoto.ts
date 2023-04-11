@@ -3,12 +3,14 @@ import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
 import {maxDistanceInKiloMeters} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {allCoordsAreExist} from 'utilities/helpers/allCoordsAreExist';
+import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export type CheckTreePhotoArgs = {
   checkMetaData: boolean;
   userLocation?: TPoint;
   imageCoords?: TPoint;
   options?: {
+    inCheck?: boolean;
     fromGallery?: boolean;
     browserPlatform?: BrowserPlatform | null;
     imageBase64?: string;
@@ -17,7 +19,7 @@ export type CheckTreePhotoArgs = {
 
 export async function checkTreePhoto({checkMetaData, imageCoords, userLocation, options}: CheckTreePhotoArgs) {
   return new Promise((resolve, reject) => {
-    const {fromGallery} = options || {};
+    const {fromGallery, inCheck} = options || {};
     if (!checkMetaData) {
       return resolve({latitude: 0, longitude: 0});
     }
@@ -27,6 +29,7 @@ export async function checkTreePhoto({checkMetaData, imageCoords, userLocation, 
         resolve(imageCoords);
       } else {
         reject({
+          data: inCheck && JourneyMetadata.Photo,
           title: 'inValidImage.title',
           message: 'inValidImage.longDistance',
           mode: AlertMode.Error,
@@ -34,6 +37,7 @@ export async function checkTreePhoto({checkMetaData, imageCoords, userLocation, 
       }
     } else {
       reject({
+        data: inCheck && JourneyMetadata.Photo,
         title: 'inValidImage.title',
         mode: AlertMode.Error,
         message: fromGallery ? 'inValidImage.message' : 'inValidImage.hasNoLocation',
