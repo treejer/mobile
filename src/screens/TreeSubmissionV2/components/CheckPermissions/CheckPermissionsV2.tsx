@@ -21,10 +21,12 @@ const AnimatedCard = isWeb() ? Card : Animated.createAnimatedComponent(Card);
 export type TCheckPermissionsProps = {
   testID?: string;
   plantTreePermissions: TUsePlantTreePermissions;
+  lockSettings: boolean;
 };
 
 export function CheckPermissionsV2(props: TCheckPermissionsProps) {
-  const {cantProceed, isChecking, isGranted} = props.plantTreePermissions;
+  const {testID, lockSettings, plantTreePermissions} = props;
+  const {cantProceed, isChecking, isGranted} = plantTreePermissions;
 
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -51,7 +53,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
 
   return (
     <AnimatedCard
-      testID={props?.testID}
+      testID={testID}
       style={[globalStyles.screenView, styles.container, isGranted ? [{height: 94}, animationStyles] : {}]}
     >
       <View style={[styles.flexRow, styles.boxesPadding]}>
@@ -110,13 +112,13 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
                 {t('permissionBox.submissionSettings')}
               </Text>
             </View>
-            <TouchableOpacity testID="toggle-settings-btn" onPress={handleToggleSettingsBox}>
+            <TouchableOpacity testID="toggle-settings-btn" disabled={lockSettings} onPress={handleToggleSettingsBox}>
               <IoIcon
                 testID="settings-chevron-icon"
-                name="chevron-forward"
+                name={lockSettings ? 'lock-closed' : 'chevron-forward'}
                 size={24}
                 color={colors.grayDarker}
-                style={{transform: [{rotate: openSettings ? '90deg' : '0deg'}]}}
+                style={lockSettings ? {transform: [{rotate: openSettings ? '90deg' : '0deg'}]} : undefined}
               />
             </TouchableOpacity>
           </View>

@@ -1,5 +1,6 @@
 import {checkTreePhoto} from 'utilities/helpers/checkTreePhoto/checkTreePhoto';
 import {AlertMode} from 'utilities/helpers/alert';
+import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 describe('checkTreePhoto', () => {
   it('checkTreePhoto should be defined', () => {
@@ -77,6 +78,23 @@ describe('checkTreePhoto', () => {
           },
         }),
       ).rejects.toEqual({
+        title: 'inValidImage.title',
+        message: 'inValidImage.hasNoLocation',
+        mode: AlertMode.Error,
+      });
+
+      await expect(
+        checkTreePhoto({
+          checkMetaData: true,
+          userLocation: {latitude: 0, longitude: 0},
+          imageCoords: {latitude: 0, longitude: 0},
+          options: {
+            fromGallery: false,
+            inCheck: true,
+          },
+        }),
+      ).rejects.toEqual({
+        data: JourneyMetadata.Photo,
         title: 'inValidImage.title',
         message: 'inValidImage.hasNoLocation',
         mode: AlertMode.Error,

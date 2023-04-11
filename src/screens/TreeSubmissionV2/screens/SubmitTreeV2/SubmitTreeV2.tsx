@@ -65,7 +65,11 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
       <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
         <View style={[globalStyles.p1, globalStyles.pt1]}>
-          <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={plantTreePermissions} />
+          <CheckPermissionsV2
+            testID="check-permissions-box"
+            lockSettings={canDraft}
+            plantTreePermissions={plantTreePermissions}
+          />
           <Spacer times={6} />
           <Text testID="submission-title" style={styles.title}>
             {t(`submitTreeV2.titles.${submissionTitle}`)}

@@ -20,7 +20,11 @@ describe('CheckPermissions component', () => {
 
     beforeEach(async () => {
       const element = render(
-        <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsBlocked} />,
+        <CheckPermissionsV2
+          testID="check-permissions-box"
+          lockSettings={false}
+          plantTreePermissions={mockPlantTreePermissionsBlocked}
+        />,
         maticReducers,
       );
       getElementByTestId = element.getByTestId;
@@ -60,7 +64,11 @@ describe('CheckPermissions component', () => {
 
     beforeEach(async () => {
       const element = render(
-        <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsGranted} />,
+        <CheckPermissionsV2
+          testID="check-permissions-box"
+          lockSettings={false}
+          plantTreePermissions={mockPlantTreePermissionsGranted}
+        />,
         maticReducers,
       );
       getElementByTestId = element.getByTestId;
@@ -87,68 +95,109 @@ describe('CheckPermissions component', () => {
       expect(guideText).toBeFalsy();
     });
 
-    it('submission settings elements should be defined', async () => {
-      const settingsBox = getElementByTestId('permission-box-plant-settings');
-      const openSettingsText = getElementByTestId('permission-box-open-settings-text');
-      const toggleSettingsBtn = getElementByTestId('toggle-settings-btn');
-      const settingsIcon = getElementByTestId('settings-icon');
-      const chevronIcon = getElementByTestId('settings-chevron-icon');
-      const settingsCpt = getElementByTestId('submission-settings-cpt');
+    describe('check permissions = granted', () => {
+      let getElementByTestId, queryElementByTestId;
 
-      expect(settingsBox).toBeTruthy();
-      expect(openSettingsText).toBeTruthy();
-      expect(settingsIcon).toBeTruthy();
-      expect(chevronIcon).toBeTruthy();
-      expect(toggleSettingsBtn).toBeTruthy();
-      expect(settingsCpt).toBeTruthy();
+      beforeEach(async () => {
+        const element = render(
+          <CheckPermissionsV2
+            testID="check-permissions-box"
+            lockSettings={true}
+            plantTreePermissions={mockPlantTreePermissionsGranted}
+          />,
+          maticReducers,
+        );
+        getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
+      });
 
-      expect(settingsIcon.props.name).toBe('settings-outline');
-      expect(openSettingsText.props.children).toBe('permissionBox.submissionSettings');
-      expect(chevronIcon.props.name).toBe('chevron-forward');
+      it('permission box title', () => {
+        const permissionBoxTitle = getElementByTestId('permission-box-title');
+        const permissionBoxIcon = getElementByTestId('permission-box-icon');
+
+        expect(permissionBoxTitle.props.children).toBe('permissionBox.allGranted');
+        expect(permissionBoxIcon.props.name).toBe('check-circle');
+      });
+
+      it('permissions list length must be 3', () => {
+        const permissionsList = queryElementByTestId('permissions-list');
+
+        expect(permissionsList).toBeFalsy();
+      });
+
+      it('guide in footer should be invisible', () => {
+        const guideText = queryElementByTestId('permission-box-guide');
+
+        expect(guideText).toBeFalsy();
+      });
+
+      it('submission settings elements should be defined', async () => {
+        const settingsBox = getElementByTestId('permission-box-plant-settings');
+        const openSettingsText = getElementByTestId('permission-box-open-settings-text');
+        const toggleSettingsBtn = getElementByTestId('toggle-settings-btn');
+        const settingsIcon = getElementByTestId('settings-icon');
+        const chevronIcon = getElementByTestId('settings-chevron-icon');
+        const settingsCpt = getElementByTestId('submission-settings-cpt');
+
+        expect(settingsBox).toBeTruthy();
+        expect(openSettingsText).toBeTruthy();
+        expect(settingsIcon).toBeTruthy();
+        expect(chevronIcon).toBeTruthy();
+        expect(settingsCpt).toBeTruthy();
+
+        expect(toggleSettingsBtn.props.accessibilityState.disabled).toBeTruthy();
+        expect(settingsIcon.props.name).toBe('settings-outline');
+        expect(openSettingsText.props.children).toBe('permissionBox.submissionSettings');
+        expect(chevronIcon.props.name).toBe('lock-closed');
+      });
     });
-  });
 
-  describe('check permissions = isChecking', () => {
-    let getElementByTestId, queryElementByTestId;
+    describe('check permissions = isChecking', () => {
+      let getElementByTestId, queryElementByTestId;
 
-    beforeEach(async () => {
-      const element = render(
-        <CheckPermissionsV2 testID="check-permissions-box" plantTreePermissions={mockPlantTreePermissionsChecking} />,
-        maticReducers,
-      );
-      getElementByTestId = element.getByTestId;
-      queryElementByTestId = element.queryByTestId;
-    });
+      beforeEach(async () => {
+        const element = render(
+          <CheckPermissionsV2
+            testID="check-permissions-box"
+            lockSettings={false}
+            plantTreePermissions={mockPlantTreePermissionsChecking}
+          />,
+          maticReducers,
+        );
+        getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
+      });
 
-    it('permission box title', () => {
-      const permissionBoxTitle = getElementByTestId('permission-box-title');
-      const permissionsBoxLoading = getElementByTestId('permission-box-checking-indicator');
+      it('permission box title', () => {
+        const permissionBoxTitle = getElementByTestId('permission-box-title');
+        const permissionsBoxLoading = getElementByTestId('permission-box-checking-indicator');
 
-      expect(permissionBoxTitle).toBeTruthy();
-      expect(permissionBoxTitle.props.children).toBe('permissionBox.isChecking');
-      expect(permissionsBoxLoading).toBeTruthy();
-      expect(permissionsBoxLoading.props.size).toBe('small');
-      expect(permissionsBoxLoading.props.color).toBe(colors.grayDarker);
-    });
+        expect(permissionBoxTitle).toBeTruthy();
+        expect(permissionBoxTitle.props.children).toBe('permissionBox.isChecking');
+        expect(permissionsBoxLoading).toBeTruthy();
+        expect(permissionsBoxLoading.props.size).toBe('small');
+        expect(permissionsBoxLoading.props.color).toBe(colors.grayDarker);
+      });
 
-    it('permissions list length must be 3', () => {
-      const permissionsList = queryElementByTestId('permissions-list');
+      it('permissions list length must be 3', () => {
+        const permissionsList = queryElementByTestId('permissions-list');
 
-      expect(permissionsList).toBeTruthy();
-    });
+        expect(permissionsList).toBeTruthy();
+      });
 
-    it('guide in footer should be invisible', () => {
-      const guideText = queryElementByTestId('permission-box-guide');
+      it('guide in footer should be invisible', () => {
+        const guideText = queryElementByTestId('permission-box-guide');
 
-      expect(guideText).toBeFalsy();
-    });
+        expect(guideText).toBeFalsy();
+      });
 
-    it('settings box should be invisible', () => {
-      const settingsBox = queryElementByTestId('permission-box-plant-settings');
-      const settingsCpt = queryElementByTestId('submission-settings-cpt');
+      it('settings box should be invisible', () => {
+        const settingsBox = queryElementByTestId('permission-box-plant-settings');
+        const settingsCpt = queryElementByTestId('submission-settings-cpt');
 
-      expect(settingsBox).toBeFalsy();
-      expect(settingsCpt).toBeFalsy();
+        expect(settingsBox).toBeFalsy();
+        expect(settingsCpt).toBeFalsy();
+      });
     });
   });
 });

@@ -2,6 +2,7 @@ import {checkTreePhoto} from 'utilities/helpers/checkTreePhoto/checkTreePhoto.we
 import {BrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {AlertMode} from 'utilities/helpers/alert';
 import {imageBase64} from 'utilities/helpers/__test__/checkTreePhoto/checkTreePhoto.mock';
+import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 describe('checkTreePhoto.web', () => {
   it('checkTreePhoto.web should be defined', () => {
@@ -100,9 +101,11 @@ describe('checkTreePhoto.web', () => {
             fromGallery: false,
             imageBase64: '',
             browserPlatform: BrowserPlatform.Android,
+            inCheck: true,
           },
         }),
       ).rejects.toEqual({
+        data: JourneyMetadata.Photo,
         title: 'inValidImage.title',
         mode: AlertMode.Error,
         message: 'inValidImage.hasNoLocation',

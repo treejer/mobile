@@ -1,6 +1,7 @@
 import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLocation';
 import {BrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {AlertMode} from 'utilities/helpers/alert';
+import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 describe('checkTreeLocation', () => {
   it('checkTreeLocation should be defined', () => {
@@ -116,6 +117,21 @@ describe('checkTreeLocation', () => {
         checkMetaData: true,
       }),
     ).rejects.toEqual({
+      title: 'map.updateSingleTree.errTitle',
+      mode: AlertMode.Error,
+      message: 'map.updateSingleTree.errMessage',
+    });
+    await expect(
+      checkTreeLocation({
+        isUpdate: true,
+        photoLocation: locationOne,
+        submittedLocation: withoutCoords,
+        browserPlatform: BrowserPlatform.Android,
+        checkMetaData: true,
+        inCheck: true,
+      }),
+    ).rejects.toEqual({
+      data: JourneyMetadata.Location,
       title: 'map.updateSingleTree.errTitle',
       mode: AlertMode.Error,
       message: 'map.updateSingleTree.errMessage',
