@@ -9,19 +9,18 @@ import {capitalize} from 'utilities/helpers/capitalize';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import {TDraftState} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 
 export type DraftJourneyModalProps = {
   testID?: string;
   isSingle: boolean;
-  draftId: Date;
-  draftType: DraftType;
+  draft: TDraftState | null;
   onSubmit: (name: string) => void;
   onCancel: () => void;
 };
 
 export function DraftJourneyModal(props: DraftJourneyModalProps) {
-  const {testID, draftType, draftId, isSingle, onCancel, onSubmit} = props;
+  const {testID, isSingle, draft, onCancel, onSubmit} = props;
 
   const [draftName, setDraftName] = useState('');
 
@@ -30,8 +29,13 @@ export function DraftJourneyModal(props: DraftJourneyModalProps) {
   const {t} = useTranslation();
 
   const draftDefaultName = useMemo(
-    () => `${capitalize(draftType)} ${moment(draftId).locale(locale.toLowerCase()).format('YYYY-MM-DD hh:mm:ss a')}`,
-    [draftType, draftId],
+    () =>
+      draft
+        ? `${capitalize(draft?.draftType)} ${moment(draft?.id)
+            .locale(locale.toLowerCase())
+            .format('YYYY-MM-DD hh:mm:ss a')}`
+        : '',
+    [draft],
   );
 
   return (

@@ -1,9 +1,10 @@
 import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
-import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {Tree} from 'types';
+import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
+import {canUpdateJourneyLocation} from 'utilities/helpers/canUpdateJourneyLocation';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
@@ -66,12 +67,13 @@ export const currentJourneyReducer = (
         ...state,
         photo: action.photo,
         photoLocation: action.photoLocation,
-        nurseryContinuedUpdatingLocation: action.discardUpdateLocation,
+        canDraft: true,
       };
     case actionsList.SET_TREE_LOCATION:
       return {
         ...state,
         location: action.location,
+        canDraft: true,
       };
     case actionsList.DISCARD_UPDATE_NURSERY_LOCATION:
       return {
@@ -80,16 +82,27 @@ export const currentJourneyReducer = (
       };
     case actionsList.SET_TREE_DETAIL_TO_UPDATE:
       return {
-        ...state,
-        treeIdToUpdate: action.treeIdToUpdate,
+        isUpdate: true,
         tree: action.tree,
-        location: action.location,
+        isSingle: action?.tree?.treeSpecsEntity?.nursery !== 'true',
+        isNursery: action?.tree?.treeSpecsEntity?.nursery === 'true',
+        treeIdToUpdate: action.treeIdToUpdate,
+        location: {
+          latitude: Number(action.tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+          longitude: Number(action.tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        },
+        canUpdateLocation: canUpdateJourneyLocation(action.tree, action?.tree?.treeSpecsEntity?.nursery === 'true'),
+        nurseryContinuedUpdatingLocation: !canUpdateJourneyLocation(
+          action.tree,
+          action?.tree?.treeSpecsEntity?.nursery === 'true',
+        ),
       };
 
     case actionsList.REMOVE_JOURNEY_LOCATION:
       return {
         ...state,
         location: undefined,
+        canDraft: !!(state.photo && state.photoLocation),
       };
 
     case actionsList.REMOVE_JOURNEY_PHOTO:
@@ -97,6 +110,7 @@ export const currentJourneyReducer = (
         ...state,
         photo: undefined,
         photoLocation: undefined,
+        canDraft: !!state.location,
       };
     case actionsList.SET_JOURNEY_FROM_DRAFTS:
       return action.journey || state;
@@ -140,6 +154,13 @@ export function useCurrentJourney() {
     [dispatch],
   );
 
+  const dispatchSetTreeDetailToUpdate = useCallback(
+    (args: actionsList.SetTreeDetailToUpdateArgs) => {
+      dispatch(actionsList.setTreeDetailToUpdate(args));
+    },
+    [dispatch],
+  );
+
   return {
     journey,
     dispatchClearJourney,
@@ -147,5 +168,6 @@ export function useCurrentJourney() {
     dispatchStartPlantNursery,
     dispatchSelectTreeLocation,
     dispatchSelectTreePhoto,
+    dispatchSetTreeDetailToUpdate,
   };
 }

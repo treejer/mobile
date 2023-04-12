@@ -22,8 +22,7 @@ describe('DraftJourneyModal component', () => {
         <DraftJourneyModal
           testID="draft-modal"
           isSingle={true}
-          draftId={draftId}
-          draftType={DraftType.Draft}
+          draft={{id: draftId, draftType: DraftType.Draft}}
           onSubmit={() => {}}
           onCancel={() => {}}
         />,

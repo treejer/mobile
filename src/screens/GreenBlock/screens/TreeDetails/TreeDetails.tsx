@@ -42,6 +42,7 @@ import {useCurrentJourney} from 'services/currentJourney';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useCurrentJourney as useNewCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 interface Props {}
 
@@ -54,6 +55,8 @@ function TreeDetails(_: Props) {
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
   const {releaseDate, changeCheckMetaData} = useSettings();
   const {isMainnet} = useConfig();
+
+  const {dispatchSetTreeDetailToUpdate} = useNewCurrentJourney();
 
   const {setNewJourney} = useCurrentJourney();
 
@@ -142,22 +145,25 @@ function TreeDetails(_: Props) {
         index: 0,
         routes: [
           {
-            name: Routes.TreeSubmission,
+            name: Routes.TreeSubmission_V2,
             params: {
-              initialRouteName: Routes.SelectPhoto,
+              initialRouteName: Routes.SubmitTree_V2,
             },
           },
         ],
       }),
     );
-    setNewJourney({
-      treeIdToUpdate: tree?.id,
-      tree: treeDetails,
-      location: {
-        latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-        longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-      },
-    });
+    if (tree?.id) {
+      dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+    }
+    // setNewJourney({
+    //   treeIdToUpdate: tree?.id,
+    //   tree: treeDetails,
+    //   location: {
+    //     latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+    //     longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+    //   },
+    // });
   };
 
   if (loading) {

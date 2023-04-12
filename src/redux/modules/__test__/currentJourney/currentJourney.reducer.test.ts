@@ -2,6 +2,7 @@ import {currentJourneyReducer} from 'ranger-redux/modules/currentJourney/current
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
 import {onBoardingOne} from '../../../../../assets/images';
+import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
 
 describe('currentJourney reducer', () => {
   const initialState = {};
@@ -47,7 +48,7 @@ describe('currentJourney reducer', () => {
       expectedValue,
     );
   });
-  it('should handle SET_TREE_PHOTO, discard update location = false', () => {
+  it('should handle SET_TREE_PHOTO', () => {
     const photo = onBoardingOne;
     const photoLocation = {
       latitude: 2003423,
@@ -57,30 +58,11 @@ describe('currentJourney reducer', () => {
       ...initialState,
       photo,
       photoLocation,
-      nurseryContinuedUpdatingLocation: false,
+      canDraft: true,
     };
     expect(currentJourneyReducer(initialState, actionsList.setTreePhoto({photo, photoLocation}))).toEqual(
       expectedValue,
     );
-  });
-  it('should handle SET_TREE_PHOTO, discard update location = true', () => {
-    const photo = onBoardingOne;
-    const photoLocation = {
-      latitude: 2003423,
-      longitude: 213123123,
-    };
-    const expectedValue = {
-      ...initialState,
-      photo,
-      photoLocation,
-      nurseryContinuedUpdatingLocation: true,
-    };
-    expect(
-      currentJourneyReducer(
-        initialState,
-        actionsList.setTreePhoto({photo, photoLocation, discardUpdateLocation: true}),
-      ),
-    ).toEqual(expectedValue);
   });
   it('should handle SET_TREE_LOCATION', () => {
     const coords = {
@@ -90,6 +72,7 @@ describe('currentJourney reducer', () => {
     const expectedValue = {
       ...initialState,
       location: coords,
+      canDraft: true,
     };
     expect(currentJourneyReducer(initialState, actionsList.setTreeLocation({coords}))).toEqual(expectedValue);
   });
@@ -101,20 +84,26 @@ describe('currentJourney reducer', () => {
     expect(currentJourneyReducer(initialState, actionsList.discardUpdateNurseryLocation())).toEqual(expectedValue);
   });
   it('should handle SET_TREE_DETAIL_TO_UPDATE', () => {
-    const coords = {
-      latitude: 200000,
-      longitude: 123130,
-    };
     const expectedValue = {
-      ...initialState,
-      location: coords,
+      location: {
+        latitude: Number(treeDetail?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        longitude: Number(treeDetail?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+      },
       tree: treeDetail,
+      isUpdate: true,
       treeIdToUpdate: treeDetail.id,
+      isSingle: treeDetail?.treeSpecsEntity?.nursery !== 'true',
+      isNursery: treeDetail?.treeSpecsEntity?.nursery === 'true',
+      canUpdateLocation: canUpdateTreeLocation(treeDetail as any, treeDetail?.treeSpecsEntity?.nursery === 'true'),
+      nurseryContinuedUpdatingLocation: !canUpdateTreeLocation(
+        treeDetail as any,
+        treeDetail?.treeSpecsEntity?.nursery === 'true',
+      ),
     };
     expect(
       currentJourneyReducer(
         initialState,
-        actionsList.setTreeDetailToUpdate({tree: treeDetail as any, treeIdToUpdate: treeDetail.id, location: coords}),
+        actionsList.setTreeDetailToUpdate({tree: treeDetail as any, treeIdToUpdate: treeDetail.id}),
       ),
     ).toEqual(expectedValue);
   });
@@ -122,17 +111,32 @@ describe('currentJourney reducer', () => {
     expect(currentJourneyReducer(initialState, actionsList.clearJourney())).toEqual(initialState);
   });
   it('should handle REMOVE_JOURNEY_PHOTO', () => {
+    const initialState = {
+      location: {
+        latitude: 2999,
+        longitude: 2999,
+      },
+    };
     const expectedValue = {
       ...initialState,
       photo: undefined,
       photoLocation: undefined,
+      canDraft: !!initialState.location,
     };
     expect(currentJourneyReducer(initialState, actionsList.removeJourneyPhoto())).toEqual(expectedValue);
   });
   it('should handle REMOVE_JOURNEY_LOCATION', () => {
+    const initialState = {
+      photo: onBoardingOne,
+      photoLocation: {
+        latitude: 2999,
+        longitude: 2999,
+      },
+    };
     const expectedValue = {
       ...initialState,
       location: undefined,
+      canDraft: !!(initialState.photo && initialState.photoLocation),
     };
     expect(currentJourneyReducer(initialState, actionsList.removeJourneyLocation())).toEqual(expectedValue);
   });

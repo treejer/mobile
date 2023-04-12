@@ -6,12 +6,11 @@ import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourne
 import {BrowserPlatformState} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
 import {TSettings} from 'ranger-redux/modules/settings/settings';
 import {checkTreePhoto} from 'utilities/helpers/checkTreePhoto/checkTreePhoto';
-import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
-import * as actionsList from './currentJourney.action';
 import {showSagaAlert} from 'utilities/helpers/alert';
 import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLocation';
 import {navigationRef} from 'navigation/navigationRef';
 import {Routes} from 'navigation/Navigation';
+import * as actionsList from './currentJourney.action';
 
 export const getSettings = (state: TReduxState) => state.settings;
 export const getBrowserPlatform = (state: TReduxState) => state.browserPlatform;
@@ -54,8 +53,7 @@ export function* watchAssignJourneyTreePhoto({
       });
     }
 
-    const discardUpdateLocation = journey.isUpdate && canUpdateTreeLocation(journey, !!journey?.isNursery);
-    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords, discardUpdateLocation}));
+    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
   } catch (e: any) {
     yield showSagaAlert({
       title: i18next.t(e?.title),

@@ -131,7 +131,7 @@ describe('SubmitTreeV2 component', () => {
       expect(submissionButton).toBeTruthy();
     });
   });
-  describe('SubmitTreeV2, permissions draft', () => {
+  describe('SubmitTreeV2 draft', () => {
     let getElementByTestId, queryElementByTestId;
 
     beforeEach(() => {
@@ -148,6 +148,7 @@ describe('SubmitTreeV2 component', () => {
               latitude: 20000,
               longitude: 2000,
             },
+            canDraft: true,
           },
         },
       );
@@ -162,8 +163,8 @@ describe('SubmitTreeV2 component', () => {
       const selectTreeLocation = getElementByTestId('select-tree-location-cpt');
       const blockedTreeLocationField = queryElementByTestId('locked-location-cpt');
       const submissionButton = queryElementByTestId('submission-buttons');
-      const draftButton = getElementByTestId('draft-submission');
       const draftModal = queryElementByTestId('draft-modal');
+      const draftButton = getElementByTestId('draft-submission');
 
       expect(draftModal).toBeFalsy();
       expect(permissionBox).toBeTruthy();
@@ -184,7 +185,7 @@ describe('SubmitTreeV2 component', () => {
       });
     });
   });
-  describe('SubmitTreeV2, permissions submit offline', () => {
+  describe('SubmitTreeV2 submit offline', () => {
     let getElementByTestId, queryElementByTestId;
 
     beforeEach(() => {
@@ -209,6 +210,7 @@ describe('SubmitTreeV2 component', () => {
               latitude: 20000,
               longitude: 2000,
             },
+            canDraft: true,
           },
         },
       );
@@ -269,6 +271,83 @@ describe('SubmitTreeV2 component', () => {
         const draftModal = queryElementByTestId('draft-modal');
         expect(draftModal).toBeFalsy();
       });
+    });
+  });
+  describe('SubmitTreeV2 isUpdate = true', () => {
+    it('journey isSingle = true, selectTreeLocation should not be defined', () => {
+      const {queryByTestId: queryElementByTestId} = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            treeIdToUpdate: '#2131313',
+            isUpdate: true,
+            isSingle: true,
+            isNursery: false,
+            canUpdateLocation: false,
+            nurseryContinuedUpdatingLocation: true,
+          },
+        },
+      );
+
+      const selectTreeLocationCpt = queryElementByTestId('select-tree-location-cpt');
+      expect(selectTreeLocationCpt).toBeFalsy();
+
+      const canUpdateLocationText = queryElementByTestId('update-location-text');
+      expect(canUpdateLocationText).toBeFalsy();
+    });
+    it('journey isNursery = true, canUpdateLocation = true, selectTreeLocation should be defined, canUpdate text', () => {
+      const {getByTestId: getElementByTestId} = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            treeIdToUpdate: '#2131313',
+            isUpdate: true,
+            isSingle: false,
+            isNursery: true,
+            canUpdateLocation: true,
+            nurseryContinuedUpdatingLocation: false,
+          },
+        },
+      );
+      const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
+      expect(selectTreeLocationCpt).toBeTruthy();
+
+      const canUpdateLocationText = getElementByTestId('update-location-text');
+      expect(canUpdateLocationText).toBeTruthy();
+      expect(canUpdateLocationText.props.children).toBe('submitTreeV2.canUpdate');
+    });
+    it('journey isNursery = true, canUpdateLocation = false, selectTreeLocation be defined, cantUpdate text', () => {
+      const {getByTestId: getElementByTestId} = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            treeIdToUpdate: '#2131313',
+            isUpdate: true,
+            isSingle: false,
+            isNursery: true,
+            canUpdateLocation: false,
+            nurseryContinuedUpdatingLocation: true,
+          },
+        },
+      );
+      const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
+      expect(selectTreeLocationCpt).toBeTruthy();
+
+      const canUpdateLocationText = getElementByTestId('update-location-text');
+      expect(canUpdateLocationText).toBeTruthy();
+      expect(canUpdateLocationText.props.children).toBe('submitTreeV2.cantUpdate');
     });
   });
 });

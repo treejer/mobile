@@ -81,7 +81,6 @@ describe('currentJourney actions', () => {
       type: actionsList.SET_TREE_PHOTO,
       photo: treePhoto,
       photoLocation: treeCoordsLocation,
-      discardUpdateLocation: false,
     };
     expect(actionsList.setTreePhoto({photo: treePhoto, photoLocation: treeCoordsLocation})).toEqual(expectedAction);
   });
@@ -95,13 +94,11 @@ describe('currentJourney actions', () => {
       type: actionsList.SET_TREE_PHOTO,
       photo: treePhoto,
       photoLocation: treeCoordsLocation,
-      discardUpdateLocation: true,
     };
     expect(
       actionsList.setTreePhoto({
         photo: treePhoto,
         photoLocation: treeCoordsLocation,
-        discardUpdateLocation: true,
       }),
     ).toEqual(expectedAction);
   });
@@ -111,14 +108,9 @@ describe('currentJourney actions', () => {
     };
     expect(actionsList.discardUpdateNurseryLocation()).toEqual(expectedAction);
   });
-  it('set tree detail to update', () => {
-    const treeCoordsLocation = {
-      latitude: 200000,
-      longitude: 5000000,
-    };
+  it('update & set tree detail', () => {
     const expectedAction = {
       type: actionsList.SET_TREE_DETAIL_TO_UPDATE,
-      location: treeCoordsLocation,
       treeIdToUpdate: treeDetail.id,
       tree: treeDetail,
     };
@@ -127,7 +119,6 @@ describe('currentJourney actions', () => {
       actionsList.setTreeDetailToUpdate({
         treeIdToUpdate: treeDetail.id,
         tree: treeDetail as any,
-        location: treeCoordsLocation,
       }),
     ).toEqual(expectedAction);
   });

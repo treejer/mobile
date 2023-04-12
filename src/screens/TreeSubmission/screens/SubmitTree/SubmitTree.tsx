@@ -66,7 +66,6 @@ function SubmitTree(props: Props) {
   const [submitting, setSubmitting] = useState(false);
   const config = useConfig();
   const isConnected = useNetInfoConnected();
-  const treeFactory = useTreeFactory();
 
   const birthDay = currentTimestamp();
 

@@ -87,11 +87,6 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     [dispatchDraftJourney, dispatchClearJourney, draftState],
   );
 
-  const canDraft = useMemo(
-    () => !!(!!(journey.photo && journey.photoLocation) || journey.location),
-    [journey.photo, journey.photoLocation, journey.location],
-  );
-
   const canSubmit = useMemo(
     () => !!(journey.photo && journey.photoLocation && journey.location),
     [journey.photo, journey.photoLocation, journey.location],
@@ -104,27 +99,26 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   return (
     <>
-      {draftState ? (
+      <RenderIf condition={!!draftState}>
         <DraftJourneyModal
           testID="draft-modal"
           isSingle={!!journey?.isSingle}
-          draftId={draftState?.id}
-          draftType={draftState?.draftType}
+          draft={draftState}
           onSubmit={handleDraft}
           onCancel={() => setDraftState(null)}
         />
-      ) : null}
+      </RenderIf>
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
         <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
             <CheckPermissionsV2
               testID="check-permissions-box"
-              lockSettings={canDraft}
+              lockSettings={canSubmit}
               plantTreePermissions={plantTreePermissions}
             />
             <Spacer times={6} />
             <Text testID="submission-title" style={styles.title}>
-              {t(`submitTreeV2.titles.${submissionTitle}`)}
+              {t(`submitTreeV2.titles.${submissionTitle}`, {treeId: journey?.treeIdToUpdate})}
             </Text>
             <Spacer times={4} />
             {plantTreePermissions?.isCameraGranted ? (
@@ -134,25 +128,36 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             )}
             <Spacer times={3} />
             {plantTreePermissions.isLocationGranted && plantTreePermissions.isGPSEnabled ? (
-              <SelectTreeLocation
-                hasLocation={{
-                  coords: journey?.location,
-                  canUpdate: !journey.isUpdate || journey.canUpdateLocation,
-                }}
-                testID="select-tree-location-cpt"
-                onSelect={handleNavigateToMap}
-              />
+              <RenderIf condition={!(journey.isUpdate && journey.isSingle)}>
+                <SelectTreeLocation
+                  hasLocation={{
+                    coords: journey?.location,
+                    canUpdate: !journey.isUpdate || journey.canUpdateLocation,
+                  }}
+                  testID="select-tree-location-cpt"
+                  onSelect={handleNavigateToMap}
+                />
+                <RenderIf condition={!!(journey?.treeIdToUpdate && journey?.isNursery)}>
+                  <Spacer times={2} />
+                  <Text
+                    testID="update-location-text"
+                    style={styles[journey?.canUpdateLocation ? 'greenText' : 'redText']}
+                  >
+                    {t(`submitTreeV2.${journey?.canUpdateLocation ? 'canUpdate' : 'cantUpdate'}`)}
+                  </Text>
+                </RenderIf>
+              </RenderIf>
             ) : (
               <LockedSubmissionField testID="locked-location-cpt" title="lockedField.location" />
             )}
           </View>
         </ScrollView>
-        <RenderIf condition={canDraft || plantTreePermissions.cantProceed}>
+        <RenderIf condition={journey?.canDraft || plantTreePermissions.cantProceed}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
             <SubmissionButtons
               testID="submission-buttons"
               hasNoPermission={plantTreePermissions.cantProceed}
-              canDraft={canDraft}
+              canDraft={!!journey?.canDraft}
               canSubmit={canSubmit}
               isSingle={!!journey.isSingle}
               isUpdate={!!journey.isUpdate}
@@ -174,5 +179,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: colors.tooBlack,
+  },
+  redText: {
+    color: colors.red,
+    fontSize: 12,
+  },
+  greenText: {
+    color: colors.green,
+    fontSize: 12,
   },
 });

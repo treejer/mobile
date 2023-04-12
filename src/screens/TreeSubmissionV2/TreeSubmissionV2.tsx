@@ -58,7 +58,7 @@ function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
   }
 
   useEffect(() => {
-    if (initRouteName && initRouteName !== Routes.SelectPlantType) {
+    if (initRouteName && initRouteName !== Routes.SelectPlantType_V2) {
       navigation.navigate(initRouteName);
     }
   }, [initRouteName, navigation, route.params]);
@@ -74,6 +74,11 @@ function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
         <Stack.Screen
           name={Routes.SelectPlantType_V2}
           options={{title: screenTitle('Select Type')}}
+          component={CheckOfflineMaps}
+        />
+        <Stack.Screen
+          name={Routes.SubmitTree_V2}
+          options={{title: screenTitle('Submit Tree')}}
           component={CheckOfflineMaps}
         />
       </Stack.Navigator>

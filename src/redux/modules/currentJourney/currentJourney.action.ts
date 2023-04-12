@@ -1,7 +1,7 @@
 import {Image} from 'react-native-image-crop-picker';
 
-import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {Tree} from 'types';
+import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {CurrentJourneyAction, TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
 export const START_PLANT_SINGLE_TREE = 'START_PLANT_SINGLE_TREE';
@@ -41,14 +41,12 @@ export const setTreeLocation = ({coords}: SetTreeLocationArgs) => ({
 export type SetTreePhotoArgs = {
   photo?: Image | File;
   photoLocation?: TUserLocation;
-  discardUpdateLocation?: boolean;
 };
 
 export const SET_TREE_PHOTO = 'SET_TREE_PHOTO';
-export const setTreePhoto = ({photo, photoLocation, discardUpdateLocation = false}: SetTreePhotoArgs) => ({
+export const setTreePhoto = ({photo, photoLocation}: SetTreePhotoArgs) => ({
   type: SET_TREE_PHOTO,
   photo: photo,
-  discardUpdateLocation,
   photoLocation,
 });
 
@@ -57,17 +55,15 @@ export const discardUpdateNurseryLocation = () => ({
   type: DISCARD_UPDATE_NURSERY_LOCATION,
 });
 
-export type TreeDetailToUpdateArgs = {
+export type SetTreeDetailToUpdateArgs = {
   treeIdToUpdate: string;
   tree: Tree;
-  location: TUserLocation;
 };
 export const SET_TREE_DETAIL_TO_UPDATE = 'SET_TREE_DETAIL_TO_UPDATE';
-export const setTreeDetailToUpdate = ({treeIdToUpdate, tree, location}: TreeDetailToUpdateArgs) => ({
+export const setTreeDetailToUpdate = ({treeIdToUpdate, tree}: SetTreeDetailToUpdateArgs) => ({
   type: SET_TREE_DETAIL_TO_UPDATE,
   treeIdToUpdate,
   tree,
-  location,
 });
 
 export const CLEAR_JOURNEY = 'CLEAR_JOURNEY';
