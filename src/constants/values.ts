@@ -47,4 +47,5 @@ export const colors = {
   placeholder: '#C7C7CD',
   loadingOpacity: '#00000022',
   tooBlack: '#000',
+  modalBg: '#00000066',
 };

@@ -4,7 +4,7 @@ import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.re
 export type DraftJourneyArgs = {
   journey: TCurrentJourney;
   draftType: DraftType;
-  id: string;
+  id: Date;
   name?: string;
 };
 export const DRAFT_JOURNEY = 'DRAFT_JOURNEY';
@@ -30,7 +30,7 @@ export const saveDraftedJourney = ({journey, name, draftType}: SaveDraftedJourne
 });
 
 export type RemoveDraftedJourneyArgs = {
-  id: string;
+  id: Date;
 };
 export const REMOVE_DRAFTED_JOURNEY = 'REMOVE_DRAFTED_JOURNEY';
 export const removeDraftedJourney = ({id}: RemoveDraftedJourneyArgs) => ({
@@ -40,7 +40,7 @@ export const removeDraftedJourney = ({id}: RemoveDraftedJourneyArgs) => ({
 
 // * saga watcher actions
 export type SetAsCurrentJourneyWatcherPayload = {
-  id: string;
+  id: Date;
 };
 export const SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER = 'SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER';
 export const setDraftAsCurrentJourneyWatcher = ({id}: SetAsCurrentJourneyWatcherPayload) => ({

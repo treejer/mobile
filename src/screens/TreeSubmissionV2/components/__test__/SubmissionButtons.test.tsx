@@ -19,7 +19,7 @@ describe('SubmissionButtons component', () => {
         onGrant={() => {}}
         onSubmit={() => {}}
         onDraft={() => {}}
-        onReview={() => {}}
+        onPreview={() => {}}
       />,
       {
         ...goerliReducers,
@@ -53,7 +53,7 @@ describe('SubmissionButtons component', () => {
         isSingle={true}
         onSubmit={() => {}}
         onDraft={() => {}}
-        onReview={() => {}}
+        onPreview={() => {}}
       />,
       {
         ...goerliReducers,
@@ -86,7 +86,7 @@ describe('SubmissionButtons component', () => {
         isSingle={false}
         onSubmit={() => {}}
         onDraft={() => {}}
-        onReview={() => {}}
+        onPreview={() => {}}
       />,
       {
         ...goerliReducers,
@@ -129,7 +129,7 @@ describe('SubmissionButtons component', () => {
         isUpdate={true}
         onSubmit={() => {}}
         onDraft={() => {}}
-        onReview={() => {}}
+        onPreview={() => {}}
       />,
       {
         ...goerliReducers,

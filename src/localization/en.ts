@@ -553,6 +553,7 @@ export const en = {
       plantNursery: 'Submit a new Nursery',
       updateSingle: 'Update <ID>#{{treeId}}</ID> tree',
       updateNursery: 'Update <ID>#{{treeId}}</ID> nursery',
+      draft: 'Name this {{submissionType}} to remember better',
     },
     buttons: {
       grantAll: 'Grant All Permissions',

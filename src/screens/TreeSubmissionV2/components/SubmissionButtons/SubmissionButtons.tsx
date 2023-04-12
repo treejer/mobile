@@ -15,11 +15,12 @@ export type SubmissionButtonsProps = {
   canSubmit: boolean;
   onDraft: () => void;
   onSubmit: () => void;
-  onReview: () => void;
+  onPreview: () => void;
 };
 
 export function SubmissionButtons(props: SubmissionButtonsProps) {
-  const {testID, canSubmit, canDraft, isSingle, isUpdate, hasNoPermission, onGrant} = props;
+  const {testID, canSubmit, canDraft, isSingle, isUpdate, hasNoPermission, onGrant, onSubmit, onDraft, onPreview} =
+    props;
 
   const {isConnected} = useNetInfo();
 
@@ -38,21 +39,21 @@ export function SubmissionButtons(props: SubmissionButtonsProps) {
         </TouchableOpacity>
       ) : null}
       {canSubmit ? (
-        <TouchableOpacity testID="preview-submission" style={[styles.btn, styles.previewBtn]}>
+        <TouchableOpacity testID="preview-submission" style={[styles.btn, styles.previewBtn]} onPress={onPreview}>
           <Text testID="preview-submission-text" style={styles.blackText}>
             {t(`submitTreeV2.buttons.preview${submissionType}`)}
           </Text>
         </TouchableOpacity>
       ) : null}
       {canDraft ? (
-        <TouchableOpacity testID="draft-submission" style={[styles.btn, styles.draftBtn]}>
+        <TouchableOpacity testID="draft-submission" style={[styles.btn, styles.draftBtn]} onPress={onDraft}>
           <Text testID="draft-submission-text" style={styles.blackText}>
             {t(`submitTreeV2.buttons.draft${submissionType}`, {submissionType: t(actionType)})}
           </Text>
         </TouchableOpacity>
       ) : null}
       {canSubmit ? (
-        <TouchableOpacity testID="submit-submission" style={[styles.btn, styles.submitBtn]}>
+        <TouchableOpacity testID="submit-submission" style={[styles.btn, styles.submitBtn]} onPress={onSubmit}>
           <Text testID="submit-submission-text" style={styles[isConnected ? 'whiteText' : 'decoratedText']}>
             {t(`submitTreeV2.buttons.${actionType + submissionType}`)}
           </Text>
