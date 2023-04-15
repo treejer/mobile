@@ -7,6 +7,7 @@ export const colors = {
   khakiOpacity: '#FAF8F0B3',
   darkOpacity: '#0000001A',
   gray: '#9E9E9E',
+  grayMidLight: '#BEBEBE',
   grayDarker: '#424242',
   grayDarkerOpacity: '#424242B3',
   red: '#D04F45',

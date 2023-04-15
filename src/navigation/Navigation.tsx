@@ -68,6 +68,7 @@ export enum Routes {
   SubmitTree_V2 = 'SubmitTree_V2',
   SelectOnMap_V2 = 'SelectOnMap_v2',
   TreeList = 'TreeList',
+  TreeInventory_V2 = 'TreeInventory_V2',
   TreeDetails = 'TreeDetails',
   Organization = 'Organization',
   Withdraw = 'Withdraw',

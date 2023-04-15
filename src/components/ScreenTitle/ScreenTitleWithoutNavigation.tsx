@@ -29,7 +29,9 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
       )}
       {title && (
         <View style={{flex: 4, justifyContent: 'center'}}>
-          <Text style={[globalStyles.textCenter, styles.title]}>{title}</Text>
+          <Text testID="screen-title-text" style={[globalStyles.textCenter, styles.title]}>
+            {title}
+          </Text>
         </View>
       )}
       {rightContent ? (

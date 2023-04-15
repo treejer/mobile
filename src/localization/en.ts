@@ -573,4 +573,11 @@ export const en = {
   },
   approve: 'Approve',
   reject: 'Reject',
+  treeInventoryV2: {
+    titles: {
+      screen: 'Tree Inventory',
+    },
+  },
+  drafted: 'Drafted',
+  submitted: 'Submitted',
 };

@@ -52,7 +52,7 @@ export function DraftJourneyModal(props: DraftJourneyModalProps) {
             value={draftName}
             onChangeText={setDraftName}
             placeholder={draftDefaultName}
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={colors.grayMidLight}
           />
           <Spacer times={6} />
           <View style={styles.btnContainer}>

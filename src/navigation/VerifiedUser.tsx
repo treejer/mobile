@@ -2,17 +2,18 @@ import React from 'react';
 import {BottomTabScreenProps as LibraryProp, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import {Routes} from './Navigation';
-import TabBar from 'components/TabBar/TabBar';
 import MyProfile from 'screens/Profile/screens/MyProfile/MyProfile';
 import {Activity} from 'screens/Profile/screens/Activity/Activity';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
 import {Withdraw} from 'screens/Withdraw/Withdraw';
+import TreeSubmissionV2 from 'screens/TreeSubmissionV2';
 import TreeSubmission from 'screens/TreeSubmission';
 import {screenTitle} from 'utilities/helpers/documentTitle';
+import {TreeLife, TreeSituation} from 'utilities/helpers/treeInventory';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
+import TabBar from 'components/TabBar/TabBar';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
-import TreeSubmissionV2 from 'screens/TreeSubmissionV2';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -25,6 +26,8 @@ export type VerifiedUserNavigationParamList = {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
+    tabFilter?: TreeLife;
+    situationFilter?: TreeSituation;
   };
   [Routes.Withdraw]: undefined;
   [Routes.Activity]?: {

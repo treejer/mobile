@@ -2,6 +2,7 @@ import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {Routes} from 'navigation/index';
+import {TreeLife, TreeSituation} from 'utilities/helpers/treeInventory';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 
@@ -12,6 +13,8 @@ export interface MainTabsParamList extends Record<string, any> {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
+    tabFilter?: TreeLife;
+    situationFilter?: TreeSituation;
   };
   Activity: {
     filters: string[];
