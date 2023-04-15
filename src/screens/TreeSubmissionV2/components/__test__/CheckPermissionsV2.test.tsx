@@ -22,6 +22,7 @@ describe('CheckPermissions component', () => {
       const element = render(
         <CheckPermissionsV2
           testID="check-permissions-box"
+          onUnLock={() => {}}
           lockSettings={false}
           plantTreePermissions={mockPlantTreePermissionsBlocked}
         />,
@@ -66,6 +67,7 @@ describe('CheckPermissions component', () => {
       const element = render(
         <CheckPermissionsV2
           testID="check-permissions-box"
+          onUnLock={() => {}}
           lockSettings={false}
           plantTreePermissions={mockPlantTreePermissionsGranted}
         />,
@@ -102,6 +104,7 @@ describe('CheckPermissions component', () => {
         const element = render(
           <CheckPermissionsV2
             testID="check-permissions-box"
+            onUnLock={() => {}}
             lockSettings={true}
             plantTreePermissions={mockPlantTreePermissionsGranted}
           />,
@@ -145,7 +148,7 @@ describe('CheckPermissions component', () => {
         expect(chevronIcon).toBeTruthy();
         expect(settingsCpt).toBeTruthy();
 
-        expect(toggleSettingsBtn.props.accessibilityState.disabled).toBeTruthy();
+        expect(toggleSettingsBtn.props.accessibilityState.disabled).toBeFalsy();
         expect(settingsIcon.props.name).toBe('settings-outline');
         expect(openSettingsText.props.children).toBe('permissionBox.submissionSettings');
         expect(chevronIcon.props.name).toBe('lock-closed');
@@ -159,6 +162,7 @@ describe('CheckPermissions component', () => {
         const element = render(
           <CheckPermissionsV2
             testID="check-permissions-box"
+            onUnLock={() => {}}
             lockSettings={false}
             plantTreePermissions={mockPlantTreePermissionsChecking}
           />,

@@ -48,6 +48,9 @@ const globalStyles = StyleSheet.create({
   justifyContentEvenly: {
     justifyContent: 'space-evenly',
   },
+  justifyContentBetween: {
+    justifyContent: 'space-between',
+  },
   flexWrap: {
     flexWrap: 'wrap',
   },

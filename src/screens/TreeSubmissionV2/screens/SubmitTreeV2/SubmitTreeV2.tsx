@@ -12,6 +12,7 @@ import {DraftJourneyModal} from 'screens/TreeSubmissionV2/components/DraftJourne
 import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
+import {ChangeSettingsAlert} from 'screens/TreeSubmissionV2/components/ChangeSettingsAlert/ChangeSettingsAlert';
 import {SelectTreePhoto, TOnSelectTree} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {DraftType, useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
@@ -34,6 +35,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const {userLocation} = plantTreePermissions;
 
   const [draftState, setDraftState] = useState<TDraftState | null>(null);
+  const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
 
   const {journey, dispatchSelectTreePhoto, dispatchClearJourney} = useCurrentJourney();
   const {drafts, dispatchDraftJourney} = useDraftedJourneys();
@@ -76,10 +78,15 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     }
   }, [isConnected, handleOpenDraftModal]);
 
+  const handleClearJourney = useCallback(() => {
+    dispatchClearJourney();
+    setOpenSettingsAlert(false);
+  }, [dispatchClearJourney]);
+
   const handleDraft = useCallback(
     (name: string) => {
       if (journey && draftState) {
-        dispatchDraftJourney({journey, draftType: draftState.draftType, name, id: draftState.id});
+        dispatchDraftJourney({journey, draftType: draftState.draftType, name, id: draftState.id.toString()});
         dispatchClearJourney();
         setDraftState(null);
       }
@@ -108,12 +115,20 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           onCancel={() => setDraftState(null)}
         />
       </RenderIf>
+      <RenderIf condition={openSettingsAlert}>
+        <ChangeSettingsAlert
+          testID="change-settings-alert-cpt"
+          onReject={() => setOpenSettingsAlert(false)}
+          onApprove={handleClearJourney}
+        />
+      </RenderIf>
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
         <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
             <CheckPermissionsV2
               testID="check-permissions-box"
               lockSettings={canSubmit}
+              onUnLock={() => setOpenSettingsAlert(true)}
               plantTreePermissions={plantTreePermissions}
             />
             <Spacer times={6} />

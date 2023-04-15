@@ -1,10 +1,10 @@
 import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
 import {takeEvery, put, call} from 'redux-saga/effects';
-import axios, {Method} from 'axios';
+import {Method} from 'axios';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
+import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {UserSignForm, UserSignRes} from 'services/types';
 import {NetworkConfig} from 'services/config';
 import {selectConfig} from '../web3/web3';

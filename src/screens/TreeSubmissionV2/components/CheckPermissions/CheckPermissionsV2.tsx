@@ -22,10 +22,11 @@ export type TCheckPermissionsProps = {
   testID?: string;
   plantTreePermissions: TUsePlantTreePermissions;
   lockSettings: boolean;
+  onUnLock: () => void;
 };
 
 export function CheckPermissionsV2(props: TCheckPermissionsProps) {
-  const {testID, lockSettings, plantTreePermissions} = props;
+  const {testID, lockSettings, onUnLock, plantTreePermissions} = props;
   const {cantProceed, isChecking, isGranted} = plantTreePermissions;
 
   const [openSettings, setOpenSettings] = useState(false);
@@ -112,7 +113,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
                 {t('permissionBox.submissionSettings')}
               </Text>
             </View>
-            <TouchableOpacity testID="toggle-settings-btn" disabled={lockSettings} onPress={handleToggleSettingsBox}>
+            <TouchableOpacity testID="toggle-settings-btn" onPress={lockSettings ? onUnLock : handleToggleSettingsBox}>
               <IoIcon
                 testID="settings-chevron-icon"
                 name={lockSettings ? 'lock-closed' : 'chevron-forward'}

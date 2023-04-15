@@ -26,15 +26,16 @@ describe('draftedJourneys saga', () => {
   });
 
   it('setDraftAsCurrentJourney', () => {
+    const date = new Date(jest.now());
     const gen = watchSetDraftAsCurrentJourney({
-      id: 'SAMPLE_ID_1',
+      id: date.toString(),
       type: actionsList.SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER,
     });
     let next = gen.next();
     assert.deepEqual(next.value, select(getDraftedJourneys), 'select drafted journeys');
 
     const draftOne = {
-      id: 'SAMPLE_ID_1',
+      id: date.toString(),
       journey: {
         photo: onBoardingOne,
         photoLocation: {
@@ -45,7 +46,7 @@ describe('draftedJourneys saga', () => {
       draftType: DraftType.Draft,
     };
     const draftTwo = {
-      id: 'SAMPLE_ID_2',
+      id: new Date().toString(),
       journey: {
         location: {
           latitude: 2000,
@@ -57,6 +58,9 @@ describe('draftedJourneys saga', () => {
     };
 
     next = gen.next({drafts: [draftOne, draftTwo]});
-    assert.deepEqual(next.value, put(setJourneyFromDrafts({journey: {...draftOne.journey, draftId: draftOne.id}})));
+    assert.deepEqual(
+      next.value,
+      put(setJourneyFromDrafts({journey: {...draftOne.journey, draftId: draftOne.id.toString()}})),
+    );
   });
 });

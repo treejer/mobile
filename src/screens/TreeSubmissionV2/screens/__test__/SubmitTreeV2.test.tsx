@@ -350,4 +350,87 @@ describe('SubmitTreeV2 component', () => {
       expect(canUpdateLocationText.props.children).toBe('submitTreeV2.cantUpdate');
     });
   });
+  it('journey isNursery = true, canUpdateLocation = true, selectTreeLocation should be defined, canUpdate text', () => {
+    const {getByTestId: getElementByTestId} = render(
+      <TestSubmissionStack
+        name={Routes.SubmitTree_V2}
+        component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+      />,
+      {
+        ...goerliReducers,
+        currentJourney: {
+          treeIdToUpdate: '#2131313',
+          isUpdate: true,
+          isSingle: false,
+          isNursery: true,
+          canUpdateLocation: true,
+          nurseryContinuedUpdatingLocation: false,
+        },
+      },
+    );
+    const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
+    expect(selectTreeLocationCpt).toBeTruthy();
+
+    const canUpdateLocationText = getElementByTestId('update-location-text');
+    expect(canUpdateLocationText).toBeTruthy();
+    expect(canUpdateLocationText.props.children).toBe('submitTreeV2.canUpdate');
+  });
+  it('clear journey', async () => {
+    const {getByTestId: getElementByTestId, queryByTestId: queryElementByTestId} = render(
+      <TestSubmissionStack
+        name={Routes.SubmitTree_V2}
+        component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+      />,
+      {
+        ...goerliReducers,
+        currentJourney: {
+          isSingle: true,
+          isUpdate: false,
+          canDraft: true,
+          isNursery: false,
+          photo: onBoardingOne,
+          photoLocation: {
+            latitude: 20000,
+            longitude: 20000,
+          },
+          location: {
+            latitude: 20000,
+            longitude: 20000,
+          },
+        },
+      },
+    );
+
+    const unlockBtn = getElementByTestId('toggle-settings-btn');
+    await act(async () => {
+      await fireEvent.press(unlockBtn);
+    });
+    await waitFor(() => {
+      const changeSettingsAlert = getElementByTestId('change-settings-alert-cpt');
+      expect(changeSettingsAlert).toBeTruthy();
+    });
+    const rejectBtn = getElementByTestId('reject-btn');
+    await act(async () => {
+      await fireEvent.press(rejectBtn);
+    });
+    await waitFor(() => {
+      const changeSettingsAlert = queryElementByTestId('change-settings-alert-cpt');
+      expect(changeSettingsAlert).toBeFalsy();
+    });
+    await act(async () => {
+      await fireEvent.press(unlockBtn);
+    });
+    await waitFor(() => {
+      const changeSettingsAlert = getElementByTestId('change-settings-alert-cpt');
+      expect(changeSettingsAlert).toBeTruthy();
+    });
+    const approveBtn = getElementByTestId('approve-btn');
+    await act(async () => {
+      await fireEvent.press(approveBtn);
+    });
+    await waitFor(() => {
+      const changeSettingsAlert = queryElementByTestId('change-settings-alert-cpt');
+      expect(changeSettingsAlert).toBeFalsy();
+    });
+  });
 });

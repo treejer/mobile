@@ -556,6 +556,7 @@ export const en = {
       updateSingle: 'Update #{{treeId}} tree',
       updateNursery: 'Update #{{treeId}} nursery',
       draft: 'Name this {{submissionType}} to remember better',
+      changeSettings: 'If you want to change settings, submission information must be entered again.',
     },
     buttons: {
       grantAll: 'Grant All Permissions',
@@ -570,4 +571,6 @@ export const en = {
       offline: 'Submit Offline',
     },
   },
+  approve: 'Approve',
+  reject: 'Reject',
 };

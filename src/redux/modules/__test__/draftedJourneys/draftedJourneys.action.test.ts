@@ -18,11 +18,11 @@ describe('draftedJourneys actions', () => {
       type: actionsList.DRAFT_JOURNEY,
       journey,
       draftType: DraftType.Draft,
-      id: date,
+      id: date.toString(),
     };
-    expect(actionsList.draftJourney({draftType: DraftType.Draft, journey, name: 'SAMPLE', id: date})).toEqual(
-      expectedAction,
-    );
+    expect(
+      actionsList.draftJourney({draftType: DraftType.Draft, journey, name: 'SAMPLE', id: date.toString()}),
+    ).toEqual(expectedAction);
   });
   it('draft journey without name', () => {
     const date = new Date(jest.now());
@@ -30,17 +30,19 @@ describe('draftedJourneys actions', () => {
       type: actionsList.DRAFT_JOURNEY,
       journey,
       draftType: DraftType.Draft,
-      id: new Date(date),
+      id: date.toString(),
     };
-    expect(actionsList.draftJourney({draftType: DraftType.Draft, journey, id: date})).toEqual(expectedAction);
+    expect(actionsList.draftJourney({draftType: DraftType.Draft, journey, id: date.toString()})).toEqual(
+      expectedAction,
+    );
   });
   it('remove journey', () => {
     const date = new Date(jest.now());
     const expectedAction = {
       type: actionsList.REMOVE_DRAFTED_JOURNEY,
-      id: date,
+      id: date.toString(),
     };
-    expect(actionsList.removeDraftedJourney({id: date})).toEqual(expectedAction);
+    expect(actionsList.removeDraftedJourney({id: date.toString()})).toEqual(expectedAction);
   });
   it('save drafted journey, with change name and draftType', () => {
     const expectedAction = {
@@ -64,8 +66,8 @@ describe('draftedJourneys actions', () => {
     const date = new Date(jest.now());
     const expectedAction = {
       type: actionsList.SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER,
-      id: date,
+      id: date.toString(),
     };
-    expect(actionsList.setDraftAsCurrentJourneyWatcher({id: date})).toEqual(expectedAction);
+    expect(actionsList.setDraftAsCurrentJourneyWatcher({id: date.toString()})).toEqual(expectedAction);
   });
 });

@@ -1,8 +1,9 @@
-import * as actionsList from './draftedJourneys.action';
 import {put, select, takeEvery} from 'redux-saga/effects';
 import {TReduxState} from 'ranger-redux/store';
+
 import {TDraftedJourneysState} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {setJourneyFromDrafts} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import * as actionsList from './draftedJourneys.action';
 
 export const getDraftedJourneys = (state: TReduxState) => state.draftedJourneys;
 
