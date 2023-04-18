@@ -2,10 +2,12 @@ import {useCallback} from 'react';
 
 import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import * as actionsList from './draftedJourneys.action';
+import {navigateToGreenBlock} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
+import {sortByDate} from 'utilities/helpers/sortByDate';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 export enum DraftType {
-  Draft = 'draft',
+  Draft = 'Draft',
   Offline = 'Offline',
 }
 
@@ -32,6 +34,7 @@ export type TDraftedJourneysAction = {
   draftType?: DraftType;
   journey?: TCurrentJourney;
   id?: string;
+  drafts?: DraftedJourney[];
 };
 
 export const draftedJourneysReducer = (
@@ -46,10 +49,12 @@ export const draftedJourneysReducer = (
         updatedAt: new Date(action?.id || ''),
         journey: action.journey,
         name: action.name || action.id,
-        draftType: DraftType.Draft,
+        draftType: action.draftType,
       };
+
+      navigateToGreenBlock({isNew: true, name: newDraft?.name});
       return {
-        drafts: [...state.drafts, newDraft],
+        drafts: [newDraft, ...state.drafts],
       };
     case actionsList.REMOVE_DRAFTED_JOURNEY:
       const filteredDraftedJourneys = state.drafts.filter(draft => draft.id !== action.id);
@@ -57,21 +62,19 @@ export const draftedJourneysReducer = (
         drafts: filteredDraftedJourneys,
       };
     case actionsList.SAVE_DRAFTED_JOURNEY:
-      const updatedDrafts = state.drafts.map(draft =>
-        draft.id === action.journey?.draftId
-          ? {
-              ...draft,
-              journey: action.journey || draft.journey,
-              name: action.name || draft.name,
-              draftType: action.draftType || draft.draftType,
-              updatedAt: new Date(),
-            }
-          : draft,
-      );
-      return {
-        drafts: updatedDrafts,
-      };
+      const cloneDrafts = [...state.drafts];
+      const selectedDraftIndex = cloneDrafts.findIndex(draft => draft.id === action.journey?.draftId);
+      const selectedDraft = {...cloneDrafts[selectedDraftIndex]};
+      selectedDraft.journey = action.journey || selectedDraft.journey;
+      selectedDraft.name = action.name || selectedDraft.name;
+      selectedDraft.draftType = action.draftType || selectedDraft.draftType;
+      selectedDraft.updatedAt = new Date();
+      cloneDrafts[selectedDraftIndex] = selectedDraft;
 
+      navigateToGreenBlock({isNew: false, name: selectedDraft?.name});
+      return {
+        drafts: sortByDate(cloneDrafts, 'updatedAt'),
+      };
     default:
       return state;
   }
@@ -108,7 +111,6 @@ export const useDraftedJourneys = () => {
     },
     [dispatch],
   );
-  //
 
   return {
     drafts,

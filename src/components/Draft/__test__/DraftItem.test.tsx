@@ -1,7 +1,7 @@
 import {render} from 'ranger-testUtils/testingLibrary';
 import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {DraftItem} from 'components/Draft/DraftItem';
-import {draftListReducers, journey} from 'components/Draft/__test__/DratList.mock';
+import {draftListReducers, journey} from 'components/Draft/__test__/DraftList.mock';
 import {TreeImage} from '../../../../assets/icons';
 
 describe('DraftItem component', () => {

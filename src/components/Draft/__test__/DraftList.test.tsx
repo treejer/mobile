@@ -1,6 +1,6 @@
 import {render} from 'ranger-testUtils/testingLibrary';
 import {DraftList} from 'components/Draft/DraftList';
-import {draftListReducers} from 'components/Draft/__test__/DratList.mock';
+import {draftListReducers} from 'components/Draft/__test__/DraftList.mock';
 
 describe('DraftList component', () => {
   it('DraftList component should be defined', () => {

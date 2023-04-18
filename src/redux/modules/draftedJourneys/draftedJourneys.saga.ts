@@ -4,6 +4,8 @@ import {CommonActions} from '@react-navigation/native';
 
 import {Routes} from 'navigation/Navigation';
 import {navigationRef} from 'navigation/navigationRef';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {TreeLife} from 'utilities/helpers/treeInventory';
 import {TDraftedJourneysState} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {setJourneyFromDrafts} from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import * as actionsList from './draftedJourneys.action';
@@ -39,4 +41,37 @@ export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAct
 
 export function* draftedJourneysSagas() {
   yield takeEvery(actionsList.SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER, watchSetDraftAsCurrentJourney);
+}
+
+export type navigateToGreenBlockArgs = {
+  isNew: boolean;
+  name?: string;
+};
+
+export function navigateToGreenBlock({isNew, name}: navigateToGreenBlockArgs) {
+  showAlert({
+    message: `submitTreeV2.toast.${isNew ? 'drafted' : 'draftSaved'}`,
+    mode: AlertMode.Success,
+    alertOptions: {
+      translate: true,
+      tParams: {
+        message: {
+          name,
+        },
+      },
+    },
+  });
+  navigationRef()?.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [
+        {
+          name: Routes.GreenBlock,
+          params: {
+            tabFilter: TreeLife.Drafted,
+          },
+        },
+      ],
+    }),
+  );
 }

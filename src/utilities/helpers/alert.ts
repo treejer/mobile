@@ -1,4 +1,4 @@
-import {Alert, AlertButton, AlertOptions} from 'react-native';
+import {Alert, AlertButton} from 'react-native';
 import {DefaultTFuncReturn} from 'i18next';
 
 export function asyncAlert(
@@ -32,8 +32,13 @@ export type ShowAlertOptions = {
   message: string | DefaultTFuncReturn;
   title?: string | DefaultTFuncReturn;
   mode?: AlertMode;
-  buttons?: AlertButton[];
-  alertOptions?: AlertOptions;
+  alertOptions?: {
+    tParams?: {
+      title?: any;
+      message?: any;
+    };
+    translate?: boolean;
+  };
 };
 
 export enum AlertMode {
@@ -44,41 +49,23 @@ export enum AlertMode {
 }
 
 export function showAlert(options: ShowAlertOptions) {
-  const {message, title, mode = AlertMode.Info, buttons} = options;
+  const {message, title, mode = AlertMode.Info, alertOptions} = options;
 
   if (mode) {
-    toast.show?.(message, {type: mode, title});
+    toast.show?.(message, {type: mode, title, ...alertOptions});
   } else {
-    toast.show?.(message, {data: {title}});
+    toast.show?.(message, {data: {title, ...alertOptions}});
   }
   // * Alert.alert(title, message, buttons, alertOptions);
 }
 
 export function showSagaAlert(options: ShowAlertOptions) {
-  const {message, title = 'Alert', buttons, alertOptions, mode} = options;
+  const {message, title = 'Alert', alertOptions, mode} = options;
 
-  return new Promise((resolve, reject) => {
-    const _buttons = buttons ?? [
-      {
-        text: 'OK',
-        onPress: () => {
-          resolve('ok');
-        },
-      },
-      {
-        text: 'Cancel',
-        onPress: () => {
-          reject();
-        },
-      },
-    ];
-
-    showAlert({
-      title,
-      message,
-      buttons: _buttons,
-      alertOptions: alertOptions ?? {cancelable: false},
-      mode,
-    });
+  return showAlert({
+    title,
+    message,
+    alertOptions,
+    mode,
   });
 }

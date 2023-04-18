@@ -558,6 +558,10 @@ export const en = {
       draft: 'Name this {{submissionType}} to remember better',
       changeSettings: 'If you want to change settings, submission information must be entered again.',
     },
+    toast: {
+      drafted: '{{name}} drafted successfully.',
+      draftSaved: '{{name}} draft updated & saved successfully.',
+    },
     buttons: {
       grantAll: 'Grant All Permissions',
       plantSingle: 'Submit Tree Now',

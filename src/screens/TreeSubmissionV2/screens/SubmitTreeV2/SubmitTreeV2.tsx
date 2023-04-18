@@ -38,7 +38,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
 
   const {journey, dispatchSelectTreePhoto, dispatchClearJourney} = useCurrentJourney();
-  const {drafts, dispatchDraftJourney} = useDraftedJourneys();
+  const {drafts, dispatchDraftJourney, dispatchSaveDraftedJourney} = useDraftedJourneys();
 
   console.log(drafts, 'drafts');
   const {isConnected} = useNetInfo();
@@ -62,12 +62,19 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     navigation.navigate(Routes.SelectOnMap_V2);
   }, [navigation]);
 
-  const handleOpenDraftModal = useCallback((draftType: DraftType) => {
-    setDraftState({
-      id: new Date(),
-      draftType,
-    });
-  }, []);
+  const handleOpenDraftModal = useCallback(
+    (draftType: DraftType) => {
+      if (journey?.draftId) {
+        dispatchSaveDraftedJourney({journey, draftType});
+      } else {
+        setDraftState({
+          id: new Date(),
+          draftType,
+        });
+      }
+    },
+    [journey, dispatchSaveDraftedJourney],
+  );
 
   const handleSubmitJourney = useCallback(() => {
     if (isConnected) {
