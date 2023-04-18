@@ -27,7 +27,10 @@ describe('draftedJourneys reducer', () => {
       id: date.toString(),
     };
     const expectedValue = {
-      drafts: [...initialState.drafts, newDraft],
+      drafts: [
+        ...initialState.drafts,
+        {...newDraft, createdAt: new Date(newDraft.id), updatedAt: new Date(newDraft.id)},
+      ],
     };
     expect(draftedJourneysReducer(initialState, actionsList.draftJourney(newDraft))).toEqual(expectedValue);
   });
@@ -38,6 +41,8 @@ describe('draftedJourneys reducer', () => {
       draftType: DraftType.Draft,
       name: `Draft ${date}`,
       id: date.toString(),
+      createdAt: date,
+      updatedAt: date,
     };
     const state = {
       drafts: [...initialState.drafts, draft],
@@ -46,11 +51,14 @@ describe('draftedJourneys reducer', () => {
     expect(draftedJourneysReducer(state, actionsList.removeDraftedJourney({id: draft.id}))).toEqual(initialState);
   });
   it('should handle SAVE_DRAFTED_JOURNEY', () => {
+    const draftDate = new Date(jest.now());
     const draft = {
       journey,
       draftType: DraftType.Draft,
-      name: `Draft ${jest.now()}`,
-      id: `Draft ${jest.now()}`,
+      name: `Draft ${draftDate}`,
+      id: draftDate.toString(),
+      createdAt: new Date(draftDate.toString()),
+      updatedAt: new Date(draftDate.toString()),
     };
     const state = {
       drafts: [...initialState.drafts, draft],
@@ -68,6 +76,8 @@ describe('draftedJourneys reducer', () => {
       draftType: DraftType.Draft,
       name: draft.name,
       id: draft.id,
+      createdAt: new Date(draft.id.toString()),
+      updatedAt: new Date(jest.now()),
     };
     const updatedState = {
       drafts: [...initialState.drafts, updatedDraft],
@@ -90,6 +100,8 @@ describe('draftedJourneys reducer', () => {
       draftType: DraftType.Draft,
       name: `Draft ${jest.now()}`,
       id: date.toString(),
+      createdAt: date,
+      updatedAt: date,
     };
     const state = {
       drafts: [...initialState.drafts, draft],

@@ -580,4 +580,5 @@ export const en = {
   },
   drafted: 'Drafted',
   submitted: 'Submitted',
+  empty: 'Empty',
 };

@@ -10,7 +10,7 @@ import {TransactionItem, TTransactionHistory} from 'components/Withdraw/Transact
 import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import {isWeb} from 'utilities/helpers/web';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
-import {EmptyList} from 'components/EmptyList/EmptyList';
+import {EmptyList} from 'components/Common/EmptyList';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 
 export type TTransactionHistoryProps = {

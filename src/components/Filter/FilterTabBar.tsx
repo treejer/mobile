@@ -3,21 +3,27 @@ import {StyleSheet, View} from 'react-native';
 
 import {FilterTab} from 'components/Filter/FilterTab';
 
-export type Tab = {title: string; icon?: string};
-export type FilterTabProps = {
+export type Tab<T> = {title: T; icon?: string};
+export type FilterTabProps<T> = {
   testID?: string;
-  tabs: Tab[];
+  tabs: Tab<T>[];
   activeTab: string;
-  onChange: (tab: Tab) => void;
+  onChange: (tab: Tab<T>) => void;
 };
 
-export function FilterTabBar(props: FilterTabProps) {
+export function FilterTabBar<T>(props: FilterTabProps<T>) {
   const {testID, tabs, activeTab, onChange} = props;
 
   return (
     <View testID={testID} style={styles.tabBar}>
       {tabs.map(tab => (
-        <FilterTab key={tab.title} tab={tab} onPress={() => onChange(tab)} isActive={tab.title === activeTab} />
+        <FilterTab
+          testID={`tab-${tab.title}-button`}
+          key={`${tab.title}`}
+          tab={tab}
+          onPress={() => onChange(tab)}
+          isActive={tab.title === activeTab}
+        />
       ))}
     </View>
   );

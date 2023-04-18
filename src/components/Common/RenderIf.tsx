@@ -8,6 +8,5 @@ export type RenderIfProps = {
 export function RenderIf(props: RenderIfProps) {
   const {children, condition} = props;
 
-  console.log(condition, 'condition');
   return condition ? <>{children}</> : null;
 }

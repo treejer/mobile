@@ -8,14 +8,14 @@ import globalStyles from 'constants/styles';
 import {Tab} from 'components/Filter/FilterTabBar';
 import Spacer from 'components/Spacer';
 
-export type FilterTabProps = {
+export type FilterTabProps<T> = {
   testID?: string;
-  tab: Tab;
+  tab: Tab<T>;
   onPress: () => void;
   isActive: boolean;
 };
 
-export function FilterTab(props: FilterTabProps) {
+export function FilterTab<T>(props: FilterTabProps<T>) {
   const {
     testID,
     tab: {title, icon},
@@ -26,8 +26,8 @@ export function FilterTab(props: FilterTabProps) {
   const {t} = useTranslation();
 
   return (
-    <View testID={testID} style={[globalStyles.fill, styles.container, isActive ? styles.borderButton : {}]}>
-      <TouchableOpacity style={styles.btn} testID="tab-button" onPress={onPress}>
+    <View testID={testID} style={[styles.container, isActive ? styles.borderButton : {}]}>
+      <TouchableOpacity style={styles.btn} testID={`tab-button-${title}`} onPress={onPress}>
         {icon ? (
           <>
             <FAIcon
@@ -49,7 +49,9 @@ export function FilterTab(props: FilterTabProps) {
 
 const styles = StyleSheet.create({
   container: {
+    ...globalStyles.fill,
     paddingVertical: 8,
+    height: 40,
   },
   text: {
     fontSize: 14,

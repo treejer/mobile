@@ -99,6 +99,8 @@ describe('SelectTreeLocation component', () => {
       const locationIcon = getElementByTestId('select-location-icon');
       const selectLocationBtn = getElementByTestId('select-location-button');
 
+      const checkIcon = getElementByTestId('check-icon');
+
       expect(container).toBeTruthy();
       expect(stylesToOneObject(container.props.style).height).toBe(104);
 
@@ -115,6 +117,10 @@ describe('SelectTreeLocation component', () => {
 
       expect(locationText).toBeTruthy();
       expect(locationText.props.children).toBe('submitTreeV2.location');
+
+      expect(checkIcon).toBeTruthy();
+      expect(checkIcon.props.name).toBe('check-circle');
+      expect(checkIcon.props.color).toBe(colors.green);
 
       expect(locationDesc).toBeTruthy();
       expect(locationDesc.props.i18nKey).toBe('submitTreeV2.SelectOnMapToChange');
@@ -168,6 +174,8 @@ describe('SelectTreeLocation component', () => {
       const locationIcon = getElementByTestId('select-location-icon');
       const selectLocationBtn = getElementByTestId('select-location-button');
 
+      const checkIcon = getElementByTestId('check-icon');
+
       expect(container).toBeTruthy();
       expect(stylesToOneObject(container.props.style).height).toBe(104);
 
@@ -184,6 +192,10 @@ describe('SelectTreeLocation component', () => {
 
       expect(locationText).toBeTruthy();
       expect(locationText.props.children).toBe('submitTreeV2.location');
+
+      expect(checkIcon).toBeTruthy();
+      expect(checkIcon.props.name).toBe('check-circle');
+      expect(checkIcon.props.color).toBe(colors.green);
 
       expect(locationDesc).toBeTruthy();
       expect(locationDesc.props.i18nKey).toBe('submitTreeV2.SelectOnMapToChange');

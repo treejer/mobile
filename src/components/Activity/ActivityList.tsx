@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
 import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';

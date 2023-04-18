@@ -9,7 +9,7 @@ import {Withdraw} from 'screens/Withdraw/Withdraw';
 import TreeSubmissionV2 from 'screens/TreeSubmissionV2';
 import TreeSubmission from 'screens/TreeSubmission';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import {TreeLife, TreeSituation} from 'utilities/helpers/treeInventory';
+import {TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import TabBar from 'components/TabBar/TabBar';
@@ -27,7 +27,7 @@ export type VerifiedUserNavigationParamList = {
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
     tabFilter?: TreeLife;
-    situationFilter?: TreeSituation;
+    situationFilter?: TreeStatus;
   };
   [Routes.Withdraw]: undefined;
   [Routes.Activity]?: {

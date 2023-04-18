@@ -1,21 +1,33 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import globalStyles from 'constants/styles';
-import Spacer from 'components/Spacer';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {colors} from 'constants/values';
 import {useTranslation} from 'react-i18next';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-export function EmptyList() {
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
+import Spacer from 'components/Spacer';
+
+export type EmptyListProps = {
+  testID?: string;
+};
+
+export function EmptyList(props: EmptyListProps) {
+  const {testID} = props;
+
   const {t} = useTranslation();
 
   return (
-    <View style={[styles.container, globalStyles.screenView, globalStyles.alignItemsCenter]}>
+    <View
+      testID={testID || 'empty-text-cpt'}
+      style={[styles.container, globalStyles.screenView, globalStyles.alignItemsCenter]}
+    >
       <Spacer times={8} />
       <View style={styles.row}>
-        <Text style={styles.emptyText}>{t('activities.empty')}</Text>
+        <Text testID="empty-text" style={styles.emptyText}>
+          {t('empty')}
+        </Text>
         <Spacer />
-        <Icon name="smileo" size={24} color={colors.green} />
+        <Icon testID="smile-icon" name="smileo" size={24} color={colors.green} />
       </View>
     </View>
   );

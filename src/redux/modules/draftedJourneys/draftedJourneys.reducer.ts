@@ -14,6 +14,8 @@ export type DraftedJourney = {
   draftType: DraftType;
   id: string;
   name?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type TDraftedJourneysState = {
@@ -40,6 +42,8 @@ export const draftedJourneysReducer = (
     case actionsList.DRAFT_JOURNEY:
       const newDraft = {
         id: action.id,
+        createdAt: new Date(action?.id || ''),
+        updatedAt: new Date(action?.id || ''),
         journey: action.journey,
         name: action.name || action.id,
         draftType: DraftType.Draft,
@@ -60,6 +64,7 @@ export const draftedJourneysReducer = (
               journey: action.journey || draft.journey,
               name: action.name || draft.name,
               draftType: action.draftType || draft.draftType,
+              updatedAt: new Date(),
             }
           : draft,
       );

@@ -1,26 +1,29 @@
 import React, {useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
-import {FilterTabBar, Tab} from 'components/Filter/FilterTabBar';
+import {FilterTabBar} from 'components/Filter/FilterTabBar';
+import {Tabs} from 'components/Tabs/Tabs';
+import {Tab} from 'components/Tabs/Tab';
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
-import {treeInventoryTabs, TreeLife, TreeSituation} from 'utilities/helpers/treeInventory';
+import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
+import {DraftList} from 'components/Draft/DraftList';
 
 export type TreeInventoryProps = {
   testID?: string;
   filter?: {
     tab?: TreeLife;
-    situation?: TreeSituation;
+    situation?: TreeStatus;
   };
 };
 
 export function TreeInventory(props: TreeInventoryProps) {
   const {testID, filter} = props;
 
-  const [activeTab, setActiveTab] = useState<string>(filter?.tab || treeInventoryTabs[0]?.title);
+  const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
 
   const {t} = useTranslation();
 
@@ -31,16 +34,26 @@ export function TreeInventory(props: TreeInventoryProps) {
         title={t('treeInventoryV2.titles.screen')}
         rightContent={<SearchButton testID="search-button-cpt" onPress={() => {}} />}
       />
-      <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
-        <View style={[globalStyles.p1]}>
-          <FilterTabBar
-            testID="filter-tab-cpt"
-            tabs={treeInventoryTabs}
-            activeTab={activeTab}
-            onChange={(tab: Tab) => setActiveTab(tab.title)}
-          />
+      <View style={globalStyles.fill}>
+        <View style={globalStyles.fill}>
+          <View style={globalStyles.p1}>
+            <FilterTabBar<TreeLife>
+              testID="filter-tab-cpt"
+              tabs={treeInventoryTabs}
+              activeTab={activeTab}
+              onChange={tab => setActiveTab(tab.title)}
+            />
+          </View>
+          <Tabs testID="tab-context" style={globalStyles.fill} tab={activeTab}>
+            <Tab testID="submitted-tab" tab={TreeLife.Submitted}>
+              <View style={{padding: 20, backgroundColor: 'red'}}></View>
+            </Tab>
+            <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
+              <DraftList testID="draft-list-cpt" />
+            </Tab>
+          </Tabs>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

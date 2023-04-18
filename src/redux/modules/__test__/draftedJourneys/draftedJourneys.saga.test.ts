@@ -44,9 +44,12 @@ describe('draftedJourneys saga', () => {
         },
       },
       draftType: DraftType.Draft,
+      createdAt: date,
+      updatedAt: date,
     };
+    const dateTwo = new Date();
     const draftTwo = {
-      id: new Date().toString(),
+      id: dateTwo.toString(),
       journey: {
         location: {
           latitude: 2000,
@@ -55,6 +58,8 @@ describe('draftedJourneys saga', () => {
       },
       draftType: DraftType.Offline,
       name: 'Name',
+      createdAt: dateTwo,
+      updatedAt: dateTwo,
     };
 
     next = gen.next({drafts: [draftOne, draftTwo]});

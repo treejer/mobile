@@ -22,7 +22,7 @@ describe('FilterTab component', () => {
 
     it('components/elements should be defined', () => {
       const tab = getElementByTestId('tab');
-      const tabButton = getElementByTestId('tab-button');
+      const tabButton = getElementByTestId(`tab-button-${title}`);
       const tabButtonText = getElementByTestId('tab-button-text');
       const tabButtonIcon = getElementByTestId('tab-button-icon');
 
@@ -49,7 +49,7 @@ describe('FilterTab component', () => {
 
     it('components/elements should be defined', () => {
       const tab = getElementByTestId('tab');
-      const tabButton = getElementByTestId('tab-button');
+      const tabButton = getElementByTestId(`tab-button-${title}`);
       const tabButtonText = getElementByTestId('tab-button-text');
       const tabButtonIcon = queryElementByTestId('tab-button-icon');
 
@@ -76,7 +76,7 @@ describe('FilterTab component', () => {
 
     it('components/elements should be defined', () => {
       const tab = getElementByTestId('tab');
-      const tabButton = getElementByTestId('tab-button');
+      const tabButton = getElementByTestId(`tab-button-${title}`);
       const tabButtonText = getElementByTestId('tab-button-text');
       const tabButtonIcon = queryElementByTestId('tab-button-icon');
 

@@ -88,6 +88,8 @@ describe('SelectTreePhoto component', () => {
       const galleryBtnText = getElementByTestId('gallery-button-text');
       const galleryIcon = getElementByTestId('gallery-button-icon');
 
+      const checkIcon = getElementByTestId('check-icon');
+
       expect(container).toBeTruthy();
       expect(stylesToOneObject(container.props.style).height).toBe(104);
 
@@ -107,6 +109,10 @@ describe('SelectTreePhoto component', () => {
 
       expect(photoDescription).toBeTruthy();
       expect(photoDescription.props.i18nKey).toBe('submitTreeV2.changePhoto');
+
+      expect(checkIcon).toBeTruthy();
+      expect(checkIcon.props.name).toBe('check-circle');
+      expect(checkIcon.props.color).toBe(colors.green);
 
       expect(cameraBtn).toBeTruthy();
       expect(cameraBtnText).toBeTruthy();

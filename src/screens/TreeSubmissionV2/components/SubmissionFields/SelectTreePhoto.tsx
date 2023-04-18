@@ -5,11 +5,13 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
-import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
+import {RenderIf} from 'components/Common/RenderIf';
 import useCamera from 'utilities/hooks/useCamera';
 import {isWeb} from 'utilities/helpers/web';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 
 export type TOnSelectTree = {
   photo: Image | File;
@@ -114,9 +116,15 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
               treePhoto ? colors.boxInBoxShadow : {},
             ]}
           >
-            <Text testID="photo-title" style={styles.title}>
-              {t('submitTreeV2.photo')}
-            </Text>
+            <View style={styles.flexRow}>
+              <RenderIf condition={!!treePhoto}>
+                <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
+                <Spacer />
+              </RenderIf>
+              <Text testID="photo-title" style={styles.title}>
+                {t('submitTreeV2.photo')}
+              </Text>
+            </View>
             <Spacer times={1} />
             <Text style={styles.desc}>
               <Trans
@@ -214,5 +222,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  flexRow: {
+    flexDirection: 'row',
+    ...globalStyles.alignItemsCenter,
   },
 });

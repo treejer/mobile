@@ -3,10 +3,9 @@ export enum TreeLife {
   Drafted = 'drafted',
 }
 
-export enum TreeSituation {
+export enum TreeStatus {
   Pending = 'pending',
   Verified = 'verified',
-  NotVerified = 'notVerified',
   Update = 'update',
 }
 
@@ -20,3 +19,5 @@ export const treeInventoryTabs = [
     icon: 'cloud-upload-alt',
   },
 ];
+
+export function treeInventoryTreeStatues() {}

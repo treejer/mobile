@@ -4,8 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
-import {colors} from 'constants/values';
+import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {mapboxPrivateToken} from 'services/config';
 
@@ -72,9 +74,15 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
               hasLocation?.coords ? colors.boxInBoxShadow : {},
             ]}
           >
-            <Text testID="select-location-title" style={styles.title}>
-              {t('submitTreeV2.location')}
-            </Text>
+            <View style={styles.flexRow}>
+              <RenderIf condition={!!hasLocation?.coords}>
+                <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
+                <Spacer />
+              </RenderIf>
+              <Text testID="select-location-title" style={styles.title}>
+                {t('submitTreeV2.location')}
+              </Text>
+            </View>
             <Spacer times={1} />
             <Text style={styles.desc}>
               <Trans
@@ -159,5 +167,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  flexRow: {
+    flexDirection: 'row',
+    ...globalStyles.alignItemsCenter,
   },
 });
