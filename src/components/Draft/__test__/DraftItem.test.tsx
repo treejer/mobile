@@ -2,6 +2,7 @@ import {render} from 'ranger-testUtils/testingLibrary';
 import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {DraftItem} from 'components/Draft/DraftItem';
 import {draftListReducers, journey} from 'components/Draft/__test__/DraftList.mock';
+import {colors} from 'constants/values';
 import {TreeImage} from '../../../../assets/icons';
 
 describe('DraftItem component', () => {
@@ -31,7 +32,8 @@ describe('DraftItem component', () => {
             createdAt: new Date(dateOne),
             updatedAt: new Date(dateOne),
           }}
-          onPress={() => {}}
+          onPressDraft={() => {}}
+          onRemoveDraft={() => {}}
         />,
         draftListReducers,
       );
@@ -45,6 +47,8 @@ describe('DraftItem component', () => {
       const draftName = getElementByTestId('draft-name');
       const draftPassageTime = getElementByTestId('draft-passage-time');
       const treeImage = queryElementByTestId('tree-image');
+      const removeButton = getElementByTestId(`remove-draft-button-${dateOne}`);
+      const removeIcon = getElementByTestId(`remove-icon`);
 
       expect(draftIcon).toBeTruthy();
       expect(draftButton).toBeTruthy();
@@ -52,6 +56,11 @@ describe('DraftItem component', () => {
       expect(draftName.props.children).toBe('SAMPLE');
       expect(draftPassageTime).toBeTruthy();
       expect(treeImage).toBeFalsy();
+
+      expect(removeButton).toBeTruthy();
+      expect(removeIcon).toBeTruthy();
+      expect(removeIcon.props.name).toBe('trash-alt');
+      expect(removeIcon.props.color).toBe(colors.red);
     });
   });
 
@@ -75,7 +84,8 @@ describe('DraftItem component', () => {
             createdAt: new Date(dateOne),
             updatedAt: new Date(dateOne),
           }}
-          onPress={() => {}}
+          onPressDraft={() => {}}
+          onRemoveDraft={() => {}}
         />,
         draftListReducers,
       );
@@ -89,6 +99,8 @@ describe('DraftItem component', () => {
       const draftName = getElementByTestId('draft-name');
       const draftPassageTime = getElementByTestId('draft-passage-time');
       const draftIcon = queryElementByTestId('nursery-icon');
+      const removeButton = getElementByTestId(`remove-draft-button-${dateOne}`);
+      const removeIcon = getElementByTestId(`remove-icon`);
 
       expect(treeImage).toBeTruthy();
       expect(treeImage.props.source).toBe(TreeImage);
@@ -97,6 +109,11 @@ describe('DraftItem component', () => {
       expect(draftName.props.children).toBe('SAMPLE');
       expect(draftPassageTime).toBeTruthy();
       expect(draftIcon).toBeFalsy();
+
+      expect(removeButton).toBeTruthy();
+      expect(removeIcon).toBeTruthy();
+      expect(removeIcon.props.name).toBe('trash-alt');
+      expect(removeIcon.props.color).toBe(colors.red);
     });
   });
 });

@@ -558,6 +558,9 @@ export const en = {
       draft: 'Name this {{submissionType}} to remember better',
       changeSettings: 'If you want to change settings, submission information must be entered again.',
     },
+    descriptions: {
+      draftWillRemove: 'This draft will remove',
+    },
     toast: {
       drafted: '{{name}} drafted successfully.',
       draftSaved: '{{name}} draft updated & saved successfully.',

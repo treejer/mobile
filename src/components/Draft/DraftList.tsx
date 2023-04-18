@@ -15,7 +15,7 @@ export type DraftListProps = {
 export function DraftList(props: DraftListProps) {
   const {testID} = props;
 
-  const {drafts, dispatchSetDraftAsCurrentJourney} = useDraftedJourneys();
+  const {drafts, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
 
   const draftRenderItem = useCallback(
     ({item, index}: ListRenderItemInfo<DraftedJourney>) => {
@@ -24,13 +24,14 @@ export function DraftList(props: DraftListProps) {
           <DraftItem
             testID={`draft-item-${index}`}
             draft={item}
-            onPress={() => dispatchSetDraftAsCurrentJourney(item)}
+            onPressDraft={() => dispatchSetDraftAsCurrentJourney(item)}
+            onRemoveDraft={() => dispatchRemoveDraftedJourney({id: item.id})}
           />
           <Spacer times={0.5} />
         </>
       );
     },
-    [dispatchSetDraftAsCurrentJourney],
+    [dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney],
   );
 
   return (

@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 
 import {Routes} from 'navigation/Navigation';
 import {colors} from 'constants/values';
@@ -85,10 +85,21 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     }
   }, [isConnected, handleOpenDraftModal]);
 
-  const handleClearJourney = useCallback(() => {
-    dispatchClearJourney();
-    setOpenSettingsAlert(false);
-  }, [dispatchClearJourney]);
+  const handleClearJourney = useCallback(
+    (resetStack?: boolean) => {
+      dispatchClearJourney();
+      setOpenSettingsAlert(false);
+      if (resetStack) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: Routes.TreeSubmission_V2}],
+          }),
+        );
+      }
+    },
+    [dispatchClearJourney, navigation],
+  );
 
   const handleDraft = useCallback(
     (name: string) => {
@@ -126,7 +137,8 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         <ChangeSettingsAlert
           testID="change-settings-alert-cpt"
           onReject={() => setOpenSettingsAlert(false)}
-          onApprove={handleClearJourney}
+          onApprove={() => handleClearJourney(true)}
+          isDrafted={!!journey?.draftId}
         />
       </RenderIf>
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>

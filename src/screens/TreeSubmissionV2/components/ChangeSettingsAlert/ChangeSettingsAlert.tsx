@@ -4,17 +4,19 @@ import {useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
+import {RenderIf} from 'components/Common/RenderIf';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
 export type ChangeSettingsAlertProps = {
   testID?: string;
+  isDrafted?: boolean;
   onReject: () => void;
   onApprove: () => void;
 };
 
 export function ChangeSettingsAlert(props: ChangeSettingsAlertProps) {
-  const {testID, onReject, onApprove} = props;
+  const {testID, isDrafted, onReject, onApprove} = props;
 
   const {t} = useTranslation();
 
@@ -25,6 +27,12 @@ export function ChangeSettingsAlert(props: ChangeSettingsAlertProps) {
           <Text testID="change-settings-alert-title" style={styles.title}>
             {t('submitTreeV2.titles.changeSettings')}
           </Text>
+          <RenderIf condition={!!isDrafted}>
+            <Spacer />
+            <Text testID="change-settings-draft-message" style={styles.desc}>
+              {t('submitTreeV2.descriptions.draftWillRemove')}
+            </Text>
+          </RenderIf>
           <Spacer times={8} />
           <View style={styles.btnContainer}>
             <TouchableOpacity testID="reject-btn" style={[styles.btn, styles.rejectBtn]} onPress={onReject}>
@@ -68,6 +76,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
+    textAlign: 'center',
+  },
+  desc: {
+    color: colors.grayLight,
+    fontSize: 12,
     textAlign: 'center',
   },
   btn: {

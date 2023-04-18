@@ -1,11 +1,12 @@
 import React from 'react';
 import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 
 import Card from 'components/Card';
 import {Tree} from 'components/Icons';
-import {colors} from 'constants/values';
 import Spacer from 'components/Spacer';
+import {colors} from 'constants/values';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {DraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {TreeImage} from '../../../assets/icons';
@@ -13,18 +14,19 @@ import {TreeImage} from '../../../assets/icons';
 export type DraftItemProps = {
   testID?: string;
   draft: DraftedJourney;
-  onPress: () => void;
+  onPressDraft: () => void;
+  onRemoveDraft: () => void;
 };
 
 export function DraftItem(props: DraftItemProps) {
-  const {testID, draft, onPress} = props;
+  const {testID, draft, onPressDraft, onRemoveDraft} = props;
   const {isNursery} = draft.journey;
 
   const {locale} = useSettings();
 
   return (
     <Card testID={testID} style={styles.card}>
-      <TouchableOpacity testID={`draft-item-button-${draft.id}`} style={styles.btn} onPress={onPress}>
+      <TouchableOpacity testID={`draft-item-button-${draft.id}`} style={styles.btn} onPress={onPressDraft}>
         {isNursery ? (
           <View testID="nursery-icon" style={styles.treesWrapper}>
             <View style={styles.trees}>
@@ -47,12 +49,17 @@ export function DraftItem(props: DraftItemProps) {
           </Text>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity testID={`remove-draft-button-${draft.id}`} onPress={onRemoveDraft}>
+        <FAIcon testID="remove-icon" name="trash-alt" color={colors.red} size={18} />
+      </TouchableOpacity>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.khaki,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -61,6 +68,7 @@ const styles = StyleSheet.create({
   btn: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   treeImage: {
     tintColor: colors.grayLight,
