@@ -8,9 +8,11 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {FilterTabBar} from 'components/Filter/FilterTabBar';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
-import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
-import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
 import {DraftList} from 'components/Draft/DraftList';
+import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
+import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
+import {useSearchValue} from 'utilities/hooks/useSearchValue';
+import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
 
 export type TreeInventoryProps = {
   testID?: string;
@@ -24,16 +26,22 @@ export function TreeInventory(props: TreeInventoryProps) {
   const {testID, filter} = props;
 
   const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
+  const [openSearchBox, setOpenSearchBox] = useState(false);
+  const searchValue = useSearchValue();
 
   const {t} = useTranslation();
 
   return (
     <SafeAreaView testID={testID} style={[globalStyles.screenView, globalStyles.fill]}>
-      <ScreenTitle
-        testID="screen-title-cpt"
-        title={t('treeInventoryV2.titles.screen')}
-        rightContent={<SearchButton testID="search-button-cpt" onPress={() => {}} />}
-      />
+      {openSearchBox ? (
+        <SearchInInventory testID="search-in-inventory-cpt" {...searchValue} onClose={() => setOpenSearchBox(false)} />
+      ) : (
+        <ScreenTitle
+          testID="screen-title-cpt"
+          title={t('treeInventoryV2.titles.screen')}
+          rightContent={<SearchButton testID="search-button-cpt" onPress={() => setOpenSearchBox(true)} />}
+        />
+      )}
       <View style={globalStyles.fill}>
         <View style={globalStyles.fill}>
           <View style={globalStyles.p1}>

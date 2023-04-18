@@ -1,12 +1,12 @@
 import React, {useContext} from 'react';
 import {View, ViewStyle} from 'react-native';
 
-export const TabsContext = React.createContext<string | number | null>(null);
+export const TabsContext = React.createContext<string | number | boolean | null>(null);
 
 export type TabsProps = {
   testID?: string;
   style?: ViewStyle | ViewStyle[];
-  tab: string;
+  tab: string | number | boolean;
   children: JSX.Element | JSX.Element[];
 };
 

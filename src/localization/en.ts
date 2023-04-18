@@ -584,6 +584,7 @@ export const en = {
     titles: {
       screen: 'Tree Inventory',
     },
+    search: 'Search...',
   },
   drafted: 'Drafted',
   submitted: 'Submitted',

@@ -104,6 +104,9 @@ const globalStyles = StyleSheet.create({
   alignItemsStart: {
     alignItems: 'flex-start',
   },
+  alignItemsEnd: {
+    alignItems: 'flex-end',
+  },
   justifyContentEnd: {
     justifyContent: 'flex-end',
   },

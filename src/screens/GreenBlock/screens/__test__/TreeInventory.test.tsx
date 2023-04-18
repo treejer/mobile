@@ -38,6 +38,29 @@ describe('TreeInventory component', () => {
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
     });
+    it('SearchInInventory component should visible', async () => {
+      const searchButton = getElementByTestId('search-button-cpt');
+
+      await act(async () => {
+        await fireEvent.press(searchButton);
+      });
+      await waitFor(() => {
+        const searchInInventory = getElementByTestId('search-in-inventory-cpt');
+        expect(searchInInventory).toBeTruthy();
+      });
+      const closeButton = getElementByTestId('close-button');
+      await act(async () => {
+        await fireEvent.press(closeButton);
+      });
+      await waitFor(() => {
+        const searchInInventory = queryElementByTestId('search-in-inventory-cpt');
+        expect(searchInInventory).toBeFalsy();
+        const screenTitle = getElementByTestId('screen-title-cpt');
+        const searchButton = getElementByTestId('search-button-cpt');
+        expect(screenTitle).toBeTruthy();
+        expect(searchButton).toBeTruthy();
+      });
+    });
     it('Tab should change', async () => {
       const tabContext = getElementByTestId('tab-context');
       const submittedTab = getElementByTestId('submitted-tab');

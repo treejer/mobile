@@ -7,7 +7,7 @@ import {RenderIf} from 'components/Common/RenderIf';
 export type TabProps = {
   testID?: string;
   style?: ViewStyle | ViewStyle[];
-  tab: string | number;
+  tab: string | number | boolean;
   children: JSX.Element | JSX.Element[];
 };
 
