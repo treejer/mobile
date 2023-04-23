@@ -3,16 +3,19 @@ import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
+import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {FilterTabBar} from 'components/Filter/FilterTabBar';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import {DraftList} from 'components/Draft/DraftList';
+import {FilterTrees} from 'components/Filter/FilterTrees';
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {useSearchValue} from 'utilities/hooks/useSearchValue';
 import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
+import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 
 export type TreeInventoryProps = {
   testID?: string;
@@ -25,11 +28,36 @@ export type TreeInventoryProps = {
 export function TreeInventory(props: TreeInventoryProps) {
   const {testID, filter} = props;
 
-  const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
   const [openSearchBox, setOpenSearchBox] = useState(false);
   const searchValue = useSearchValue();
 
+  const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
+  const {filters: treeFilters, handleSetFilter: handleFilterTrees} = useArrayFilter<TreeStatus>();
+
   const {t} = useTranslation();
+
+  const mockFilters = [
+    {
+      title: TreeStatus.Verified,
+      count: 20,
+      color: colors.green,
+    },
+    {
+      title: TreeStatus.Pending,
+      count: 15,
+      color: colors.pink,
+    },
+    {
+      title: TreeStatus.NotVerified,
+      count: 20,
+      color: colors.yellow,
+    },
+    {
+      title: TreeStatus.Update,
+      count: 42,
+      color: colors.gray,
+    },
+  ];
 
   return (
     <SafeAreaView testID={testID} style={[globalStyles.screenView, globalStyles.fill]}>
@@ -54,7 +82,12 @@ export function TreeInventory(props: TreeInventoryProps) {
           </View>
           <Tabs testID="tab-context" style={globalStyles.fill} tab={activeTab}>
             <Tab testID="submitted-tab" tab={TreeLife.Submitted}>
-              <View style={{padding: 20, backgroundColor: 'red'}}></View>
+              <FilterTrees
+                testID="filter-trees-cpt"
+                filterList={mockFilters}
+                filters={treeFilters}
+                onFilter={handleFilterTrees}
+              />
             </Tab>
             <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
               <DraftList testID="draft-list-cpt" />

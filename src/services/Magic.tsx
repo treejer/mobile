@@ -1,7 +1,7 @@
-import {Magic, MagicUserMetadata} from '@magic-sdk/react-native';
+import {Magic, MagicUserMetadata} from '@magic-sdk/react-native-bare';
 import Web3 from 'web3';
 import {BlockchainNetwork, NetworkConfig} from 'services/config';
-import {OAuthExtension} from '@magic-ext/react-native-oauth';
+import {OAuthExtension} from '@magic-ext/react-native-bare-oauth';
 
 export interface OAuthRedirectResult {
   oauth: {
@@ -37,7 +37,6 @@ export function magicGenerator(config: NetworkConfig) {
       rpcUrl: config.web3Url,
       chainId: Number(config.chainId),
     },
-    //@ts-ignore
     extensions: [new OAuthExtension()],
   });
 }

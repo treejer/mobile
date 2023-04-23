@@ -38,7 +38,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
 
   const {journey, dispatchSelectTreePhoto, dispatchClearJourney} = useCurrentJourney();
-  const {drafts, dispatchDraftJourney, dispatchSaveDraftedJourney} = useDraftedJourneys();
+  const {drafts, dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
 
   console.log(drafts, 'drafts');
   const {isConnected} = useNetInfo();
@@ -89,6 +89,9 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     (resetStack?: boolean) => {
       dispatchClearJourney();
       setOpenSettingsAlert(false);
+      if (journey?.draftId) {
+        dispatchRemoveDraftedJourney({id: journey?.draftId});
+      }
       if (resetStack) {
         navigation.dispatch(
           CommonActions.reset({
@@ -98,7 +101,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         );
       }
     },
-    [dispatchClearJourney, navigation],
+    [dispatchClearJourney, navigation, dispatchRemoveDraftedJourney, journey?.draftId],
   );
 
   const handleDraft = useCallback(

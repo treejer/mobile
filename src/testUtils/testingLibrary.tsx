@@ -28,9 +28,9 @@ const TestApp = ({initialState, children}: Props) => {
   return (
     <Provider store={store}>
       {/*<ApolloProvider>*/}
-      <CurrentJourneyProvider>
-        <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
-      </CurrentJourneyProvider>
+      {/*<CurrentJourneyProvider>*/}
+      <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
+      {/*</CurrentJourneyProvider>*/}
       {/*</ApolloProvider>*/}
     </Provider>
   );

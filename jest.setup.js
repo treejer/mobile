@@ -123,11 +123,12 @@ jest.mock('web3', () => {
   };
 });
 
-jest.mock('@magic-ext/react-native-oauth', () => {
-  return {
-    OAuthExtension: jest.fn(),
-  };
-});
+// jest.mock('@magic-ext/react-native-oauth', () => {
+//   return {
+//     OAuthExtension: jest.fn(),
+//   };
+// });
+
 jest.mock('@react-native-community/netinfo', () => {
   return {
     useNetInfo: () => ({

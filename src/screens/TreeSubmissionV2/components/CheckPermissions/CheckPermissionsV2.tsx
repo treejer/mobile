@@ -16,7 +16,7 @@ import {Hr} from 'components/Common/Hr';
 import {permissionsList} from 'utilities/helpers/permissionsList';
 import {SubmissionSettings} from 'components/SubmissionSettings/SubmissionSettings';
 
-const AnimatedCard = isWeb() ? Card : Animated.createAnimatedComponent(Card);
+const AnimatedView = isWeb() ? View : Animated.createAnimatedComponent(View);
 
 export type TCheckPermissionsProps = {
   testID?: string;
@@ -53,96 +53,106 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
   // TODO:  loading state
 
   return (
-    <AnimatedCard
-      testID={testID}
-      style={[globalStyles.screenView, styles.container, isGranted ? [{height: 94}, animationStyles] : {}]}
-    >
-      <View style={[styles.flexRow, styles.boxesPadding]}>
-        {!isChecking ? (
-          <Fa5Icon
-            testID="permission-box-icon"
-            style={cantProceed ? styles.warningIcon : styles.checkIcon}
-            name={cantProceed ? 'warning' : 'check-circle'}
-            size={cantProceed ? 24 : 26}
-          />
-        ) : (
-          <ActivityIndicator testID="permission-box-checking-indicator" color={colors.grayDarker} size="small" />
-        )}
-        <Spacer />
-        <Text testID="permission-box-title" style={[styles.title, isGranted ? styles.greenTextColor : null]}>
-          {t(
-            isChecking
-              ? 'permissionBox.isChecking'
-              : cantProceed
-              ? 'permissionBox.grantToContinue'
-              : 'permissionBox.allGranted',
-          )}
-        </Text>
-      </View>
-      <Spacer />
-      <Hr />
-      {cantProceed || isChecking ? (
-        <View testID="permissions-list" style={[styles.flexBetween, styles.boxesPadding]}>
-          {permissions.map(permission => (
-            <PermissionItemV2 key={permission.name} permission={permission} />
-          ))}
-        </View>
-      ) : (
-        <Spacer />
-      )}
-      {cantProceed ? (
-        <View style={styles.boxesPadding}>
-          <Text style={styles.guideText}>
-            <Trans
-              testID="permission-box-guide"
-              i18nKey="permissionBox.guide"
-              components={{
-                Red: <Text style={styles.redTextColor} />,
-                Grant: <Text style={styles.greenTextColor} />,
-              }}
+    <Card style={styles.boxShadow}>
+      <AnimatedView
+        testID={testID}
+        style={[globalStyles.screenView, styles.container, isGranted ? [{height: 94}, animationStyles] : {}]}
+      >
+        <View style={[styles.flexRow, styles.boxesPadding]}>
+          {!isChecking ? (
+            <Fa5Icon
+              testID="permission-box-icon"
+              style={cantProceed ? styles.warningIcon : styles.checkIcon}
+              name={cantProceed ? 'warning' : 'check-circle'}
+              size={cantProceed ? 24 : 26}
             />
+          ) : (
+            <ActivityIndicator testID="permission-box-checking-indicator" color={colors.grayDarker} size="small" />
+          )}
+          <Spacer />
+          <Text testID="permission-box-title" style={[styles.title, isGranted ? styles.greenTextColor : null]}>
+            {t(
+              isChecking
+                ? 'permissionBox.isChecking'
+                : cantProceed
+                ? 'permissionBox.grantToContinue'
+                : 'permissionBox.allGranted',
+            )}
           </Text>
         </View>
-      ) : isGranted ? (
-        <View testID="permission-box-plant-settings" style={{paddingHorizontal: 4}}>
-          <View style={[styles.flexBetween, {paddingVertical: 0}]}>
-            <View style={styles.flexRow}>
-              <IoIcon testID="settings-icon" name="settings-outline" size={24} color={colors.grayDarker} />
-              <Spacer />
-              <Text testID="permission-box-open-settings-text" style={styles.title}>
-                {t('permissionBox.submissionSettings')}
-              </Text>
-            </View>
-            <TouchableOpacity testID="toggle-settings-btn" onPress={lockSettings ? onUnLock : handleToggleSettingsBox}>
-              <IoIcon
-                testID="settings-chevron-icon"
-                name={lockSettings ? 'lock-closed' : 'chevron-forward'}
-                size={24}
-                color={colors.grayDarker}
-                style={lockSettings ? {transform: [{rotate: openSettings ? '90deg' : '0deg'}]} : undefined}
-              />
-            </TouchableOpacity>
+        <Spacer />
+        <Hr />
+        {cantProceed || isChecking ? (
+          <View testID="permissions-list" style={[styles.flexBetween, styles.boxesPadding]}>
+            {permissions.map(permission => (
+              <PermissionItemV2 key={permission.name} permission={permission} />
+            ))}
           </View>
-          {isGranted ? (
-            <>
-              <Spacer />
-              <SubmissionSettings
-                testID="submission-settings-cpt"
-                shadow={false}
-                cardStyle={{backgroundColor: colors.khaki}}
+        ) : (
+          <Spacer />
+        )}
+        {cantProceed ? (
+          <View style={styles.boxesPadding}>
+            <Text style={styles.guideText}>
+              <Trans
+                testID="permission-box-guide"
+                i18nKey="permissionBox.guide"
+                components={{
+                  Red: <Text style={styles.redTextColor} />,
+                  Grant: <Text style={styles.greenTextColor} />,
+                }}
               />
-            </>
-          ) : null}
-        </View>
-      ) : null}
-    </AnimatedCard>
+            </Text>
+          </View>
+        ) : isGranted ? (
+          <View testID="permission-box-plant-settings" style={{paddingHorizontal: 4}}>
+            <View style={[styles.flexBetween, {paddingVertical: 0}]}>
+              <View style={styles.flexRow}>
+                <IoIcon testID="settings-icon" name="settings-outline" size={24} color={colors.grayDarker} />
+                <Spacer />
+                <Text testID="permission-box-open-settings-text" style={styles.title}>
+                  {t('permissionBox.submissionSettings')}
+                </Text>
+              </View>
+              <TouchableOpacity
+                testID="toggle-settings-btn"
+                onPress={lockSettings ? onUnLock : handleToggleSettingsBox}
+              >
+                <IoIcon
+                  testID="settings-chevron-icon"
+                  name={lockSettings ? 'lock-closed' : 'chevron-forward'}
+                  size={24}
+                  color={colors.grayDarker}
+                  style={lockSettings ? {transform: [{rotate: openSettings ? '90deg' : '0deg'}]} : undefined}
+                />
+              </TouchableOpacity>
+            </View>
+            {isGranted ? (
+              <>
+                <Spacer />
+                <SubmissionSettings
+                  testID="submission-settings-cpt"
+                  shadow={false}
+                  cardStyle={{backgroundColor: colors.khaki}}
+                />
+              </>
+            ) : null}
+          </View>
+        ) : null}
+      </AnimatedView>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
+  boxShadow: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
   container: {
     paddingVertical: 12,
     paddingHorizontal: 0,
+    borderRadius: 10,
     overflow: 'hidden',
   },
   boxesPadding: {

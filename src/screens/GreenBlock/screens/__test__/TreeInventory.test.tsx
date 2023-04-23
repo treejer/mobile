@@ -1,7 +1,6 @@
-import {render} from 'ranger-testUtils/testingLibrary';
+import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
-import {act, fireEvent, waitFor} from '@testing-library/react-native';
 import {TreeLife} from 'utilities/helpers/treeInventory';
 
 describe('TreeInventory component', () => {
@@ -98,6 +97,14 @@ describe('TreeInventory component', () => {
         expect(submittedTab).toBeTruthy();
         expect(draftedTab).toBeFalsy();
       });
+    });
+    it('Tab = TreeLife.Submitted', () => {
+      const submittedTab = getElementByTestId('submitted-tab');
+      const draftedTab = queryElementByTestId('drafted-tab');
+      const filterTreesCpt = getElementByTestId('filter-trees-cpt');
+      expect(submittedTab).toBeTruthy();
+      expect(draftedTab).toBeFalsy();
+      expect(filterTreesCpt).toBeTruthy();
     });
   });
 });

@@ -5,6 +5,7 @@ export enum TreeLife {
 
 export enum TreeStatus {
   Pending = 'Pending',
+  NotVerified = 'NotVerified',
   Verified = 'Verified',
   Update = 'Update',
 }

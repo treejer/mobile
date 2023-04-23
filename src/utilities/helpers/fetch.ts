@@ -112,11 +112,6 @@ export function* handleSagaFetchError(e: AxiosError<ClientError>, options: Handl
       title: status ? i18next.t(`errors.${status}`, {lng: locale}) : undefined,
       message: Array.isArray(message) ? message[0] : message,
       mode: AlertMode.Error,
-      buttons: [
-        {
-          text: i18next.t('ok', {lng: locale}) as string,
-        },
-      ],
     });
   }
 }

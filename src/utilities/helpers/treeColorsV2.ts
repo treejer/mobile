@@ -21,6 +21,10 @@ export type TreeColorType = {
 };
 
 export const treeColorTypes: TreeColorType = {
+  [TreeStatus.NotVerified]: {
+    title: 'pending',
+    color: colors.yellow,
+  },
   [TreeStatus.Pending]: {
     title: 'pending',
     color: colors.pink,
@@ -52,13 +56,13 @@ export function treeColor(tree?: Tree, treeUpdateInterval?: number): string | un
   //   color = colors.claimed;
   // }
   if (tree?.treeStatus?.toString() === '3') {
-    color = treeColorTypes.pending.color;
+    color = treeColorTypes.NotVerified.color;
     return color;
   } else if (isUpdatePended(tree)) {
-    color = treeColorTypes.pending.color;
+    color = treeColorTypes.Pending.color;
     return color;
   } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-    color = treeColorTypes.update.color;
+    color = treeColorTypes.Update.color;
   } else {
     if (id <= 10000) {
       color = undefined;

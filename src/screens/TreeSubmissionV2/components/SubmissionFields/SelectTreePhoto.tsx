@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Image} from 'react-native-image-crop-picker';
-import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Modal} from 'react-native';
+import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
@@ -175,9 +175,10 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 0,
     paddingHorizontal: 0,
-    backgroundColor: colors.khaki,
-    overflow: 'hidden',
+    overflow: Platform.OS === 'ios' ? 'visible' : 'hidden',
+    borderRadius: 10,
     height: 104,
+    backgroundColor: colors.khaki,
   },
   bgStyle: {
     borderRadius: 10,
@@ -193,6 +194,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

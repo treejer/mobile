@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
@@ -49,9 +49,6 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
             imageStyle: styles.bgStyle,
             source: {
               uri: imageUrl,
-              imageStyle: {
-                opacity: 0.4,
-              },
             },
           }
         : {},
@@ -121,8 +118,9 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 0,
     backgroundColor: colors.khaki,
-    overflow: 'hidden',
+    overflow: Platform.OS === 'ios' ? 'visible' : 'hidden',
     height: 104,
+    borderRadius: 10,
   },
   bgStyle: {
     borderRadius: 10,
@@ -136,6 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   contentContainer: {
+    borderRadius: 10,
     paddingVertical: 16,
     paddingHorizontal: 16,
     flexDirection: 'row',
