@@ -585,6 +585,8 @@ export const en = {
       screen: 'Tree Inventory',
     },
     search: 'Search...',
+    bornDate: 'Born:',
+    lastUpdateDate: 'Last Update:',
   },
   drafted: 'Drafted',
   submitted: 'Submitted',

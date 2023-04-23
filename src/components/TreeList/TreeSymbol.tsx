@@ -1,11 +1,14 @@
 import React from 'react';
-import globalStyles from 'constants/styles';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {TreeImage} from './TreeImage';
-import {Hex2Dec} from 'utilities/helpers/hex';
+
 import {Tree} from 'types';
+import globalStyles from 'constants/styles';
+import {Hex2Dec} from 'utilities/helpers/hex';
+import {TreeImage} from './TreeImage';
 
 interface TreeSymbolPropsType {
+  horizontal?: boolean;
+  testID?: string;
   handlePress?: () => void;
   tree?: Tree;
   color?: string;
@@ -17,11 +20,30 @@ interface TreeSymbolPropsType {
   hideId?: boolean;
 }
 const TreeSymbol = (props: TreeSymbolPropsType) => {
-  const {handlePress, tree, color, size = 60, treeUpdateInterval, style, autoHeight, tint = true, hideId} = props;
+  const {
+    testID,
+    horizontal,
+    handlePress,
+    tree,
+    color,
+    size = 60,
+    treeUpdateInterval,
+    style,
+    autoHeight,
+    tint = true,
+    hideId,
+  } = props;
 
   return (
     <TouchableOpacity
-      style={[{height: autoHeight ? undefined : 80, marginBottom: autoHeight ? 0 : 15}, styles.tree]}
+      testID={testID}
+      style={[
+        {height: autoHeight ? undefined : 80, marginBottom: autoHeight ? 0 : 15},
+        styles.tree,
+        horizontal
+          ? [globalStyles.flexRow, globalStyles.alignItemsCenter, {margin: 0, width: undefined, padding: 0}]
+          : {},
+      ]}
       onPress={handlePress}
     >
       <TreeImage

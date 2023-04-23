@@ -105,11 +105,18 @@ jest.mock('react-native-vector-icons/Entypo', () => {
   return Icon;
 });
 
-jest.mock('@magic-sdk/react-native', () => {
+jest.mock('@magic-sdk/react-native-bare', () => {
   return {
     Magic: jest.fn(),
   };
 });
+
+jest.mock('@magic-ext/react-native-bare-oauth', () => {
+  return {
+    OAuthExtension: jest.fn(),
+  };
+});
+
 jest.mock('web3', () => {
   return function notJestFn() {
     return {
@@ -190,5 +197,11 @@ jest.mock('redux-persist', () => {
   return {
     ...real,
     persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
+  };
+});
+
+jest.mock('./src/utilities/hooks/useTreeUpdateInterval', () => {
+  return {
+    useTreeUpdateInterval: () => 200,
   };
 });

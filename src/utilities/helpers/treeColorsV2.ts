@@ -39,7 +39,7 @@ export const treeColorTypes: TreeColorType = {
   },
 };
 
-export function treeColor(tree?: Tree, treeUpdateInterval?: number): string | undefined {
+export function treeColorV2(tree?: Tree, treeUpdateInterval?: number): string | undefined {
   let color: string | undefined;
   if (!treeUpdateInterval) {
     return;

@@ -51,6 +51,9 @@ const globalStyles = StyleSheet.create({
   justifyContentBetween: {
     justifyContent: 'space-between',
   },
+  flexRow: {
+    flexDirection: 'row',
+  },
   flexWrap: {
     flexWrap: 'wrap',
   },

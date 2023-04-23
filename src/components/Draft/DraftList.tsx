@@ -35,7 +35,7 @@ export function DraftList(props: DraftListProps) {
   );
 
   return (
-    <View testID={testID} style={{flex: 1, width: '100%'}}>
+    <View testID={testID} style={styles.listContainer}>
       <FlashList<DraftedJourney>
         contentContainerStyle={styles.list}
         estimatedItemSize={68}
@@ -52,6 +52,10 @@ export function DraftList(props: DraftListProps) {
 }
 
 const styles = StyleSheet.create({
+  listContainer: {
+    flex: 1,
+    width: '100%',
+  },
   list: {
     paddingHorizontal: globalStyles.p1.padding,
     paddingBottom: globalStyles.p1.padding,

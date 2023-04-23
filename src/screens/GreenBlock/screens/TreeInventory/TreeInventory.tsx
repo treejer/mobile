@@ -10,6 +10,8 @@ import {FilterTabBar} from 'components/Filter/FilterTabBar';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import {DraftList} from 'components/Draft/DraftList';
+import {TreeListV2} from 'components/TreeListV2/TreeListV2';
+import Spacer from 'components/Spacer';
 import {FilterTrees} from 'components/Filter/FilterTrees';
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
@@ -81,13 +83,15 @@ export function TreeInventory(props: TreeInventoryProps) {
             />
           </View>
           <Tabs testID="tab-context" style={globalStyles.fill} tab={activeTab}>
-            <Tab testID="submitted-tab" tab={TreeLife.Submitted}>
+            <Tab testID="submitted-tab" style={globalStyles.fill} tab={TreeLife.Submitted}>
               <FilterTrees
                 testID="filter-trees-cpt"
                 filterList={mockFilters}
                 filters={treeFilters}
                 onFilter={handleFilterTrees}
               />
+              <Spacer times={6} />
+              <TreeListV2 />
             </Tab>
             <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
               <DraftList testID="draft-list-cpt" />
