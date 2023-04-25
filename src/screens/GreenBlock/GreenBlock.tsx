@@ -1,11 +1,13 @@
 import React, {useCallback, useEffect} from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
+
 import {GreenBlockRouteParamList} from 'types';
-import TreeDetails from './screens/TreeDetails';
 import TreeList from 'components/TreeList';
 import {Routes, VerifiedUserNavigationProp} from 'navigation/index';
 import {screenTitle} from 'utilities/helpers/documentTitle';
-import {createStackNavigator} from '@react-navigation/stack';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
+import TreeDetails from './screens/TreeDetails';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 interface Props extends VerifiedUserNavigationProp<Routes.GreenBlock> {}
 
@@ -16,6 +18,8 @@ function GreenBlock({navigation, route}: Props) {
   const filter = params?.filter || route.params?.filter;
   const tabFilter = params?.tabFilter || route.params?.tabFilter;
   const situationFilter = params?.situationFilter || route.params?.situationFilter;
+
+  const {useV1Submission} = useConfig();
 
   const shouldNavigateToTree = useCallback(() => {
     if (route.params?.shouldNavigateToTreeDetails) {
@@ -33,10 +37,13 @@ function GreenBlock({navigation, route}: Props) {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false, animationEnabled: true}}>
-      <Stack.Screen name={Routes.TreeInventory_V2}>
-        {props => <TreeInventory {...props} filter={{tab: tabFilter, situation: situationFilter}} />}
-      </Stack.Screen>
-      <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
+      {useV1Submission ? (
+        <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
+      ) : (
+        <Stack.Screen name={Routes.TreeInventory_V2}>
+          {props => <TreeInventory {...props} filter={{tab: tabFilter, situation: situationFilter}} />}
+        </Stack.Screen>
+      )}
       <Stack.Screen
         name={Routes.TreeDetails}
         component={TreeDetails}

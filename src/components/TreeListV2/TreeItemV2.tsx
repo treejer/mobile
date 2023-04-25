@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {Image, StyleSheet, View, Text} from 'react-native';
+import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
@@ -10,22 +10,22 @@ import {colors} from 'constants/values';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import TreeSymbol from 'components/TreeList/TreeSymbol';
 import {RenderIf} from 'components/Common/RenderIf';
-import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 export type TreeItemV2Props = {
   testID?: string;
+  onPress?: () => void;
   withDetail?: boolean;
   treeUpdateInterval: number;
   tree: Tree;
 };
 
 export function TreeItemV2(props: TreeItemV2Props) {
-  const {testID, withDetail, tree, treeUpdateInterval} = props;
+  const {testID, withDetail, tree, treeUpdateInterval, onPress} = props;
 
   const imageFs = tree?.treeSpecsEntity?.imageFs;
-  const size = imageFs ? 60 : 40;
+  const size = imageFs ? 60 : 38;
 
   const {t} = useTranslation();
   const {locale} = useSettings();
@@ -36,32 +36,35 @@ export function TreeItemV2(props: TreeItemV2Props) {
     () =>
       getStaticMapboxUrl(
         mapboxPrivateToken,
-        Number(tree.treeSpecsEntity.longitude) / Math.pow(10, 6),
-        Number(tree.treeSpecsEntity.latitude) / Math.pow(10, 6),
-        500,
-        300,
+        Number(tree?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        Number(tree?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+        200,
+        200,
       ),
-    [tree.treeSpecsEntity.longitude, tree.treeSpecsEntity.latitude],
+    [tree?.treeSpecsEntity?.longitude, tree?.treeSpecsEntity?.latitude],
   );
 
   return (
-    <Card testID={testID} style={[styles.bg, styles[`${cptSize}Container`]]}>
-      <RenderIf condition={!!withDetail}>
-        <Card style={styles.bg}>
-          <Image testID="location-image" source={{uri: locationImage}} style={styles.locationImage} />
-        </Card>
+    <TouchableOpacity testID={testID} style={[styles.bg, styles[`${cptSize}Container`]]} onPress={onPress}>
+      <RenderIf condition={!!withDetail && !!(tree?.treeSpecsEntity?.longitude && tree?.treeSpecsEntity?.latitude)}>
+        <View style={styles.bg}>
+          <Image testID="location-image" style={styles.locationImage} source={{uri: locationImage}} />
+        </View>
       </RenderIf>
-      <View style={globalStyles.alignItemsCenter}>
+      <View style={styles.contentContainer}>
         <View style={withDetail ? styles.treeImageContainer : undefined}>
           <TreeSymbol
             testID="tree-symbol-cpt"
             treeUpdateInterval={treeUpdateInterval}
             size={size}
             autoHeight
+            tree={tree}
             horizontal={withDetail}
+            handlePress={onPress}
           />
         </View>
         <RenderIf condition={!!withDetail}>
+          <Spacer />
           <View style={styles.textContentContainer}>
             <View style={styles.dateContainer}>
               <Text testID="plant-date-text" style={styles.dateText}>
@@ -79,7 +82,7 @@ export function TreeItemV2(props: TreeItemV2Props) {
                 {t('treeInventoryV2.lastUpdateDate')}
               </Text>
               <Text testID="update-date-text-fromNow" style={styles.dateText}>
-                {moment(Number(tree.lastUpdate.createdAt) * 1000)
+                {moment(Number(tree.lastUpdate ? tree.lastUpdate.createdAt : tree.plantDate) * 1000)
                   .locale(locale)
                   .fromNow()}
               </Text>
@@ -87,7 +90,7 @@ export function TreeItemV2(props: TreeItemV2Props) {
           </View>
         </RenderIf>
       </View>
-    </Card>
+    </TouchableOpacity>
   );
 }
 
@@ -98,21 +101,29 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   smallContainer: {
-    width: 54,
-    height: 72,
+    width: 64,
+    height: 80,
     borderRadius: 4,
     ...globalStyles.alignItemsCenter,
     ...globalStyles.justifyContentCenter,
+    ...colors.smShadow,
   },
   bigContainer: {
     width: 167,
     height: 167,
     borderRadius: 8,
+    ...colors.smShadow,
   },
   locationImage: {
     width: 167,
-    height: 76,
+    height: 72,
     borderRadius: 8,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 8,
   },
   textContentContainer: {
     width: '100%',

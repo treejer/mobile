@@ -5,6 +5,7 @@ import {Tree} from 'types';
 import globalStyles from 'constants/styles';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {TreeImage} from './TreeImage';
+import Spacer from 'components/Spacer';
 
 interface TreeSymbolPropsType {
   horizontal?: boolean;
@@ -54,6 +55,7 @@ const TreeSymbol = (props: TreeSymbolPropsType) => {
         color={color}
         treeUpdateInterval={treeUpdateInterval}
       />
+      {horizontal ? <Spacer /> : null}
       {!hideId && (
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree?.id!)}</Text>
       )}

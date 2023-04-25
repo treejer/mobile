@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -13,11 +13,24 @@ import {DraftList} from 'components/Draft/DraftList';
 import {TreeListV2} from 'components/TreeListV2/TreeListV2';
 import Spacer from 'components/Spacer';
 import {FilterTrees} from 'components/Filter/FilterTrees';
-import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
-import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {useSearchValue} from 'utilities/hooks/useSearchValue';
 import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
+import {usePagination} from 'utilities/hooks/usePagination';
+import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
+import {treeStatusCount} from 'utilities/helpers/treeColorsV2';
+import planterTreeQuery, {
+  PlanterTreesQueryQueryData,
+  PlanterTreesQueryQueryPartialData,
+} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
+import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
+
+export enum TreeItemUI {
+  WithDetail = 'WithDetail',
+  WithId = 'WithId',
+}
 
 export type TreeInventoryProps = {
   testID?: string;
@@ -35,31 +48,65 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
   const {filters: treeFilters, handleSetFilter: handleFilterTrees} = useArrayFilter<TreeStatus>();
+  const [treeItemUI, setTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
+
+  const walletAddress = useWalletAccount();
+
+  const {
+    persistedData: plantedTrees,
+    query: plantedTreesQuery,
+    refetchData: refetchPlantedTrees,
+    refetching: plantedRefetching,
+    loadMore: plantedLoadMore,
+  } = usePagination<
+    PlanterTreesQueryQueryData,
+    PlanterTreesQueryQueryData.Variables,
+    PlanterTreesQueryQueryPartialData.Trees[]
+  >(
+    planterTreeQuery,
+    {
+      address: walletAddress.toString().toLocaleLowerCase(),
+    },
+    'trees',
+    TreeLife.Submitted,
+  );
+
+  console.log(plantedTrees, 'plantedTreess ish shehehre');
+
+  const treeUpdateInterval = useTreeUpdateInterval();
 
   const {t} = useTranslation();
 
-  const mockFilters = [
-    {
-      title: TreeStatus.Verified,
-      count: 20,
-      color: colors.green,
-    },
-    {
-      title: TreeStatus.Pending,
-      count: 15,
-      color: colors.pink,
-    },
-    {
-      title: TreeStatus.NotVerified,
-      count: 20,
-      color: colors.yellow,
-    },
-    {
-      title: TreeStatus.Update,
-      count: 42,
-      color: colors.gray,
-    },
-  ];
+  const treeCountOf = useMemo(
+    () => treeStatusCount(plantedTrees, treeUpdateInterval),
+    [plantedTrees, treeUpdateInterval],
+  );
+
+  const filterButtons = useMemo(
+    () => [
+      {
+        title: TreeStatus.Verified,
+        count: treeCountOf?.Verified,
+        color: colors.green,
+      },
+      {
+        title: TreeStatus.Pending,
+        count: treeCountOf?.Pending,
+        color: colors.pink,
+      },
+      {
+        title: TreeStatus.NotVerified,
+        count: treeCountOf?.NotVerified,
+        color: colors.yellow,
+      },
+      {
+        title: TreeStatus.Update,
+        count: treeCountOf?.Update,
+        color: colors.gray,
+      },
+    ],
+    [treeCountOf],
+  );
 
   return (
     <SafeAreaView testID={testID} style={[globalStyles.screenView, globalStyles.fill]}>
@@ -86,12 +133,19 @@ export function TreeInventory(props: TreeInventoryProps) {
             <Tab testID="submitted-tab" style={globalStyles.fill} tab={TreeLife.Submitted}>
               <FilterTrees
                 testID="filter-trees-cpt"
-                filterList={mockFilters}
+                filterList={filterButtons}
                 filters={treeFilters}
                 onFilter={handleFilterTrees}
               />
               <Spacer times={6} />
-              <TreeListV2 />
+              <TreeListV2
+                testID="tree-list-v2"
+                verifiedTrees={plantedTrees}
+                treeItemUI={treeItemUI}
+                setTreeItemUI={setTreeItemUI}
+                treeUpdateInterval={treeUpdateInterval}
+              />
+              <Spacer times={6} />
             </Tab>
             <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
               <DraftList testID="draft-list-cpt" />

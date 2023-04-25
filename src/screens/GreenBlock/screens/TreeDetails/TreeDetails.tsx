@@ -54,7 +54,7 @@ function TreeDetails(_: Props) {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
   const {releaseDate, changeCheckMetaData} = useSettings();
-  const {isMainnet} = useConfig();
+  const {isMainnet, useV1Submission} = useConfig();
 
   const {dispatchSetTreeDetailToUpdate} = useNewCurrentJourney();
 
@@ -145,25 +145,28 @@ function TreeDetails(_: Props) {
         index: 0,
         routes: [
           {
-            name: Routes.TreeSubmission_V2,
+            name: useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2,
             params: {
-              initialRouteName: Routes.SubmitTree_V2,
+              initialRouteName: useV1Submission ? Routes.SelectPhoto : Routes.SubmitTree_V2,
             },
           },
         ],
       }),
     );
-    if (tree?.id) {
-      dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+    if (useV1Submission) {
+      setNewJourney({
+        treeIdToUpdate: tree?.id,
+        tree: treeDetails,
+        location: {
+          latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
+          longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
+        },
+      });
+    } else {
+      if (tree?.id) {
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+      }
     }
-    // setNewJourney({
-    //   treeIdToUpdate: tree?.id,
-    //   tree: treeDetails,
-    //   location: {
-    //     latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-    //     longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-    //   },
-    // });
   };
 
   if (loading) {

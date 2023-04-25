@@ -3,17 +3,19 @@ import {render} from '@testing-library/react-native';
 import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 
-// import ApolloProvider from 'services/apollo';
-// import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
 import appReducer from 'ranger-redux/reducer';
 import {initialWeb3State} from 'ranger-redux/modules/web3/web3';
 import {reducerInitiator, storeGenerator} from 'ranger-redux/store';
-import CurrentJourneyProvider from 'services/currentJourney';
 import {navigationContainerRef} from 'navigation/navigationRef';
+import {MockedProvider, MockedProviderProps} from '@apollo/client/testing';
 
 type AppReducer = Partial<ReturnType<typeof appReducer>>;
 
-export type Props = {initialState: AppReducer; children?: JSX.Element | JSX.Element[]};
+export type Props = {
+  initialState: AppReducer;
+  apolloState: MockedProviderProps['mocks'];
+  children?: JSX.Element | JSX.Element[];
+};
 
 const TestApp = ({initialState, children}: Props) => {
   const [store, setStore] = useState<any>();
@@ -88,7 +90,7 @@ const reducers = {
   web: initialWeb3State,
 };
 
-export const AllTheProviders = ({children, initialState}: Props) => {
+export const AllTheProviders = ({children, initialState, apolloState}: Props) => {
   const [store, setStore] = useState<any>();
 
   useEffect(() => {
@@ -100,23 +102,21 @@ export const AllTheProviders = ({children, initialState}: Props) => {
   }
   return (
     <Provider store={store}>
-      {/*<ApolloProvider>*/}
-      {/*<CurrentJourneyProvider>*/}
-      <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
-      {/*</CurrentJourneyProvider>*/}
-      {/*</ApolloProvider>*/}
+      <MockedProvider mocks={apolloState} addTypename>
+        <NavigationContainer ref={navigationContainerRef}>{children}</NavigationContainer>
+      </MockedProvider>
     </Provider>
   );
 };
 
-const customRender = (ui, initialState, options = {}) =>
+const customRender = (ui, initialState, apolloState: any[] = [], options = {}) =>
   render(ui, {
-    wrapper: props => <AllTheProviders {...props} initialState={initialState} />,
+    wrapper: props => <AllTheProviders {...props} initialState={initialState} apolloState={apolloState} />,
     ...options,
   });
 
 const renderTestApp = (initialState, options = {}) =>
-  render(<TestApp initialState={initialState} />, {
+  render(<TestApp initialState={initialState} apolloState={[]} />, {
     ...options,
   });
 

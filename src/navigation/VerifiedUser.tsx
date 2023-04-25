@@ -53,9 +53,9 @@ export function VerifiedUserNavigation() {
         component={MyProfile}
         options={{title: screenTitle('Profile')}}
       />
-      <VerifiedUserStack.Screen name={false ? Routes.TreeSubmission : Routes.TreeSubmission_V2}>
+      <VerifiedUserStack.Screen name={useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2}>
         {props =>
-          false ? (
+          useV1Submission ? (
             <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />
           ) : (
             <TreeSubmissionV2 {...props} plantTreePermissions={plantTreePermissions} />

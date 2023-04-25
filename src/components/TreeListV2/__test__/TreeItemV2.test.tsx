@@ -38,8 +38,8 @@ describe('TreeItemV2 component', () => {
         mapboxPrivateToken,
         Number(treeDetail.treeSpecsEntity.longitude) / Math.pow(10, 6),
         Number(treeDetail.treeSpecsEntity.latitude) / Math.pow(10, 6),
-        500,
-        300,
+        200,
+        200,
       );
 
       expect(treeSymbol).toBeTruthy();

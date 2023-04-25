@@ -2,6 +2,9 @@ import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
 import {TreeLife} from 'utilities/helpers/treeInventory';
+import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {MockedProviderProps} from '@apollo/client/testing';
+import {verifiedTress} from 'components/TreeListV2/__test__/TreeListV2.mock';
 
 describe('TreeInventory component', () => {
   it('TreeInventory component should be defined', () => {
@@ -9,10 +12,26 @@ describe('TreeInventory component', () => {
     expect(typeof TreeInventory).toBe('function');
   });
 
+  const mockQuery: MockedProviderProps['mocks'] = [
+    {
+      request: {
+        query: doucment,
+        variables: {
+          first: 40,
+          skip: 0 * 40,
+          orderBy: 'createdAt',
+          orderDirection: 'desc',
+          address: '',
+        },
+      },
+      result: {data: {trees: verifiedTress}},
+    },
+  ];
+
   describe('TreeInventory', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
-      const element = render(<TreeInventory />, reducersWithDraftsAndTreeList);
+      const element = render(<TreeInventory />, reducersWithDraftsAndTreeList, mockQuery as any);
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
     });
@@ -37,6 +56,14 @@ describe('TreeInventory component', () => {
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
     });
+
+    it('TreeList length should be 2', () => {
+      const treeListV2 = getElementByTestId('with-id-flatList');
+      console.log(treeListV2.props, 'heheheheheheh');
+      expect(treeListV2.props.data).toEqual(verifiedTress);
+      expect(treeListV2.props.data.length).toEqual(verifiedTress.length);
+    });
+
     it('SearchInInventory component should visible', async () => {
       const searchButton = getElementByTestId('search-button-cpt');
 
@@ -102,9 +129,28 @@ describe('TreeInventory component', () => {
       const submittedTab = getElementByTestId('submitted-tab');
       const draftedTab = queryElementByTestId('drafted-tab');
       const filterTreesCpt = getElementByTestId('filter-trees-cpt');
+      const treeListV2 = getElementByTestId('tree-list-v2');
+
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
       expect(filterTreesCpt).toBeTruthy();
+      expect(treeListV2).toBeTruthy();
+    });
+    it('Tab = TreeLife.Drafted', async () => {
+      const tabDraftedButton = getElementByTestId(`tab-button-${TreeLife.Drafted}`);
+
+      await act(async () => {
+        await fireEvent.press(tabDraftedButton, TreeLife.Drafted);
+      });
+      const submittedTab = queryElementByTestId('submitted-tab');
+      const draftedTab = getElementByTestId('drafted-tab');
+      const filterTreesCpt = queryElementByTestId('filter-trees-cpt');
+      const draftList = getElementByTestId('draft-list-cpt');
+
+      expect(submittedTab).toBeFalsy();
+      expect(draftedTab).toBeTruthy();
+      expect(filterTreesCpt).toBeFalsy();
+      expect(draftList).toBeTruthy();
     });
   });
 });

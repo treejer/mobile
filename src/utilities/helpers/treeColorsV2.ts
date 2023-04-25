@@ -74,6 +74,42 @@ export function treeColorV2(tree?: Tree, treeUpdateInterval?: number): string | 
   return color;
 }
 
+export function treeStatusCount(trees: Tree[] | null, treeUpdateInterval: number) {
+  const defaultAcc = {
+    [TreeStatus.Update]: 0,
+    [TreeStatus.Pending]: 0,
+    [TreeStatus.Verified]: 0,
+    [TreeStatus.NotVerified]: 0,
+  };
+
+  return trees
+    ? trees?.reduce((acc, tree) => {
+        const id = Number(Hex2Dec(tree?.id || ''));
+        if (tree?.treeStatus?.toString() === '3') {
+          return {
+            ...acc,
+            [TreeStatus.NotVerified]: acc[TreeStatus.NotVerified] + 1,
+          };
+        } else if (isUpdatePended(tree)) {
+          return {
+            ...acc,
+            [TreeStatus.Pending]: acc[TreeStatus.Pending] + 1,
+          };
+        } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
+          return {
+            ...acc,
+            [TreeStatus.Update]: acc[TreeStatus.Update] + 1,
+          };
+        } else {
+          return {
+            ...acc,
+            [TreeStatus.Verified]: acc[TreeStatus.Verified] + 1,
+          };
+        }
+      }, defaultAcc)
+    : defaultAcc;
+}
+
 export function isUpdatePended(tree: Tree): boolean {
   return tree?.lastUpdate?.updateStatus?.toString() === '1';
 }
