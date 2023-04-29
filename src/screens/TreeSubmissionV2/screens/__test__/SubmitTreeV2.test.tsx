@@ -10,12 +10,103 @@ import {
   mockPlantTreePermissionsLocationGranted,
 } from 'screens/TreeSubmissionV2/components/__test__/mock';
 import {onBoardingOne} from '../../../../../assets/images';
+import {MockedProviderProps} from '@apollo/client/testing';
+import document from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
+import {screen} from '@testing-library/react-native';
+
+const canPlantMockQuery: MockedProviderProps['mocks'] = [
+  {
+    request: {
+      query: document,
+      variables: {
+        id: '',
+        // id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
+      },
+    },
+    result: {
+      data: {
+        planter: {
+          __typename: 'Planter',
+          balance: '245293209876543209',
+          balanceProjected: '146054706790123456791',
+          countryCode: '0',
+          id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
+          plantedCount: '10',
+          planterType: '2',
+          status: '1',
+          supplyCap: '100',
+        },
+      },
+    },
+  },
+];
+
+const cantPlantMockQuery = [
+  {
+    request: {
+      query: document,
+      variables: {
+        id: '',
+        // id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
+      },
+    },
+    result: {
+      data: {
+        planter: {
+          __typename: 'Planter',
+          balance: '245293209876543209',
+          balanceProjected: '146054706790123456791',
+          countryCode: '0',
+          id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
+          plantedCount: '121',
+          planterType: '2',
+          status: '1',
+          supplyCap: '100',
+        },
+      },
+    },
+  },
+];
 
 describe('SubmitTreeV2 component', () => {
   it('SubmitTreeV2 component should be defined', () => {
     expect(SubmitTreeV2).toBeDefined();
     expect(typeof SubmitTreeV2).toBe('function');
   });
+  describe('SubmitTreeV2, cant plant', () => {
+    let getElementByTestId, queryElementByTestId;
+
+    console.log(cantPlantMockQuery);
+
+    beforeEach(() => {
+      const element = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        goerliReducers,
+        cantPlantMockQuery as any,
+      );
+      getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
+    });
+
+    it('components/elements should be defined', async () => {
+      const cantPlantView = await screen.findByTestId('cant-plant-view');
+      const permissionBox = queryElementByTestId('check-permissions-box');
+      const submissionTitle = queryElementByTestId('submission-title');
+      const selectTreePhoto = queryElementByTestId('select-tree-photo-cpt');
+      const selectTreeLocation = queryElementByTestId('select-tree-location-cpt');
+
+      expect(cantPlantView).toBeTruthy();
+
+      expect(permissionBox).toBeFalsy();
+      expect(submissionTitle).toBeFalsy();
+      expect(selectTreePhoto).toBeFalsy();
+      expect(selectTreeLocation).toBeFalsy();
+    });
+  });
+
   describe('SubmitTreeV2, permissions = all granted', () => {
     let getElementByTestId, queryElementByTestId;
 
@@ -26,13 +117,14 @@ describe('SubmitTreeV2 component', () => {
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
         />,
         goerliReducers,
+        canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
     });
 
-    it('components/elements should be defined', () => {
-      const permissionBox = getElementByTestId('check-permissions-box');
+    it('components/elements should be defined', async () => {
+      const permissionBox = await screen.findByTestId('check-permissions-box');
       const submissionTitle = getElementByTestId('submission-title');
       const selectTreePhoto = getElementByTestId('select-tree-photo-cpt');
       const selectTreeLocation = getElementByTestId('select-tree-location-cpt');
@@ -68,6 +160,7 @@ describe('SubmitTreeV2 component', () => {
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsLocationGranted} />}
         />,
         goerliReducers,
+        canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -109,6 +202,7 @@ describe('SubmitTreeV2 component', () => {
             },
           },
         },
+        canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -151,6 +245,7 @@ describe('SubmitTreeV2 component', () => {
             canDraft: true,
           },
         },
+        canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -213,6 +308,7 @@ describe('SubmitTreeV2 component', () => {
             canDraft: true,
           },
         },
+        canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
@@ -291,6 +387,7 @@ describe('SubmitTreeV2 component', () => {
             nurseryContinuedUpdatingLocation: true,
           },
         },
+        canPlantMockQuery as any,
       );
 
       const selectTreeLocationCpt = queryElementByTestId('select-tree-location-cpt');
@@ -316,6 +413,7 @@ describe('SubmitTreeV2 component', () => {
             nurseryContinuedUpdatingLocation: false,
           },
         },
+        canPlantMockQuery as any,
       );
       const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
       expect(selectTreeLocationCpt).toBeTruthy();
@@ -341,6 +439,7 @@ describe('SubmitTreeV2 component', () => {
             nurseryContinuedUpdatingLocation: true,
           },
         },
+        canPlantMockQuery as any,
       );
       const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
       expect(selectTreeLocationCpt).toBeTruthy();
@@ -367,6 +466,7 @@ describe('SubmitTreeV2 component', () => {
           nurseryContinuedUpdatingLocation: false,
         },
       },
+      canPlantMockQuery as any,
     );
     const selectTreeLocationCpt = getElementByTestId('select-tree-location-cpt');
     expect(selectTreeLocationCpt).toBeTruthy();
@@ -399,6 +499,7 @@ describe('SubmitTreeV2 component', () => {
           },
         },
       },
+      canPlantMockQuery as any,
     );
 
     const unlockBtn = getElementByTestId('toggle-settings-btn');

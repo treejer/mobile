@@ -548,6 +548,10 @@ export const en = {
     camera: 'Camera',
     gallery: 'Gallery',
     photo: 'Photo',
+    cantPlant: {
+      supplyCapReached: 'You reached your supply cap limit.',
+      contactSupport: 'Please contact customer support to plant more trees!',
+    },
     selectPhoto: 'Select the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
     changePhoto: 'Change the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
     titles: {

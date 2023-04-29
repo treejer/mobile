@@ -7,6 +7,7 @@ import {CommonActions, useNavigation} from '@react-navigation/native';
 import {Routes} from 'navigation/Navigation';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
+import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {DraftJourneyModal} from 'screens/TreeSubmissionV2/components/DraftJourneyModal/DraftJourneyModal';
 import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
@@ -17,6 +18,7 @@ import {SelectTreePhoto, TOnSelectTree} from 'screens/TreeSubmissionV2/component
 import {DraftType, useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {useNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubmissionField';
 import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
@@ -34,16 +36,18 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const {plantTreePermissions} = props;
   const {userLocation} = plantTreePermissions;
 
+  const walletAddress = useWalletAccount();
+  const {data, canPlant} = usePlanterStatusQuery(walletAddress);
+
+  console.log(canPlant, 'data idadsf');
+
   const [draftState, setDraftState] = useState<TDraftState | null>(null);
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
 
   const {journey, dispatchSelectTreePhoto, dispatchClearJourney} = useCurrentJourney();
-  const {drafts, dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
+  const {dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
 
-  console.log(drafts, 'drafts');
   const {isConnected} = useNetInfo();
-
-  console.log(journey, 'journey is here');
 
   const navigation = useNavigation<any>();
   const {t} = useTranslation();
@@ -124,6 +128,16 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     () => (journey.isUpdate ? 'update' : 'plant') + (journey.isSingle ? 'Single' : 'Nursery'),
     [],
   );
+
+  if (canPlant === false) {
+    return (
+      <View testID="cant-plant-view" style={styles.cantPlantContainer}>
+        <Text style={styles.cantPlantTitle}>{t('submitTreeV2.cantPlant.supplyCapReached')}</Text>
+        <Spacer times={4} />
+        <Text style={styles.cantPlantDesc}>{t('submitTreeV2.cantPlant.contactSupport')}</Text>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -224,5 +238,23 @@ const styles = StyleSheet.create({
   greenText: {
     color: colors.green,
     fontSize: 12,
+  },
+  cantPlantContainer: {
+    backgroundColor: colors.khaki,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...globalStyles.p1,
+  },
+  cantPlantTitle: {
+    fontSize: 22,
+    textAlign: 'center',
+    color: colors.green,
+    fontWeight: '500',
+  },
+  cantPlantDesc: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: colors.grayLight,
   },
 });

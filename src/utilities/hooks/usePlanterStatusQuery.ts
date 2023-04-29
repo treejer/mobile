@@ -1,10 +1,13 @@
+import {Dispatch, useCallback, useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NetworkStatus, useQuery} from '@apollo/client';
+
 import PlanterStatusQuery, {
   PlanterStatusQueryQueryData,
 } from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
-import {Dispatch, useCallback, useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
+import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 
 type Planter = PlanterStatusQueryQueryData.Planter;
 
@@ -14,6 +17,12 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
   const [planter, setPlanter] = usePlanterStatusQueryPersisted();
 
   const {offlineTrees} = useOfflineTrees();
+  const {useV1Submission} = useConfig();
+  const {drafts} = useDraftedJourneys();
+
+  const draftedPlants = useV1Submission
+    ? offlineTrees.planted?.length
+    : drafts.filter(draft => !draft.journey.isUpdate).length;
 
   const query = useQuery<PlanterStatusQueryQueryData>(PlanterStatusQuery, {
     variables: {
@@ -52,8 +61,9 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
   }, [address, query, setPlanter]);
 
   const refetching = query.networkStatus === NetworkStatus.refetch;
+  console.log(planter?.plantedCount, draftedPlants);
   const canPlant = planter
-    ? Number(planter?.plantedCount || 0) + (offlineTrees?.planted?.length || 0) <= Number(planter?.supplyCap)
+    ? Number(planter?.plantedCount || 0) + (draftedPlants || 0) <= Number(planter?.supplyCap)
     : null;
 
   return {data: planter, planterQuery: query, refetchPlanterStatus, refetching, canPlant};

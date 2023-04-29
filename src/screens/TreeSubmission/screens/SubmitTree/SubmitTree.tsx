@@ -41,7 +41,7 @@ import {TreeSubmissionStackNavigationProp} from 'screens/TreeSubmission/TreeSubm
 import {useCurrentJourney} from 'services/currentJourney';
 import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {useConfig, useMagic, useTreeFactory, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {useConfig, useMagic, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 interface Props {
   navigation: TreeSubmissionStackNavigationProp<Routes.SubmitTree>;
