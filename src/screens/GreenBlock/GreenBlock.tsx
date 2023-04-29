@@ -17,7 +17,8 @@ function GreenBlock({navigation, route}: Props) {
   const {params} = route;
   const filter = params?.filter || route.params?.filter;
   const tabFilter = params?.tabFilter || route.params?.tabFilter;
-  const situationFilter = params?.situationFilter || route.params?.situationFilter;
+  const submittedFilter = params?.submittedFilter || route.params?.submittedFilter;
+  const notVerifiedFilter = params?.notVerifiedFilter || route.params?.notVerifiedFilter;
 
   const {useV1Submission} = useConfig();
 
@@ -41,7 +42,12 @@ function GreenBlock({navigation, route}: Props) {
         <Stack.Screen name={Routes.TreeList}>{props => <TreeList {...props} filter={filter} />}</Stack.Screen>
       ) : (
         <Stack.Screen name={Routes.TreeInventory_V2}>
-          {props => <TreeInventory {...props} filter={{tab: tabFilter, situation: situationFilter}} />}
+          {props => (
+            <TreeInventory
+              {...props}
+              filter={{tab: tabFilter, submittedStatus: submittedFilter, notVerifiedStatus: notVerifiedFilter}}
+            />
+          )}
         </Stack.Screen>
       )}
       <Stack.Screen

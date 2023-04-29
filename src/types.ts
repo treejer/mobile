@@ -2,9 +2,11 @@ import {TreeJourney} from 'screens/TreeSubmission/types';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import {Routes} from 'navigation/index';
-import {TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
+import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
+import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
+export type TreeInList = PlanterTreesQueryQueryPartialData.Trees;
 
 export interface MainTabsParamList extends Record<string, any> {
   Profile: undefined;
@@ -14,7 +16,8 @@ export interface MainTabsParamList extends Record<string, any> {
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
     tabFilter?: TreeLife;
-    situationFilter?: TreeStatus;
+    notVerifiedFilter?: NotVerifiedTreeStatus[];
+    submittedFilter?: SubmittedTreeStatus[];
   };
   Activity: {
     filters: string[];

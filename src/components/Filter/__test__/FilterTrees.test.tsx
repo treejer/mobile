@@ -1,7 +1,7 @@
 import {render} from '@testing-library/react-native';
 
 import {FilterTrees} from 'components/Filter/FilterTrees';
-import {TreeStatus} from 'utilities/helpers/treeInventory';
+import {SubmittedTreeStatus} from 'utilities/helpers/treeInventory';
 import {colors} from 'constants/values';
 
 describe('FilterTrees component', () => {
@@ -15,17 +15,17 @@ describe('FilterTrees component', () => {
 
     const mockFilters = [
       {
-        title: TreeStatus.Verified,
+        title: SubmittedTreeStatus.Verified,
         count: 20,
         color: colors.green,
       },
       {
-        title: TreeStatus.Pending,
+        title: SubmittedTreeStatus.Pending,
         count: 15,
         color: colors.pink,
       },
       {
-        title: TreeStatus.Update,
+        title: SubmittedTreeStatus.Update,
         count: 42,
         color: colors.gray,
       },
@@ -36,7 +36,7 @@ describe('FilterTrees component', () => {
         <FilterTrees
           testID="filter-trees-cpt"
           filterList={mockFilters}
-          filters={[TreeStatus.Update]}
+          filters={[SubmittedTreeStatus.Update]}
           onFilter={() => {}}
         />,
       );

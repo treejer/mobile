@@ -1,30 +1,29 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {TreeStatus} from 'utilities/helpers/treeInventory';
 import {FilterTreeButton} from 'components/Filter/FilterTreeButton';
 
-export type FilterTree = {
-  title: TreeStatus;
+export type FilterTree<T> = {
+  title: T;
   count: number;
   color: string;
 };
 
-export type FilterTreesProps = {
+export type FilterTreesProps<T> = {
   testID?: string;
-  filterList: FilterTree[];
-  filters: TreeStatus[];
-  onFilter: (filter: TreeStatus) => void;
+  filterList: FilterTree<T>[];
+  filters: T[];
+  onFilter: (filter: T) => void;
 };
 
-export function FilterTrees(props: FilterTreesProps) {
+export function FilterTrees<T>(props: FilterTreesProps<T>) {
   const {testID, filterList, filters, onFilter} = props;
 
   return (
     <View testID={testID} style={styles.flexRow}>
       {filterList.map(filter => (
-        <FilterTreeButton
+        <FilterTreeButton<T>
           testID={`filter-tree-button-${filter.title}`}
-          key={filter.title}
+          key={`filter-${filter.title}`}
           isActive={filters.includes(filter.title)}
           tree={filter}
           onPress={() => onFilter(filter.title)}

@@ -115,4 +115,47 @@ describe('TreeListV2', () => {
       expect(withIdFlatList).toBeFalsy();
     });
   });
+  describe('TreeListV2 loading = true', () => {
+    const {
+      result: {current},
+    } = renderHook(() => useState(TreeItemUI.WithDetail));
+
+    const [treeItemUI, setTreeITemUI] = current;
+
+    let getElementByTestId, queryElementByTestId;
+    beforeEach(() => {
+      const element = render(
+        <TreeListV2
+          treeItemUI={treeItemUI}
+          setTreeItemUI={setTreeITemUI}
+          verifiedTrees={verifiedTress as any}
+          treeUpdateInterval={20}
+          loading={true}
+        />,
+        goerliReducers,
+      );
+      getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
+    });
+
+    it('components/elements should be defined', () => {
+      const selectTreeItemSizeContainer = getElementByTestId('select-tree-item-size');
+      const smallButtonSize = getElementByTestId('small-size-button');
+      const smallButtonIconSize = getElementByTestId('small-size-icon');
+      const bigButtonSize = getElementByTestId('big-size-button');
+      const bigButtonIconSize = getElementByTestId('big-size-icon');
+
+      const loading = getElementByTestId('tree-list-v2-loading');
+
+      expect(selectTreeItemSizeContainer).toBeTruthy();
+      expect(smallButtonSize).toBeTruthy();
+      expect(smallButtonIconSize).toBeTruthy();
+      expect(smallButtonIconSize.props.name).toBe('th');
+      expect(bigButtonSize).toBeTruthy();
+      expect(bigButtonIconSize).toBeTruthy();
+      expect(bigButtonIconSize.props.name).toBe('th-large');
+
+      expect(loading).toBeTruthy();
+    });
+  });
 });

@@ -587,8 +587,13 @@ export const en = {
     search: 'Search...',
     bornDate: 'Born:',
     lastUpdateDate: 'Last Update:',
+    shortcuts: 'Shortcuts:',
+    startPlant: 'Start plant',
+    backProfile: 'Back to profile',
+    visitNotVerified: 'Visit not verified tab',
   },
   drafted: 'Drafted',
   submitted: 'Submitted',
+  NotVerified: 'Not Verified',
   empty: 'Empty',
 };

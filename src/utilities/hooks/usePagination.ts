@@ -1,5 +1,5 @@
 import {Dispatch, useCallback, useEffect, useMemo, useState} from 'react';
-import { useQuery, NetworkStatus, OperationVariables } from "@apollo/client";
+import {NetworkStatus, OperationVariables, useQuery} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function usePagination<TQueryData, TVariables extends OperationVariables, TPersistedData>(
@@ -10,11 +10,13 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
   keepData?: boolean,
   manualPerPage?: number,
 ) {
-  const perPage = useMemo(() => manualPerPage || 40, []);
+  const perPage = useMemo(() => manualPerPage || 20, []);
 
   const [page, setPage] = useState(0);
 
   const [persistedData, setPersistedData] = usePersistedData<TPersistedData>(storageKey);
+
+  const [refetching, setRefetching] = useState(false);
 
   const paginationProps = useCallback(
     (newPage: number) => ({
@@ -57,17 +59,19 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
   }, [dataKey, query.data]);
 
   const refetchData = useCallback(
-    async (newVariables?: TVariables) => {
+    async (newVariables?: TVariables, silent?: boolean) => {
       setPage(0);
+      setRefetching(!silent);
       await query.refetch({
         ...(newVariables || variables),
         ...paginationProps(0),
       });
+      setRefetching(false);
     },
     [variables, query, setPage, paginationProps],
   );
 
-  const refetching = query.networkStatus === NetworkStatus.refetch;
+  // const refetching = query.networkStatus === NetworkStatus.refetch;
 
   const loadMore = useCallback(async () => {
     const newPage = page + 1;
@@ -88,7 +92,7 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
     setPage(0);
   }, []);
 
-  return {persistedData, query, refetchData, refetching, loadMore, resetPagination, page};
+  return {persistedData, query, loading: query.loading, refetchData, refetching, loadMore, resetPagination, page};
 }
 
 export function usePersistedData<TData>(storageKey: string): [TData | null, Dispatch<TData | null>] {

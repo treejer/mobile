@@ -163,4 +163,77 @@ describe('useArrayFilter hook', () => {
       expect(result.current.data).toBe(null);
     });
   });
+  describe('useArrayFilter custom filter handler', () => {
+    it('pass initial filters and canSelectMultiple = false', () => {
+      const {result} = renderHook(() =>
+        useArrayFilter<string, {title: string; status: string}>({
+          defaultFilters: ['status 1'],
+          canSelectMultiple: false,
+        }),
+      );
+
+      expect(result.current.filters).toEqual(['status 1']);
+      expect(result.current.data).toEqual(null);
+
+      act(() => {
+        result.current.handleSetFilter('status 2');
+      });
+      expect(result.current.filters).toEqual(['status 2']);
+      act(() => {
+        result.current.handleSetFilter('status 2');
+      });
+      expect(result.current.filters).toEqual([]);
+    });
+
+    it('use custom filter handler filter if even filters is empty', () => {
+      const mockData = ['one', 'two', 'three'];
+      const {result} = renderHook(() =>
+        useArrayFilter<string, string>({
+          defaultData: mockData,
+          canSelectMultiple: false,
+          customFilterHandler: (data, filters) => {
+            return data.filter(item => filters.includes(item));
+          },
+        }),
+      );
+
+      expect(result.current.filters).toEqual([]);
+      expect(result.current.data).toEqual([]);
+    });
+    it('use custom filter handler', () => {
+      const mockData = ['one', 'two', 'three'];
+      const {result} = renderHook(() =>
+        useArrayFilter<string, string>({
+          defaultData: mockData,
+          canSelectMultiple: false,
+          customFilterHandler: (data, filters) => {
+            return data.filter(item => (filters.length ? filters.includes(item) : item));
+          },
+        }),
+      );
+
+      expect(result.current.filters).toEqual([]);
+      expect(result.current.data).toEqual(mockData);
+
+      act(() => {
+        result.current.handleSetFilter('two');
+      });
+      expect(result.current.filters).toEqual(['two']);
+      expect(result.current.data).toEqual(['two']);
+      act(() => {
+        result.current.handleSetFilter('one');
+      });
+      expect(result.current.data).toEqual(['one']);
+      let data;
+
+      act(() => {
+        result.current.handleSetFilter('1');
+      });
+      act(() => {
+        data = result.current.handleFilterData(['1', '2', '3']);
+      });
+
+      expect(data).toEqual(['1']);
+    });
+  });
 });

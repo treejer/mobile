@@ -5,19 +5,23 @@ export type TUseArrayFilter<T, D = any> = {
   filters: T[];
   setFilters: React.Dispatch<React.SetStateAction<T[]>>;
   handleSetFilter: (filter: T) => void;
-  handleFilterData: (array: D[], checkWhat: string) => D[];
+  handleFilterData: (array: D[], checkWhat?: string) => D[];
 };
 
 export type TUseArrayFilterArgs<T, D = any> = {
   defaultFilters?: T[];
-  defaultData?: D[];
+  defaultData?: D[] | null;
   checkWhat?: string;
+  canSelectMultiple?: boolean;
+  customFilterHandler?: (array: D[], filters: T[]) => D[];
 };
 
 export function useArrayFilter<T, D = any>({
   defaultFilters,
   defaultData,
   checkWhat,
+  customFilterHandler,
+  canSelectMultiple = true,
 }: TUseArrayFilterArgs<T, D> = {}): TUseArrayFilter<T, D> {
   const [filters, setFilters] = useState<T[]>(defaultFilters || []);
   const [data, setData] = useState<D[] | null>(defaultData || null);
@@ -33,17 +37,21 @@ export function useArrayFilter<T, D = any>({
       if (filters?.some(filter => filter === pressedFilter)) {
         setFilters(filters.filter(filter => filter !== pressedFilter));
       } else {
-        setFilters([...filters, pressedFilter]);
+        setFilters([...(canSelectMultiple ? filters : []), pressedFilter]);
       }
     },
-    [filters],
+    [filters, canSelectMultiple],
   );
 
   const handleFilterLocalData = useCallback(() => {
-    if (data && defaultData && checkWhat) {
-      setData(defaultData?.filter(item => (filters.length ? filters.includes(item[checkWhat]) : item)));
+    if (data && defaultData && (customFilterHandler || checkWhat)) {
+      setData(
+        customFilterHandler
+          ? customFilterHandler(defaultData, filters)
+          : defaultData?.filter(item => (filters.length && !!checkWhat ? filters.includes(item[checkWhat]) : item)),
+      );
     }
-  }, [filters, data, checkWhat]);
+  }, [filters, data, defaultData, checkWhat, customFilterHandler]);
 
   useEffect(() => {
     if (data && defaultData) {
@@ -52,10 +60,12 @@ export function useArrayFilter<T, D = any>({
   }, [filters]);
 
   const handleFilterData = useCallback(
-    (data: D[], checkWhat: string) => {
-      return data.filter(item => (filters.length ? filters.includes(item[checkWhat]) : item));
+    (data: D[], checkWhat?: string) => {
+      return customFilterHandler
+        ? customFilterHandler(data, filters)
+        : data.filter(item => (filters.length && !!checkWhat ? filters.includes(item[checkWhat]) : item));
     },
-    [filters],
+    [filters, customFilterHandler],
   );
 
   return {

@@ -3,7 +3,7 @@ import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
-import {Tree} from 'types';
+import {TreeInList} from 'types';
 import {mapboxPrivateToken} from 'services/config';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -13,15 +13,15 @@ import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 
-export type TreeItemV2Props = {
+export type TreeItemV2Props<T> = {
   testID?: string;
   onPress?: () => void;
   withDetail?: boolean;
   treeUpdateInterval: number;
-  tree: Tree;
+  tree: TreeInList;
 };
 
-export function TreeItemV2(props: TreeItemV2Props) {
+export function TreeItemV2<T>(props: TreeItemV2Props<T>) {
   const {testID, withDetail, tree, treeUpdateInterval, onPress} = props;
 
   const imageFs = tree?.treeSpecsEntity?.imageFs;

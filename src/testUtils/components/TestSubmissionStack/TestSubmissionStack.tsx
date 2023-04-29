@@ -13,6 +13,7 @@ import TreeDetails from 'screens/GreenBlock/screens/TreeDetails';
 export type TestSubmissionStackProps = {
   name: Routes;
   component: JSX.Element;
+  stack?: Routes.TreeSubmission_V2 | Routes.GreenBlock;
 };
 
 const RootStack = createStackNavigator();
@@ -22,7 +23,7 @@ const SubmissionStack = createStackNavigator();
 const GreenBlockStack = createStackNavigator();
 
 export function TestSubmissionStack(props: TestSubmissionStackProps) {
-  const {name, component: Component} = props;
+  const {name, stack, component: Component} = props;
 
   const SubmissionNavigator = () => {
     return (
@@ -68,7 +69,7 @@ export function TestSubmissionStack(props: TestSubmissionStackProps) {
   const Another = () => <View></View>;
 
   return (
-    <RootStack.Navigator>
+    <RootStack.Navigator initialRouteName={stack}>
       <RootStack.Screen name={Routes.TreeSubmission_V2} component={SubmissionNavigator} />
       <RootStack.Screen name={Routes.GreenBlock} component={GreenBlockNavigator} />
       <RootStack.Screen name="ANOTHER" component={Another} />

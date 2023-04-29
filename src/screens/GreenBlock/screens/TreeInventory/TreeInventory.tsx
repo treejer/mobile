@@ -1,9 +1,8 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
-import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {FilterTabBar} from 'components/Filter/FilterTabBar';
@@ -14,11 +13,20 @@ import {TreeListV2} from 'components/TreeListV2/TreeListV2';
 import Spacer from 'components/Spacer';
 import {FilterTrees} from 'components/Filter/FilterTrees';
 import {useSearchValue} from 'utilities/hooks/useSearchValue';
-import {treeInventoryTabs, TreeLife, TreeStatus} from 'utilities/helpers/treeInventory';
+import {
+  handleFilterSubmittedTrees,
+  notVerifiedTreesButtons,
+  NotVerifiedTreeStatus,
+  submittedTreesButtons,
+  SubmittedTreeStatus,
+  treeInventoryTabs,
+  TreeLife,
+} from 'utilities/helpers/treeInventory';
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 import {usePagination} from 'utilities/hooks/usePagination';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
-import {treeStatusCount} from 'utilities/helpers/treeColorsV2';
+import {submittedTreeStatusCount} from 'utilities/helpers/treeColorsV2';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import planterTreeQuery, {
   PlanterTreesQueryQueryData,
   PlanterTreesQueryQueryPartialData,
@@ -36,7 +44,8 @@ export type TreeInventoryProps = {
   testID?: string;
   filter?: {
     tab?: TreeLife;
-    situation?: TreeStatus;
+    submittedStatus?: SubmittedTreeStatus[];
+    notVerifiedStatus?: NotVerifiedTreeStatus[];
   };
 };
 
@@ -47,17 +56,32 @@ export function TreeInventory(props: TreeInventoryProps) {
   const searchValue = useSearchValue();
 
   const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
-  const {filters: treeFilters, handleSetFilter: handleFilterTrees} = useArrayFilter<TreeStatus>();
-  const [treeItemUI, setTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
+
+  useEffect(() => {
+    if (filter?.tab) {
+      setActiveTab(filter?.tab);
+    }
+  }, [filter]);
+
+  const {filters: notVerifiedTreeFilters, handleSetFilter: handleSetFilterNotVerifiedTrees} =
+    useArrayFilter<NotVerifiedTreeStatus>({
+      defaultFilters:
+        filter?.tab === TreeLife.NotVerified && filter?.notVerifiedStatus ? filter?.notVerifiedStatus : [],
+      canSelectMultiple: false,
+    });
+
+  const [submittedTreeItemUI, setSubmittedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
+  const [notVerifiedTreeItemUI, setNotVerifiedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
 
   const walletAddress = useWalletAccount();
+  const treeUpdateInterval = useTreeUpdateInterval();
 
   const {
-    persistedData: plantedTrees,
-    query: plantedTreesQuery,
-    refetchData: refetchPlantedTrees,
-    refetching: plantedRefetching,
-    loadMore: plantedLoadMore,
+    persistedData: submittedTrees,
+    loading: submittedTreesLoading,
+    refetchData: refetchSubmittedTrees,
+    refetching: submittedTreesRefetching,
+    loadMore: submittedTreesLoadMore,
   } = usePagination<
     PlanterTreesQueryQueryData,
     PlanterTreesQueryQueryData.Variables,
@@ -71,41 +95,30 @@ export function TreeInventory(props: TreeInventoryProps) {
     TreeLife.Submitted,
   );
 
-  console.log(plantedTrees, 'plantedTreess ish shehehre');
+  const {
+    filters: submittedTreeFilters,
+    handleSetFilter: handleSetFilterSubmittedTrees,
+    data: filteredSubmittedTrees,
+  } = useArrayFilter<SubmittedTreeStatus, PlanterTreesQueryQueryPartialData.Trees>({
+    defaultFilters: filter?.tab === TreeLife.Submitted && filter?.submittedStatus ? filter?.submittedStatus : [],
+    defaultData: submittedTrees,
+    customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters, treeUpdateInterval),
+    canSelectMultiple: false,
+  });
 
-  const treeUpdateInterval = useTreeUpdateInterval();
+  console.log({filteredSubmittedTrees: filteredSubmittedTrees?.length, submittedTrees: submittedTrees?.length});
+
+  useRefocusEffect(async () => {
+    if (!submittedTreesLoading) {
+      await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
+    }
+  });
 
   const {t} = useTranslation();
 
-  const treeCountOf = useMemo(
-    () => treeStatusCount(plantedTrees, treeUpdateInterval),
-    [plantedTrees, treeUpdateInterval],
-  );
-
-  const filterButtons = useMemo(
-    () => [
-      {
-        title: TreeStatus.Verified,
-        count: treeCountOf?.Verified,
-        color: colors.green,
-      },
-      {
-        title: TreeStatus.Pending,
-        count: treeCountOf?.Pending,
-        color: colors.pink,
-      },
-      {
-        title: TreeStatus.NotVerified,
-        count: treeCountOf?.NotVerified,
-        color: colors.yellow,
-      },
-      {
-        title: TreeStatus.Update,
-        count: treeCountOf?.Update,
-        color: colors.gray,
-      },
-    ],
-    [treeCountOf],
+  const submittedTreesCountOf = useMemo(
+    () => submittedTreeStatusCount(submittedTrees, treeUpdateInterval),
+    [submittedTrees, treeUpdateInterval],
   );
 
   return (
@@ -131,19 +144,32 @@ export function TreeInventory(props: TreeInventoryProps) {
           </View>
           <Tabs testID="tab-context" style={globalStyles.fill} tab={activeTab}>
             <Tab testID="submitted-tab" style={globalStyles.fill} tab={TreeLife.Submitted}>
-              <FilterTrees
-                testID="filter-trees-cpt"
-                filterList={filterButtons}
-                filters={treeFilters}
-                onFilter={handleFilterTrees}
+              <FilterTrees<SubmittedTreeStatus>
+                testID="filter-submitted-trees-cpt"
+                filterList={submittedTreesButtons(submittedTreesCountOf)}
+                filters={submittedTreeFilters}
+                onFilter={handleSetFilterSubmittedTrees}
               />
               <Spacer times={6} />
               <TreeListV2
-                testID="tree-list-v2"
-                verifiedTrees={plantedTrees}
-                treeItemUI={treeItemUI}
-                setTreeItemUI={setTreeItemUI}
+                testID="submitted-tree-list-v2"
+                verifiedTrees={filteredSubmittedTrees}
+                treeItemUI={submittedTreeItemUI}
+                setTreeItemUI={setSubmittedTreeItemUI}
                 treeUpdateInterval={treeUpdateInterval}
+                onRefetch={refetchSubmittedTrees}
+                onEndReached={submittedTreesLoadMore}
+                loading={submittedTreesLoading}
+                refetching={submittedTreesRefetching}
+              />
+              <Spacer times={6} />
+            </Tab>
+            <Tab testID="notVerified-tab" style={globalStyles.fill} tab={TreeLife.NotVerified}>
+              <FilterTrees<NotVerifiedTreeStatus>
+                testID="filter-notVerified-trees-cpt"
+                filterList={notVerifiedTreesButtons({Plant: 20, Update: 10, Assigned: 2})}
+                filters={notVerifiedTreeFilters}
+                onFilter={handleSetFilterNotVerifiedTrees}
               />
               <Spacer times={6} />
             </Tab>

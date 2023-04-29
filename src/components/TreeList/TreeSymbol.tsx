@@ -1,17 +1,18 @@
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-import {Tree} from 'types';
+import {Tree, TreeInList} from 'types';
 import globalStyles from 'constants/styles';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {TreeImage} from './TreeImage';
 import Spacer from 'components/Spacer';
+import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 
 interface TreeSymbolPropsType {
   horizontal?: boolean;
   testID?: string;
   handlePress?: () => void;
-  tree?: Tree;
+  tree?: Tree | TreeInList;
   color?: string;
   size?: number;
   treeUpdateInterval: number;

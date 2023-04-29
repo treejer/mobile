@@ -1,21 +1,24 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import DropShadow from 'react-native-drop-shadow';
+import {useTranslation} from 'react-i18next';
 
 import {FilterTree} from 'components/Filter/FilterTrees';
 import Spacer from 'components/Spacer';
 import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 import {TreeImage} from '../../../assets/icons';
 
-export type FilterTreeButtonProps = {
+export type FilterTreeButtonProps<T> = {
   testID?: string;
-  tree: FilterTree;
+  tree: FilterTree<T>;
   onPress: () => void;
   isActive: boolean;
 };
 
-export function FilterTreeButton(props: FilterTreeButtonProps) {
+export function FilterTreeButton<T>(props: FilterTreeButtonProps<T>) {
   const {testID, tree, isActive, onPress} = props;
+
+  const {t} = useTranslation();
 
   return (
     <View testID={testID} style={styles.container}>
@@ -37,7 +40,7 @@ export function FilterTreeButton(props: FilterTreeButtonProps) {
       </DropShadow>
       <Spacer />
       <Text testID="filter-tree-title" style={[styles.title, {color: tree.color}]}>
-        {tree.title}
+        {t(tree.title)}
       </Text>
     </View>
   );

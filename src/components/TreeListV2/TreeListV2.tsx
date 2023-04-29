@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {colors} from 'constants/values';
@@ -8,23 +9,37 @@ import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import Spacer from 'components/Spacer';
 import {TreeItemV2} from 'components/TreeListV2/TreeItemV2';
-import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
-import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
+import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList./EmptyTreeList';
+import {TreeInList} from 'types';
 
 export type TreeListV2Props = {
   testID?: string;
   treeItemUI: TreeItemUI;
   setTreeItemUI: React.Dispatch<React.SetStateAction<TreeItemUI>>;
-  verifiedTrees: PlanterTreesQueryQueryPartialData.Trees[] | null;
+  verifiedTrees: TreeInList[] | null;
   treeUpdateInterval: number;
+  refetching?: boolean;
+  loading?: boolean;
+  onRefetch?: () => void;
+  onEndReached?: () => void;
 };
 
 export function TreeListV2(props: TreeListV2Props) {
-  const {testID, verifiedTrees, treeItemUI = TreeItemUI.WithId, setTreeItemUI, treeUpdateInterval} = props;
+  const {
+    testID,
+    verifiedTrees,
+    treeItemUI = TreeItemUI.WithId,
+    setTreeItemUI,
+    treeUpdateInterval,
+    refetching,
+    loading,
+    onRefetch,
+    onEndReached,
+  } = props;
 
   const treeItemRenderItem = useCallback(
-    ({item}: ListRenderItemInfo<PlanterTreesQueryQueryPartialData.Trees>) => {
+    ({item}: ListRenderItemInfo<TreeInList>) => {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <TreeItemV2
@@ -37,6 +52,31 @@ export function TreeListV2(props: TreeListV2Props) {
       );
     },
     [treeItemUI, treeUpdateInterval],
+  );
+
+  const renderListWithDiffCol = useCallback(
+    (col: number, testID?: string) => {
+      return (
+        <FlashList<TreeInList>
+          testID={testID}
+          data={verifiedTrees}
+          estimatedItemSize={80}
+          renderItem={treeItemRenderItem}
+          showsVerticalScrollIndicator={false}
+          numColumns={col}
+          ItemSeparatorComponent={Spacer}
+          keyExtractor={item => `list-${item.id}`}
+          centerContent
+          contentContainerStyle={styles.list}
+          refreshing={refetching}
+          onRefresh={onRefetch}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.1}
+          ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+        />
+      );
+    },
+    [refetching, onRefetch, onEndReached, treeItemRenderItem, verifiedTrees],
   );
 
   return (
@@ -61,36 +101,20 @@ export function TreeListV2(props: TreeListV2Props) {
         </TouchableOpacity>
       </View>
       <Spacer times={4} />
-      <Tabs testID="tab-trees-context" style={globalStyles.fill} tab={treeItemUI}>
-        <Tab testID="withId-tab" style={styles.listContainer} tab={TreeItemUI.WithId}>
-          <FlashList<PlanterTreesQueryQueryPartialData.Trees>
-            testID="with-id-flatList"
-            data={verifiedTrees}
-            estimatedItemSize={80}
-            renderItem={treeItemRenderItem}
-            showsVerticalScrollIndicator={false}
-            numColumns={4}
-            ItemSeparatorComponent={Spacer}
-            keyExtractor={item => `list-${item.id}`}
-            centerContent
-            contentContainerStyle={styles.list}
-          />
-        </Tab>
-        <Tab testID="withDetail-tab" style={styles.listContainer} tab={TreeItemUI.WithDetail}>
-          <FlashList<PlanterTreesQueryQueryPartialData.Trees>
-            testID="with-detail-flatList"
-            data={verifiedTrees}
-            estimatedItemSize={176}
-            renderItem={treeItemRenderItem}
-            showsVerticalScrollIndicator={false}
-            numColumns={2}
-            ItemSeparatorComponent={Spacer}
-            keyExtractor={item => `list-${item.id}`}
-            centerContent
-            contentContainerStyle={styles.list}
-          />
-        </Tab>
-      </Tabs>
+      {loading || (refetching && !verifiedTrees?.length) ? (
+        <View style={[globalStyles.fill, globalStyles.alignItemsCenter, globalStyles.justifyContentCenter]}>
+          <ActivityIndicator testID="tree-list-v2-loading" color={colors.green} size="large" />
+        </View>
+      ) : (
+        <Tabs testID="tab-trees-context" style={globalStyles.fill} tab={treeItemUI}>
+          <Tab testID="withId-tab" style={styles.listContainer} tab={TreeItemUI.WithId}>
+            {renderListWithDiffCol(4, 'with-id-flatList')}
+          </Tab>
+          <Tab testID="withDetail-tab" style={styles.listContainer} tab={TreeItemUI.WithDetail}>
+            {renderListWithDiffCol(2, 'with-detail-flatList')}
+          </Tab>
+        </Tabs>
+      )}
     </View>
   );
 }

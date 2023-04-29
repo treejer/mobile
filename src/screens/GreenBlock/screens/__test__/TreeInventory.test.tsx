@@ -1,9 +1,10 @@
-import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
+import {MockedProviderProps} from '@apollo/client/testing';
+
+import {render, act, fireEvent, waitFor, screen} from 'ranger-testUtils/testingLibrary';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
-import {TreeLife} from 'utilities/helpers/treeInventory';
 import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
-import {MockedProviderProps} from '@apollo/client/testing';
+import {TreeLife} from 'utilities/helpers/treeInventory';
 import {verifiedTress} from 'components/TreeListV2/__test__/TreeListV2.mock';
 
 describe('TreeInventory component', () => {
@@ -17,8 +18,8 @@ describe('TreeInventory component', () => {
       request: {
         query: doucment,
         variables: {
-          first: 40,
-          skip: 0 * 40,
+          first: 20,
+          skip: 0,
           orderBy: 'createdAt',
           orderDirection: 'desc',
           address: '',
@@ -45,6 +46,7 @@ describe('TreeInventory component', () => {
       const tabContext = getElementByTestId('tab-context');
       const submittedTab = getElementByTestId('submitted-tab');
       const draftedTab = queryElementByTestId('drafted-tab');
+      const notVerifiedTab = queryElementByTestId('notVerified-tab');
 
       expect(screenTitle).toBeTruthy();
       expect(screenTitleTxt).toBeTruthy();
@@ -55,11 +57,13 @@ describe('TreeInventory component', () => {
       expect(tabContext).toBeTruthy();
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
+      expect(notVerifiedTab).toBeFalsy();
     });
 
-    it('TreeList length should be 2', () => {
-      const treeListV2 = getElementByTestId('with-id-flatList');
-      console.log(treeListV2.props, 'heheheheheheh');
+    it('TreeList length should be 2', async () => {
+      const loading = await screen.findByTestId('tree-list-v2-loading');
+      expect(loading).toBeTruthy();
+      const treeListV2 = await screen.findByTestId('with-id-flatList');
       expect(treeListV2.props.data).toEqual(verifiedTress);
       expect(treeListV2.props.data.length).toEqual(verifiedTress.length);
     });
@@ -91,22 +95,29 @@ describe('TreeInventory component', () => {
       const tabContext = getElementByTestId('tab-context');
       const submittedTab = getElementByTestId('submitted-tab');
       const draftedTab = queryElementByTestId('drafted-tab');
+      const notVerifiedTab = queryElementByTestId('notVerified-tab');
 
       const tabDraftedButton = getElementByTestId(`tab-button-${TreeLife.Drafted}`);
       const tabSubmittedButton = getElementByTestId(`tab-button-${TreeLife.Submitted}`);
+      const tabNotVerifiedButton = getElementByTestId(`tab-button-${TreeLife.NotVerified}`);
 
       expect(tabContext).toBeTruthy();
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
+      expect(notVerifiedTab).toBeFalsy();
       expect(tabDraftedButton).toBeTruthy();
+      expect(tabSubmittedButton).toBeTruthy();
+      expect(tabNotVerifiedButton).toBeTruthy();
 
       await act(async () => {
         await fireEvent.press(tabDraftedButton, TreeLife.Drafted);
       });
       await waitFor(() => {
+        const notVerifiedTab = queryElementByTestId('notVerified-tab');
         const submittedTab = queryElementByTestId('submitted-tab');
         const draftedTab = getElementByTestId('drafted-tab');
 
+        expect(notVerifiedTab).toBeFalsy();
         expect(submittedTab).toBeFalsy();
         expect(draftedTab).toBeTruthy();
 
@@ -120,16 +131,32 @@ describe('TreeInventory component', () => {
       await waitFor(() => {
         const submittedTab = getElementByTestId('submitted-tab');
         const draftedTab = queryElementByTestId('drafted-tab');
+        const notVerifiedTab = queryElementByTestId('notVerified-tab');
 
         expect(submittedTab).toBeTruthy();
         expect(draftedTab).toBeFalsy();
+        expect(notVerifiedTab).toBeFalsy();
+      });
+
+      await act(async () => {
+        await fireEvent.press(tabNotVerifiedButton, TreeLife.NotVerified);
+      });
+      await waitFor(() => {
+        const submittedTab = queryElementByTestId('submitted-tab');
+        const draftedTab = queryElementByTestId('drafted-tab');
+        const notVerifiedTab = getElementByTestId('notVerified-tab');
+
+        expect(notVerifiedTab).toBeTruthy();
+        expect(submittedTab).toBeFalsy();
+        expect(draftedTab).toBeFalsy();
       });
     });
+
     it('Tab = TreeLife.Submitted', () => {
       const submittedTab = getElementByTestId('submitted-tab');
       const draftedTab = queryElementByTestId('drafted-tab');
-      const filterTreesCpt = getElementByTestId('filter-trees-cpt');
-      const treeListV2 = getElementByTestId('tree-list-v2');
+      const filterTreesCpt = getElementByTestId('filter-submitted-trees-cpt');
+      const treeListV2 = getElementByTestId('submitted-tree-list-v2');
 
       expect(submittedTab).toBeTruthy();
       expect(draftedTab).toBeFalsy();
@@ -144,13 +171,28 @@ describe('TreeInventory component', () => {
       });
       const submittedTab = queryElementByTestId('submitted-tab');
       const draftedTab = getElementByTestId('drafted-tab');
-      const filterTreesCpt = queryElementByTestId('filter-trees-cpt');
+      const filterTreesCpt = queryElementByTestId('filter-submitted-trees-cpt');
       const draftList = getElementByTestId('draft-list-cpt');
 
       expect(submittedTab).toBeFalsy();
       expect(draftedTab).toBeTruthy();
       expect(filterTreesCpt).toBeFalsy();
       expect(draftList).toBeTruthy();
+    });
+    it('Tab = TreeLife.NotVerified', async () => {
+      const tabNotVerifiedButton = getElementByTestId(`tab-button-${TreeLife.NotVerified}`);
+      await act(async () => {
+        await fireEvent.press(tabNotVerifiedButton, TreeLife.NotVerified);
+      });
+      const submittedTab = queryElementByTestId('submitted-tab');
+      const draftedTab = queryElementByTestId('drafted-tab');
+      // const treeListV2 = getElementByTestId('draft-list-cpt');
+      const filterNotVerifiedTrees = getElementByTestId('filter-notVerified-trees-cpt');
+
+      expect(submittedTab).toBeFalsy();
+      expect(draftedTab).toBeFalsy();
+      // expect(treeListV2).toBeTruthy();
+      expect(filterNotVerifiedTrees).toBeTruthy();
     });
   });
 });

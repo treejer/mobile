@@ -1,15 +1,17 @@
 import React from 'react';
 import {ActivityIndicator, Image, ImageProps, View} from 'react-native';
 
-import {Tree} from 'types';
+import {Tree, TreeInList} from 'types';
 import {treeColor, treeImageSrc} from 'utilities/helpers/tree';
 import TreeSvg from 'components/Icons/Tree';
 import {treeColorV2} from 'utilities/helpers/treeColorsV2';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import Trees = PlanterTreesQueryQueryPartialData.Trees;
 
 export interface TreeImageProps extends Omit<ImageProps, 'source'> {
   size?: number;
-  tree?: Tree;
+  tree?: Tree | Trees;
   tint?: boolean;
   color?: string;
   isNursery?: boolean;
@@ -22,7 +24,10 @@ export function TreeImage(props: TreeImageProps) {
   const {useV1Submission} = useConfig();
 
   const tintColor =
-    color || (useV1Submission ? treeColor(tree, treeUpdateInterval) : treeColorV2(tree, treeUpdateInterval));
+    color ||
+    (useV1Submission
+      ? treeColor(tree as Tree, treeUpdateInterval)
+      : treeColorV2(tree as TreeInList, treeUpdateInterval));
 
   const nurseryHasLocations = tree?.treeSpecsEntity?.locations?.length;
 
@@ -59,7 +64,7 @@ export function TreeImage(props: TreeImageProps) {
   return (
     <Image
       style={[{width: size, height: size, tintColor: tint && tintColor ? tintColor : undefined}, style]}
-      source={treeImageSrc(tree)}
+      source={treeImageSrc(tree as Tree)}
       {...restProps}
     />
   );

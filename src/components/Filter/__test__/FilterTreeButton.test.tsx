@@ -1,7 +1,7 @@
 import {render} from '@testing-library/react-native';
 
 import {FilterTreeButton} from 'components/Filter/FilterTreeButton';
-import {TreeStatus} from 'utilities/helpers/treeInventory';
+import {SubmittedTreeStatus} from 'utilities/helpers/treeInventory';
 import {colors} from 'constants/values';
 import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 import {TreeImage} from '../../../../assets/icons';
@@ -14,7 +14,7 @@ describe('FilterTreeButton component', () => {
 
   describe('FilterTreeButton isActive = true', () => {
     const tree = {
-      title: TreeStatus.Verified,
+      title: SubmittedTreeStatus.Verified,
       count: 20,
       color: colors.green,
     };
@@ -55,7 +55,7 @@ describe('FilterTreeButton component', () => {
   });
   describe('FilterTreeButton isActive = false', () => {
     const tree = {
-      title: TreeStatus.Verified,
+      title: SubmittedTreeStatus.Verified,
       count: 20,
       color: colors.green,
     };
