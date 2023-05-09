@@ -12,7 +12,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
-import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {changeCheckMetaData} from '../settings/settings';
 
 export type TProfile = {
   id: string;
@@ -27,6 +27,7 @@ export type TProfile = {
   mobileCountry?: string | null;
   mobileVerifiedAt?: string | null;
   isVerified: boolean;
+  plantingNonce: number;
 };
 
 export type TProfileForm = {
@@ -34,11 +35,12 @@ export type TProfileForm = {
   accessToken: string;
 };
 
-const Profile = new ReduxFetchState<TProfile, TProfileForm, string>('profile');
+const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 
 export function* watchProfile() {
   try {
-    const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/user/getme/user');
+    const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
+    console.log(res.result);
     yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
@@ -74,12 +76,12 @@ export function useProfile(): TUseProfile {
   const dispatch = useAppDispatch();
 
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
-  const {network: currentNetwork, userId, accessToken} = useUserWeb3();
+  const {network: currentNetwork} = useUserWeb3();
   const {t} = useTranslation();
 
   const dispatchProfile = useCallback(() => {
-    dispatch(Profile.actions.load({accessToken, userId}));
-  }, [accessToken, dispatch, userId]);
+    dispatch(Profile.actions.load());
+  }, [dispatch]);
 
   const status: UserStatus = useMemo(() => {
     if (!data) {

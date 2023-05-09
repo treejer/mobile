@@ -4,6 +4,8 @@ import {ImageURISource} from 'react-native';
 
 import {MaticLogo, GoerliLogo} from '../../assets/images';
 
+export const treejerProtocol = 'Treejer Protocol';
+
 if (process.env.NODE_ENV !== 'test') {
   console.log(process.env);
 }

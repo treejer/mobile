@@ -27,7 +27,8 @@
       "utilities/*": ["./src/utilities/*"],
       "navigation/*": ["./src/navigation/*"],
       "types": ["./src/types"],
-      "ranger-testUtils/*": ["./src/testUtils/*"]
+      "ranger-testUtils/*": ["./src/testUtils/*"],
+      "webServices/*": ["./src/webServices/*"]
     }
   },
   "exclude": ["__mocks__/*", "node_modules", "babel.config.js", "metro.config.js", "jest.config.js"],

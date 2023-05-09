@@ -1,7 +1,7 @@
 export interface UserSignRes {
-  loginToken: string;
-  userId: string;
-  wallet: string;
+  access_token: string;
+  // userId: string;
+  // wallet: string;
 }
 
 export interface UserSignForm {

@@ -27,6 +27,7 @@ module.exports = function (api) {
             types: './src/types',
             'ranger-redux': './src/redux',
             'ranger-testUtils': './src/testUtils',
+            webServices: './src/webServices',
           },
         },
       ],

@@ -12,6 +12,10 @@ import {offlineMapSagas} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {searchPlacesSagas} from 'ranger-redux/modules/searchPlaces/searchPlaces';
 import {currentJourneySagas} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
 import {draftedJourneysSagas} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
+import {mobileSendCodeSagas} from 'ranger-redux/modules/verification/mobileSendCode';
+import {mobileResendCodeSagas} from 'ranger-redux/modules/verification/mobileResendCode';
+import {verifyMobileSagas} from 'ranger-redux/modules/verification/verifyMoblie';
+import {verifyProfileSagas} from 'ranger-redux/modules/verification/verifyProfile';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -27,5 +31,9 @@ export default function* root(store: TStoreRedux) {
     countriesSagas(),
     offlineMapSagas(store),
     searchPlacesSagas(),
+    mobileSendCodeSagas(),
+    mobileResendCodeSagas(),
+    verifyMobileSagas(),
+    verifyProfileSagas(),
   ]);
 }

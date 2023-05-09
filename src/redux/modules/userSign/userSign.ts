@@ -24,18 +24,18 @@ export type TUserSignSuccessAction = {
 export function* watchUserSign(action: TUserSignAction) {
   try {
     const {signature, wallet} = action.payload;
-    const {treejerApiUrl}: NetworkConfig = yield selectConfig();
+    const {treejerNestApiUrl}: NetworkConfig = yield selectConfig();
 
     const options = {
       // configUrl: 'treejerApiUrl' as keyof NetworkConfig,
-      method: 'PATCH' as Method,
+      method: 'POST' as Method,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({signature}),
     };
 
-    const res = yield call(() => fetch(`${treejerApiUrl}/user/sign?publicAddress=${wallet}`, options));
+    const res = yield call(() => fetch(`${treejerNestApiUrl}/login/${wallet}`, options));
     const data = yield res.json();
     yield put(UserSign.actions.loadSuccess(data));
   } catch (e: any) {

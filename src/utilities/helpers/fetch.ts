@@ -55,9 +55,9 @@ export type SagaFetchOptions = {
 
 export function* sagaFetch<Data, Form = any>(
   url: string,
-  _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerApiUrl'},
+  _options: SagaFetchOptions & AxiosRequestConfig<Form> = {configUrl: 'treejerNestApiUrl'},
 ) {
-  const {accessToken, userId} = yield select((state: TReduxState) => state.web3);
+  const {accessToken} = yield select((state: TReduxState) => state.web3);
   const config: NetworkConfig = yield selectConfig();
   let {configUrl, ...options} = _options;
 
@@ -66,12 +66,14 @@ export function* sagaFetch<Data, Form = any>(
       ...options,
       headers: {
         ...(options.headers || {}),
-        'x-auth-userid': userId,
-        'x-auth-logintoken': accessToken,
+        // 'x-auth-userid': userId,
+        Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
       },
     };
   }
+
+  console.log(config[configUrl] + url, 'url is herex', options.headers, 'headers are here');
 
   return yield fetch<Data, Form>(config[configUrl] + url, options);
 }

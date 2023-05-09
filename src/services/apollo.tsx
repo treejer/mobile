@@ -28,10 +28,10 @@ function createRestLink(config: NetworkConfig, accessToken: string, userId: stri
 
   return errorLink.concat(
     new RestLink({
-      uri: config.treejerApiUrl,
+      uri: config.treejerNestApiUrl,
       headers: {
-        'x-auth-userid': userId,
-        'x-auth-logintoken': accessToken,
+        // 'x-auth-userid': userId,
+        Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
       },
       bodySerializers: {

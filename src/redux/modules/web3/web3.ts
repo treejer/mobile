@@ -274,12 +274,12 @@ export function* watchStoreMagicToken(store, action: TWeb3Action) {
       yield put(
         updateMagicToken({
           wallet,
-          accessToken: credentials.loginToken,
-          userId: credentials.userId,
+          accessToken: credentials.access_token,
+          userId: userNoncePayload.userId,
           magicToken,
         }),
       );
-      yield put(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
+      yield put(profileActions.load());
       yield put(getBalance());
     } else {
       yield put(networkDisconnect());

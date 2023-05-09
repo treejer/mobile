@@ -15,6 +15,10 @@ import {searchPlacesReducer} from 'ranger-redux/modules/searchPlaces/searchPlace
 import {currentJourneyReducer} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {browserPlatformReducer} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
 import {draftedJourneysReducer} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import {mobileSendCodeReducer} from 'ranger-redux/modules/verification/mobileSendCode';
+import {mobileResendCodeReducer} from 'ranger-redux/modules/verification/mobileResendCode';
+import {verifyMobileReducer} from 'ranger-redux/modules/verification/verifyMoblie';
+import {verifyProfileReducer} from 'ranger-redux/modules/verification/verifyProfile';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -32,6 +36,10 @@ const appReducer = combineReducers({
   browserPlatform: browserPlatformReducer,
   draftedJourneys: draftedJourneysReducer,
   offlineMap,
+  mobileSendCode: mobileSendCodeReducer,
+  mobileResendCode: mobileResendCodeReducer,
+  verifyMobile: verifyMobileReducer,
+  verifyProfile: verifyProfileReducer,
 });
 
 export default appReducer;

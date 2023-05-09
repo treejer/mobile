@@ -23,7 +23,7 @@ export function* watchUserNonce(action: TUserNonceAction) {
     const {wallet, magicToken, loginData} = action.payload;
 
     const searchParams = new URLSearchParams();
-    searchParams.set('publicAddress', wallet);
+    // searchParams.set('wallet', wallet);
     searchParams.set('token', magicToken);
 
     if (loginData?.email) {
@@ -33,7 +33,7 @@ export function* watchUserNonce(action: TUserNonceAction) {
       searchParams.set('mobile', loginData.mobile);
       searchParams.set('country', loginData.country);
     }
-    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/user/nonce?${searchParams.toString()}`);
+    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/nonce/${wallet}?${searchParams.toString()}`);
     yield put(UserNonce.actions.loadSuccess(res.result));
   } catch (e: any) {
     yield put(UserNonce.actions.loadFailure(e));
