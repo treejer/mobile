@@ -5,8 +5,8 @@ export type TMobileSendCodeRes = {
 };
 
 export type TMobileSendCodePayload = {
-  mobile: string;
-  mobileCountry: string;
+  mobileNumber: string;
+  country: string;
 };
 
 export type TMobileSendCodeAction = {

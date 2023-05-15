@@ -1,3 +1,1 @@
-export type TMobileResendCodeRes = {
-  message: string;
-};
+export type TMobileResendCodeRes = string;

@@ -66,9 +66,9 @@ export function* sagaFetch<Data, Form = any>(
       ...options,
       headers: {
         ...(options.headers || {}),
-        // 'x-auth-userid': userId,
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
+        // 'x-auth-userid': userId,
       },
     };
   }
@@ -97,14 +97,15 @@ export const handleFetchError = (e: AxiosError<ClientError>): ClientError => {
 
 export type HandleSagaFetchErrorOptions = {
   showErrorAlert?: boolean;
+  logoutUnauthorized?: boolean;
 };
 
 export function* handleSagaFetchError(e: AxiosError<ClientError>, options: HandleSagaFetchErrorOptions = {}) {
-  const {showErrorAlert = true} = options;
+  const {showErrorAlert = true, logoutUnauthorized = true} = options;
   const {locale}: TReduxState['settings'] = yield selectSettings();
   const {message, status} = handleFetchError(e);
 
-  if (status === 401 || status === 403) {
+  if ((status === 401 || status === 403) && logoutUnauthorized) {
     // @logout
     yield put(profileActions.resetCache());
     yield put(clearUserNonce());

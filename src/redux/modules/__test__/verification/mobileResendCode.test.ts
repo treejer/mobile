@@ -44,16 +44,10 @@ describe('mobileResendCode module', () => {
 
       assert.deepEqual(
         gen.next({
-          result: {
-            message: 'message',
-          },
+          result: 'message',
           status: 200,
         }).value,
-        put(
-          mobileResendCodeActions.loadSuccess({
-            message: 'message',
-          }),
-        ),
+        put(mobileResendCodeActions.loadSuccess('message')),
         'dispatch mobileResendCodeActions success',
       );
     });

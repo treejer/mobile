@@ -9,21 +9,19 @@ import {
   TMobileSendCodeRes,
 } from 'webServices/verification/mobileSendCode';
 
-const MobileSendCode = new ReduxFetchState<TMobileSendCodeRes, TMobileSendCodePayload, string | string[]>(
-  'mobileSendCode',
-);
+const MobileSendCode = new ReduxFetchState<TMobileSendCodeRes, TMobileSendCodePayload, string>('mobileSendCode');
 
 export function* watchMobileSendCode({payload}: TMobileSendCodeAction) {
   try {
-    const {mobile, mobileCountry} = payload || {};
+    const {mobileNumber, country} = payload || {};
     const res: FetchResult<TMobileSendCodeRes> = yield sagaFetch<TMobileSendCodeRes, TMobileSendCodePayload>(
       `/mobile/send`,
       {
         configUrl: 'treejerNestApiUrl',
         method: 'PATCH',
         data: {
-          mobile,
-          mobileCountry,
+          mobileNumber,
+          country,
         },
       },
     );
@@ -34,7 +32,7 @@ export function* watchMobileSendCode({payload}: TMobileSendCodeAction) {
     });
   } catch (e: any) {
     const {message} = handleFetchError(e);
-    yield put(MobileSendCode.actions.loadFailure(message));
+    yield put(MobileSendCode.actions.loadFailure(Array.isArray(message) ? message[0] : message));
     yield handleSagaFetchError(e);
   }
 }

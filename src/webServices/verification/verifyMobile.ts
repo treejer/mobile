@@ -1,9 +1,7 @@
-export type TVerifyMobileRes = {
-  message: string;
-};
+export type TVerifyMobileRes = string;
 
 export type TVerifyMobilePayload = {
-  verificationCode: string;
+  verifyMobileCode: string;
 };
 
 export type TVerifyMobileAction = {

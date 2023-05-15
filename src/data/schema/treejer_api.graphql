@@ -11,6 +11,7 @@ type User {
   mobileCountry: String
   mobileVerifiedAt: String
   isVerified: Boolean!
+  plantingNonce: Int!
 }
 
 type PlanterTreesCount {

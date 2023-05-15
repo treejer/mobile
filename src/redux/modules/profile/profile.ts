@@ -40,7 +40,6 @@ const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 export function* watchProfile() {
   try {
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
-    console.log(res.result);
     yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
@@ -121,6 +120,9 @@ export function useProfile(): TUseProfile {
             return Promise.reject(e);
           }
         }
+
+        // TODO @clear-drafted-journeys
+
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);
         // const onBoarding = await AsyncStorage.getItem(storageKeys.onBoarding);

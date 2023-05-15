@@ -39,7 +39,10 @@ describe('mobileSendCode module', () => {
     });
 
     it('Send code successfully', () => {
-      const {message, ...payload} = sendRes;
+      const payload = {
+        mobileNumber: '*****',
+        country: '*****',
+      };
 
       const gen = watchMobileSendCode({
         payload: payload,
@@ -56,7 +59,7 @@ describe('mobileSendCode module', () => {
     });
     it('Send Code Error', () => {
       const gen = watchMobileSendCode({
-        payload: {mobile: '', mobileCountry: ''},
+        payload: {mobileNumber: '', country: ''},
         type: mobileSendCodeActionTypes.load,
       });
 

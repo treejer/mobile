@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, take, takeEvery} from 'redux-saga/effects';
 
 import {
   verifyProfileActions,
@@ -9,6 +9,7 @@ import {
   watchVerifyProfile,
 } from 'ranger-redux/modules/verification/verifyProfile';
 import {TVerifyProfilePayload} from 'webServices/verification/verifyProfile';
+import {profileActions, profileActionsTypes} from 'ranger-redux/modules/profile/profile';
 
 describe('verifyProfile module', () => {
   it('verifyProfile module should be defined', () => {
@@ -49,6 +50,14 @@ describe('verifyProfile module', () => {
     it('verify profile successfully', () => {
       const gen = watchVerifyProfile({payload: input, type: verifyProfileActionTypes.load});
       gen.next();
+
+      assert.deepEqual(gen.next({result: '', status: 200}).value, put(profileActions.load()), 'dispatch get profile');
+      assert.deepEqual(
+        gen.next({result: '', status: 200}).value,
+        take(profileActionsTypes.loadSuccess),
+        'wait for success response',
+      );
+
       assert.deepEqual(
         gen.next({result: '', status: 200}).value,
         put(verifyProfileActions.loadSuccess('')),
