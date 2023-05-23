@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {CommonActions, useNavigation} from '@react-navigation/native';
@@ -84,13 +84,12 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   const handleSubmitJourney = useCallback(() => {
     if (isConnected) {
-      console.log('submitted');
       sendEvent(journey.isUpdate ? 'update_tree_confirm' : 'add_tree_confirm');
       dispatchSubmitJourney();
     } else {
       handleOpenDraftModal(DraftType.Offline);
     }
-  }, [isConnected, handleOpenDraftModal]);
+  }, [isConnected, handleOpenDraftModal, dispatchSubmitJourney, sendEvent]);
 
   const handleClearJourney = useCallback(
     (resetStack?: boolean) => {
@@ -206,23 +205,32 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             )}
           </View>
         </ScrollView>
-        <RenderIf condition={!!journey.submitLoading}>
-          <Text>loading...</Text>
-        </RenderIf>
-        <RenderIf condition={(journey?.canDraft || plantTreePermissions.cantProceed) && !journey.submitLoading}>
+        <RenderIf condition={journey?.canDraft || plantTreePermissions.cantProceed}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
-            <SubmissionButtons
-              testID="submission-buttons"
-              hasNoPermission={plantTreePermissions.cantProceed}
-              canDraft={!!journey?.canDraft}
-              canSubmit={canSubmit}
-              isSingle={!!journey.isSingle}
-              isUpdate={!!journey.isUpdate}
-              onGrant={() => plantTreePermissions.openPermissionsSettings()}
-              onDraft={() => handleOpenDraftModal(DraftType.Draft)}
-              onSubmit={handleSubmitJourney}
-              onPreview={() => console.log('on review')}
-            />
+            {journey.submitLoading ? (
+              <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
+                <ActivityIndicator
+                  testID="submit-journey-loading"
+                  style={styles.loader}
+                  size="large"
+                  color={colors.green}
+                />
+                <Spacer times={8} />
+              </View>
+            ) : (
+              <SubmissionButtons
+                testID="submission-buttons"
+                hasNoPermission={plantTreePermissions.cantProceed}
+                canDraft={!!journey?.canDraft}
+                canSubmit={canSubmit}
+                isSingle={!!journey.isSingle}
+                isUpdate={!!journey.isUpdate}
+                onGrant={() => plantTreePermissions.openPermissionsSettings()}
+                onDraft={() => handleOpenDraftModal(DraftType.Draft)}
+                onSubmit={handleSubmitJourney}
+                onPreview={() => console.log('on review')}
+              />
+            )}
           </View>
           <Spacer times={6} />
         </RenderIf>
@@ -262,5 +270,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     color: colors.grayLight,
+  },
+  loader: {
+    transform: [{scale: 2}],
   },
 });

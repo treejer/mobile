@@ -280,6 +280,56 @@ describe('SubmitTreeV2 component', () => {
       });
     });
   });
+  describe('SubmitTreeV2 submit online', () => {
+    let getElementByTestId, queryElementByTestId;
+
+    beforeEach(() => {
+      const element = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          netInfo: {
+            isConnected: true,
+          },
+          currentJourney: {
+            isSingle: true,
+            location: {
+              latitude: 20000,
+              longitude: 2000,
+            },
+            photo: onBoardingOne,
+            photoLocation: {
+              latitude: 20000,
+              longitude: 2000,
+            },
+            canDraft: true,
+            submitLoading: true,
+          },
+        },
+        canPlantMockQuery as any,
+      );
+      getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
+    });
+
+    it('components/elements should be defined', async () => {
+      const permissionBox = getElementByTestId('check-permissions-box');
+      const submissionTitle = getElementByTestId('submission-title');
+      const selectTreePhoto = getElementByTestId('select-tree-photo-cpt');
+      const selectTreeLocation = getElementByTestId('select-tree-location-cpt');
+      const loader = queryElementByTestId('submit-journey-loading');
+
+      expect(permissionBox).toBeTruthy();
+      expect(submissionTitle).toBeTruthy();
+      expect(selectTreePhoto).toBeTruthy();
+      expect(selectTreeLocation).toBeTruthy();
+      expect(loader).toBeTruthy();
+    });
+  });
+
   describe('SubmitTreeV2 submit offline', () => {
     let getElementByTestId, queryElementByTestId;
 
