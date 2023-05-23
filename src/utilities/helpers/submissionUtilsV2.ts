@@ -57,51 +57,52 @@ export async function generateTreeFactorySignature({
   wallet,
   magic,
 }: GenerateTreeFactorySignatureArgs) {
-  try {
-    console.log('am i here?');
-    const contract = config.contracts[ContractType.TreeFactory];
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = config.contracts[ContractType.TreeFactory];
 
-    const msgParams = {
-      types: {
-        EIP712Domain: [
-          {name: 'name', type: 'string'},
-          {name: 'version', type: 'string'},
-          {name: 'chainId', type: 'uint256'},
-          {name: 'verifyingContract', type: 'address'},
-        ],
-        [method]: methodParams[method],
-      },
-      primaryType: method,
-      domain: {
-        name: treejerProtocol,
-        version: '1',
-        chainId: config.chainId,
-        verifyingContract: contract.address,
-      },
-      message: requestParams,
-    };
+      const msgParams = {
+        types: {
+          EIP712Domain: [
+            {name: 'name', type: 'string'},
+            {name: 'version', type: 'string'},
+            {name: 'chainId', type: 'uint256'},
+            {name: 'verifyingContract', type: 'address'},
+          ],
+          [method]: methodParams[method],
+        },
+        primaryType: method,
+        domain: {
+          name: treejerProtocol,
+          version: '1',
+          chainId: config.chainId,
+          verifyingContract: contract.address,
+        },
+        message: requestParams,
+      };
 
-    console.log(msgParams, 'msgParams');
+      console.log(msgParams, 'msgParams');
 
-    const params = [wallet, msgParams];
-    const getSignMethod = 'eth_signTypedData_v3';
+      const params = [wallet, msgParams];
+      const getSignMethod = 'eth_signTypedData_v3';
 
-    const signature = await magic.rpcProvider.request({
-      method: getSignMethod,
-      params,
-    });
+      const signature = await magic.rpcProvider.request({
+        method: getSignMethod,
+        params,
+      });
 
-    const recoveredAddress = sigUtil.recoverTypedSignature({
-      data: msgParams,
-      sig: signature,
-    });
+      const recoveredAddress = sigUtil.recoverTypedSignature({
+        data: msgParams,
+        sig: signature,
+      });
 
-    console.log(
-      recoveredAddress.toLocaleLowerCase() === wallet.toLocaleLowerCase() ? 'Signing success!' : 'Signing failed!',
-    );
+      console.log(
+        recoveredAddress.toLocaleLowerCase() === wallet.toLocaleLowerCase() ? 'Signing success!' : 'Signing failed!',
+      );
 
-    return signature;
-  } catch (e: any) {
-    console.log(e, 'error in generate signature');
-  }
+      return resolve(signature);
+    } catch (e: any) {
+      return reject(e);
+    }
+  });
 }

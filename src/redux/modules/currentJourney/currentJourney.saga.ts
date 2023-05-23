@@ -117,8 +117,6 @@ export function* watchSubmitJourney() {
     const config: TWeb3['config'] = yield select(getConfig);
     const wallet: string = yield select(getWallet);
 
-    console.log(config);
-
     let treeDetail: TTreeDetailRes | undefined = undefined;
     if (treeIdToUpdate || treeIdToPlant) {
       yield put(treeDetailActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
@@ -197,7 +195,6 @@ export function* watchSubmitJourney() {
       );
       yield take(assignedTreeActionTypes.loadSuccess);
     } else {
-      console.log(profile.d);
       const currentTimeStamp = currentTimestamp();
       const signature = yield generateTreeFactorySignature({
         wallet,
