@@ -75,6 +75,8 @@ export const draftedJourneysReducer = (
       return {
         drafts: sortByDate(cloneDrafts, 'updatedAt'),
       };
+    case actionsList.CLEAR_DRAFTED_JOURNEYS:
+      return draftedJourneysInitialState;
     default:
       return state;
   }
@@ -112,11 +114,16 @@ export const useDraftedJourneys = () => {
     [dispatch],
   );
 
+  const dispatchClearDraftedJourneys = useCallback(() => {
+    dispatch(actionsList.clearDraftedJourneys());
+  }, [dispatch]);
+
   return {
     drafts,
     dispatchDraftJourney,
     dispatchRemoveDraftedJourney,
     dispatchSaveDraftedJourney,
     dispatchSetDraftAsCurrentJourney,
+    dispatchClearDraftedJourneys,
   };
 };

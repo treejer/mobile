@@ -70,4 +70,10 @@ describe('draftedJourneys actions', () => {
     };
     expect(actionsList.setDraftAsCurrentJourneyWatcher({id: date.toString()})).toEqual(expectedAction);
   });
+  it('clear drafted journeys', () => {
+    const expectedAction = {
+      type: actionsList.CLEAR_DRAFTED_JOURNEYS,
+    };
+    expect(actionsList.clearDraftedJourneys()).toEqual(expectedAction);
+  });
 });

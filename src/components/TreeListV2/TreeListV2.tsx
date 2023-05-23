@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
 
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
@@ -11,6 +12,8 @@ import Spacer from 'components/Spacer';
 import {TreeItemV2} from 'components/TreeListV2/TreeItemV2';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList./EmptyTreeList';
+import {Routes} from 'navigation/Navigation';
+import {Hex2Dec} from 'utilities/helpers/hex';
 import {TreeInList} from 'types';
 
 export type TreeListV2Props = {
@@ -38,6 +41,10 @@ export function TreeListV2(props: TreeListV2Props) {
     onEndReached,
   } = props;
 
+  const navigation = useNavigation();
+
+  // TODO: navigate to SubmitTreeV2 to plant assignedTree
+
   const treeItemRenderItem = useCallback(
     ({item}: ListRenderItemInfo<TreeInList>) => {
       return (
@@ -47,6 +54,10 @@ export function TreeListV2(props: TreeListV2Props) {
             withDetail={treeItemUI === TreeItemUI.WithDetail}
             treeUpdateInterval={treeUpdateInterval}
             tree={item}
+            onPress={() =>
+              //@ts-ignore
+              navigation.navigate(Routes.TreeDetails, {tree: item, tree_id: Hex2Dec(item?.id).toString()})
+            }
           />
         </View>
       );

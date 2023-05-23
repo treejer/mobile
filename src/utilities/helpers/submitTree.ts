@@ -17,17 +17,16 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useBrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
-import {checkExif} from 'utilities/helpers/checkExif';
 import {isWeb} from './web';
 import {calcDistanceInMeters} from './distanceInMeters';
-import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 
 export namespace SubmitTreeData {
   export interface Options {
     photoUploadHash: string;
     tree: TreeDetailQueryQueryData.Tree;
-    journey: TreeJourney;
+    journey: TreeJourney | TreeJourney_V2;
   }
 
   export interface NewTreeOptions {
@@ -226,19 +225,25 @@ export function fillExtraJsonData(tree: TreeDetailQueryQueryData.Tree): SubmitTr
     try {
       const attributes = JSON.parse(tree?.treeSpecsEntity?.attributes);
       extraJson.attributes = attributes;
-    } catch (e) {}
+    } catch (e) {
+      console.log(e, 'error in attr');
+    }
   }
   if (tree?.treeSpecsEntity?.updates) {
     try {
       const updates = JSON.parse(tree?.treeSpecsEntity?.updates);
       extraJson.updates = updates;
-    } catch (e) {}
+    } catch (e) {
+      console.log(e, 'error in updates');
+    }
   }
   if (tree?.treeSpecsEntity?.locations) {
     try {
       const locations = JSON.parse(tree?.treeSpecsEntity?.locations);
       extraJson.locations = locations;
-    } catch (e) {}
+    } catch (e) {
+      console.log(e, 'error in locations');
+    }
   }
   if (tree?.treeSpecsEntity?.imageFs) {
     extraJson.image = tree?.treeSpecsEntity?.imageFs?.toString();

@@ -22,4 +22,5 @@ export interface TreeJourney_V2 {
   canUpdateLocation?: boolean;
   draftId?: string;
   canDraft?: boolean;
+  submitLoading?: boolean;
 }

@@ -90,6 +90,12 @@ export const setJourneyFromDrafts = ({journey}: SetJourneyFromDraftsArgs) => ({
   journey,
 });
 
+export const SET_SUBMIT_JOURNEY_LOADING = 'SET_SUBMIT_JOURNEY_LOADING';
+export const setSubmitJourneyLoading = (loading: boolean) => ({
+  type: SET_SUBMIT_JOURNEY_LOADING,
+  loading,
+});
+
 // * saga watcher actions
 export type AssignJourneyTreePhotoPayload = Pick<
   CurrentJourneyAction,
@@ -116,4 +122,9 @@ export const ASSIGN_JOURNEY_TREE_LOCATION_WATCHER = 'ASSIGN_JOURNEY_TREE_LOCATIO
 export const assignJourneyTreeLocationWatcher = ({location}: AssignJourneyTreeLocationPayload) => ({
   type: ASSIGN_JOURNEY_TREE_LOCATION_WATCHER,
   location,
+});
+
+export const SUBMIT_JOURNEY_WATCHER = 'SUBMIT_JOURNEY_WATCHER';
+export const submitJourneyWatcher = () => ({
+  type: SUBMIT_JOURNEY_WATCHER,
 });

@@ -59,7 +59,7 @@ export function showAlert(options: ShowAlertOptions) {
   // * Alert.alert(title, message, buttons, alertOptions);
 }
 
-export function showSagaAlert(options: ShowAlertOptions) {
+export function* showSagaAlert(options: ShowAlertOptions) {
   const {message, title = 'Alert', alertOptions, mode} = options;
 
   return showAlert({

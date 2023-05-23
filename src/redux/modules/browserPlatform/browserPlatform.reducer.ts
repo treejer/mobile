@@ -1,6 +1,9 @@
-import * as actionsList from './browserPlatform.action';
+import {select} from 'redux-saga/effects';
+
 import {BrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {useAppSelector} from 'utilities/hooks/useStore';
+import {TReduxState} from 'ranger-redux/store';
+import * as actionsList from './browserPlatform.action';
 
 export type BrowserPlatformState = {
   platform: BrowserPlatform | null;
@@ -42,3 +45,9 @@ export const browserPlatformReducer = (
 };
 
 export const useBrowserPlatform = () => useAppSelector(state => state.browserPlatform);
+
+export function* selectBrowserPlatform() {
+  return yield select((state: TReduxState) => state.browserPlatform);
+}
+
+export const getBrowserPlatform = state => state.browserPlatform;

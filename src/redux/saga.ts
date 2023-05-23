@@ -1,6 +1,7 @@
 import {all} from 'redux-saga/effects';
-import {web3Sagas} from './modules/web3/web3';
+
 import {TStoreRedux} from './store';
+import {web3Sagas} from './modules/web3/web3';
 import {initSagas} from './modules/init/init';
 import {userNonceSagas} from './modules/userNonce/userNonce';
 import {userSignSagas} from './modules/userSign/userSign';
@@ -8,14 +9,18 @@ import {netInfoSagas} from './modules/netInfo/netInfo';
 import {profileSagas} from './modules/profile/profile';
 import {contractsSagas} from './modules/contracts/contracts';
 import {countriesSagas} from './modules/countris/countries';
-import {offlineMapSagas} from 'ranger-redux/modules/offlineMap/offlineMap';
-import {searchPlacesSagas} from 'ranger-redux/modules/searchPlaces/searchPlaces';
-import {currentJourneySagas} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
-import {draftedJourneysSagas} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
-import {mobileSendCodeSagas} from 'ranger-redux/modules/verification/mobileSendCode';
-import {mobileResendCodeSagas} from 'ranger-redux/modules/verification/mobileResendCode';
-import {verifyMobileSagas} from 'ranger-redux/modules/verification/verifyMoblie';
-import {verifyProfileSagas} from 'ranger-redux/modules/verification/verifyProfile';
+import {offlineMapSagas} from './modules/offlineMap/offlineMap';
+import {searchPlacesSagas} from './modules/searchPlaces/searchPlaces';
+import {draftedJourneysSagas} from './modules/draftedJourneys/draftedJourneys.saga';
+import {currentJourneySagas} from './modules/currentJourney/currentJourney.saga';
+import {mobileSendCodeSagas} from './modules/verification/mobileSendCode';
+import {mobileResendCodeSagas} from './modules/verification/mobileResendCode';
+import {verifyMobileSagas} from './modules/verification/verifyMoblie';
+import {verifyProfileSagas} from './modules/verification/verifyProfile';
+import {plantTreeSagas} from './modules/submitTreeEvents/plantTree';
+import {assignedTreeSagas} from './modules/submitTreeEvents/assignedTree';
+import {updateTreeSagas} from './modules/submitTreeEvents/updateTree';
+import {treeDetailSagas} from './modules/trees/treeDetail';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -35,5 +40,9 @@ export default function* root(store: TStoreRedux) {
     mobileResendCodeSagas(),
     verifyMobileSagas(),
     verifyProfileSagas(),
+    plantTreeSagas(),
+    assignedTreeSagas(),
+    updateTreeSagas(),
+    treeDetailSagas(),
   ]);
 }

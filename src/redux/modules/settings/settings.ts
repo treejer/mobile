@@ -160,3 +160,5 @@ export function useSettings(): TUseSettings {
 export function* selectSettings() {
   return yield select((state: TReduxState) => state.settings);
 }
+
+export const getSettings = (state: TReduxState) => state.settings;

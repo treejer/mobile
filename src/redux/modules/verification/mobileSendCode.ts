@@ -26,7 +26,7 @@ export function* watchMobileSendCode({payload}: TMobileSendCodeAction) {
       },
     );
     yield put(MobileSendCode.actions.loadSuccess(res.result));
-    showSagaAlert({
+    yield showSagaAlert({
       message: res.result.message,
       mode: AlertMode.Success,
     });

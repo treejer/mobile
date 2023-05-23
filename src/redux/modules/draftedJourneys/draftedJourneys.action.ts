@@ -38,6 +38,11 @@ export const removeDraftedJourney = ({id}: RemoveDraftedJourneyArgs) => ({
   id,
 });
 
+export const CLEAR_DRAFTED_JOURNEYS = 'CLEAR_DRAFTED_JOURNEYS';
+export const clearDraftedJourneys = () => ({
+  type: CLEAR_DRAFTED_JOURNEYS,
+});
+
 // * saga watcher actions
 export type SetAsCurrentJourneyWatcherPayload = {
   id: string;

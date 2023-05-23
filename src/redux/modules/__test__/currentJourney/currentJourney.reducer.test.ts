@@ -153,4 +153,18 @@ describe('currentJourney reducer', () => {
       expectedValue,
     );
   });
+  it('should handle SET_SUBMIT_JOURNEY_LOADING, loading: true', () => {
+    const expectedValue = {
+      ...initialState,
+      submitLoading: true,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.setSubmitJourneyLoading(true))).toEqual(expectedValue);
+  });
+  it('should handle SET_SUBMIT_JOURNEY_LOADING, loading: false', () => {
+    const expectedValue = {
+      ...initialState,
+      submitLoading: false,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.setSubmitJourneyLoading(false))).toEqual(expectedValue);
+  });
 });

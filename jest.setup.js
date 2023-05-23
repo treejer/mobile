@@ -205,3 +205,29 @@ jest.mock('./src/utilities/hooks/useTreeUpdateInterval', () => {
     useTreeUpdateInterval: () => 200,
   };
 });
+
+jest.mock('./src/utilities/helpers/IPFS', () => {
+  return {
+    upload: (url, uri) =>
+      new Promise((resolve, reject) => {
+        resolve({Hash: 'https://www.file.com'});
+      }),
+    getHttpDownloadUrl: () => 'https://www.file.com',
+  };
+});
+
+jest.mock('./src/utilities/helpers/submitTree', () => {
+  const actualImports = jest.requireActual('./src/utilities/helpers/submitTree');
+  return {
+    ...actualImports,
+    photoToUpload: file => {
+      return 'storage://file';
+    },
+  };
+});
+
+jest.mock('eth-sig-util', () => {
+  return {
+    recoverTypedSignature: (data, sig) => 'address',
+  };
+});

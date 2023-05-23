@@ -108,4 +108,19 @@ describe('draftedJourneys reducer', () => {
     };
     expect(draftedJourneysReducer(state, actionsList.setDraftAsCurrentJourneyWatcher({id: draft.id}))).toEqual(state);
   });
+  it('should handle CLEAR_DRAFTED_JOURNEYS', () => {
+    const date = new Date(jest.now());
+    const draft = {
+      journey,
+      draftType: DraftType.Draft,
+      name: `Draft ${jest.now()}`,
+      id: date.toString(),
+      createdAt: date,
+      updatedAt: date,
+    };
+    const state = {
+      drafts: [...initialState.drafts, draft],
+    };
+    expect(draftedJourneysReducer(state, actionsList.clearDraftedJourneys())).toEqual(initialState);
+  });
 });

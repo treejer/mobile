@@ -29,6 +29,7 @@ export type CurrentJourneyAction = {
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
   journey?: TCurrentJourney;
+  loading?: boolean;
 };
 
 export const currentJourneyInitialState: TCurrentJourney = {};
@@ -114,6 +115,16 @@ export const currentJourneyReducer = (
       };
     case actionsList.SET_JOURNEY_FROM_DRAFTS:
       return action.journey || state;
+    case actionsList.SUBMIT_JOURNEY_WATCHER:
+      return {
+        ...state,
+        submitLoading: true,
+      };
+    case actionsList.SET_SUBMIT_JOURNEY_LOADING:
+      return {
+        ...state,
+        submitLoading: action.loading,
+      };
     case actionsList.CLEAR_JOURNEY:
       return currentJourneyInitialState;
     default:
@@ -161,6 +172,10 @@ export function useCurrentJourney() {
     [dispatch],
   );
 
+  const dispatchSubmitJourney = useCallback(() => {
+    dispatch(actionsList.submitJourneyWatcher());
+  }, [dispatch]);
+
   return {
     journey,
     dispatchClearJourney,
@@ -169,5 +184,6 @@ export function useCurrentJourney() {
     dispatchSelectTreeLocation,
     dispatchSelectTreePhoto,
     dispatchSetTreeDetailToUpdate,
+    dispatchSubmitJourney,
   };
 }

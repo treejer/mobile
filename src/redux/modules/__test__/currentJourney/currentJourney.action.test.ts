@@ -155,4 +155,24 @@ describe('currentJourney actions', () => {
     };
     expect(actionsList.setJourneyFromDrafts({journey: expectedAction.journey})).toEqual(expectedAction);
   });
+  it('set submit journey loading = true', () => {
+    const expectedAction = {
+      type: actionsList.SET_SUBMIT_JOURNEY_LOADING,
+      loading: true,
+    };
+    expect(actionsList.setSubmitJourneyLoading(true)).toEqual(expectedAction);
+  });
+  it('set submit journey loading = false', () => {
+    const expectedAction = {
+      type: actionsList.SET_SUBMIT_JOURNEY_LOADING,
+      loading: false,
+    };
+    expect(actionsList.setSubmitJourneyLoading(false)).toEqual(expectedAction);
+  });
+  it('submit journey', () => {
+    const expectedAction = {
+      type: actionsList.SUBMIT_JOURNEY_WATCHER,
+    };
+    expect(actionsList.submitJourneyWatcher()).toEqual(expectedAction);
+  });
 });

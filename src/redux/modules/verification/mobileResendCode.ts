@@ -14,7 +14,7 @@ export function* watchMobileResendCode() {
       method: 'POST',
     });
     yield put(MobileResendCode.actions.loadSuccess(res.result));
-    showSagaAlert({
+    yield showSagaAlert({
       message: res.result,
       mode: AlertMode.Success,
     });

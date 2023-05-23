@@ -1,8 +1,9 @@
 import {ContractType, treejerProtocol} from 'services/config';
 import Web3 from 'web3';
-import sigUtil from 'eth-sig-util';
+const sigUtil = require('eth-sig-util');
 
 import {NetworkConfig} from 'services/config';
+import {TWeb3} from 'ranger-redux/modules/web3/web3';
 
 export enum TreeFactoryMethods {
   PlantTree = 'plantTree',
@@ -35,14 +36,14 @@ export const methodParams = {
 
 export type TTreeFactoryRequestParams = {
   nonce: number;
-  treeId?: string;
+  treeId?: number;
   treeSpecs: string;
   birthDate?: number;
   countryCode?: number;
 };
 
 export type GenerateTreeFactorySignatureArgs = {
-  web3: Web3;
+  magic: TWeb3['magic'];
   wallet: string;
   config: NetworkConfig;
   method: TreeFactoryMethods;
@@ -50,77 +51,57 @@ export type GenerateTreeFactorySignatureArgs = {
 };
 
 export async function generateTreeFactorySignature({
-  web3,
   requestParams,
   method,
   config,
   wallet,
+  magic,
 }: GenerateTreeFactorySignatureArgs) {
-  let signature;
+  try {
+    console.log('am i here?');
+    const contract = config.contracts[ContractType.TreeFactory];
 
-  //@ts-ignore
-  web3.currentProvider.sendAsync(
-    {
-      method: 'net_version',
-      params: [],
-      jsonrpc: '2.0',
-    },
-    () => {
-      const contract = config.contracts[ContractType.TreeFactory];
+    const msgParams = {
+      types: {
+        EIP712Domain: [
+          {name: 'name', type: 'string'},
+          {name: 'version', type: 'string'},
+          {name: 'chainId', type: 'uint256'},
+          {name: 'verifyingContract', type: 'address'},
+        ],
+        [method]: methodParams[method],
+      },
+      primaryType: method,
+      domain: {
+        name: treejerProtocol,
+        version: '1',
+        chainId: config.chainId,
+        verifyingContract: contract.address,
+      },
+      message: requestParams,
+    };
 
-      const msgParams = JSON.stringify({
-        types: {
-          EIP712Domain: [
-            {name: 'name', type: 'string'},
-            {name: 'version', type: 'string'},
-            {name: 'chainId', type: 'uint256'},
-            {name: 'verifyingContract', type: 'address'},
-          ],
-          [method]: methodParams[method],
-        },
-        method,
-        domain: {
-          name: treejerProtocol,
-          version: 1,
-          chainId: config.chainId,
-          verifyingContract: contract.address,
-        },
-        message: requestParams,
-      });
+    console.log(msgParams, 'msgParams');
 
-      const params = [wallet, msgParams];
-      const getSignMethod = 'eth_signTypedData_v3';
+    const params = [wallet, msgParams];
+    const getSignMethod = 'eth_signTypedData_v3';
 
-      //@ts-ignore
-      web3.currentProvider.sendAsync(
-        {
-          getSignMethod,
-          params,
-          wallet,
-        },
-        async function (err, result) {
-          if (err) {
-            console.log(err, 'error az bikh');
-            if (result.error) {
-              console.log(result.error.message);
-            } else {
-              const recovered = sigUtil.recoverTypedSignature({
-                data: JSON.parse(msgParams),
-                sig: result.result,
-              });
-              if (web3.utils.toChecksumAddress(recovered) === web3.utils.toChecksumAddress(wallet)) {
-                console.log('checking ====> true');
-              } else {
-                console.log('Failed to verify signer when comparing ' + result + ' to ' + wallet);
-              }
+    const signature = await magic.rpcProvider.request({
+      method: getSignMethod,
+      params,
+    });
 
-              signature = result.result.substring(2);
-            }
-          }
-        },
-      );
-    },
-  );
+    const recoveredAddress = sigUtil.recoverTypedSignature({
+      data: msgParams,
+      sig: signature,
+    });
 
-  return signature;
+    console.log(
+      recoveredAddress.toLocaleLowerCase() === wallet.toLocaleLowerCase() ? 'Signing success!' : 'Signing failed!',
+    );
+
+    return signature;
+  } catch (e: any) {
+    console.log(e, 'error in generate signature');
+  }
 }

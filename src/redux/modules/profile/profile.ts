@@ -13,6 +13,7 @@ import {useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 import {changeCheckMetaData} from '../settings/settings';
+import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
 
 export type TProfile = {
   id: string;
@@ -40,6 +41,7 @@ const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 export function* watchProfile() {
   try {
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
+    // TODO: check here
     yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
@@ -75,6 +77,7 @@ export function useProfile(): TUseProfile {
   const dispatch = useAppDispatch();
 
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
+  const {dispatchClearDraftedJourneys} = useDraftedJourneys();
   const {network: currentNetwork} = useUserWeb3();
   const {t} = useTranslation();
 
@@ -121,7 +124,7 @@ export function useProfile(): TUseProfile {
           }
         }
 
-        // TODO @clear-drafted-journeys
+        dispatchClearDraftedJourneys();
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);
@@ -170,3 +173,5 @@ export const {actionTypes: profileActionsTypes, actions: profileActions, reducer
 export function* selectProfile() {
   return yield select((state: TReduxState) => state.profile.data);
 }
+
+export const getProfile = (state: TReduxState) => state.profile.data;

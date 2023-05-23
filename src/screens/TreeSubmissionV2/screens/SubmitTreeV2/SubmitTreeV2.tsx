@@ -9,6 +9,8 @@ import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
+import {useAnalytics} from 'utilities/hooks/useAnalytics';
+import {Hex2Dec} from 'utilities/helpers/hex';
 import {DraftJourneyModal} from 'screens/TreeSubmissionV2/components/DraftJourneyModal/DraftJourneyModal';
 import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
@@ -37,15 +39,15 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const {userLocation} = plantTreePermissions;
 
   const walletAddress = useWalletAccount();
-  const {data, canPlant} = usePlanterStatusQuery(walletAddress);
-
-  console.log(canPlant, 'data idadsf');
+  const {canPlant} = usePlanterStatusQuery(walletAddress);
 
   const [draftState, setDraftState] = useState<TDraftState | null>(null);
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
 
-  const {journey, dispatchSelectTreePhoto, dispatchClearJourney} = useCurrentJourney();
+  const {journey, dispatchSelectTreePhoto, dispatchClearJourney, dispatchSubmitJourney} = useCurrentJourney();
   const {dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
+
+  const {sendEvent} = useAnalytics();
 
   const {isConnected} = useNetInfo();
 
@@ -82,8 +84,9 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   const handleSubmitJourney = useCallback(() => {
     if (isConnected) {
-      // TODO => submit journey request
-      console.log('submit');
+      console.log('submitted');
+      sendEvent(journey.isUpdate ? 'update_tree_confirm' : 'add_tree_confirm');
+      dispatchSubmitJourney();
     } else {
       handleOpenDraftModal(DraftType.Offline);
     }
@@ -169,7 +172,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             />
             <Spacer times={6} />
             <Text testID="submission-title" style={styles.title}>
-              {t(`submitTreeV2.titles.${submissionTitle}`, {treeId: journey?.treeIdToUpdate})}
+              {t(`submitTreeV2.titles.${submissionTitle}`, {treeId: Hex2Dec(journey?.treeIdToUpdate!)})}
             </Text>
             <Spacer times={4} />
             {plantTreePermissions?.isCameraGranted ? (
@@ -203,7 +206,10 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             )}
           </View>
         </ScrollView>
-        <RenderIf condition={journey?.canDraft || plantTreePermissions.cantProceed}>
+        <RenderIf condition={!!journey.submitLoading}>
+          <Text>loading...</Text>
+        </RenderIf>
+        <RenderIf condition={(journey?.canDraft || plantTreePermissions.cantProceed) && !journey.submitLoading}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
             <SubmissionButtons
               testID="submission-buttons"

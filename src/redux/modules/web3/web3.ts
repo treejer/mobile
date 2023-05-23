@@ -368,10 +368,19 @@ export function* selectConfig() {
   return yield select((state: TReduxState) => state.web3.config);
 }
 
+export const getConfig = (state: TReduxState) => state.web3.config;
+
 export function* selectWeb3() {
   return yield select((state: TReduxState) => state.web3.web3);
 }
 
+export function* selectMagic() {
+  return yield select((state: TReduxState) => state.web3.magic);
+}
+export const getMagic = (state: TReduxState) => state.web3.magic;
+
 export function* selectWallet() {
   return yield select((state: TReduxState) => state.web3.wallet);
 }
+
+export const getWallet = (state: TReduxState) => state.web3.wallet;
