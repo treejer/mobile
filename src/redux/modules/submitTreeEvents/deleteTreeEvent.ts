@@ -19,8 +19,12 @@ const DeleteTreeEvent = new ReduxFetchState<TDeleteTreeEventRes, TDeleteTreeEven
 export function* watchDeleteTreeEvent({payload}: TDeleteTreeEventAction) {
   try {
     const {id, event} = payload || {};
-    const res: FetchResult<TDeleteTreeEventRes> = yield sagaFetch(
+    const res: FetchResult<TDeleteTreeEventRes> = yield sagaFetch<TDeleteTreeEventRes>(
       `/${event.toString().toLowerCase()}_requests/${Hex2Dec(id)}`,
+      {
+        configUrl: 'treejerNestApiUrl',
+        method: 'DELETE',
+      },
     );
     yield showSagaAlert({
       title: '',

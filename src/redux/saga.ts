@@ -22,6 +22,9 @@ import {assignedTreeSagas} from './modules/submitTreeEvents/assignedTree';
 import {updateTreeSagas} from './modules/submitTreeEvents/updateTree';
 import {treeDetailSagas} from './modules/trees/treeDetail';
 import {deleteTreeEventSagas} from './modules/submitTreeEvents/deleteTreeEvent';
+import {plantedTreesSagas} from './modules/trees/plantedTrees';
+import {updatedTreesSagas} from './modules/trees/updatedTrees';
+import {assignedTreesSagas} from './modules/trees/assignedTrees';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -45,6 +48,9 @@ export default function* root(store: TStoreRedux) {
     assignedTreeSagas(),
     updateTreeSagas(),
     treeDetailSagas(),
+    plantedTreesSagas(),
+    assignedTreesSagas(),
+    updatedTreesSagas(),
     deleteTreeEventSagas(),
   ]);
 }

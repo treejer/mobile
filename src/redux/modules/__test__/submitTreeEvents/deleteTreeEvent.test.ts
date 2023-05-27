@@ -28,7 +28,11 @@ describe('deleteTreeEvent', () => {
     });
     it('should yield deleteTreeEvent watcher', () => {
       const gen = deleteTreeEventSagas();
-      assert.deepEqual(gen.next().value, takeEvery(deleteTreeEventActionTypes.load, watchDeleteTreeEvent));
+      assert.deepEqual(
+        gen.next().value,
+        takeEvery(deleteTreeEventActionTypes.load, watchDeleteTreeEvent),
+        'should yield watchDeleteTreeEvent',
+      );
     });
   });
 
@@ -44,7 +48,11 @@ describe('deleteTreeEvent', () => {
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Plant.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`),
+        sagaFetch(`/${DeleteTreeEvents.Plant.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+          configUrl: 'treejerNestApiUrl',
+          method: 'DELETE',
+        }),
+        'url should be /plant_requests/11221',
       );
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
@@ -57,6 +65,7 @@ describe('deleteTreeEvent', () => {
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
         put(deleteTreeEventActions.loadSuccess(DeleteResMock)),
+        'should dispatch deleteTreeEventActions success',
       );
     });
     it('watchDeleteTreeEvent success (Delete Update Request)', () => {
@@ -66,7 +75,11 @@ describe('deleteTreeEvent', () => {
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Update.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`),
+        sagaFetch(`/${DeleteTreeEvents.Update.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+          configUrl: 'treejerNestApiUrl',
+          method: 'DELETE',
+        }),
+        'url should be /update_requests/11221',
       );
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
@@ -79,6 +92,7 @@ describe('deleteTreeEvent', () => {
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
         put(deleteTreeEventActions.loadSuccess(DeleteResMock)),
+        'should dispatch deleteTreeEventActions success',
       );
     });
     it('watchDeleteTreeEvent success (Delete Assigned Request)', () => {
@@ -88,7 +102,11 @@ describe('deleteTreeEvent', () => {
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Assigned.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`),
+        sagaFetch(`/${DeleteTreeEvents.Assigned.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+          configUrl: 'treejerNestApiUrl',
+          method: 'DELETE',
+        }),
+        'url should be /assigned_requests/11221',
       );
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
@@ -101,6 +119,7 @@ describe('deleteTreeEvent', () => {
       assert.deepEqual(
         gen.next({result: DeleteResMock, status: 204}).value,
         put(deleteTreeEventActions.loadSuccess(DeleteResMock)),
+        'should dispatch deleteTreeEventActions success',
       );
     });
 
@@ -114,7 +133,11 @@ describe('deleteTreeEvent', () => {
       });
       gen.next();
       const error = new Error('error is here!');
-      assert.deepEqual(gen.throw(error).value, put(deleteTreeEventActions.loadFailure(error.message)));
+      assert.deepEqual(
+        gen.throw(error).value,
+        put(deleteTreeEventActions.loadFailure(error.message)),
+        'should dispatch deleteTreeEventActions failure',
+      );
       assert.deepEqual(gen.next().value, handleSagaFetchError(error as any));
     });
   });
