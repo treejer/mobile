@@ -131,7 +131,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     [],
   );
 
-  if (canPlant === false) {
+  if (canPlant === false && !journey.isUpdate) {
     return (
       <View testID="cant-plant-view" style={styles.cantPlantContainer}>
         <Text style={styles.cantPlantTitle}>{t('submitTreeV2.cantPlant.supplyCapReached')}</Text>

@@ -91,14 +91,16 @@ export async function generateTreeFactorySignature({
         params,
       });
 
-      const recoveredAddress = sigUtil.recoverTypedSignature({
-        data: msgParams,
-        sig: signature,
-      });
+      // const recoveredAddress = sigUtil.recoverTypedSignature({
+      //   data: msgParams,
+      //   sig: signature,
+      // });
 
-      console.log(
-        recoveredAddress.toLocaleLowerCase() === wallet.toLocaleLowerCase() ? 'Signing success!' : 'Signing failed!',
-      );
+      console.log(wallet, 'wallet is here');
+
+      // console.log(
+      //   recoveredAddress.toLocaleLowerCase() === wallet.toLocaleLowerCase() ? 'Signing success!' : 'Signing failed!',
+      // );
 
       return resolve(signature);
     } catch (e: any) {

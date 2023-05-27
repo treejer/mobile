@@ -118,9 +118,11 @@ export function* watchSubmitJourney() {
     const wallet: string = yield select(getWallet);
 
     let treeDetail: TTreeDetailRes | undefined = undefined;
+    console.log(treeIdToUpdate, 'treeIdToUPdate');
     if (treeIdToUpdate || treeIdToPlant) {
       yield put(treeDetailActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
-      treeDetail = yield take(treeDetailActionTypes.loadSuccess);
+      const {payload} = yield take(treeDetailActionTypes.loadSuccess);
+      treeDetail = payload;
     }
 
     let jsonData, photoUploadResult;
@@ -129,7 +131,7 @@ export function* watchSubmitJourney() {
     }
 
     if (isUpdate) {
-      console.log({ipfsGetURL: config.ipfsPostURL, treeDetail, Hash: photoUploadResult.Hash});
+      console.log(treeDetail, 'tree');
       jsonData = yield updateTreeJSON(config.ipfsGetURL, {
         journey,
         tree: treeDetail as any,

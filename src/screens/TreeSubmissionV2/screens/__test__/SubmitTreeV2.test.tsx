@@ -1,3 +1,6 @@
+import {screen} from '@testing-library/react-native';
+import {MockedProviderProps} from '@apollo/client/testing';
+
 import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
@@ -10,9 +13,7 @@ import {
   mockPlantTreePermissionsLocationGranted,
 } from 'screens/TreeSubmissionV2/components/__test__/mock';
 import {onBoardingOne} from '../../../../../assets/images';
-import {MockedProviderProps} from '@apollo/client/testing';
 import document from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
-import {screen} from '@testing-library/react-native';
 
 const canPlantMockQuery: MockedProviderProps['mocks'] = [
   {
@@ -104,6 +105,44 @@ describe('SubmitTreeV2 component', () => {
       expect(submissionTitle).toBeFalsy();
       expect(selectTreePhoto).toBeFalsy();
       expect(selectTreeLocation).toBeFalsy();
+    });
+  });
+  describe('SubmitTreeV2, cant plant in update', () => {
+    let getElementByTestId, queryElementByTestId;
+
+    console.log(cantPlantMockQuery);
+
+    beforeEach(() => {
+      const element = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isUpdate: true,
+          },
+        },
+        cantPlantMockQuery as any,
+      );
+      getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
+    });
+
+    it('components/elements should be defined', async () => {
+      const cantPlantView = await screen.queryByTestId('cant-plant-view');
+      const permissionBox = queryElementByTestId('check-permissions-box');
+      const submissionTitle = queryElementByTestId('submission-title');
+      const selectTreePhoto = queryElementByTestId('select-tree-photo-cpt');
+      const selectTreeLocation = queryElementByTestId('select-tree-location-cpt');
+
+      expect(permissionBox).toBeTruthy();
+      expect(submissionTitle).toBeTruthy();
+      expect(selectTreePhoto).toBeTruthy();
+      expect(selectTreeLocation).toBeTruthy();
+
+      expect(cantPlantView).toBeFalsy();
     });
   });
 
