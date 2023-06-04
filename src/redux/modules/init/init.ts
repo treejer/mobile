@@ -11,8 +11,8 @@ import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
 import {countriesActions} from '../countris/countries';
 import {version} from '../../../../package.json';
-import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
-import {processBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.action';
+import {changeCheckMetaData} from '../settings/settings';
+import {processBrowserPlatform} from '../browserPlatform/browserPlatform.action';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({

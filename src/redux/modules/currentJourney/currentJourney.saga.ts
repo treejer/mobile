@@ -118,11 +118,10 @@ export function* watchSubmitJourney() {
     const wallet: string = yield select(getWallet);
 
     let treeDetail: TTreeDetailRes | undefined = undefined;
-    console.log(treeIdToUpdate, 'treeIdToUPdate');
     if (treeIdToUpdate || treeIdToPlant) {
       yield put(treeDetailActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
       const {payload} = yield take(treeDetailActionTypes.loadSuccess);
-      treeDetail = payload;
+      treeDetail = yield payload;
     }
 
     let jsonData, photoUploadResult;
@@ -131,7 +130,7 @@ export function* watchSubmitJourney() {
     }
 
     if (isUpdate) {
-      console.log(treeDetail, 'tree');
+      console.log(treeDetail, 'tree Detail');
       jsonData = yield updateTreeJSON(config.ipfsGetURL, {
         journey,
         tree: treeDetail as any,
@@ -177,7 +176,7 @@ export function* watchSubmitJourney() {
       const signature = yield generateTreeFactorySignature({
         wallet,
         magic,
-        method: TreeFactoryMethods.PlantAssignedTree,
+        method: TreeFactoryMethods.PlantAssignTree,
         config,
         requestParams: {
           treeId: Number(treeIdToPlant),

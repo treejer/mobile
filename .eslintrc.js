@@ -8,6 +8,7 @@ module.exports = {
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    'react/react-in-jsx-scope': 'off',
     'no-console': 0,
     'unused-imports/no-unused-vars': [
       'warn',

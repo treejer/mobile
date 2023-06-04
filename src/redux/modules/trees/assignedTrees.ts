@@ -8,7 +8,9 @@ const AssignedTrees = new ReduxFetchState<TAssignedTreesRes, null, string>('assi
 
 export function* watchAssignedTrees() {
   try {
-    const res: FetchResult<TAssignedTreesRes> = yield sagaFetch<TAssignedTreesRes>('/assigned_requests/verification');
+    const res: FetchResult<TAssignedTreesRes> = yield sagaFetch<TAssignedTreesRes>(
+      '/assigned_requests/verification/me',
+    );
     yield put(AssignedTrees.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

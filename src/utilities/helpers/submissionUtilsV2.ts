@@ -9,7 +9,7 @@ export enum TreeFactoryMethods {
   PlantTree = 'plantTree',
   UpdateTree = 'updateTree',
   PlantMarketPlaceTree = 'plantMarketPlaceTree',
-  PlantAssignedTree = 'plantAssignedTree',
+  PlantAssignTree = 'plantAssignTree',
 }
 
 export const methodParams = {
@@ -24,7 +24,7 @@ export const methodParams = {
     {name: 'treeId', type: 'uint256'},
     {name: 'treeSpecs', type: 'string'},
   ],
-  [TreeFactoryMethods.PlantAssignedTree]: [
+  [TreeFactoryMethods.PlantAssignTree]: [
     {name: 'nonce', type: 'uint256'},
     {name: 'treeId', type: 'uint256'},
     {name: 'treeSpecs', type: 'string'},

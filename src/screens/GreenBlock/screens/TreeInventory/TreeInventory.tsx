@@ -9,7 +9,6 @@ import {FilterTabBar} from 'components/Filter/FilterTabBar';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import {DraftList} from 'components/Draft/DraftList';
-import {TreeListV2} from 'components/TreeListV2/TreeListV2';
 import Spacer from 'components/Spacer';
 import {FilterTrees} from 'components/Filter/FilterTrees';
 import {useSearchValue} from 'utilities/hooks/useSearchValue';
@@ -34,6 +33,7 @@ import planterTreeQuery, {
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
+import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -76,6 +76,8 @@ export function TreeInventory(props: TreeInventoryProps) {
   const walletAddress = useWalletAccount();
   const treeUpdateInterval = useTreeUpdateInterval();
 
+  const {t} = useTranslation();
+
   const {
     persistedData: submittedTrees,
     loading: submittedTreesLoading,
@@ -114,8 +116,6 @@ export function TreeInventory(props: TreeInventoryProps) {
     }
   });
 
-  const {t} = useTranslation();
-
   const submittedTreesCountOf = useMemo(
     () => submittedTreeStatusCount(submittedTrees, treeUpdateInterval),
     [submittedTrees, treeUpdateInterval],
@@ -151,7 +151,7 @@ export function TreeInventory(props: TreeInventoryProps) {
                 onFilter={handleSetFilterSubmittedTrees}
               />
               <Spacer times={6} />
-              <TreeListV2
+              <SubmittedTreeListV2
                 testID="submitted-tree-list-v2"
                 verifiedTrees={filteredSubmittedTrees}
                 treeItemUI={submittedTreeItemUI}

@@ -27,6 +27,7 @@ import {deleteTreeEventReducer} from './modules/submitTreeEvents/deleteTreeEvent
 import {plantedTreesReducer} from './modules/trees/plantedTrees';
 import {updatedTreesReducer} from './modules/trees/updatedTrees';
 import {assignedTreesReducer} from './modules/trees/assignedTrees';
+import {paginationReducer} from './modules/pagination/pagination.reducer';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -56,6 +57,7 @@ const appReducer = combineReducers({
   updatedTrees: updatedTreesReducer,
   assignedTrees: assignedTreesReducer,
   deleteTreeEvent: deleteTreeEventReducer,
+  pagination: paginationReducer,
 });
 
 export default appReducer;

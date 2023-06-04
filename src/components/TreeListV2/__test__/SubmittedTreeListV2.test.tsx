@@ -2,18 +2,18 @@ import {useState} from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
-import {TreeListV2} from 'components/TreeListV2/TreeListV2';
+import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
-import {verifiedTress} from 'components/TreeListV2/__test__/TreeListV2.mock';
+import {verifiedTress} from 'components/TreeListV2/__test__/SubmittedTreeListV2.mock';
 import {render} from 'ranger-testUtils/testingLibrary';
 
-describe('TreeListV2', () => {
-  it('TreeListV2 component should be defined', () => {
-    expect(TreeListV2).toBeDefined();
-    expect(typeof TreeListV2).toBe('function');
+describe('SubmittedTreeListV2', () => {
+  it('SubmittedTreeListV2 component should be defined', () => {
+    expect(SubmittedTreeListV2).toBeDefined();
+    expect(typeof SubmittedTreeListV2).toBe('function');
   });
 
-  describe('TreeListV2 withId', () => {
+  describe('SubmittedTreeListV2 withId', () => {
     const {
       result: {current},
     } = renderHook(() => useState(TreeItemUI.WithId));
@@ -23,7 +23,7 @@ describe('TreeListV2', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
       const element = render(
-        <TreeListV2
+        <SubmittedTreeListV2
           treeItemUI={treeItemUI}
           setTreeItemUI={setTreeITemUI}
           verifiedTrees={verifiedTress as any}
@@ -64,7 +64,7 @@ describe('TreeListV2', () => {
       expect(withDetailFlatList).toBeFalsy();
     });
   });
-  describe('TreeListV2 withDetail', () => {
+  describe('SubmittedTreeListV2 withDetail', () => {
     const {
       result: {current},
     } = renderHook(() => useState(TreeItemUI.WithDetail));
@@ -74,7 +74,7 @@ describe('TreeListV2', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
       const element = render(
-        <TreeListV2
+        <SubmittedTreeListV2
           treeItemUI={treeItemUI}
           setTreeItemUI={setTreeITemUI}
           verifiedTrees={verifiedTress as any}
@@ -115,7 +115,7 @@ describe('TreeListV2', () => {
       expect(withIdFlatList).toBeFalsy();
     });
   });
-  describe('TreeListV2 loading = true', () => {
+  describe('SubmittedTreeListV2 loading = true', () => {
     const {
       result: {current},
     } = renderHook(() => useState(TreeItemUI.WithDetail));
@@ -125,7 +125,7 @@ describe('TreeListV2', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
       const element = render(
-        <TreeListV2
+        <SubmittedTreeListV2
           treeItemUI={treeItemUI}
           setTreeItemUI={setTreeITemUI}
           verifiedTrees={verifiedTress as any}

@@ -164,7 +164,8 @@ function TreeDetails(_: Props) {
       });
     } else {
       if (tree?.id) {
-        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+        const {__typename, ...treeData} = treeDetails;
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeData});
       }
     }
   };

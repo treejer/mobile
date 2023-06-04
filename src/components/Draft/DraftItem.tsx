@@ -9,6 +9,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {DraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import {treeImageSrc} from 'utilities/helpers/tree';
 import {TreeImage} from '../../../assets/icons';
 
 export type DraftItemProps = {
@@ -20,23 +21,27 @@ export type DraftItemProps = {
 
 export function DraftItem(props: DraftItemProps) {
   const {testID, draft, onPressDraft, onRemoveDraft} = props;
-  const {isNursery} = draft.journey;
+  const {isNursery, tree} = draft.journey;
 
   const {locale} = useSettings();
 
   return (
     <Card testID={testID} style={styles.card}>
       <TouchableOpacity testID={`draft-item-button-${draft.id}`} style={styles.btn} onPress={onPressDraft}>
-        {isNursery ? (
-          <View testID="nursery-icon" style={styles.treesWrapper}>
-            <View style={styles.trees}>
-              <Tree color={colors.grayLight} size={16} />
+        {!tree?.treeSpecsEntity?.imageFs ? (
+          isNursery ? (
+            <View testID="nursery-icon" style={styles.treesWrapper}>
+              <View style={styles.trees}>
+                <Tree color={colors.grayLight} size={16} />
+                <Tree color={colors.grayLight} size={16} />
+              </View>
               <Tree color={colors.grayLight} size={16} />
             </View>
-            <Tree color={colors.grayLight} size={16} />
-          </View>
+          ) : (
+            <Image testID="tree-image" source={TreeImage} style={styles.treeImage} />
+          )
         ) : (
-          <Image testID="tree-image" source={TreeImage} style={styles.treeImage} />
+          <Image testID="tree-imageFs" source={treeImageSrc(tree)} style={[styles.treeImage, {tintColor: undefined}]} />
         )}
         <Spacer times={4} />
         <View>

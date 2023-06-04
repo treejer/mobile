@@ -25,6 +25,7 @@ import {deleteTreeEventSagas} from './modules/submitTreeEvents/deleteTreeEvent';
 import {plantedTreesSagas} from './modules/trees/plantedTrees';
 import {updatedTreesSagas} from './modules/trees/updatedTrees';
 import {assignedTreesSagas} from './modules/trees/assignedTrees';
+import {paginationSagas} from './modules/pagination/pagination.saga';
 
 export default function* root(store: TStoreRedux) {
   yield all([
@@ -52,5 +53,6 @@ export default function* root(store: TStoreRedux) {
     assignedTreesSagas(),
     updatedTreesSagas(),
     deleteTreeEventSagas(),
+    paginationSagas(),
   ]);
 }

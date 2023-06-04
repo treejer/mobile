@@ -8,7 +8,7 @@ const UpdatedTrees = new ReduxFetchState<TUpdatedTreesRes, null, string>('update
 
 export function* watchUpdatedTrees() {
   try {
-    const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/verification');
+    const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/verification/me');
     yield put(UpdatedTrees.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

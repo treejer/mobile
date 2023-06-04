@@ -118,6 +118,13 @@ export const useDraftedJourneys = () => {
     dispatch(actionsList.clearDraftedJourneys());
   }, [dispatch]);
 
+  const checkExistAnyDraftOfTree = useCallback(
+    (treeId: string) => {
+      return drafts.some(draft => draft.journey.treeIdToPlant === treeId);
+    },
+    [drafts],
+  );
+
   return {
     drafts,
     dispatchDraftJourney,
@@ -125,5 +132,6 @@ export const useDraftedJourneys = () => {
     dispatchSaveDraftedJourney,
     dispatchSetDraftAsCurrentJourney,
     dispatchClearDraftedJourneys,
+    checkExistAnyDraftOfTree,
   };
 };

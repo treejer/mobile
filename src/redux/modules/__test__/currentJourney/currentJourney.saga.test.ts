@@ -593,10 +593,11 @@ describe('currentJourney sagas', () => {
       };
 
       assert.deepEqual(
-        gen.next(updatedTreeDetail).value,
+        gen.next({payload: updatedTreeDetail}).value,
         take(treeDetailActionTypes.loadSuccess),
         'should wait to get tree detail',
       );
+      assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
 
       assert.deepEqual(
         gen.next({...updatedTreeDetail, ...selectedData}).value,
@@ -717,10 +718,12 @@ describe('currentJourney sagas', () => {
       };
 
       assert.deepEqual(
-        gen.next(updatedTreeDetail).value,
+        gen.next({payload: updatedTreeDetail}).value,
         take(treeDetailActionTypes.loadSuccess),
         'should wait to get tree detail',
       );
+
+      assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
 
       assert.deepEqual(
         gen.next({...updatedTreeDetail, ...selectedData}).value,
@@ -836,10 +839,12 @@ describe('currentJourney sagas', () => {
       };
 
       assert.deepEqual(
-        gen.next(updatedTreeDetail).value,
+        gen.next({payload: updatedTreeDetail}).value,
         take(treeDetailActionTypes.loadSuccess),
         'should wait to get tree detail',
       );
+
+      assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
 
       assert.deepEqual(
         gen.next({...updatedTreeDetail, ...selectedData}).value,
@@ -899,6 +904,7 @@ describe('currentJourney sagas', () => {
         take(assignedTreeActionTypes.loadSuccess),
         'should wait to assignedTree request success response',
       );
+
       assert.deepEqual(
         gen.next(mockAssignedJourneyWithDraftId).value,
         showSagaAlert({
@@ -971,10 +977,12 @@ describe('currentJourney sagas', () => {
       };
 
       assert.deepEqual(
-        gen.next(updatedTreeDetail).value,
+        gen.next({payload: updatedTreeDetail}).value,
         take(treeDetailActionTypes.loadSuccess),
         'should wait to get tree detail',
       );
+
+      assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
 
       assert.deepEqual(
         gen.next({...updatedTreeDetail, ...selectedData}).value,
@@ -1101,10 +1109,12 @@ describe('currentJourney sagas', () => {
       };
 
       assert.deepEqual(
-        gen.next(updatedTreeDetail).value,
+        gen.next({payload: updatedTreeDetail}).value,
         take(treeDetailActionTypes.loadSuccess),
         'should wait to get tree detail',
       );
+
+      assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
 
       assert.deepEqual(
         gen.next({...updatedTreeDetail, ...selectedData}).value,
@@ -1112,14 +1122,14 @@ describe('currentJourney sagas', () => {
         'should upload file and receive uploadData',
       );
 
-      const jsonData = assignedTreeJSON(mockConfig.ipfsGetURL, {
+      const jsonData = assignedTreeJSON(mockMainnetConfig.ipfsGetURL, {
         journey: mockAssignedJourneyWithoutDraftId as any,
         tree: updatedTreeDetail as any,
         photoUploadHash: 'https://www.file.com',
       });
 
       assert.deepEqual(
-        gen.next({...updatedTreeDetail, ...selectedData, Hash: 'https://www.file.com'}).value,
+        gen.next({...selectedData, Hash: 'https://www.file.com'}).value,
         assignedTreeJSON(mockMainnetConfig.ipfsGetURL, {
           journey: mockAssignedJourneyWithoutDraftId as any,
           tree: updatedTreeDetail as any,

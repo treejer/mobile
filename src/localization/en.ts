@@ -582,6 +582,7 @@ export const en = {
       offline: 'Submit Offline',
     },
   },
+  accept: 'Accept',
   approve: 'Approve',
   reject: 'Reject',
   treeInventoryV2: {
@@ -595,9 +596,12 @@ export const en = {
     startPlant: 'Start plant',
     backProfile: 'Back to profile',
     visitNotVerified: 'Visit not verified tab',
+    existInDraft:
+      '#{{id}} tree is exist in your draft list.\nyou can continue submission, or you can reset your draft.\n(after press reset draft item will remove)',
   },
   drafted: 'Drafted',
   submitted: 'Submitted',
   NotVerified: 'Not Verified',
   empty: 'Empty',
+  reset: 'Reset',
 };

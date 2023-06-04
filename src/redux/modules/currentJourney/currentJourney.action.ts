@@ -11,7 +11,7 @@ export const startPlantSingleTree = () => ({
 
 export type StartPlantAssignedTreeArgs = {
   treeIdToPlant: string;
-  tree: Tree;
+  tree: TCurrentJourney['tree'];
 };
 export const START_PLANT_ASSIGNED_TREE = 'START_PLANT_ASSIGNED_TREE';
 export const startPlantAssignedTree = ({treeIdToPlant, tree}: StartPlantAssignedTreeArgs) => ({
@@ -57,7 +57,7 @@ export const discardUpdateNurseryLocation = () => ({
 
 export type SetTreeDetailToUpdateArgs = {
   treeIdToUpdate: string;
-  tree: Tree;
+  tree: TCurrentJourney['tree'];
 };
 export const SET_TREE_DETAIL_TO_UPDATE = 'SET_TREE_DETAIL_TO_UPDATE';
 export const setTreeDetailToUpdate = ({treeIdToUpdate, tree}: SetTreeDetailToUpdateArgs) => ({

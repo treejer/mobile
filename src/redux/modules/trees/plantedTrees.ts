@@ -8,7 +8,7 @@ export const PlantedTrees = new ReduxFetchState<TPlantedTreesRes, null, string>(
 
 export function* watchPlantedTrees() {
   try {
-    const res: FetchResult<TPlantedTreesRes> = yield sagaFetch<TPlantedTreesRes>('/plant_requests/verification');
+    const res: FetchResult<TPlantedTreesRes> = yield sagaFetch<TPlantedTreesRes>('/plant_requests/verification/me');
     yield put(PlantedTrees.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

@@ -41,7 +41,7 @@ const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 export function* watchProfile() {
   try {
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
-    // TODO: check here
+    // TODO: check here for check metadata
     yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {

@@ -5,7 +5,7 @@ import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInvent
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
 import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {TreeLife} from 'utilities/helpers/treeInventory';
-import {verifiedTress} from 'components/TreeListV2/__test__/TreeListV2.mock';
+import {verifiedTress} from 'components/TreeListV2/__test__/SubmittedTreeListV2.mock';
 
 describe('TreeInventory component', () => {
   it('TreeInventory component should be defined', () => {

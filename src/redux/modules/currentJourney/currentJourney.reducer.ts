@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
-import {Tree} from 'types';
+import {Tree, TreeInList} from 'types';
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {canUpdateJourneyLocation} from 'utilities/helpers/canUpdateJourneyLocation';
@@ -25,7 +25,7 @@ export type CurrentJourneyAction = {
   fromGallery?: boolean;
   userLocation?: TPoint;
   photoLocation?: TPoint;
-  tree?: Tree;
+  tree?: Omit<Tree | TreeInList, '__typename'>;
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
   journey?: TCurrentJourney;
@@ -136,6 +136,13 @@ export function useCurrentJourney() {
   const journey = useAppSelector(state => state.currentJourney);
   const dispatch = useAppDispatch();
 
+  const dispatchStartPlantAssignedTree = useCallback(
+    (args: actionsList.StartPlantAssignedTreeArgs) => {
+      dispatch(actionsList.startPlantAssignedTree(args));
+    },
+    [dispatch],
+  );
+
   const dispatchStartPlantSingleTree = useCallback(() => {
     dispatch(actionsList.startPlantSingleTree());
   }, [dispatch]);
@@ -185,5 +192,6 @@ export function useCurrentJourney() {
     dispatchSelectTreePhoto,
     dispatchSetTreeDetailToUpdate,
     dispatchSubmitJourney,
+    dispatchStartPlantAssignedTree,
   };
 }
