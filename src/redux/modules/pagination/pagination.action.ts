@@ -1,10 +1,11 @@
 import {PaginationName, TAppQueries} from 'ranger-redux/modules/pagination/pagination.reducer';
 
 export const SET_NEXT_PAGE = 'SET_NEXT_PAGE';
-export const setNextPage = (name: PaginationName, query?: TAppQueries) => ({
+export const setNextPage = (name: PaginationName, action: () => any, query?: TAppQueries) => ({
   type: SET_NEXT_PAGE,
   name,
   query,
+  action,
 });
 
 export const PAGINATION_REACHED_END = 'PAGINATION_REACHED_END';

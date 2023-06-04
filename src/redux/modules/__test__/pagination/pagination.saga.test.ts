@@ -1,12 +1,9 @@
 import assert from 'assert';
 import {put, takeEvery} from 'redux-saga/effects';
 
-import {
-  defaultPaginationItem,
-  PaginationName,
-  PaginationNameFetcher,
-} from 'ranger-redux/modules/pagination/pagination.reducer';
+import {defaultPaginationItem, PaginationName} from 'ranger-redux/modules/pagination/pagination.reducer';
 import {paginationSagas, watchSetNextPage} from 'ranger-redux/modules/pagination/pagination.saga';
+import {plantedTreesActions} from 'ranger-redux/modules/trees/plantedTrees';
 import * as actionsList from 'ranger-redux/modules/pagination/pagination.action';
 
 describe('pagination module', () => {
@@ -25,9 +22,10 @@ describe('pagination module', () => {
     });
     it('watchSetNextPage should increase one page to selected pagination item', () => {
       const name = PaginationName.PlantedTrees;
-      const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name});
+      const action = plantedTreesActions.load;
+      const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name, action});
       gen.next();
-      assert.deepEqual(gen.next(defaultPaginationItem).value, put(PaginationNameFetcher[name]()));
+      assert.deepEqual(gen.next(defaultPaginationItem).value, put(action()));
     });
     it('watchSetNextPage should do nothing | hasMore: false', () => {
       const name = PaginationName.PlantedTrees;

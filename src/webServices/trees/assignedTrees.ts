@@ -1,3 +1,5 @@
+import {PaginationRes} from 'webServices/pagination/pagination';
+
 type AssignedTree = {
   _id: string;
   signer: string;
@@ -12,4 +14,12 @@ type AssignedTree = {
   updatedAt: string;
 };
 
-export type TAssignedTreesRes = AssignedTree[];
+export type TAssignedTreesRes = PaginationRes<AssignedTree>;
+export type TAssignedTreesPayload = {
+  filters?: {signer: string; nonce: number};
+  sort?: {signer: number; nonce: number};
+};
+export type TAssignedTreesAction = {
+  type: string;
+  payload: TAssignedTreesPayload;
+};

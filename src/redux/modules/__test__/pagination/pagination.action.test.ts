@@ -1,5 +1,6 @@
 import {PaginationName} from 'ranger-redux/modules/pagination/pagination.reducer';
 import * as actionsList from 'ranger-redux/modules/pagination/pagination.action';
+import {plantedTreesActions} from 'ranger-redux/modules/trees/plantedTrees';
 
 describe('pagination actions', () => {
   it('set next page + query', () => {
@@ -7,17 +8,21 @@ describe('pagination actions', () => {
       type: actionsList.SET_NEXT_PAGE,
       name: PaginationName.PlantedTrees,
       query: {filters: {signer: 'any', nonce: 1}},
+      action: plantedTreesActions.load,
     };
-    expect(actionsList.setNextPage(PaginationName.PlantedTrees, {filters: {signer: 'any', nonce: 1}})).toEqual(
-      expectedAction,
-    );
+    expect(
+      actionsList.setNextPage(PaginationName.PlantedTrees, plantedTreesActions.load, {
+        filters: {signer: 'any', nonce: 1},
+      }),
+    ).toEqual(expectedAction);
   });
   it('set next page', () => {
     const expectedAction = {
       type: actionsList.SET_NEXT_PAGE,
       name: PaginationName.PlantedTrees,
+      action: plantedTreesActions.load,
     };
-    expect(actionsList.setNextPage(PaginationName.PlantedTrees)).toEqual(expectedAction);
+    expect(actionsList.setNextPage(PaginationName.PlantedTrees, plantedTreesActions.load)).toEqual(expectedAction);
   });
   it('pagination reached end', () => {
     const expectedAction = {

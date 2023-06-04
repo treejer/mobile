@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux';
 
 import {initReducer} from './modules/init/init';
+import {paginationReducer} from './modules/pagination/pagination.reducer';
 import {web3Reducer} from './modules/web3/web3';
 import {netInfoReducer} from './modules/netInfo/netInfo';
 import {settingsReducer} from './modules/settings/settings';
@@ -27,10 +28,10 @@ import {deleteTreeEventReducer} from './modules/submitTreeEvents/deleteTreeEvent
 import {plantedTreesReducer} from './modules/trees/plantedTrees';
 import {updatedTreesReducer} from './modules/trees/updatedTrees';
 import {assignedTreesReducer} from './modules/trees/assignedTrees';
-import {paginationReducer} from './modules/pagination/pagination.reducer';
 
 const appReducer = combineReducers({
   init: initReducer,
+  pagination: paginationReducer,
   web3: web3Reducer,
   netInfo: netInfoReducer,
   settings: settingsReducer,
@@ -57,7 +58,6 @@ const appReducer = combineReducers({
   updatedTrees: updatedTreesReducer,
   assignedTrees: assignedTreesReducer,
   deleteTreeEvent: deleteTreeEventReducer,
-  pagination: paginationReducer,
 });
 
 export default appReducer;

@@ -1,9 +1,6 @@
 import {useCallback} from 'react';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {plantedTreesActions} from 'ranger-redux/modules/trees/plantedTrees';
-import {updatedTreesActions} from 'ranger-redux/modules/trees/updatedTrees';
-import {assignedTreesActions} from 'ranger-redux/modules/trees/assignedTrees';
 import * as actionsList from './pagination.action';
 
 export type TAppQueries = {
@@ -49,6 +46,7 @@ export type TPaginationAction = {
   total?: number;
   page?: number;
   query?: TAppQueries;
+  action?: (query?: TAppQueries) => any;
 };
 
 export function paginationReducer(state: TPaginationState = paginationInitialState, action: TPaginationAction) {
@@ -87,25 +85,19 @@ export function paginationReducer(state: TPaginationState = paginationInitialSta
   }
 }
 
-export const PaginationNameFetcher = {
-  [PaginationName.PlantedTrees]: plantedTreesActions.load,
-  [PaginationName.UpdatedTrees]: updatedTreesActions.load,
-  [PaginationName.AssignedTrees]: assignedTreesActions.load,
-};
-
 export type TUsePagination = TPaginationItem & {
-  dispatchNextPage: (query?: TAppQueries) => void;
+  dispatchNextPage: (action: () => any, query?: TAppQueries) => void;
   dispatchResetPagination: () => void;
 };
 
-export function usePagination(name: PaginationName): TUsePagination {
+export function useReduxPagination(name: PaginationName): TUsePagination {
   const data = useAppSelector(state => state.pagination[name]);
 
   const dispatch = useAppDispatch();
 
   const dispatchNextPage = useCallback(
-    (query?: TAppQueries) => {
-      dispatch(actionsList.setNextPage(name, query));
+    (action: () => any, query?: TAppQueries) => {
+      dispatch(actionsList.setNextPage(name, action, query));
     },
     [dispatch, name],
   );

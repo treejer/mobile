@@ -1,3 +1,5 @@
+import {PaginationRes} from 'webServices/pagination/pagination';
+
 type PlantedTree = {
   _id: string;
   signer: string;
@@ -11,4 +13,14 @@ type PlantedTree = {
   updatedAt: string;
 };
 
-export type TPlantedTreesRes = PlantedTree[];
+export type TPlantedTreesRes = PaginationRes<PlantedTree>;
+
+export type TPlantedTreesPayload = {
+  filters?: {signer: string; nonce: number};
+  sort?: {signer: number; nonce: number};
+};
+
+export type TPlantedTreesAction = {
+  type: string;
+  payload: TPlantedTreesPayload;
+};

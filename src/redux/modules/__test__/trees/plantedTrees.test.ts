@@ -8,7 +8,9 @@ import {
   plantedTreesSagas,
   watchPlantedTrees,
 } from 'ranger-redux/modules/trees/plantedTrees';
-import {plantedTressMock} from 'ranger-redux/modules/__test__/trees/plantedTrees.mock';
+import {plantedTressMock, plantedTressReachedEndMock} from 'ranger-redux/modules/__test__/trees/plantedTrees.mock';
+import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
+import {defaultPaginationItem, PaginationName} from 'ranger-redux/modules/pagination/pagination.reducer';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 
 describe('plantedTrees', () => {
@@ -35,16 +37,48 @@ describe('plantedTrees', () => {
       expect(watchPlantedTrees).toBeDefined();
     });
     it('watchPlantedTrees success', () => {
-      const gen = watchPlantedTrees();
-      gen.next();
+      const gen = watchPlantedTrees({type: plantedTreesActionTypes.load, payload: {sort: {signer: 1, nonce: 1}}});
+      const nextValue = {
+        ...defaultPaginationItem,
+        result: plantedTressMock,
+        status: 200,
+      };
+      gen.next(nextValue);
+      gen.next(nextValue);
+
       assert.deepEqual(
-        gen.next({result: plantedTressMock, status: 200}).value,
+        gen.next(nextValue).value,
+        put(setPaginationTotal(PaginationName.PlantedTrees, plantedTressMock.count)),
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
         put(plantedTreesActions.loadSuccess(plantedTressMock)),
         'should dispatch plantedTreesActions success',
       );
     });
+    it('watchPlantedTrees success, reachedEnd', () => {
+      const gen = watchPlantedTrees({type: plantedTreesActionTypes.load, payload: {sort: {signer: 1, nonce: 1}}});
+      const nextValue = {
+        ...defaultPaginationItem,
+        result: plantedTressReachedEndMock,
+        status: 200,
+      };
+      gen.next(nextValue);
+      gen.next(nextValue);
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(setPaginationTotal(PaginationName.PlantedTrees, plantedTressReachedEndMock.count)),
+      );
+      assert.deepEqual(gen.next(nextValue).value, put(paginationReachedEnd(PaginationName.PlantedTrees)));
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(plantedTreesActions.loadSuccess(plantedTressReachedEndMock)),
+        'should dispatch plantedTreesActions success',
+      );
+    });
     it('watchPlantedTrees failure', () => {
-      const gen = watchPlantedTrees();
+      const gen = watchPlantedTrees({type: plantedTreesActionTypes.load, payload: {}});
       gen.next();
       const error = new Error('error is here!');
       assert.deepEqual(

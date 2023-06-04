@@ -8,8 +8,10 @@ import {
   assignedTreesSagas,
   watchAssignedTrees,
 } from 'ranger-redux/modules/trees/assignedTrees';
-import {assignedTreesMock} from 'ranger-redux/modules/__test__/trees/assignedTrees.mock';
+import {assignedTreesMock, reachedEndAssignedTreesMock} from 'ranger-redux/modules/__test__/trees/assignedTrees.mock';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
+import {defaultPaginationItem, PaginationName} from 'ranger-redux/modules/pagination/pagination.reducer';
+import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
 
 describe('assignedTrees', () => {
   it('assignedTrees module should be defined', () => {
@@ -35,16 +37,51 @@ describe('assignedTrees', () => {
       expect(watchAssignedTrees).toBeDefined();
     });
     it('watchAssignedTrees success', () => {
-      const gen = watchAssignedTrees();
-      gen.next();
+      const gen = watchAssignedTrees({type: assignedTreesActionTypes.load, payload: {}});
+      const nextValue = {
+        result: assignedTreesMock,
+        status: 200,
+        ...defaultPaginationItem,
+      };
+      gen.next(nextValue);
+      gen.next(nextValue);
+
       assert.deepEqual(
-        gen.next({result: assignedTreesMock, status: 200}).value,
+        gen.next(nextValue).value,
+        put(setPaginationTotal(PaginationName.AssignedTrees, assignedTreesMock.count)),
+      );
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
         put(assignedTreesActions.loadSuccess(assignedTreesMock)),
         'should dispatch assignedTreesActions success',
       );
     });
+    it('watchAssignedTrees success, reachedEnd', () => {
+      const gen = watchAssignedTrees({type: assignedTreesActionTypes.load, payload: {}});
+      const nextValue = {
+        result: reachedEndAssignedTreesMock,
+        status: 200,
+        ...defaultPaginationItem,
+      };
+      gen.next(nextValue);
+      gen.next(nextValue);
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(setPaginationTotal(PaginationName.AssignedTrees, reachedEndAssignedTreesMock.count)),
+      );
+
+      assert.deepEqual(gen.next(nextValue).value, put(paginationReachedEnd(PaginationName.AssignedTrees)));
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(assignedTreesActions.loadSuccess(reachedEndAssignedTreesMock)),
+        'should dispatch assignedTreesActions success',
+      );
+    });
     it('watchAssignedTrees failure', () => {
-      const gen = watchAssignedTrees();
+      const gen = watchAssignedTrees({type: assignedTreesActionTypes.load, payload: {}});
       gen.next();
       const error = new Error('error is here!');
       assert.deepEqual(

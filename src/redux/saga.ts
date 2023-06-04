@@ -3,6 +3,7 @@ import {all} from 'redux-saga/effects';
 import {TStoreRedux} from './store';
 import {web3Sagas} from './modules/web3/web3';
 import {initSagas} from './modules/init/init';
+import {paginationSagas} from './modules/pagination/pagination.saga';
 import {userNonceSagas} from './modules/userNonce/userNonce';
 import {userSignSagas} from './modules/userSign/userSign';
 import {netInfoSagas} from './modules/netInfo/netInfo';
@@ -25,10 +26,10 @@ import {deleteTreeEventSagas} from './modules/submitTreeEvents/deleteTreeEvent';
 import {plantedTreesSagas} from './modules/trees/plantedTrees';
 import {updatedTreesSagas} from './modules/trees/updatedTrees';
 import {assignedTreesSagas} from './modules/trees/assignedTrees';
-import {paginationSagas} from './modules/pagination/pagination.saga';
 
 export default function* root(store: TStoreRedux) {
   yield all([
+    paginationSagas(),
     initSagas(),
     web3Sagas(store),
     currentJourneySagas(),
@@ -53,6 +54,5 @@ export default function* root(store: TStoreRedux) {
     assignedTreesSagas(),
     updatedTreesSagas(),
     deleteTreeEventSagas(),
-    paginationSagas(),
   ]);
 }
