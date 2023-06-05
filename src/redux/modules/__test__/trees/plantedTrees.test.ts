@@ -1,7 +1,8 @@
 import * as assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {
+  getPlantedTrees,
   plantedTreesActions,
   plantedTreesActionTypes,
   plantedTreesReducer,
@@ -40,6 +41,8 @@ describe('plantedTrees', () => {
       const gen = watchPlantedTrees({type: plantedTreesActionTypes.load, payload: {sort: {signer: 1, nonce: 1}}});
       const nextValue = {
         ...defaultPaginationItem,
+        data: [],
+        count: 0,
         result: plantedTressMock,
         status: 200,
       };
@@ -49,7 +52,11 @@ describe('plantedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.PlantedTrees, plantedTressMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
+
+      assert.deepEqual(gen.next(nextValue).value, select(getPlantedTrees), 'should select persisted planted trees');
+
       assert.deepEqual(
         gen.next(nextValue).value,
         put(plantedTreesActions.loadSuccess(plantedTressMock)),
@@ -59,7 +66,10 @@ describe('plantedTrees', () => {
     it('watchPlantedTrees success, reachedEnd', () => {
       const gen = watchPlantedTrees({type: plantedTreesActionTypes.load, payload: {sort: {signer: 1, nonce: 1}}});
       const nextValue = {
+        data: [plantedTressReachedEndMock.data[0]],
+        count: 2,
         ...defaultPaginationItem,
+        page: 1,
         result: plantedTressReachedEndMock,
         status: 200,
       };
@@ -69,11 +79,19 @@ describe('plantedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.PlantedTrees, plantedTressReachedEndMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
-      assert.deepEqual(gen.next(nextValue).value, put(paginationReachedEnd(PaginationName.PlantedTrees)));
+
+      assert.deepEqual(gen.next(nextValue).value, select(getPlantedTrees), 'should select persisted planted trees');
+
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(plantedTreesActions.loadSuccess(plantedTressReachedEndMock)),
+        put(paginationReachedEnd(PaginationName.PlantedTrees)),
+        'should dispatch pagination reached end',
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(plantedTreesActions.loadSuccess({data: [...nextValue.data, ...plantedTressReachedEndMock.data], count: 2})),
         'should dispatch plantedTreesActions success',
       );
     });

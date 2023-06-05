@@ -18,11 +18,11 @@ describe('pagination reducer', () => {
     const expectedState = {
       ...initialState,
       [PaginationName.PlantedTrees]: {
-        page: 2,
+        page: 1,
         perPage: 20,
         total: 0,
         hasMore: true,
-        loading: false,
+        loading: true,
       },
     };
     expect(
@@ -33,7 +33,7 @@ describe('pagination reducer', () => {
     const expectedState = {
       ...initialState,
       [PaginationName.PlantedTrees]: {
-        page: 1,
+        page: 0,
         perPage: 20,
         total: 34,
         hasMore: true,
@@ -52,7 +52,7 @@ describe('pagination reducer', () => {
     const expectedState = {
       ...initialState,
       [PaginationName.PlantedTrees]: {
-        page: 1,
+        page: 0,
         perPage: 20,
         total: 0,
         hasMore: false,

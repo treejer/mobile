@@ -1,7 +1,8 @@
 import assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {
+  getUpdatedTrees,
   updatedTreesActions,
   updatedTreesActionTypes,
   updatedTreesReducer,
@@ -39,6 +40,8 @@ describe('updatedTrees', () => {
     it('watchUpdatedTrees success', () => {
       const gen = watchUpdatedTrees({type: updatedTreesActionTypes.load, payload: {}});
       const nextValue = {
+        data: [],
+        count: 0,
         result: updatedTreesMock,
         status: 200,
         ...defaultPaginationItem,
@@ -49,7 +52,10 @@ describe('updatedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.UpdatedTrees, updatedTreesMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
+
+      assert.deepEqual(gen.next(nextValue).value, select(getUpdatedTrees), 'should select persisted updated trees');
 
       assert.deepEqual(
         gen.next(nextValue).value,
@@ -60,9 +66,12 @@ describe('updatedTrees', () => {
     it('watchUpdatedTrees success, reachedEnd', () => {
       const gen = watchUpdatedTrees({type: updatedTreesActionTypes.load, payload: {}});
       const nextValue = {
+        data: [reachedEndUpdatedTreesMock.data[0]],
+        count: 2,
         result: reachedEndUpdatedTreesMock,
         status: 200,
         ...defaultPaginationItem,
+        page: 1,
       };
       gen.next(nextValue);
       gen.next(nextValue);
@@ -70,13 +79,20 @@ describe('updatedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.UpdatedTrees, reachedEndUpdatedTreesMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
 
-      assert.deepEqual(gen.next(nextValue).value, put(paginationReachedEnd(PaginationName.UpdatedTrees)));
+      assert.deepEqual(gen.next(nextValue).value, select(getUpdatedTrees), 'should select persisted updated trees');
 
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(updatedTreesActions.loadSuccess(reachedEndUpdatedTreesMock)),
+        put(paginationReachedEnd(PaginationName.UpdatedTrees)),
+        'should dispatch pagination reached end',
+      );
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(updatedTreesActions.loadSuccess({data: [...nextValue.data, ...reachedEndUpdatedTreesMock.data], count: 2})),
         'should dispatch updatedTreesActions success',
       );
     });

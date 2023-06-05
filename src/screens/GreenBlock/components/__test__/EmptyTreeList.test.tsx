@@ -1,7 +1,7 @@
 import {GraphQLError} from 'graphql/error';
 import {MockedProviderProps} from '@apollo/client/testing';
 
-import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList./EmptyTreeList';
+import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {render, act, waitFor, fireEvent, screen} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
 import {Routes} from 'navigation/Navigation';

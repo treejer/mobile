@@ -14,6 +14,7 @@ export type TUseArrayFilterArgs<T, D = any> = {
   checkWhat?: string;
   canSelectMultiple?: boolean;
   customFilterHandler?: (array: D[], filters: T[]) => D[];
+  canDeSelectLastItem?: boolean;
 };
 
 export function useArrayFilter<T, D = any>({
@@ -22,6 +23,7 @@ export function useArrayFilter<T, D = any>({
   checkWhat,
   customFilterHandler,
   canSelectMultiple = true,
+  canDeSelectLastItem = true,
 }: TUseArrayFilterArgs<T, D> = {}): TUseArrayFilter<T, D> {
   const [filters, setFilters] = useState<T[]>(defaultFilters || []);
   const [data, setData] = useState<D[] | null>(defaultData || null);
@@ -35,6 +37,7 @@ export function useArrayFilter<T, D = any>({
   const handleSetFilter = useCallback(
     (pressedFilter: T) => {
       if (filters?.some(filter => filter === pressedFilter)) {
+        if (!canDeSelectLastItem && filters.length === 1) return;
         setFilters(filters.filter(filter => filter !== pressedFilter));
       } else {
         setFilters([...(canSelectMultiple ? filters : []), pressedFilter]);

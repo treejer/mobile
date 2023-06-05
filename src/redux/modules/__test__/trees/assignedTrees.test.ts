@@ -1,11 +1,12 @@
 import assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {
   assignedTreesActions,
   assignedTreesActionTypes,
   assignedTreesReducer,
   assignedTreesSagas,
+  getAssignedTrees,
   watchAssignedTrees,
 } from 'ranger-redux/modules/trees/assignedTrees';
 import {assignedTreesMock, reachedEndAssignedTreesMock} from 'ranger-redux/modules/__test__/trees/assignedTrees.mock';
@@ -39,6 +40,8 @@ describe('assignedTrees', () => {
     it('watchAssignedTrees success', () => {
       const gen = watchAssignedTrees({type: assignedTreesActionTypes.load, payload: {}});
       const nextValue = {
+        data: [],
+        count: 0,
         result: assignedTreesMock,
         status: 200,
         ...defaultPaginationItem,
@@ -49,7 +52,10 @@ describe('assignedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.AssignedTrees, assignedTreesMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
+
+      assert.deepEqual(gen.next(nextValue).value, select(getAssignedTrees), 'should select persisted assigned trees');
 
       assert.deepEqual(
         gen.next(nextValue).value,
@@ -60,9 +66,12 @@ describe('assignedTrees', () => {
     it('watchAssignedTrees success, reachedEnd', () => {
       const gen = watchAssignedTrees({type: assignedTreesActionTypes.load, payload: {}});
       const nextValue = {
+        data: [reachedEndAssignedTreesMock.data[0]],
+        count: 2,
         result: reachedEndAssignedTreesMock,
         status: 200,
         ...defaultPaginationItem,
+        page: 1,
       };
       gen.next(nextValue);
       gen.next(nextValue);
@@ -70,13 +79,22 @@ describe('assignedTrees', () => {
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.AssignedTrees, reachedEndAssignedTreesMock.count)),
+        'should dispatch setPaginationTotal to set count of data',
       );
 
-      assert.deepEqual(gen.next(nextValue).value, put(paginationReachedEnd(PaginationName.AssignedTrees)));
+      assert.deepEqual(gen.next(nextValue).value, select(getAssignedTrees), 'should select persisted assigned trees');
 
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(assignedTreesActions.loadSuccess(reachedEndAssignedTreesMock)),
+        put(paginationReachedEnd(PaginationName.AssignedTrees)),
+        'should dispatch pagination reached end',
+      );
+
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(
+          assignedTreesActions.loadSuccess({data: [...nextValue.data, ...reachedEndAssignedTreesMock.data], count: 2}),
+        ),
         'should dispatch assignedTreesActions success',
       );
     });

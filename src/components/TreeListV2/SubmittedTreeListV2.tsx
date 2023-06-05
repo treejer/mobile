@@ -9,10 +9,10 @@ import globalStyles from 'constants/styles';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import Spacer from 'components/Spacer';
-import {TreeItemV2} from 'components/TreeListV2/TreeItemV2';
+import {SubmittedTreeItemV2} from 'components/TreeListV2/SubmittedTreeItemV2';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
-import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList./EmptyTreeList';
+import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {Routes} from 'navigation/Navigation';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
@@ -120,9 +120,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
                 },
               ],
             });
-            // TODO: show modal to start plant draft or remove draft item [~/] - test []
           } else {
-            // TODO: navigate to SubmitTreeV2 to plant assignedTree [~/] - test []
             dispatchStartPlantAssignedTree({
               treeIdToPlant: tree?.id,
               tree: tree,
@@ -152,10 +150,10 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const treeItemRenderItem = useCallback(
-    ({item, index}: ListRenderItemInfo<TreeInList>) => {
+    ({item}: ListRenderItemInfo<TreeInList>) => {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <TreeItemV2
+          <SubmittedTreeItemV2
             testID="tree-item-v2-cpt"
             withDetail={treeItemUI === TreeItemUI.WithDetail}
             treeUpdateInterval={treeUpdateInterval}
@@ -165,7 +163,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
         </View>
       );
     },
-    [treeItemUI, treeUpdateInterval],
+    [treeItemUI, treeUpdateInterval, handlePressTree],
   );
 
   const renderListWithDiffCol = useCallback(

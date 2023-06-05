@@ -1,6 +1,7 @@
 import {PaginationRes} from 'webServices/pagination/pagination';
+import {NotVerifiedTree} from 'types';
 
-type AssignedTree = {
+export type AssignedTree = {
   _id: string;
   signer: string;
   nonce: number;
@@ -14,7 +15,7 @@ type AssignedTree = {
   updatedAt: string;
 };
 
-export type TAssignedTreesRes = PaginationRes<AssignedTree>;
+export type TAssignedTreesRes = PaginationRes<NotVerifiedTree>;
 export type TAssignedTreesPayload = {
   filters?: {signer: string; nonce: number};
   sort?: {signer: number; nonce: number};

@@ -13,7 +13,11 @@ describe('pagination module', () => {
     });
     it('pagination saga should yield setNextPage watcher', () => {
       const gen = paginationSagas();
-      assert.deepEqual(gen.next().value, takeEvery(actionsList.SET_NEXT_PAGE, watchSetNextPage));
+      assert.deepEqual(
+        gen.next().value,
+        takeEvery(actionsList.SET_NEXT_PAGE, watchSetNextPage),
+        'should yield setNextPage watcher',
+      );
     });
   });
   describe('watchSetNextPage', () => {
@@ -25,13 +29,17 @@ describe('pagination module', () => {
       const action = plantedTreesActions.load;
       const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name, action});
       gen.next();
-      assert.deepEqual(gen.next(defaultPaginationItem).value, put(action()));
+      assert.deepEqual(gen.next(defaultPaginationItem).value, put(action()), 'should dispatch passed action');
     });
     it('watchSetNextPage should do nothing | hasMore: false', () => {
       const name = PaginationName.PlantedTrees;
       const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name});
       gen.next();
-      assert.deepEqual(gen.next({...defaultPaginationItem, hasMore: false}).value, undefined);
+      assert.deepEqual(
+        gen.next({...defaultPaginationItem, hasMore: false}).value,
+        undefined,
+        'should do nothing because pagination reached end',
+      );
     });
   });
 });

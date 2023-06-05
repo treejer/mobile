@@ -34,6 +34,8 @@ import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchBut
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
+import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
+import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -63,13 +65,6 @@ export function TreeInventory(props: TreeInventoryProps) {
     }
   }, [filter]);
 
-  const {filters: notVerifiedTreeFilters, handleSetFilter: handleSetFilterNotVerifiedTrees} =
-    useArrayFilter<NotVerifiedTreeStatus>({
-      defaultFilters:
-        filter?.tab === TreeLife.NotVerified && filter?.notVerifiedStatus ? filter?.notVerifiedStatus : [],
-      canSelectMultiple: false,
-    });
-
   const [submittedTreeItemUI, setSubmittedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
   const [notVerifiedTreeItemUI, setNotVerifiedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
 
@@ -97,6 +92,18 @@ export function TreeInventory(props: TreeInventoryProps) {
     TreeLife.Submitted,
   );
 
+  const {filters: notVerifiedTreeFilters, handleSetFilter: handleSetFilterNotVerifiedTrees} =
+    useArrayFilter<NotVerifiedTreeStatus>({
+      defaultFilters:
+        filter?.tab === TreeLife.NotVerified && filter?.notVerifiedStatus
+          ? filter?.notVerifiedStatus
+          : [NotVerifiedTreeStatus.Plant],
+      canSelectMultiple: false,
+      canDeSelectLastItem: false,
+    });
+
+  const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(notVerifiedTreeFilters[0]);
+
   const {
     filters: submittedTreeFilters,
     handleSetFilter: handleSetFilterSubmittedTrees,
@@ -113,6 +120,7 @@ export function TreeInventory(props: TreeInventoryProps) {
   useRefocusEffect(async () => {
     if (!submittedTreesLoading) {
       await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
+      currentTrees.dispatchRefetch();
     }
   });
 
@@ -167,11 +175,25 @@ export function TreeInventory(props: TreeInventoryProps) {
             <Tab testID="notVerified-tab" style={globalStyles.fill} tab={TreeLife.NotVerified}>
               <FilterTrees<NotVerifiedTreeStatus>
                 testID="filter-notVerified-trees-cpt"
-                filterList={notVerifiedTreesButtons({Plant: 20, Update: 10, Assigned: 2})}
+                filterList={notVerifiedTreesButtons({
+                  Plant: planted?.trees?.count || 0,
+                  Update: updated?.trees?.count || 0,
+                  Assigned: assigned?.trees?.count || 0,
+                })}
                 filters={notVerifiedTreeFilters}
                 onFilter={handleSetFilterNotVerifiedTrees}
               />
               <Spacer times={6} />
+              <NotVerifiedTreeList
+                testID="notVerified-tree-list"
+                notVerifiedTrees={currentTrees?.trees?.data}
+                treeItemUI={notVerifiedTreeItemUI}
+                setTreeItemUI={setNotVerifiedTreeItemUI}
+                loading={currentTrees.loading && !currentTrees.refetching}
+                refetching={currentTrees.refetching && !currentTrees.loading}
+                onRefetch={currentTrees.dispatchRefetch}
+                onEndReached={currentTrees.dispatchLoadMore}
+              />
             </Tab>
             <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
               <DraftList testID="draft-list-cpt" />

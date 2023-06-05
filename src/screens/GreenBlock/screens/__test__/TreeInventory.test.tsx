@@ -6,6 +6,7 @@ import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__
 import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {TreeLife} from 'utilities/helpers/treeInventory';
 import {verifiedTress} from 'components/TreeListV2/__test__/SubmittedTreeListV2.mock';
+import {notVerifiedTreesMock} from 'components/TreeListV2/__test__/NotVerifiedTrees.mock';
 
 describe('TreeInventory component', () => {
   it('TreeInventory component should be defined', () => {
@@ -186,13 +187,20 @@ describe('TreeInventory component', () => {
       });
       const submittedTab = queryElementByTestId('submitted-tab');
       const draftedTab = queryElementByTestId('drafted-tab');
-      // const treeListV2 = getElementByTestId('draft-list-cpt');
+      const notVerifiedTreeList = getElementByTestId('notVerified-tree-list');
       const filterNotVerifiedTrees = getElementByTestId('filter-notVerified-trees-cpt');
+
+      const notVerifiedTreeFlashList = await screen.findByTestId('with-id-flatList');
 
       expect(submittedTab).toBeFalsy();
       expect(draftedTab).toBeFalsy();
-      // expect(treeListV2).toBeTruthy();
+      expect(notVerifiedTreeList).toBeTruthy();
       expect(filterNotVerifiedTrees).toBeTruthy();
+
+      expect(notVerifiedTreeFlashList).toBeTruthy();
+
+      expect(notVerifiedTreeFlashList.props.data).toEqual(notVerifiedTreesMock);
+      expect(notVerifiedTreeFlashList.props.data.length).toEqual(notVerifiedTreesMock.length);
     });
   });
 });

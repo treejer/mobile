@@ -1,13 +1,25 @@
-import {TreeJourney} from 'screens/TreeSubmission/types';
+import {Routes} from 'navigation/index';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {Routes} from 'navigation/index';
-import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
+import {TreeJourney} from 'screens/TreeSubmission/types';
 import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 export type TreeInList = PlanterTreesQueryQueryPartialData.Trees;
-
+export type NotVerifiedTree = {
+  _id: string;
+  signer: string;
+  nonce: number;
+  treeSpecs: string;
+  birthDate?: number;
+  countryCode?: number;
+  treeId?: number;
+  signature: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export interface MainTabsParamList extends Record<string, any> {
   Profile: undefined;
   TreeSubmission: undefined;

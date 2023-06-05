@@ -14,6 +14,9 @@ import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 import {changeCheckMetaData} from '../settings/settings';
 import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
+import {plantedTreesActions} from '../trees/plantedTrees';
+import {updatedTreesActions} from '../trees/updatedTrees';
+import {assignedTreesActions} from '../trees/assignedTrees';
 
 export type TProfile = {
   id: string;
@@ -125,6 +128,9 @@ export function useProfile(): TUseProfile {
         }
 
         dispatchClearDraftedJourneys();
+        dispatch(plantedTreesActions.resetCache());
+        dispatch(updatedTreesActions.resetCache());
+        dispatch(assignedTreesActions.resetCache());
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);

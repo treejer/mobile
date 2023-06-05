@@ -6,14 +6,9 @@ import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'ut
 import {getPaginationByName} from 'ranger-redux/modules/pagination/pagination.saga';
 import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
 import {PaginationName, TPaginationItem} from 'ranger-redux/modules/pagination/pagination.reducer';
+import {TReduxState} from 'ranger-redux/store';
 
 export const PlantedTrees = new ReduxFetchState<TPlantedTreesRes, TPlantedTreesPayload, string>('plantedTrees');
-
-export const {
-  reducer: plantedTreesReducer,
-  actions: plantedTreesActions,
-  actionTypes: plantedTreesActionTypes,
-} = PlantedTrees;
 
 export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
   try {
@@ -22,16 +17,23 @@ export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
     const res: FetchResult<TPlantedTreesRes> = yield sagaFetch<TPlantedTreesRes>('/plant_requests/verification/me', {
       configUrl: 'treejerNestApiUrl',
       params: {
-        limit: page * perPage,
+        skip: page,
+        limit: perPage,
         sort: sort ? JSON.stringify(sort) : undefined,
         filters: filters ? JSON.stringify(filters) : undefined,
       },
     });
     yield put(setPaginationTotal(PaginationName.PlantedTrees, res.result.count));
-    if (res.result.count === res.result.data.length) {
+    const persistedPlantedTrees: TPlantedTreesRes = yield select(getPlantedTrees);
+    if (res.result.count === [...(persistedPlantedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.PlantedTrees));
     }
-    yield put(PlantedTrees.actions.loadSuccess(res.result));
+    yield put(
+      PlantedTrees.actions.loadSuccess({
+        count: res.result.count,
+        data: [...(page === 0 || !persistedPlantedTrees?.data ? [] : persistedPlantedTrees?.data), ...res.result.data],
+      }),
+    );
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(PlantedTrees.actions.loadFailure(message));
@@ -42,3 +44,11 @@ export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
 export function* plantedTreesSagas() {
   yield takeEvery(PlantedTrees.actionTypes.load, watchPlantedTrees);
 }
+
+export const getPlantedTrees = (state: TReduxState) => state.plantedTrees.data;
+
+export const {
+  reducer: plantedTreesReducer,
+  actions: plantedTreesActions,
+  actionTypes: plantedTreesActionTypes,
+} = PlantedTrees;

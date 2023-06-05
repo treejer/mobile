@@ -33,5 +33,5 @@ export const reachedEndAssignedTreesMock = {
       updatedAt: '2023-05-27T10:18:06.557Z',
     },
   ],
-  count: 1,
+  count: 2,
 };

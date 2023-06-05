@@ -592,6 +592,8 @@ export const en = {
     search: 'Search...',
     bornDate: 'Born:',
     lastUpdateDate: 'Last Update:',
+    signature: 'Signature:',
+    createdAt: 'Created at:',
     shortcuts: 'Shortcuts:',
     startPlant: 'Start plant',
     backProfile: 'Back to profile',

@@ -31,5 +31,5 @@ export const plantedTressReachedEndMock = {
       updatedAt: '2023-05-27T09:30:10.407Z',
     },
   ],
-  count: 1,
+  count: 2,
 };

@@ -1,6 +1,7 @@
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
 import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {onBoardingOne} from '../../../../../assets/images';
+import {notVerifiedTreesMock} from 'components/TreeListV2/__test__/NotVerifiedTrees.mock';
 
 const idOne = new Date(jest.now());
 const idTwo = new Date(jest.now());
@@ -47,5 +48,24 @@ export const reducersWithDraftsAndTreeList = {
   ...goerliReducers,
   draftedJourneys: {
     drafts: [draftTwo, draftOne],
+  },
+  plantedTrees: {
+    data: {
+      data: notVerifiedTreesMock,
+      count: notVerifiedTreesMock.length,
+    },
+    loading: false,
+  },
+  updatedTrees: {
+    data: {
+      data: notVerifiedTreesMock,
+      count: notVerifiedTreesMock.length,
+    },
+  },
+  assignedTrees: {
+    data: {
+      data: notVerifiedTreesMock,
+      count: notVerifiedTreesMock.length,
+    },
   },
 };

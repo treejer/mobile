@@ -1,28 +1,31 @@
 import moment from 'moment/moment';
 
 import {mapboxPrivateToken} from 'services/config';
-import {TreeItemV2} from 'components/TreeListV2/TreeItemV2';
+import {SubmittedTreeItemV2} from 'components/TreeListV2/SubmittedTreeItemV2';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {render} from 'ranger-testUtils/testingLibrary';
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
 
-describe('TreeItemV2 component', () => {
-  it('TreeItemV2 component should be defined', () => {
-    expect(TreeItemV2).toBeDefined();
-    expect(typeof TreeItemV2).toBe('function');
+describe('SubmittedTreeItemV2 component', () => {
+  it('SubmittedTreeItemV2 component should be defined', () => {
+    expect(SubmittedTreeItemV2).toBeDefined();
+    expect(typeof SubmittedTreeItemV2).toBe('function');
   });
 
   describe('Tree Item component withDetail=true', () => {
     let getElementByTestId;
 
     beforeEach(() => {
-      const element = render(<TreeItemV2 treeUpdateInterval={20} tree={treeDetail as any} withDetail={true} />, {
-        ...goerliReducers,
-        settings: {
-          locale: 'en',
+      const element = render(
+        <SubmittedTreeItemV2 treeUpdateInterval={20} tree={treeDetail as any} withDetail={true} />,
+        {
+          ...goerliReducers,
+          settings: {
+            locale: 'en',
+          },
         },
-      });
+      );
       getElementByTestId = element.getByTestId;
     });
 
@@ -68,12 +71,15 @@ describe('TreeItemV2 component', () => {
     let getElementByTestId, queryElementByTestId;
 
     beforeEach(() => {
-      const element = render(<TreeItemV2 treeUpdateInterval={20} tree={treeDetail as any} withDetail={false} />, {
-        ...goerliReducers,
-        settings: {
-          locale: 'en',
+      const element = render(
+        <SubmittedTreeItemV2 treeUpdateInterval={20} tree={treeDetail as any} withDetail={false} />,
+        {
+          ...goerliReducers,
+          settings: {
+            locale: 'en',
+          },
         },
-      });
+      );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
     });

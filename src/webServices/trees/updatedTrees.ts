@@ -1,6 +1,7 @@
 import {PaginationRes} from 'webServices/pagination/pagination';
+import {NotVerifiedTree} from 'types';
 
-type UpdatedTree = {
+export type UpdatedTree = {
   _id: string;
   signer: string;
   nonce: number;
@@ -12,12 +13,11 @@ type UpdatedTree = {
   updatedAt: string;
 };
 
-export type TUpdatedTreesRes = PaginationRes<UpdatedTree>;
+export type TUpdatedTreesRes = PaginationRes<NotVerifiedTree>;
 export type TUpdatedTreesPayload = {
   filters?: {signer: string; nonce: number};
   sort?: {signer: number; nonce: number};
 };
-
 export type TUpdatedTreesAction = {
   type: string;
   payload: TUpdatedTreesPayload;

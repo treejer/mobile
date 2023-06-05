@@ -8,7 +8,7 @@ import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLo
 import {generateTreeFactorySignature, TreeFactoryMethods} from 'utilities/helpers/submissionUtilsV2';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload} from 'utilities/helpers/IPFS';
-import {TreeLife} from 'utilities/helpers/treeInventory';
+import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
 import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetail';
@@ -229,7 +229,21 @@ export function* watchSubmitJourney() {
     navigationRef()?.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{name: Routes.GreenBlock, params: {tabFilter: TreeLife.NotVerified}}],
+        routes: [
+          {
+            name: Routes.GreenBlock,
+            params: {
+              tabFilter: TreeLife.NotVerified,
+              notVerifiedFilter: [
+                isUpdate
+                  ? NotVerifiedTreeStatus.Update
+                  : treeIdToPlant
+                  ? NotVerifiedTreeStatus.Assigned
+                  : NotVerifiedTreeStatus.Plant,
+              ],
+            },
+          },
+        ],
       }),
     );
     if (journey.draftId) {

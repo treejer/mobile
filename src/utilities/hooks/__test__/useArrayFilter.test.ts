@@ -235,5 +235,23 @@ describe('useArrayFilter hook', () => {
 
       expect(data).toEqual(['1']);
     });
+    it('can deselect last filter', () => {
+      const mockData = ['one', 'two', 'three'];
+
+      const {result} = renderHook(() =>
+        useArrayFilter<string, string>({
+          defaultData: mockData,
+          defaultFilters: ['one'],
+          canSelectMultiple: false,
+          canDeSelectLastItem: false,
+        }),
+      );
+
+      act(() => {
+        result.current.handleSetFilter('one');
+      });
+
+      expect(result.current.filters).toEqual(['one']);
+    });
   });
 });

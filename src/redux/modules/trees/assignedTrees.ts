@@ -6,6 +6,7 @@ import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'ut
 import {PaginationName, TPaginationItem} from 'ranger-redux/modules/pagination/pagination.reducer';
 import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
 import {getPaginationByName} from 'ranger-redux/modules/pagination/pagination.saga';
+import {TReduxState} from 'ranger-redux/store';
 
 const AssignedTrees = new ReduxFetchState<TAssignedTreesRes, TAssignedTreesPayload, string>('assignedTrees');
 
@@ -18,17 +19,27 @@ export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
       {
         configUrl: 'treejerNestApiUrl',
         params: {
-          limit: page * perPage,
+          skip: page,
+          limit: perPage,
           filters: filters ? JSON.stringify(filters) : undefined,
           sort: sort ? JSON.stringify(sort) : undefined,
         },
       },
     );
     yield put(setPaginationTotal(PaginationName.AssignedTrees, res.result.count));
-    if (res.result.count === res.result.data.length) {
+    const persistedAssignedTrees: TAssignedTreesRes = yield select(getAssignedTrees);
+    if (res.result.count === [...(persistedAssignedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.AssignedTrees));
     }
-    yield put(AssignedTrees.actions.loadSuccess(res.result));
+    yield put(
+      AssignedTrees.actions.loadSuccess({
+        ...res.result,
+        data: [
+          ...(page === 0 || !persistedAssignedTrees?.data ? [] : persistedAssignedTrees?.data),
+          ...res.result.data,
+        ],
+      }),
+    );
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(AssignedTrees.actions.loadFailure(message));
@@ -39,6 +50,8 @@ export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
 export function* assignedTreesSagas() {
   yield takeEvery(AssignedTrees.actionTypes.load, watchAssignedTrees);
 }
+
+export const getAssignedTrees = (state: TReduxState) => state.assignedTrees.data;
 
 export const {
   reducer: assignedTreesReducer,

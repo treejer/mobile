@@ -27,7 +27,7 @@ export type TPaginationState = {
 };
 
 export const defaultPaginationItem: TPaginationItem = {
-  page: 1,
+  page: 0,
   perPage: 20,
   total: 0,
   hasMore: true,
@@ -57,6 +57,7 @@ export function paginationReducer(state: TPaginationState = paginationInitialSta
         [action.name]: {
           ...state[action.name],
           page: state[action.name].page + 1,
+          loading: true,
         },
       };
     case actionsList.SET_PAGINATION_TOTAL:
@@ -65,6 +66,7 @@ export function paginationReducer(state: TPaginationState = paginationInitialSta
         [action.name]: {
           ...state[action.name],
           total: action.total,
+          loading: false,
         },
       };
     case actionsList.PAGINATION_REACHED_END:

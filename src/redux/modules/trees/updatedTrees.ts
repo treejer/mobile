@@ -6,6 +6,7 @@ import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'ut
 import {PaginationName, TPaginationItem} from 'ranger-redux/modules/pagination/pagination.reducer';
 import {getPaginationByName} from 'ranger-redux/modules/pagination/pagination.saga';
 import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
+import {TReduxState} from 'ranger-redux/store';
 
 const UpdatedTrees = new ReduxFetchState<TUpdatedTreesRes, TUpdatedTreesPayload, string>('updatedTrees');
 
@@ -16,16 +17,23 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
     const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/verification/me', {
       configUrl: 'treejerNestApiUrl',
       params: {
-        limit: page * perPage,
+        skip: page,
+        limit: perPage,
         sort: sort ? JSON.stringify(sort) : undefined,
         filters: filters ? JSON.stringify(filters) : undefined,
       },
     });
     yield put(setPaginationTotal(PaginationName.UpdatedTrees, res.result.count));
-    if (res.result.count === res.result.data.length) {
+    const persistedUpdatedTrees: TUpdatedTreesRes = yield select(getUpdatedTrees);
+    if (res.result.count === [...(persistedUpdatedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.UpdatedTrees));
     }
-    yield put(UpdatedTrees.actions.loadSuccess(res.result));
+    yield put(
+      UpdatedTrees.actions.loadSuccess({
+        count: res.result.count,
+        data: [...(page === 0 || !persistedUpdatedTrees?.data ? [] : persistedUpdatedTrees?.data), ...res.result.data],
+      }),
+    );
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(UpdatedTrees.actions.loadFailure(message));
@@ -36,6 +44,8 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
 export function* updatedTreesSagas() {
   yield takeEvery(UpdatedTrees.actionTypes.load, watchUpdatedTrees);
 }
+
+export const getUpdatedTrees = (state: TReduxState) => state.updatedTrees.data;
 
 export const {
   reducer: updatedTreesReducer,
