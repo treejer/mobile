@@ -49,11 +49,12 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
 
   const {checkExistAnyDraftOfTree, dispatchRemoveDraftedJourney, dispatchSetDraftAsCurrentJourney} =
     useDraftedJourneys();
-  const {dispatchStartPlantAssignedTree} = useCurrentJourney();
+  const {dispatchStartPlantAssignedTree, dispatchClearJourney} = useCurrentJourney();
 
   const {openAlertModal, closeAlertModal} = useAlertModal();
 
   const handleNavigateToSubmission = useCallback(() => {
+    dispatchClearJourney();
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -67,7 +68,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
         ],
       }),
     );
-  }, [navigation]);
+  }, [navigation, dispatchClearJourney]);
 
   const handleContinueDraftedJourney = useCallback(
     (id: string, reset: boolean) => {
@@ -121,6 +122,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
               ],
             });
           } else {
+            dispatchClearJourney();
             dispatchStartPlantAssignedTree({
               treeIdToPlant: tree?.id,
               tree: tree,
@@ -140,6 +142,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       }
     },
     [
+      dispatchClearJourney,
       checkExistAnyDraftOfTree,
       navigation,
       openAlertModal,
@@ -178,7 +181,6 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
           numColumns={col}
           ItemSeparatorComponent={Spacer}
           keyExtractor={item => `list-${item.id}`}
-          centerContent
           contentContainerStyle={styles.list}
           refreshing={refetching}
           onRefresh={onRefetch}

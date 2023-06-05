@@ -18,17 +18,20 @@ import {TreeImage} from '../../../assets/icons';
 export type NotVerifiedTreeItemProps = {
   testID?: string;
   onPress?: () => void;
+  tint?: string;
   withDetail?: boolean;
   tree: NotVerifiedTree;
 };
 
 export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
-  const {testID, withDetail, tree, onPress} = props;
+  const {testID, withDetail, tree, tint = colors.gray, onPress} = props;
 
   const {t} = useTranslation();
   const {locale} = useSettings();
 
   const treeSpecs = JSON.parse(tree.treeSpecs);
+
+  const hasLocation = useMemo(() => !!(treeSpecs.location.latitude && treeSpecs.location.longitude), [treeSpecs]);
 
   const cptSize = useMemo(() => (withDetail ? 'big' : 'small'), [withDetail]);
 
@@ -46,13 +49,15 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
 
   return (
     <TouchableOpacity testID={testID} style={[styles.bg, styles[`${cptSize}Container`]]} onPress={onPress}>
-      <RenderIf condition={!!withDetail && !!treeSpecs}>
+      <RenderIf condition={!!withDetail && hasLocation}>
         <View style={styles.bg}>
           <Image testID="location-image" style={styles.locationImage} source={{uri: locationImage}} />
         </View>
       </RenderIf>
-      <View style={styles.contentContainer}>
-        <View style={withDetail ? styles.treeImageContainer : undefined}>
+      <View style={[styles.contentContainer, {justifyContent: withDetail ? 'flex-end' : 'center'}]}>
+        <View
+          style={withDetail ? [styles.treeImageContainer, hasLocation ? styles.centerTreeImage : undefined] : undefined}
+        >
           {treeSpecs.nursery ? (
             <View testID="nursery-icon" style={styles.treesWrapper}>
               <View style={styles.trees}>
@@ -62,10 +67,14 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
               <Tree color={colors.grayLight} size={16} />
             </View>
           ) : (
-            <Image testID="tree-image" source={TreeImage} style={styles.treeImage} />
+            <Image
+              testID="tree-image"
+              source={treeSpecs.image ? {uri: treeSpecs.image} : TreeImage}
+              style={[styles.treeImage, {tintColor: !treeSpecs.image ? tint : undefined}]}
+            />
           )}
           {withDetail ? <Spacer /> : undefined}
-          <Text testID="tree-name" style={{textAlign: 'center'}}>
+          <Text testID="tree-name" style={styles.treeName}>
             {tree.treeId || tree.nonce}
           </Text>
         </View>
@@ -123,7 +132,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
     alignItems: 'center',
     padding: 8,
   },
@@ -148,15 +156,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   treeImage: {
-    tintColor: colors.grayLight,
-    width: 28,
-    height: 40,
+    width: 38,
+    height: 38,
   },
   treesWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 2,
   },
   trees: {
     flexDirection: 'row',
+  },
+  treeName: {
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 12,
+  },
+  centerTreeImage: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
 });

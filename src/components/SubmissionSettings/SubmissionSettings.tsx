@@ -35,35 +35,41 @@ export function SubmissionSettings(props: SubmissionSettingsProps) {
 
   return (
     <Card style={cardStyle} testID={testID} shadow={shadow}>
-      <View style={styles.settingsItem}>
-        <Text testID="use-biconomy" style={styles.text}>
-          {t('settings.useBiconomy')}
-        </Text>
-        <Switch testID="transaction-switch" value={useBiconomy} onValueChange={handleChangeUseBiconomy} />
-      </View>
-      <View style={{paddingVertical: 16}}>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Icon name="note" size={20} style={{marginVertical: 2}} color={colors.red} />
-          <Text testID="biconomy-detail" style={{textAlign: 'justify', paddingHorizontal: 8, color: colors.red}}>
-            {t('settings.gsnDetails')}
-          </Text>
-        </View>
-      </View>
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}>
-        <Text testID="network-balance-label" style={styles.text}>
-          {t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}
-        </Text>
-        {etherBalance ? (
-          <Text style={styles.text} testID="network-balance">
-            {Number(etherBalance).toFixed(etherBalance ? 7 : 0)}
-          </Text>
-        ) : (
-          <ActivityIndicator color={colors.gray} />
-        )}
-      </View>
+      {config.useV1Submission ? (
+        <>
+          <View style={styles.settingsItem}>
+            <Text testID="use-biconomy" style={styles.text}>
+              {t('settings.useBiconomy')}
+            </Text>
+            <Switch testID="transaction-switch" value={useBiconomy} onValueChange={handleChangeUseBiconomy} />
+          </View>
+          <View style={{paddingVertical: 16}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <Icon name="note" size={20} style={{marginVertical: 2}} color={colors.red} />
+              <Text testID="biconomy-detail" style={{textAlign: 'justify', paddingHorizontal: 8, color: colors.red}}>
+                {t('settings.gsnDetails')}
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}
+          >
+            <Text testID="network-balance-label" style={styles.text}>
+              {t(isMatic(config) ? 'settings.maticBalance' : 'settings.ethBalance')}
+            </Text>
+            {etherBalance ? (
+              <Text style={styles.text} testID="network-balance">
+                {Number(etherBalance).toFixed(etherBalance ? 7 : 0)}
+              </Text>
+            ) : (
+              <ActivityIndicator color={colors.gray} />
+            )}
+          </View>
+          <Spacer />
+        </>
+      ) : null}
       {!config.isMainnet && (
         <>
-          <Spacer />
           <View style={styles.settingsItem}>
             <Text testID="check-meta-data-label" style={styles.text}>
               {t('settings.checkMetaData')}

@@ -15,6 +15,7 @@ import {NotVerifiedTree} from 'types';
 
 export type NotVerifiedTreeListProps = {
   testID?: string;
+  tint?: string;
   treeItemUI: TreeItemUI;
   setTreeItemUI: React.Dispatch<React.SetStateAction<TreeItemUI>>;
   notVerifiedTrees: NotVerifiedTree[] | undefined;
@@ -25,7 +26,8 @@ export type NotVerifiedTreeListProps = {
 };
 
 export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
-  const {testID, notVerifiedTrees, treeItemUI, setTreeItemUI, loading, refetching, onRefetch, onEndReached} = props;
+  const {testID, notVerifiedTrees, treeItemUI, setTreeItemUI, loading, refetching, onRefetch, onEndReached, tint} =
+    props;
 
   const treeItemRenderItem = useCallback(
     ({item}: ListRenderItemInfo<NotVerifiedTree>) => {
@@ -35,12 +37,13 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
             testID="tree-item-v2-cpt"
             withDetail={treeItemUI === TreeItemUI.WithDetail}
             tree={item}
+            tint={tint}
             onPress={() => console.log('tree lllgogogo')}
           />
         </View>
       );
     },
-    [treeItemUI],
+    [treeItemUI, tint],
   );
 
   const renderListWithDiffCol = useCallback(
@@ -55,7 +58,6 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
           numColumns={col}
           ItemSeparatorComponent={Spacer}
           keyExtractor={item => `list-${item._id}`}
-          centerContent
           contentContainerStyle={styles.list}
           refreshing={refetching}
           onRefresh={onRefetch}

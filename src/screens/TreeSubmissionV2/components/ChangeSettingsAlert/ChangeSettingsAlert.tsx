@@ -21,7 +21,7 @@ export function ChangeSettingsAlert(props: ChangeSettingsAlertProps) {
   const {t} = useTranslation();
 
   return (
-    <Modal testID={testID} style={styles.modal} transparent>
+    <Modal testID={testID} style={styles.modal} transparent onRequestClose={onReject}>
       <View style={styles.container}>
         <Card style={styles.box}>
           <Text testID="change-settings-alert-title" style={styles.title}>

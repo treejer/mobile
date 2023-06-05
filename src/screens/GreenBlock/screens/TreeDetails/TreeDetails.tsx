@@ -56,7 +56,7 @@ function TreeDetails(_: Props) {
   const {releaseDate, changeCheckMetaData} = useSettings();
   const {isMainnet, useV1Submission} = useConfig();
 
-  const {dispatchSetTreeDetailToUpdate} = useNewCurrentJourney();
+  const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useNewCurrentJourney();
 
   const {setNewJourney} = useCurrentJourney();
 
@@ -140,6 +140,7 @@ function TreeDetails(_: Props) {
     if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
+    dispatchClearJourney();
     navigation.dispatch(
       CommonActions.reset({
         index: 0,

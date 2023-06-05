@@ -10,53 +10,55 @@ describe('SubmissionSettings component', () => {
 
   describe('SubmissionSettings', () => {
     describe('matic elements should be defined', () => {
-      let getElementByTestId;
+      let getElementByTestId, queryElementByTestId;
       beforeEach(() => {
         const element = render(<SubmissionSettings />, maticReducers);
         getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
       });
 
       it('elements should be defined', () => {
-        const biconomy = getElementByTestId('use-biconomy');
-        const biconomyDetail = getElementByTestId('biconomy-detail');
-        const transactionMethodSwitch = getElementByTestId('transaction-switch');
-        const balanceLabel = getElementByTestId('network-balance-label');
-        const balanceValue = getElementByTestId('network-balance');
+        const biconomy = queryElementByTestId('use-biconomy');
+        const biconomyDetail = queryElementByTestId('biconomy-detail');
+        const transactionMethodSwitch = queryElementByTestId('transaction-switch');
+        const balanceLabel = queryElementByTestId('network-balance-label');
+        const balanceValue = queryElementByTestId('network-balance');
 
-        expect(biconomy).toBeTruthy();
-        expect(biconomy.props.children).toBe('settings.useBiconomy');
-        expect(biconomyDetail).toBeTruthy();
-        expect(biconomyDetail.props.children).toBe('settings.gsnDetails');
-        expect(transactionMethodSwitch).toBeTruthy();
-        expect(balanceLabel).toBeTruthy();
-        expect(balanceLabel.props.children).toBe('settings.maticBalance');
-        expect(balanceValue).toBeTruthy();
+        expect(biconomy).toBeFalsy();
+        // expect(biconomy.props.children).toBe('settings.useBiconomy');
+        expect(biconomyDetail).toBeFalsy();
+        // expect(biconomyDetail.props.children).toBe('settings.gsnDetails');
+        expect(transactionMethodSwitch).toBeFalsy();
+        expect(balanceLabel).toBeFalsy();
+        // expect(balanceLabel.props.children).toBe('settings.maticBalance');
+        expect(balanceValue).toBeFalsy();
       });
     });
     describe('goerli elements should be defined', () => {
-      let getElementByTestId;
+      let getElementByTestId, queryElementByTestId;
       beforeEach(() => {
         const element = render(<SubmissionSettings />, goerliReducers);
         getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
       });
 
       it('elements should be defined', () => {
-        const biconomy = getElementByTestId('use-biconomy');
-        const biconomyDetail = getElementByTestId('biconomy-detail');
-        const transactionMethodSwitch = getElementByTestId('transaction-switch');
-        const balanceLabel = getElementByTestId('network-balance-label');
-        const balanceValue = getElementByTestId('network-balance');
+        const biconomy = queryElementByTestId('use-biconomy');
+        const biconomyDetail = queryElementByTestId('biconomy-detail');
+        const transactionMethodSwitch = queryElementByTestId('transaction-switch');
+        const balanceLabel = queryElementByTestId('network-balance-label');
+        const balanceValue = queryElementByTestId('network-balance');
         const checkMetaDataLabel = getElementByTestId('check-meta-data-label');
         const checkMetaDataSwitch = getElementByTestId('check-meta-data-switch');
 
-        expect(biconomy).toBeTruthy();
-        expect(biconomyDetail).toBeTruthy();
-        expect(biconomyDetail.props.children).toBe('settings.gsnDetails');
-        expect(biconomy.props.children).toBe('settings.useBiconomy');
-        expect(transactionMethodSwitch).toBeTruthy();
-        expect(balanceLabel).toBeTruthy();
-        expect(balanceLabel.props.children).toBe('settings.ethBalance');
-        expect(balanceValue).toBeTruthy();
+        expect(biconomy).toBeFalsy();
+        expect(biconomyDetail).toBeFalsy();
+        // expect(biconomyDetail.props.children).toBe('settings.gsnDetails');
+        // expect(biconomy.props.children).toBe('settings.useBiconomy');
+        expect(transactionMethodSwitch).toBeFalsy();
+        expect(balanceLabel).toBeFalsy();
+        // expect(balanceLabel.props.children).toBe('settings.ethBalance');
+        expect(balanceValue).toBeFalsy();
         expect(checkMetaDataLabel).toBeTruthy();
         expect(checkMetaDataSwitch).toBeTruthy();
       });

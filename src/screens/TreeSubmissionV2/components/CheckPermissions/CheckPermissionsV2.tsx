@@ -1,5 +1,5 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {ActivityIndicator, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation, Trans} from 'react-i18next';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome';
 import IoIcon from 'react-native-vector-icons/Ionicons';
@@ -36,11 +36,17 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
     height: withTiming(sharedStylesValue.value.height),
   }));
 
+  useEffect(() => {
+    if (lockSettings) {
+      sharedStylesValue.value = {height: 94};
+    }
+  }, [lockSettings]);
+
   const {t} = useTranslation();
 
   const handleToggleSettingsBox = useCallback(() => {
     setOpenSettings(prevState => {
-      sharedStylesValue.value = {height: prevState ? 94 : 348};
+      sharedStylesValue.value = {height: prevState ? 94 : Platform.OS === 'android' ? 152 : 158};
       return !prevState;
     });
   }, [sharedStylesValue.value]);
@@ -123,7 +129,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
                   name={lockSettings ? 'lock-closed' : 'chevron-forward'}
                   size={24}
                   color={colors.grayDarker}
-                  style={lockSettings ? {transform: [{rotate: openSettings ? '90deg' : '0deg'}]} : undefined}
+                  style={!lockSettings ? {transform: [{rotate: openSettings ? '90deg' : '0deg'}]} : undefined}
                 />
               </TouchableOpacity>
             </View>

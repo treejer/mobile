@@ -36,6 +36,7 @@ import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
+import {colors} from 'constants/values';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -102,7 +103,9 @@ export function TreeInventory(props: TreeInventoryProps) {
       canDeSelectLastItem: false,
     });
 
-  const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(notVerifiedTreeFilters[0]);
+  const [notVerifiedTreeFilter] = notVerifiedTreeFilters;
+
+  const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(notVerifiedTreeFilter);
 
   const {
     filters: submittedTreeFilters,
@@ -123,6 +126,16 @@ export function TreeInventory(props: TreeInventoryProps) {
       currentTrees.dispatchRefetch();
     }
   });
+
+  const notVerifiedTintColor = useMemo(
+    () =>
+      notVerifiedTreeFilter === NotVerifiedTreeStatus.Plant
+        ? colors.gray
+        : notVerifiedTreeFilter === NotVerifiedTreeStatus.Update
+        ? colors.pink
+        : colors.red,
+    [notVerifiedTreeFilter],
+  );
 
   const submittedTreesCountOf = useMemo(
     () => submittedTreeStatusCount(submittedTrees, treeUpdateInterval),
@@ -186,6 +199,7 @@ export function TreeInventory(props: TreeInventoryProps) {
               <Spacer times={6} />
               <NotVerifiedTreeList
                 testID="notVerified-tree-list"
+                tint={notVerifiedTintColor}
                 notVerifiedTrees={currentTrees?.trees?.data}
                 treeItemUI={notVerifiedTreeItemUI}
                 setTreeItemUI={setNotVerifiedTreeItemUI}

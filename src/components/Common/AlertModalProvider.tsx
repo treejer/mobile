@@ -91,7 +91,13 @@ export function AlertModalProvider(props: AlertModalProviderProps) {
 
   return (
     <AlertModalContext.Provider value={alertModalValue}>
-      <Modal testID="alert-modal" visible={visible} style={{paddingTop: top, paddingBottom: bottom}} transparent>
+      <Modal
+        testID="alert-modal"
+        visible={visible}
+        style={{paddingTop: top, paddingBottom: bottom}}
+        transparent
+        onRequestClose={handleCloseAlertModal}
+      >
         <View testID="alert-modal-container" style={styles.container}>
           <Card
             testID="alert-modal-card"

@@ -32,6 +32,7 @@ export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {
 
   const cptSize = useMemo(() => (withDetail ? 'big' : 'small'), [withDetail]);
 
+  const hasLocation = useMemo(() => !!(tree?.treeSpecsEntity?.longitude && tree?.treeSpecsEntity?.latitude), []);
   const locationImage = useMemo(
     () =>
       getStaticMapboxUrl(
@@ -46,17 +47,22 @@ export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {
 
   return (
     <TouchableOpacity testID={testID} style={[styles.bg, styles[`${cptSize}Container`]]} onPress={onPress}>
-      <RenderIf condition={!!withDetail && !!(tree?.treeSpecsEntity?.longitude && tree?.treeSpecsEntity?.latitude)}>
+      <RenderIf condition={!!withDetail && hasLocation}>
         <View style={styles.bg}>
           <Image testID="location-image" style={styles.locationImage} source={{uri: locationImage}} />
         </View>
       </RenderIf>
-      <View style={styles.contentContainer}>
-        <View style={withDetail ? styles.treeImageContainer : undefined}>
+      <View style={[styles.contentContainer, {justifyContent: withDetail ? 'flex-end' : 'center'}]}>
+        <View
+          style={
+            withDetail ? [styles.treeImageContainer, !hasLocation ? styles.centerTreeImage : undefined] : undefined
+          }
+        >
           <TreeSymbol
             testID="tree-symbol-cpt"
             treeUpdateInterval={treeUpdateInterval}
             size={size}
+            tint
             autoHeight
             tree={tree}
             horizontal={withDetail}
@@ -121,7 +127,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
     alignItems: 'center',
     padding: 8,
   },
@@ -141,5 +146,10 @@ const styles = StyleSheet.create({
   },
   treeImageContainer: {
     marginLeft: -8,
+  },
+  centerTreeImage: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
 });
