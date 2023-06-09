@@ -50,6 +50,10 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
     offline?: boolean;
     tree_id: string;
   };
+  NotVerifiedTreeDetails: {
+    tree: NotVerifiedTree;
+    tree_id?: string;
+  };
   TreeUpdate: {
     treeIdToUpdate: string;
     location: {

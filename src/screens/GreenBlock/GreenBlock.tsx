@@ -7,6 +7,7 @@ import {Routes, VerifiedUserNavigationProp} from 'navigation/index';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import TreeDetails from './screens/TreeDetails';
+import {NotVerifiedTreeDetails} from './screens/TreeDetails/NotVerifiedTreeDetails';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 interface Props extends VerifiedUserNavigationProp<Routes.GreenBlock> {}
@@ -55,6 +56,7 @@ function GreenBlock({navigation, route}: Props) {
         component={TreeDetails}
         options={({route}) => ({title: screenTitle(`Tree ${route.params?.tree_id}`)})}
       />
+      <Stack.Screen name={Routes.NotVerifiedTreeDetails} component={NotVerifiedTreeDetails} />
     </Stack.Navigator>
   );
 }

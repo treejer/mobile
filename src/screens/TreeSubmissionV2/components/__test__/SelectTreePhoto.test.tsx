@@ -68,7 +68,7 @@ describe('SelectTreePhoto component', () => {
 
     beforeEach(() => {
       const element = render(
-        <SelectTreePhoto testID="select-tree-photo-cpt" treePhoto={treePhoto} onSelect={() => {}} />,
+        <SelectTreePhoto testID="select-tree-photo-cpt" disabled={true} treePhoto={treePhoto} onSelect={() => {}} />,
       );
       getElementByTestId = element.getByTestId;
     });
@@ -115,11 +115,14 @@ describe('SelectTreePhoto component', () => {
       expect(checkIcon.props.color).toBe(colors.green);
 
       expect(cameraBtn).toBeTruthy();
+      expect(cameraBtn.props.accessibilityState.disabled).toBeTruthy();
       expect(cameraBtnText).toBeTruthy();
       expect(cameraBtnText.props.children).toBe('submitTreeV2.camera');
       expect(cameraIcon.props.name).toBe('camera');
 
       expect(galleryBtn).toBeTruthy();
+      expect(galleryBtn.props.accessibilityState.disabled).toBeTruthy();
+
       expect(galleryBtnText).toBeTruthy();
       expect(galleryBtnText.props.children).toBe('submitTreeV2.gallery');
       expect(galleryIcon.props.name).toBe('photo-video');

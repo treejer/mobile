@@ -8,12 +8,12 @@ import {
   deleteTreeEventSagas,
   watchDeleteTreeEvent,
 } from 'ranger-redux/modules/submitTreeEvents/deleteTreeEvent';
+import {DeleteResMock} from 'ranger-redux/modules/__test__/submitTreeEvents/deleteTreeEvent.mock';
+import {assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 import {DeleteTreeEvents} from 'webServices/submitTreeEvents/deleteTreeEvent';
 import {handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
-import {DeleteResMock} from 'ranger-redux/modules/__test__/submitTreeEvents/deleteTreeEvent.mock';
-import {assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 
 describe('deleteTreeEvent', () => {
   it('deleteTreeEvent module should be defined', () => {
@@ -48,7 +48,7 @@ describe('deleteTreeEvent', () => {
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Plant.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+        sagaFetch(`/${DeleteTreeEvents.Plant.toString().toLowerCase()}_requests/11221`, {
           configUrl: 'treejerNestApiUrl',
           method: 'DELETE',
         }),
@@ -75,7 +75,7 @@ describe('deleteTreeEvent', () => {
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Update.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+        sagaFetch(`/${DeleteTreeEvents.Update.toString().toLowerCase()}_requests/11221`, {
           configUrl: 'treejerNestApiUrl',
           method: 'DELETE',
         }),

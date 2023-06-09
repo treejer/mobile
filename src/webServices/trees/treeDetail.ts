@@ -35,6 +35,7 @@ export type TTreeDetailRes = {
     latitude: string;
     longitude: string;
     attributes: string;
+    updates?: string;
   };
   attributes: {
     trait_type: string;

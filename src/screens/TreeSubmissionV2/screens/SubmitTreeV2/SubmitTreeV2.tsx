@@ -15,6 +15,7 @@ import {DraftJourneyModal} from 'screens/TreeSubmissionV2/components/DraftJourne
 import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {SelectTreeLocation} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreeLocation';
+import {PreviewTreeDetails} from 'screens/TreeSubmissionV2/components/PreviewTreeDetails/PreviewTreeDetails';
 import {ChangeSettingsAlert} from 'screens/TreeSubmissionV2/components/ChangeSettingsAlert/ChangeSettingsAlert';
 import {SelectTreePhoto, TOnSelectTree} from 'screens/TreeSubmissionV2/components/SubmissionFields/SelectTreePhoto';
 import {DraftType, useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
@@ -43,6 +44,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   const [draftState, setDraftState] = useState<TDraftState | null>(null);
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const {journey, dispatchSelectTreePhoto, dispatchClearJourney, dispatchSubmitJourney} = useCurrentJourney();
   const {dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
@@ -160,6 +162,12 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           isDrafted={!!journey?.draftId}
         />
       </RenderIf>
+      <PreviewTreeDetails
+        testID="preview-treeDetails-cpt"
+        isVisible={showPreview}
+        currentJourney={journey}
+        onClose={() => setShowPreview(false)}
+      />
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
         <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
           <View style={[globalStyles.p1, globalStyles.pt1]}>
@@ -175,7 +183,12 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             </Text>
             <Spacer times={4} />
             {plantTreePermissions?.isCameraGranted ? (
-              <SelectTreePhoto testID="select-tree-photo-cpt" treePhoto={journey?.photo} onSelect={handleSelectPhoto} />
+              <SelectTreePhoto
+                testID="select-tree-photo-cpt"
+                treePhoto={journey?.photo}
+                onSelect={handleSelectPhoto}
+                disabled={!!journey.submitLoading}
+              />
             ) : (
               <LockedSubmissionField testID="locked-camera-cpt" title="lockedField.camera" />
             )}
@@ -189,6 +202,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
                   }}
                   testID="select-tree-location-cpt"
                   onSelect={handleNavigateToMap}
+                  disabled={!!journey.submitLoading}
                 />
                 <RenderIf condition={!!(journey?.treeIdToUpdate && journey?.isNursery)}>
                   <Spacer times={2} />
@@ -228,7 +242,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
                 onGrant={() => plantTreePermissions.openPermissionsSettings()}
                 onDraft={() => handleOpenDraftModal(DraftType.Draft)}
                 onSubmit={handleSubmitJourney}
-                onPreview={() => console.log('on review')}
+                onPreview={() => setShowPreview(true)}
               />
             )}
           </View>

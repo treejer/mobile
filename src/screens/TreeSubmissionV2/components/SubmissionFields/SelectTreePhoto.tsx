@@ -48,8 +48,8 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
       } else {
         selectedPhoto = await openCameraHook();
         photoLocation = {
-          latitude: selectedPhoto.exif.latitude,
-          longitude: selectedPhoto.exif.longitude,
+          latitude: selectedPhoto?.exif?.Latitude,
+          longitude: selectedPhoto?.exif?.Longitude,
         };
       }
 
@@ -73,8 +73,8 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         } else {
           selectedPhoto = await openLibraryHook();
           photoLocation = {
-            latitude: selectedPhoto.exif.latitude,
-            longitude: selectedPhoto.exif.longitude,
+            latitude: selectedPhoto.exif.Latitude,
+            longitude: selectedPhoto.exif.Longitude,
           };
         }
 

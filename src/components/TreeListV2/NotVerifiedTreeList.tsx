@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
 import {ActivityIndicator, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -12,6 +13,7 @@ import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTr
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {NotVerifiedTreeItem} from 'components/TreeListV2/NotVerifiedTreeItem';
 import {NotVerifiedTree} from 'types';
+import {Routes} from 'navigation/Navigation';
 
 export type NotVerifiedTreeListProps = {
   testID?: string;
@@ -29,6 +31,16 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
   const {testID, notVerifiedTrees, treeItemUI, setTreeItemUI, loading, refetching, onRefetch, onEndReached, tint} =
     props;
 
+  const navigation = useNavigation();
+
+  const handleNavigate = useCallback(
+    (tree: NotVerifiedTree) => {
+      //@ts-ignore
+      navigation.navigate(Routes.NotVerifiedTreeDetails, {tree});
+    },
+    [navigation],
+  );
+
   const treeItemRenderItem = useCallback(
     ({item}: ListRenderItemInfo<NotVerifiedTree>) => {
       return (
@@ -38,12 +50,12 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
             withDetail={treeItemUI === TreeItemUI.WithDetail}
             tree={item}
             tint={tint}
-            onPress={() => console.log('tree lllgogogo')}
+            onPress={() => handleNavigate(item)}
           />
         </View>
       );
     },
-    [treeItemUI, tint],
+    [treeItemUI, tint, handleNavigate],
   );
 
   const renderListWithDiffCol = useCallback(

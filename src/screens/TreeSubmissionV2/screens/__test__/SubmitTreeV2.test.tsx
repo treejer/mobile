@@ -369,6 +369,60 @@ describe('SubmitTreeV2 component', () => {
     });
   });
 
+  describe('SubmitTreeV2 preview', () => {
+    let getElementByTestId, queryElementByTestId;
+
+    beforeEach(() => {
+      const element = render(
+        <TestSubmissionStack
+          name={Routes.SubmitTree_V2}
+          component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
+        />,
+        {
+          ...goerliReducers,
+          netInfo: {
+            isConnected: true,
+          },
+          currentJourney: {
+            isSingle: true,
+            location: {
+              latitude: 20000,
+              longitude: 2000,
+            },
+            photo: onBoardingOne,
+            photoLocation: {
+              latitude: 20000,
+              longitude: 2000,
+            },
+            canDraft: true,
+            submitLoading: false,
+          },
+        },
+        canPlantMockQuery as any,
+      );
+      getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
+    });
+
+    it('components/elements should be defined', async () => {
+      const previewBtn = getElementByTestId('preview-submission');
+      const previewModal = queryElementByTestId('preview-treeDetails-cpt');
+
+      expect(previewBtn).toBeTruthy();
+      expect(previewModal).toBeTruthy();
+      expect(previewModal.props.visible).toBeFalsy();
+
+      await act(async () => {
+        await fireEvent.press(previewBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+
+        expect(previewModal.props.visible).toBeTruthy();
+      });
+    });
+  });
+
   describe('SubmitTreeV2 submit offline', () => {
     let getElementByTestId, queryElementByTestId;
 

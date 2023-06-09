@@ -40,7 +40,7 @@ import {
 import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
 import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
 import {clearJourney} from 'ranger-redux/modules/currentJourney/currentJourney.action';
-import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetail';
+import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetails';
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';

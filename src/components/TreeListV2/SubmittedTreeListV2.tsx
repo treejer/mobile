@@ -54,7 +54,6 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   const {openAlertModal, closeAlertModal} = useAlertModal();
 
   const handleNavigateToSubmission = useCallback(() => {
-    dispatchClearJourney();
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -68,10 +67,11 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
         ],
       }),
     );
-  }, [navigation, dispatchClearJourney]);
+  }, [navigation]);
 
   const handleContinueDraftedJourney = useCallback(
     (id: string, reset: boolean) => {
+      dispatchClearJourney();
       if (reset) {
         dispatchRemoveDraftedJourney({id});
       } else {

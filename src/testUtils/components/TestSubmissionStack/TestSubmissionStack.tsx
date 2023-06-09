@@ -9,6 +9,7 @@ import {SelectOnMapV2} from 'screens/TreeSubmissionV2/screens/SelectOnMapV2/Sele
 import {mockPlantTreePermissionsGranted} from 'screens/TreeSubmissionV2/components/__test__/mock';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import TreeDetails from 'screens/GreenBlock/screens/TreeDetails';
+import {NotVerifiedTreeDetails} from 'screens/GreenBlock/screens/TreeDetails/NotVerifiedTreeDetails';
 
 export type TestSubmissionStackProps = {
   name: Routes;
@@ -55,12 +56,15 @@ export function TestSubmissionStack(props: TestSubmissionStackProps) {
 
   const GreenBlockNavigator = () => {
     return (
-      <GreenBlockStack.Navigator>
+      <GreenBlockStack.Navigator initialRouteName={name}>
         <GreenBlockStack.Screen name={Routes.TreeInventory_V2}>
           {() => (name === Routes.TreeInventory_V2 ? Component : <TreeInventory />)}
         </GreenBlockStack.Screen>
         <GreenBlockStack.Screen name={Routes.TreeDetails}>
           {() => (name === Routes.TreeDetails ? Component : <TreeDetails />)}
+        </GreenBlockStack.Screen>
+        <GreenBlockStack.Screen name={Routes.NotVerifiedTreeDetails}>
+          {() => (name === Routes.NotVerifiedTreeDetails ? Component : <NotVerifiedTreeDetails />)}
         </GreenBlockStack.Screen>
       </GreenBlockStack.Navigator>
     );

@@ -70,6 +70,7 @@ export enum Routes {
   TreeList = 'TreeList',
   TreeInventory_V2 = 'TreeInventory_V2',
   TreeDetails = 'TreeDetails',
+  NotVerifiedTreeDetails = 'NotVerifiedTreeDetails',
   Organization = 'Organization',
   Withdraw = 'Withdraw',
   Transfer = 'Transfer',

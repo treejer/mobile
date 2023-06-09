@@ -204,7 +204,7 @@ export function TreeInventory(props: TreeInventoryProps) {
                 treeItemUI={notVerifiedTreeItemUI}
                 setTreeItemUI={setNotVerifiedTreeItemUI}
                 loading={currentTrees.loading && !currentTrees.refetching}
-                refetching={currentTrees.refetching && !currentTrees.loading}
+                refetching={currentTrees?.refetching && !currentTrees?.loading}
                 onRefetch={currentTrees.dispatchRefetch}
                 onEndReached={currentTrees.dispatchLoadMore}
               />

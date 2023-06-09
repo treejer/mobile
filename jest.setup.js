@@ -231,3 +231,9 @@ jest.mock('eth-sig-util', () => {
     recoverTypedSignature: (data, sig) => 'address',
   };
 });
+
+jest.mock('./src/screens/GreenBlock/screens/TreeDetails/TreePhotos', () => {
+  return {
+    TreePhotos: Icon,
+  };
+});

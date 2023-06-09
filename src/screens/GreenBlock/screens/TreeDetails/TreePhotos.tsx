@@ -6,13 +6,14 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {colors} from 'constants/values';
 
 export type TreePhotosProps = {
+  testID?: string;
   updatesCount: number;
   cardWidth: number;
   updates: any[];
 };
 
 export function TreePhotos(props: TreePhotosProps) {
-  const {updatesCount, cardWidth, updates} = props;
+  const {testID, updatesCount, cardWidth, updates} = props;
 
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -32,7 +33,10 @@ export function TreePhotos(props: TreePhotosProps) {
 
   return (
     <>
-      <View style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack, globalStyles.alignItemsCenter]}>
+      <View
+        testID={testID}
+        style={[globalStyles.justifyContentCenter, globalStyles.horizontalStack, globalStyles.alignItemsCenter]}
+      >
         {updatesCount > 1 && (
           <TouchableOpacity style={[globalStyles.p1]} onPress={() => sliderRef.current?.snapToPrev()}>
             <ChevronLeft />
@@ -51,7 +55,13 @@ export function TreePhotos(props: TreePhotosProps) {
                 }}
                 resizeMode="cover"
                 key={update.createdAt}
-                source={{uri: update.image}}
+                source={
+                  update?.preview
+                    ? update.preview?.hasOwnProperty('path')
+                      ? {uri: update.preview?.path}
+                      : update.preview
+                    : {uri: update.image}
+                }
               />
             );
           }}

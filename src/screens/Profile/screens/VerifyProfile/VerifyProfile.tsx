@@ -280,7 +280,7 @@ function VerifyProfile(props: Props) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [openLibraryHook]);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
     const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);

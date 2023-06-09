@@ -1,6 +1,7 @@
 import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
 import {put, takeEvery} from 'redux-saga/effects';
+import {CommonActions} from '@react-navigation/native';
 
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
@@ -12,7 +13,9 @@ import {
   TDeleteTreeEventRes,
 } from 'webServices/submitTreeEvents/deleteTreeEvent';
 import {TReduxState} from 'ranger-redux/store';
-import {Hex2Dec} from 'utilities/helpers/hex';
+import {Routes} from 'navigation/Navigation';
+import {TreeLife} from 'utilities/helpers/treeInventory';
+import {navigationRef} from 'navigation/navigationRef';
 
 const DeleteTreeEvent = new ReduxFetchState<TDeleteTreeEventRes, TDeleteTreeEventPayload, string>('deleteTreeEvent');
 
@@ -20,7 +23,7 @@ export function* watchDeleteTreeEvent({payload}: TDeleteTreeEventAction) {
   try {
     const {id, event} = payload || {};
     const res: FetchResult<TDeleteTreeEventRes> = yield sagaFetch<TDeleteTreeEventRes>(
-      `/${event.toString().toLowerCase()}_requests/${Hex2Dec(id)}`,
+      `/${event.toString().toLowerCase()}_requests/${id}`,
       {
         configUrl: 'treejerNestApiUrl',
         method: 'DELETE',
@@ -32,6 +35,12 @@ export function* watchDeleteTreeEvent({payload}: TDeleteTreeEventAction) {
       mode: AlertMode.Success,
     });
     yield put(DeleteTreeEvent.actions.loadSuccess(res.result));
+    navigationRef()?.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: Routes.GreenBlock, params: {tabFilter: TreeLife.NotVerified}}],
+      }),
+    );
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(DeleteTreeEvent.actions.loadFailure(message));

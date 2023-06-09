@@ -183,6 +183,7 @@ function TreeDetails(_: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={
           isWeb() ? undefined : (

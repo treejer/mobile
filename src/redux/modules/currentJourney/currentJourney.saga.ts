@@ -11,7 +11,7 @@ import {upload} from 'utilities/helpers/IPFS';
 import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
-import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetail';
+import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetails';
 import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';

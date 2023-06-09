@@ -45,7 +45,7 @@ export function useNotVerifiedTrees(status: NotVerifiedTreeStatus = NotVerifiedT
     () => ({
       trees: plantedTrees,
       ...plantedTreesState,
-      refetching: plantedTrees?.data && plantedTreesState.loading,
+      refetching: !!plantedTrees?.data && plantedTreesState.loading,
       dispatchRefetch: () => {
         plantedTreesPagination.dispatchResetPagination();
         dispatchGetPlantedTrees();
@@ -60,7 +60,7 @@ export function useNotVerifiedTrees(status: NotVerifiedTreeStatus = NotVerifiedT
     () => ({
       trees: updatedTrees,
       ...updatedTreesState,
-      refetching: updatedTrees?.data && updatedTreesState.loading,
+      refetching: !!updatedTrees?.data && updatedTreesState.loading,
       dispatchRefetch: () => {
         updatedTreesPagination.dispatchResetPagination();
         dispatchGetUpdatedTrees();
@@ -75,7 +75,7 @@ export function useNotVerifiedTrees(status: NotVerifiedTreeStatus = NotVerifiedT
     () => ({
       trees: assignedTrees,
       ...assignedTreesState,
-      refetching: assignedTrees?.data && assignedTreesState.loading,
+      refetching: !!assignedTrees?.data && assignedTreesState.loading,
       dispatchRefetch: () => {
         assignedTreesPagination.dispatchResetPagination();
         dispatchGetAssignedTrees();

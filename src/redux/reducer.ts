@@ -23,7 +23,7 @@ import {verifyProfileReducer} from './modules/verification/verifyProfile';
 import {plantTreeReducer} from './modules/submitTreeEvents/plantTree';
 import {assignedTreeReducer} from './modules/submitTreeEvents/assignedTree';
 import {updateTreeReducer} from './modules/submitTreeEvents/updateTree';
-import {treeDetailReducer} from './modules/trees/treeDetail';
+import {treeDetailReducer} from './modules/trees/treeDetails';
 import {deleteTreeEventReducer} from './modules/submitTreeEvents/deleteTreeEvent';
 import {plantedTreesReducer} from './modules/trees/plantedTrees';
 import {updatedTreesReducer} from './modules/trees/updatedTrees';
@@ -53,7 +53,7 @@ const appReducer = combineReducers({
   plantTree: plantTreeReducer,
   assignedTree: assignedTreeReducer,
   updateTree: updateTreeReducer,
-  treeDetail: treeDetailReducer,
+  treeDetails: treeDetailReducer,
   plantedTrees: plantedTreesReducer,
   updatedTrees: updatedTreesReducer,
   assignedTrees: assignedTreesReducer,
