@@ -87,6 +87,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const handleSubmitJourney = useCallback(() => {
     if (isConnected) {
       sendEvent(journey.isUpdate ? 'update_tree_confirm' : 'add_tree_confirm');
+      setShowPreview(false);
       dispatchSubmitJourney();
     } else {
       handleOpenDraftModal(DraftType.Offline);
@@ -166,6 +167,8 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         testID="preview-treeDetails-cpt"
         isVisible={showPreview}
         currentJourney={journey}
+        onSubmit={handleSubmitJourney}
+        onDraft={() => handleOpenDraftModal(DraftType.Draft)}
         onClose={() => setShowPreview(false)}
       />
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>

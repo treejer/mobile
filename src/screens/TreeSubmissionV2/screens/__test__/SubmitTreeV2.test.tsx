@@ -421,6 +421,84 @@ describe('SubmitTreeV2 component', () => {
         expect(previewModal.props.visible).toBeTruthy();
       });
     });
+    it('submit current journey', async () => {
+      const previewBtn = getElementByTestId('preview-submission');
+      const previewModal = queryElementByTestId('preview-treeDetails-cpt');
+
+      expect(previewBtn).toBeTruthy();
+      expect(previewModal).toBeTruthy();
+      expect(previewModal.props.visible).toBeFalsy();
+
+      await act(async () => {
+        await fireEvent.press(previewBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+
+        expect(previewModal.props.visible).toBeTruthy();
+      });
+      const submitBtn = getElementByTestId('submit-btn');
+
+      await act(async () => {
+        await fireEvent.press(submitBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+        expect(previewModal.props.visible).toBeFalsy();
+      });
+    });
+    it('draft current journey', async () => {
+      const previewBtn = getElementByTestId('preview-submission');
+      const previewModal = queryElementByTestId('preview-treeDetails-cpt');
+
+      expect(previewBtn).toBeTruthy();
+      expect(previewModal).toBeTruthy();
+      expect(previewModal.props.visible).toBeFalsy();
+
+      await act(async () => {
+        await fireEvent.press(previewBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+
+        expect(previewModal.props.visible).toBeTruthy();
+      });
+      const draftBtn = getElementByTestId('draft-btn');
+
+      await act(async () => {
+        await fireEvent.press(draftBtn);
+      });
+      await waitFor(() => {
+        const draftModal = getElementByTestId('draft-modal');
+        expect(draftModal).toBeTruthy();
+      });
+    });
+    it('reject and edit current journey', async () => {
+      const previewBtn = getElementByTestId('preview-submission');
+      const previewModal = queryElementByTestId('preview-treeDetails-cpt');
+
+      expect(previewBtn).toBeTruthy();
+      expect(previewModal).toBeTruthy();
+      expect(previewModal.props.visible).toBeFalsy();
+
+      await act(async () => {
+        await fireEvent.press(previewBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+
+        expect(previewModal.props.visible).toBeTruthy();
+      });
+      const rejectBtn = getElementByTestId('reject-btn');
+
+      await act(async () => {
+        await fireEvent.press(rejectBtn);
+      });
+      await waitFor(() => {
+        const previewModal = getElementByTestId('preview-treeDetails-cpt');
+        expect(previewModal.props.visible).toBeFalsy();
+      });
+    });
   });
 
   describe('SubmitTreeV2 submit offline', () => {

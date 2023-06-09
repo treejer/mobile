@@ -20,7 +20,13 @@ describe('PreviewTreeDetails component', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
       const element = render(
-        <PreviewTreeDetails isVisible={true} currentJourney={singleTreeReducer.currentJourney} onClose={() => {}} />,
+        <PreviewTreeDetails
+          isVisible={true}
+          currentJourney={singleTreeReducer.currentJourney}
+          onClose={() => {}}
+          onSubmit={() => {}}
+          onDraft={() => {}}
+        />,
         singleTreeReducer,
       );
       getElementByTestId = element.getByTestId;
@@ -40,6 +46,12 @@ describe('PreviewTreeDetails component', () => {
       const treeLocationBtn = getElementByTestId('tree-location-btn');
       const treeLocation = getElementByTestId('tree-location-image');
       const treePhotos = getElementByTestId('tree-photos-slider');
+      const submitBtn = getElementByTestId('submit-btn');
+      const submitBtnText = getElementByTestId('submit-btn-text');
+      const draftBtn = getElementByTestId('draft-btn');
+      const draftBtnText = getElementByTestId('draft-btn-text');
+      const rejectBtn = getElementByTestId('reject-btn');
+      const rejectBtnText = getElementByTestId('reject-btn-text');
 
       const treeIdLabel = queryElementByTestId('tree-id-label');
       const treeId = queryElementByTestId('tree-id');
@@ -84,13 +96,29 @@ describe('PreviewTreeDetails component', () => {
       expect(treeLocation.props.source).toEqual({uri: staticMapUrl});
 
       expect(treePhotos).toBeTruthy();
+
+      expect(submitBtn).toBeTruthy();
+      expect(submitBtnText).toBeTruthy();
+      expect(submitBtnText.props.children).toBe('previewTreeDetails.submit');
+      expect(draftBtn).toBeTruthy();
+      expect(draftBtnText).toBeTruthy();
+      expect(draftBtnText.props.children).toBe('previewTreeDetails.draft');
+      expect(rejectBtn).toBeTruthy();
+      expect(rejectBtnText).toBeTruthy();
+      expect(rejectBtnText.props.children).toBe('previewTreeDetails.reject');
     });
   });
   describe('PreviewTreeDetails, update', () => {
     let getElementByTestId;
     beforeEach(() => {
       const element = render(
-        <PreviewTreeDetails isVisible={true} currentJourney={updateTreeReducer.currentJourney} onClose={() => {}} />,
+        <PreviewTreeDetails
+          isVisible={true}
+          currentJourney={updateTreeReducer.currentJourney}
+          onClose={() => {}}
+          onSubmit={() => {}}
+          onDraft={() => {}}
+        />,
         updateTreeReducer,
       );
       getElementByTestId = element.getByTestId;
@@ -111,6 +139,12 @@ describe('PreviewTreeDetails component', () => {
       const treeLocationBtn = getElementByTestId('tree-location-btn');
       const treeLocation = getElementByTestId('tree-location-image');
       const treePhotos = getElementByTestId('tree-photos-slider');
+      const submitBtn = getElementByTestId('submit-btn');
+      const submitBtnText = getElementByTestId('submit-btn-text');
+      const draftBtn = getElementByTestId('draft-btn');
+      const draftBtnText = getElementByTestId('draft-btn-text');
+      const rejectBtn = getElementByTestId('reject-btn');
+      const rejectBtnText = getElementByTestId('reject-btn-text');
 
       const staticMapUrl = getStaticMapboxUrl(
         mapboxPrivateToken,
@@ -155,6 +189,15 @@ describe('PreviewTreeDetails component', () => {
       expect(treeLocation.props.source).toEqual({uri: staticMapUrl});
 
       expect(treePhotos).toBeTruthy();
+      expect(submitBtn).toBeTruthy();
+      expect(submitBtnText).toBeTruthy();
+      expect(submitBtnText.props.children).toBe('previewTreeDetails.submit');
+      expect(draftBtn).toBeTruthy();
+      expect(draftBtnText).toBeTruthy();
+      expect(draftBtnText.props.children).toBe('previewTreeDetails.draft');
+      expect(rejectBtn).toBeTruthy();
+      expect(rejectBtnText).toBeTruthy();
+      expect(rejectBtnText.props.children).toBe('previewTreeDetails.reject');
     });
   });
 
@@ -162,7 +205,13 @@ describe('PreviewTreeDetails component', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
       const element = render(
-        <PreviewTreeDetails isVisible={true} currentJourney={updateLoadingReducer.currentJourney} onClose={() => {}} />,
+        <PreviewTreeDetails
+          isVisible={true}
+          currentJourney={updateLoadingReducer.currentJourney}
+          onClose={() => {}}
+          onSubmit={() => {}}
+          onDraft={() => {}}
+        />,
         updateLoadingReducer,
       );
       getElementByTestId = element.getByTestId;
@@ -186,6 +235,12 @@ describe('PreviewTreeDetails component', () => {
       const treeLocationBtn = queryElementByTestId('tree-location-btn');
       const treeLocation = queryElementByTestId('tree-location-image');
       const treePhotos = queryElementByTestId('tree-photos-slider');
+      const submitBtn = queryElementByTestId('submit-btn');
+      const submitBtnText = queryElementByTestId('submit-btn-text');
+      const draftBtn = queryElementByTestId('draft-btn');
+      const draftBtnText = queryElementByTestId('draft-btn-text');
+      const rejectBtn = queryElementByTestId('reject-btn');
+      const rejectBtnText = queryElementByTestId('reject-btn-text');
 
       expect(loading).toBeTruthy();
 
@@ -200,6 +255,7 @@ describe('PreviewTreeDetails component', () => {
       expect(treeId).toBeFalsy();
 
       expect(treeCoordsLabel).toBeFalsy();
+      expect(treeCoords).toBeFalsy();
 
       expect(treeSubmittedAtLabel).toBeFalsy();
 
@@ -213,6 +269,12 @@ describe('PreviewTreeDetails component', () => {
       expect(treeLocation).toBeFalsy();
 
       expect(treePhotos).toBeFalsy();
+      expect(submitBtn).toBeFalsy();
+      expect(submitBtnText).toBeFalsy();
+      expect(draftBtn).toBeFalsy();
+      expect(draftBtnText).toBeFalsy();
+      expect(rejectBtn).toBeFalsy();
+      expect(rejectBtnText).toBeFalsy();
     });
   });
 });

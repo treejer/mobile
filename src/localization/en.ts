@@ -617,6 +617,9 @@ export const en = {
     photo: 'Photo',
     photos: 'Photos',
     coords: 'lat: {{lat}}\n long: {{long}}',
+    submit: 'Confirm & Submit',
+    draft: 'Draft & Submit Later',
+    reject: 'Reject & Edit',
   },
   notVerifiedTreeDetails: {
     delete: 'Delete',

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -35,10 +36,12 @@ export type PreviewTreeDetailsProps = {
   isVisible: boolean;
   currentJourney: TCurrentJourney;
   onClose: () => void;
+  onSubmit: () => void;
+  onDraft: () => void;
 };
 
 export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
-  const {testID, isVisible, currentJourney, onClose} = props;
+  const {testID, isVisible, currentJourney, onClose, onSubmit, onDraft} = props;
 
   const {profile} = useProfile();
   const {treeDetails, dispatchGetTreeDetails, loading: treeDetailsLoading} = useTreeDetails();
@@ -95,8 +98,13 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
       testID={testID}
       isVisible={isVisible}
       swipeDirection="down"
+      customBackdrop={
+        <TouchableWithoutFeedback style={{flex: 1}} onPress={onClose}>
+          <View style={{flex: 1, backgroundColor: colors.modalBg}} />
+        </TouchableWithoutFeedback>
+      }
       animationIn="slideInUp"
-      animationOut="slideOutUp"
+      animationOut="slideOutDown"
       onSwipeComplete={onClose}
       swipeThreshold={150}
       propagateSwipe
@@ -235,6 +243,24 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
                     />
                   </View>
                 )}
+                <Spacer times={4} />
+                <TouchableOpacity testID="submit-btn" style={[styles.btn, styles.submitBtn]} onPress={onSubmit}>
+                  <Text testID="submit-btn-text" style={styles.whiteText}>
+                    {t('previewTreeDetails.submit')}
+                  </Text>
+                </TouchableOpacity>
+                <Spacer times={2} />
+                <TouchableOpacity testID="draft-btn" style={[styles.btn, styles.draftBtn]} onPress={onDraft}>
+                  <Text testID="draft-btn-text" style={styles.blackText}>
+                    {t('previewTreeDetails.draft')}
+                  </Text>
+                </TouchableOpacity>
+                <Spacer times={2} />
+                <TouchableOpacity testID="reject-btn" style={[styles.btn, styles.rejectBtn]} onPress={onClose}>
+                  <Text testID="reject-btn-text" style={styles.whiteText}>
+                    {t('previewTreeDetails.reject')}
+                  </Text>
+                </TouchableOpacity>
                 <Spacer times={8} />
               </View>
             </TouchableOpacity>
@@ -249,15 +275,6 @@ const styles = StyleSheet.create({
   header: {
     color: '#757575',
   },
-  deleteButtonContainer: {
-    alignItems: 'center',
-    left: 0,
-    right: 0,
-    marginTop: -40,
-  },
-  deleteButton: {
-    backgroundColor: colors.red,
-  },
   titleLine: {
     height: 2,
     backgroundColor: colors.grayLight,
@@ -265,5 +282,32 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignSelf: 'center',
+  },
+  btn: {
+    ...colors.smShadow,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingVertical: 14,
+    marginTop: 8,
+  },
+  submitBtn: {
+    backgroundColor: colors.green,
+  },
+  draftBtn: {
+    backgroundColor: colors.yellow,
+  },
+  rejectBtn: {
+    backgroundColor: colors.red,
+  },
+  blackText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.black,
+  },
+  whiteText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.white,
   },
 });
