@@ -109,7 +109,7 @@ export const mockAssignedJourneyWithoutDraftId = {
   treeIdToPlant: 'IDIDIDID',
 };
 export const mockProfile = {
-  _id: 'ID',
+  id: 'ID',
   createdAt: 'Date',
   email: 'dev@gmail.com',
   emailVerifiedAt: '2023-05-14T20:34:23.075Z',

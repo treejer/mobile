@@ -23,6 +23,7 @@ import {assignedTreeSagas} from './modules/submitTreeEvents/assignedTree';
 import {updateTreeSagas} from './modules/submitTreeEvents/updateTree';
 import {treeDetailsSagas} from './modules/trees/treeDetails';
 import {deleteTreeEventSagas} from './modules/submitTreeEvents/deleteTreeEvent';
+import {submittedTreesSagas} from './modules/trees/submittedTrees';
 import {plantedTreesSagas} from './modules/trees/plantedTrees';
 import {updatedTreesSagas} from './modules/trees/updatedTrees';
 import {assignedTreesSagas} from './modules/trees/assignedTrees';
@@ -50,6 +51,7 @@ export default function* root(store: TStoreRedux) {
     assignedTreeSagas(),
     updateTreeSagas(),
     treeDetailsSagas(),
+    submittedTreesSagas(),
     plantedTreesSagas(),
     assignedTreesSagas(),
     updatedTreesSagas(),

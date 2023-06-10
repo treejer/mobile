@@ -4,6 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 
 import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {FilterTabBar} from 'components/Filter/FilterTabBar';
 import {Tabs} from 'components/Tabs/Tabs';
@@ -36,7 +37,6 @@ import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
-import {colors} from 'constants/values';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -105,7 +105,7 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const [notVerifiedTreeFilter] = notVerifiedTreeFilters;
 
-  const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(notVerifiedTreeFilter);
+  const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
 
   const {
     filters: submittedTreeFilters,

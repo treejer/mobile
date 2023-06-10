@@ -9,9 +9,10 @@ export type TAppQueries = {
 };
 
 export enum PaginationName {
-  PlantedTrees,
-  UpdatedTrees,
-  AssignedTrees,
+  PlantedTrees, // planted trees means not verified planted trees
+  UpdatedTrees, // updated trees means not verified updated trees
+  AssignedTrees, // assigned trees means not verified assigned trees
+  SubmittedTrees, // submitted trees means verified trees by admin
 }
 
 export type TPaginationItem = {
@@ -38,6 +39,7 @@ export const paginationInitialState: TPaginationState = {
   [PaginationName.PlantedTrees]: defaultPaginationItem,
   [PaginationName.UpdatedTrees]: defaultPaginationItem,
   [PaginationName.AssignedTrees]: defaultPaginationItem,
+  [PaginationName.SubmittedTrees]: defaultPaginationItem,
 };
 
 export type TPaginationAction = {

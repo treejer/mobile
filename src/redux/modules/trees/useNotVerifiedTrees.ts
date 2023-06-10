@@ -7,7 +7,10 @@ import {updatedTreesActions} from './updatedTrees';
 import {assignedTreesActions} from './assignedTrees';
 import {PaginationName, useReduxPagination} from 'ranger-redux/modules/pagination/pagination.reducer';
 
-export function useNotVerifiedTrees(status: NotVerifiedTreeStatus = NotVerifiedTreeStatus.Plant) {
+export function useNotVerifiedTrees(
+  fetchOnMount?: boolean,
+  status: NotVerifiedTreeStatus = NotVerifiedTreeStatus.Plant,
+) {
   const {data: plantedTrees, ...plantedTreesState} = useAppSelector(state => state.plantedTrees);
   const plantedTreesPagination = useReduxPagination(PaginationName.PlantedTrees);
 
@@ -26,7 +29,9 @@ export function useNotVerifiedTrees(status: NotVerifiedTreeStatus = NotVerifiedT
   }, [dispatch]);
 
   useEffect(() => {
-    dispatchGetAll();
+    if (fetchOnMount) {
+      dispatchGetAll();
+    }
   }, []);
 
   const dispatchGetPlantedTrees = useCallback(() => {
