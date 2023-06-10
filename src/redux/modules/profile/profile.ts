@@ -5,8 +5,9 @@ import ReduxFetchState from 'redux-fetch-state';
 import {takeEvery, put, select} from 'redux-saga/effects';
 
 import {defaultNetwork, storageKeys} from 'services/config';
+import {TProfile} from 'webServices/profile/profile';
 import {asyncAlert} from 'utilities/helpers/alert';
-import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
+import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {useUserWeb3} from '../web3/web3';
@@ -18,27 +19,6 @@ import {plantedTreesActions} from '../trees/plantedTrees';
 import {updatedTreesActions} from '../trees/updatedTrees';
 import {assignedTreesActions} from '../trees/assignedTrees';
 
-export type TProfile = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  emailVerifiedAt?: string | null;
-  idCard?: string | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
-  mobile?: string | null;
-  mobileCountry?: string | null;
-  mobileVerifiedAt?: string | null;
-  isVerified: boolean;
-  plantingNonce: number;
-};
-
-export type TProfileForm = {
-  userId: string;
-  accessToken: string;
-};
-
 const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 
 export function* watchProfile() {
@@ -48,7 +28,8 @@ export function* watchProfile() {
     yield put(changeCheckMetaData(true));
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
-    yield put(Profile.actions.loadFailure(e));
+    const {message} = handleFetchError(e);
+    yield put(Profile.actions.loadFailure(message));
     yield handleSagaFetchError(e);
   }
 }
@@ -64,18 +45,7 @@ export enum UserStatus {
   Verified,
 }
 
-export type TUseProfile = {
-  loading: boolean;
-  loaded: boolean;
-  form: TProfileForm | null;
-  error: string | null;
-  dispatchProfile: () => void;
-  profile: TProfile | null;
-  status: UserStatus;
-  handleLogout: (userPressed?: boolean) => void;
-};
-
-export function useProfile(): TUseProfile {
+export function useProfile() {
   const {data, ...profileState} = useAppSelector(state => state.profile);
   const dispatch = useAppDispatch();
 

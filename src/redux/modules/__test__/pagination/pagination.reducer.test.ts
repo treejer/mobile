@@ -10,6 +10,7 @@ describe('pagination reducer', () => {
     [PaginationName.PlantedTrees]: defaultPaginationItem,
     [PaginationName.UpdatedTrees]: defaultPaginationItem,
     [PaginationName.AssignedTrees]: defaultPaginationItem,
+    [PaginationName.SubmittedTrees]: defaultPaginationItem,
   };
   it('should return the initial state', () => {
     expect(paginationReducer(initialState, {type: '', name: PaginationName.AssignedTrees})).toEqual(initialState);

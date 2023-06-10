@@ -7,6 +7,7 @@ import {netInfoReducer} from './modules/netInfo/netInfo';
 import {settingsReducer} from './modules/settings/settings';
 import {contractsReducer} from './modules/contracts/contracts';
 import {profileReducer} from './modules/profile/profile';
+import {planterReducer} from './modules/profile/planter';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
 import {countriesReducer} from './modules/countris/countries';
@@ -39,6 +40,7 @@ const appReducer = combineReducers({
   contracts: contractsReducer,
   recentPlaces: recentPlacesReducer,
   profile: profileReducer,
+  planter: planterReducer,
   userSign: userSignReducer,
   userNonce: userNonceReducer,
   countries: countriesReducer,
