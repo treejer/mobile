@@ -1,7 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-import {Tree} from 'types';
 import globalStyles from 'constants/styles';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {TreeImage} from './TreeImage';
@@ -12,7 +11,7 @@ interface TreeSymbolPropsType {
   horizontal?: boolean;
   testID?: string;
   handlePress?: () => void;
-  tree?: Tree | SubmittedTree;
+  tree?: SubmittedTree;
   color?: string;
   size?: number;
   treeUpdateInterval: number;

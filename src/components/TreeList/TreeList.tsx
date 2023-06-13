@@ -439,7 +439,7 @@ function Trees({navigation, filter}: Props) {
       return (
         <TouchableOpacity onPress={onPress} key={id} style={styles.offlineTree} disabled={disabled}>
           <TreeImage
-            tree={item.tree}
+            tree={item.tree as any}
             tint
             size={60}
             isNursery={item.isSingle === false}

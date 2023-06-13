@@ -56,7 +56,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
     [props.plantTreePermissions],
   );
 
-  // TODO:  loading state
+  // *:  loading state
 
   return (
     <Card style={styles.boxShadow}>

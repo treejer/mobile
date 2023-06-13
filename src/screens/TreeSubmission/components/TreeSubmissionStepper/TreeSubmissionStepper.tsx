@@ -77,7 +77,7 @@ function TreeSubmissionStepper(props: Props) {
       <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter, {marginTop: 16}]}>
         {isUpdate && (
           <TreeSymbol
-            tree={journey.tree}
+            tree={journey.tree as any}
             tint={false}
             treeUpdateInterval={1}
             color={colors.green}

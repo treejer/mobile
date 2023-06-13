@@ -40,22 +40,9 @@ interface Props {
 function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
   // @ts-ignore
   const initRouteName = route.params?.initialRouteName;
-  const {journey} = useCurrentJourney();
 
   const {packs} = useOfflineMap();
   const isConnected = useNetInfoConnected();
-
-  const treeIdToPlant = journey && 'treeIdToPlant' in journey ? ((journey as any).treeIdToPlant as string) : undefined;
-
-  // this if added to get query to assignedTree works well on submit tree
-  if (typeof treeIdToPlant != 'undefined') {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useQuery<TreeDetailQueryQueryData, TreeDetailQueryQueryData.Variables>(TreeDetailQuery, {
-      variables: {
-        id: treeIdToPlant, //todo fix it
-      },
-    });
-  }
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType_V2) {

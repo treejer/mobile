@@ -3,8 +3,8 @@ import {Image, ImageProps, View} from 'react-native';
 
 import {NotVerifiedTree} from 'types';
 import {colors} from 'constants/values';
-import {treeImageSrc} from 'utilities/helpers/tree';
 import TreeSvg from 'components/Icons/Tree';
+import {TreeImage} from '../../../assets/icons';
 
 export type NotVerifiedTreeImageProps = {
   testID?: string;
@@ -46,8 +46,7 @@ export function NotVerifiedTreeImage(props: NotVerifiedTreeImageProps) {
     <Image
       testID={testID}
       style={[{width: size, height: size, tintColor: tint && tintColor ? tintColor : undefined}, style]}
-      // TODO: type
-      source={treeImageSrc({treeSpecsEntity: {imageFs: treeSpecs?.image}} as any)}
+      source={treeSpecs?.image ? {uri: treeSpecs?.image} : TreeImage}
     />
   );
 }

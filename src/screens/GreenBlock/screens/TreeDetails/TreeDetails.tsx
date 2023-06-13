@@ -196,7 +196,7 @@ function TreeDetails(_: Props) {
             {treeDetails ? (
               <TreeImage
                 color={colors.green}
-                tree={treeDetails}
+                tree={treeDetails as any}
                 size={120}
                 style={{alignSelf: 'center'}}
                 treeUpdateInterval={treeUpdateInterval}
