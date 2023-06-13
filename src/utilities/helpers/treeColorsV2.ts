@@ -1,7 +1,7 @@
 import {colors} from 'constants/values';
-import {isTheTimeToUpdate, isUpdatePended, SubmittedTreeStatus} from './treeInventory';
+import {SubmittedTreeStatus} from './treeInventory';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {TreeInList} from 'types';
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
 
 export type TreeColorType = {
   [key in SubmittedTreeStatus]: {
@@ -19,26 +19,26 @@ export const treeColorTypes: TreeColorType = {
     title: 'pending',
     color: colors.green,
   },
-  [SubmittedTreeStatus.Update]: {
+  [SubmittedTreeStatus.CanUpdate]: {
     title: 'update',
     color: colors.gray,
   },
+  [SubmittedTreeStatus.Assigned]: {
+    title: 'assigned',
+    color: colors.red,
+  },
 };
 
-export function treeColorV2(tree?: TreeInList, treeUpdateInterval?: number): string | undefined {
+export function treeColorV2(tree?: SubmittedTree): string | undefined {
   let color: string | undefined;
-  if (!treeUpdateInterval) {
-    return;
-  }
-  if (!tree) {
-    return colors.green;
-  }
   const id = Number(Hex2Dec(tree?.id || ''));
-  if (isUpdatePended(tree)) {
-    color = treeColorTypes.Pending.color;
+  if (tree?.status == SubmittedTreeStatus.Pending) {
+    color = colors.pink;
+  } else if (tree?.status === SubmittedTreeStatus.Verified) {
+    color = treeColorTypes.Verified.color;
     return color;
-  } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-    color = treeColorTypes.Update.color;
+  } else if (tree?.status === SubmittedTreeStatus.CanUpdate) {
+    color = treeColorTypes.CanUpdate.color;
   } else {
     if (id <= 10000) {
       color = undefined;
@@ -48,33 +48,4 @@ export function treeColorV2(tree?: TreeInList, treeUpdateInterval?: number): str
   }
 
   return color;
-}
-
-export function submittedTreeStatusCount(trees: TreeInList[] | null, treeUpdateInterval: number) {
-  const defaultAcc = {
-    [SubmittedTreeStatus.Update]: 0,
-    [SubmittedTreeStatus.Pending]: 0,
-    [SubmittedTreeStatus.Verified]: 0,
-  };
-
-  return trees
-    ? trees?.reduce((acc, tree) => {
-        if (isUpdatePended(tree)) {
-          return {
-            ...acc,
-            [SubmittedTreeStatus.Pending]: acc[SubmittedTreeStatus.Pending] + 1,
-          };
-        } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-          return {
-            ...acc,
-            [SubmittedTreeStatus.Update]: acc[SubmittedTreeStatus.Update] + 1,
-          };
-        } else {
-          return {
-            ...acc,
-            [SubmittedTreeStatus.Verified]: acc[SubmittedTreeStatus.Verified] + 1,
-          };
-        }
-      }, defaultAcc)
-    : defaultAcc;
 }

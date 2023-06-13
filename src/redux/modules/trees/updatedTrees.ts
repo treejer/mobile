@@ -23,7 +23,9 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
         filters: filters ? JSON.stringify(filters) : undefined,
       },
     });
-    yield put(setPaginationTotal(PaginationName.UpdatedTrees, res.result.count));
+    if (res?.result?.count) {
+      yield put(setPaginationTotal(PaginationName.UpdatedTrees, res.result.count));
+    }
     const persistedUpdatedTrees: TUpdatedTreesRes = yield select(getUpdatedTrees);
     if (res.result.count === [...(persistedUpdatedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.UpdatedTrees));

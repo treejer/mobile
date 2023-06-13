@@ -3,10 +3,10 @@ import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
-import {TreeInList} from 'types';
 import {mapboxPrivateToken} from 'services/config';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import TreeSymbol from 'components/TreeList/TreeSymbol';
 import {RenderIf} from 'components/Common/RenderIf';
@@ -18,7 +18,7 @@ export type TreeItemV2Props<T> = {
   onPress?: () => void;
   withDetail?: boolean;
   treeUpdateInterval: number;
-  tree: TreeInList;
+  tree: SubmittedTree;
 };
 
 export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {
@@ -32,7 +32,11 @@ export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {
 
   const cptSize = useMemo(() => (withDetail ? 'big' : 'small'), [withDetail]);
 
-  const hasLocation = useMemo(() => !!(tree?.treeSpecsEntity?.longitude && tree?.treeSpecsEntity?.latitude), []);
+  const hasLocation = useMemo(
+    () => !!(tree?.treeSpecsEntity?.longitude && tree?.treeSpecsEntity?.latitude),
+    [tree?.treeSpecsEntity?.longitude, tree?.treeSpecsEntity?.latitude],
+  );
+
   const locationImage = useMemo(
     () =>
       getStaticMapboxUrl(

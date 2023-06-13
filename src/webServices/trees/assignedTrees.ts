@@ -9,7 +9,6 @@ export type AssignedTree = {
   treeSpecs: string;
   birthDate: number;
   countryCode: number;
-  signature: string;
   status: number;
   createdAt: string;
   updatedAt: string;

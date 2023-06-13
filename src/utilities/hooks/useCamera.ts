@@ -14,6 +14,7 @@ const useCamera = () => {
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
+      return Promise.reject(error);
     }
   }, []);
 
@@ -29,6 +30,7 @@ const useCamera = () => {
       return Promise.resolve(photo);
     } catch (error) {
       console.log(error, '====> do something cancelled <====');
+      return Promise.reject(error);
     }
   }, []);
 

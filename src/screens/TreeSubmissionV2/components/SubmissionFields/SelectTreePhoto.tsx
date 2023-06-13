@@ -47,13 +47,14 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         return;
       } else {
         selectedPhoto = await openCameraHook();
-        photoLocation = {
-          latitude: selectedPhoto?.exif?.Latitude,
-          longitude: selectedPhoto?.exif?.Longitude,
-        };
+        if (selectedPhoto) {
+          photoLocation = {
+            latitude: selectedPhoto?.exif?.Latitude,
+            longitude: selectedPhoto?.exif?.Longitude,
+          };
+          onSelect({photo: selectedPhoto, fromGallery: false, photoLocation, imageBase64});
+        }
       }
-
-      onSelect({photo: selectedPhoto, fromGallery: false, photoLocation, imageBase64});
     } catch (e) {
       console.log(e, 'error in open camera');
     }

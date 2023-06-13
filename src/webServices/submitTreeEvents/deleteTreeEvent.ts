@@ -1,13 +1,9 @@
-export enum DeleteTreeEvents {
-  Plant = 'Plant',
-  Update = 'Update',
-  Assigned = 'Assigned',
-}
+import {NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
 
 export type TDeleteTreeEventRes = string;
 
 export type TDeleteTreeEventPayload = {
-  event: DeleteTreeEvents;
+  event: NotVerifiedTreeStatus;
   id: string;
 };
 

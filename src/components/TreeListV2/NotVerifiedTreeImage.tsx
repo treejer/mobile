@@ -46,7 +46,8 @@ export function NotVerifiedTreeImage(props: NotVerifiedTreeImageProps) {
     <Image
       testID={testID}
       style={[{width: size, height: size, tintColor: tint && tintColor ? tintColor : undefined}, style]}
-      source={treeImageSrc({treeSpecsEntity: {imageFs: treeSpecs?.image}})}
+      // TODO: type
+      source={treeImageSrc({treeSpecsEntity: {imageFs: treeSpecs?.image}} as any)}
     />
   );
 }

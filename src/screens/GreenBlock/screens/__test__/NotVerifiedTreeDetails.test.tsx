@@ -5,7 +5,6 @@ import {Routes} from 'navigation/Navigation';
 import {NotVerifiedTreeDetails} from 'screens/GreenBlock/screens/TreeDetails/NotVerifiedTreeDetails';
 import {goerliReducers} from 'components/SubmissionSettings/__test__/mock';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
-import {shortenedString} from 'utilities/helpers/shortenedString';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 
 jest.mock('@react-navigation/native', () => {
@@ -38,7 +37,6 @@ jest.mock('@react-navigation/native', () => {
               },
             ],
           }),
-          signature: 'signaturesignaturesignaturesignature',
           status: 2,
           treeId: '11002',
           createdAt: '2023-05-27T11:15:10.090Z',
@@ -80,8 +78,6 @@ describe('NotVerifiedTreeDetails component', () => {
       const treeCreatedAtDate = getElementByTestId('tree-createdAt-date');
       const treeIdLabel = getElementByTestId('tree-id-label');
       const treeId = getElementByTestId('tree-id');
-      const treeSignatureLabel = getElementByTestId('tree-signature-label');
-      const treeSignature = getElementByTestId('tree-signature');
       const treeLocationBtn = getElementByTestId('tree-location-btn');
       const treeLocationImage = getElementByTestId('tree-location-image');
       const treePhotos = getElementByTestId('tree-photos-slider');
@@ -119,12 +115,6 @@ describe('NotVerifiedTreeDetails component', () => {
 
       expect(treeId).toBeTruthy();
       expect(treeId.props.children).toEqual(['#', '11002']);
-
-      expect(treeSignatureLabel).toBeTruthy();
-      expect(treeSignatureLabel.props.children).toBe('notVerifiedTreeDetails.signature');
-
-      expect(treeSignature).toBeTruthy();
-      expect(treeSignature.props.children).toBe(shortenedString('signaturesignaturesignaturesignature', 16, 4));
 
       expect(treeLocationBtn).toBeTruthy();
 

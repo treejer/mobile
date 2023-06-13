@@ -6,8 +6,9 @@ import {colors} from 'constants/values';
 import {currentTimestamp} from 'utilities/helpers/date';
 import humanize from 'humanize-duration';
 import {TreeImage} from '../../../assets/icons';
-
-export function treeImageSrc(tree?: Omit<Tree | TreeInList, '__typename'>): ImageSourcePropType {
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
+// TODO: type
+export function treeImageSrc(tree?: SubmittedTree): ImageSourcePropType {
   const imageFs = tree?.treeSpecsEntity?.imageFs;
   return imageFs ? {uri: imageFs} : TreeImage;
 }

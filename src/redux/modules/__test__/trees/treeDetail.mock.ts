@@ -1,4 +1,6 @@
-export const treeDetailRes = {
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
+
+export const treeDetailRes: SubmittedTree = {
   id: 'string',
   planter: {
     id: 'string',
@@ -31,7 +33,7 @@ export const treeDetailRes = {
     symbolFs: 'string',
     symbolHash: 'string',
     animationUrl: 'string',
-    diameter: 'string',
+    diameter: 2,
     latitude: 'string',
     longitude: 'string',
     attributes: 'string',
@@ -42,6 +44,13 @@ export const treeDetailRes = {
       value: 'string',
     },
   ],
+  lastUpdate: {
+    id: '2',
+    updatedAt: 67676767,
+    createdAt: 67676767,
+    updateSpecs: 'string',
+    updateStatus: 2,
+  },
   background_color: 'string',
   image: 'string',
   external_url: 'string',

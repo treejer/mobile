@@ -179,14 +179,6 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
                     </>
                   ) : null}
 
-                  <Text testID="tree-signature-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
-                    {t('previewTreeDetails.signature')}
-                  </Text>
-                  <Text testID="tree-signature" style={[globalStyles.h5, globalStyles.textCenter]}>
-                    {shortenedString('0000000000000000', 16, 4)}
-                  </Text>
-                  <Spacer times={6} />
-
                   <TouchableOpacity
                     testID="tree-location-btn"
                     style={{
@@ -261,7 +253,7 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
                     {t('previewTreeDetails.reject')}
                   </Text>
                 </TouchableOpacity>
-                <Spacer times={8} />
+                <Spacer times={12} />
               </View>
             </TouchableOpacity>
           </ScrollView>

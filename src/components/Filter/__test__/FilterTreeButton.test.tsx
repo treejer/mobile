@@ -15,6 +15,7 @@ describe('FilterTreeButton component', () => {
   describe('FilterTreeButton isActive = true', () => {
     const tree = {
       title: SubmittedTreeStatus.Verified,
+      t: 'submittedFilter',
       count: 20,
       color: colors.green,
     };
@@ -56,6 +57,7 @@ describe('FilterTreeButton component', () => {
   describe('FilterTreeButton isActive = false', () => {
     const tree = {
       title: SubmittedTreeStatus.Verified,
+      t: 'submittedFilter',
       count: 20,
       color: colors.green,
     };

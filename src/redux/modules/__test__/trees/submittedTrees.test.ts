@@ -16,8 +16,6 @@ import {
   reachedEndSubmittedTreesMock,
   submittedTreesMock,
 } from 'ranger-redux/modules/__test__/trees/submittedTrees.mock';
-import {mockWallet} from 'ranger-redux/modules/__test__/currentJourney/currentJourney.mock';
-import {getWallet} from 'ranger-redux/modules/web3/web3';
 
 describe('submittedTrees module', () => {
   it('submittedTrees module should be defined', () => {
@@ -46,7 +44,7 @@ describe('submittedTrees module', () => {
       const gen = watchSubmittedTrees();
       const nextValue = {
         ...defaultPaginationItem,
-        wallet: mockWallet,
+        page: 1,
         data: [{}, {}] as any,
         count: 5,
         error: null,
@@ -54,11 +52,8 @@ describe('submittedTrees module', () => {
         result: submittedTreesMock as any,
         status: 200,
       };
-      assert.deepEqual(gen.next().value, select(getWallet), 'should select wallet data');
-      //@ts-ignore
-      gen.next(mockWallet);
-      //@ts-ignore
-      gen.next(mockWallet);
+      gen.next();
+      gen.next(nextValue);
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.SubmittedTrees, nextValue.result.count)),
@@ -91,11 +86,8 @@ describe('submittedTrees module', () => {
         result: reachedEndSubmittedTreesMock as any,
         status: 200,
       };
-      assert.deepEqual(gen.next().value, select(getWallet), 'should select wallet data');
-      //@ts-ignore
-      gen.next(mockWallet);
-      //@ts-ignore
-      gen.next(mockWallet);
+      gen.next();
+      gen.next(nextValue);
       assert.deepEqual(
         gen.next(nextValue).value,
         put(setPaginationTotal(PaginationName.SubmittedTrees, nextValue.result.count)),

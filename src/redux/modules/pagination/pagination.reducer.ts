@@ -29,7 +29,7 @@ export type TPaginationState = {
 
 export const defaultPaginationItem: TPaginationItem = {
   page: 0,
-  perPage: 20,
+  perPage: 30,
   total: 0,
   hasMore: true,
   loading: false,

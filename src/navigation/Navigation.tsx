@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStackNavigator, StackScreenProps as LibraryProp} from '@react-navigation/stack';
 
+import {TUserStatus} from 'webServices/profile/profile';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import PwaModal from 'components/PwaModal/PwaModal';
 import NoWallet from 'screens/Profile/screens/NoWallet/NoWallet';
@@ -16,7 +17,7 @@ import {VerifiedUserNavigation} from './VerifiedUser';
 import {UnVerifiedUserNavigation} from './UnVerifiedUser';
 import {useUserWeb3} from 'ranger-redux/modules/web3/web3';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
-import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 
 export type RootNavigationParamList = {
   [Routes.Init]: undefined;
@@ -83,9 +84,9 @@ export function RootNavigation() {
   const {loading, magic} = useUserWeb3();
   const {locale, onBoardingDone} = useSettings();
 
-  const {profile, status} = useProfile();
+  const {profile} = useProfile();
 
-  const isVerified = status === UserStatus.Verified;
+  const isVerified = profile?.userStatus === TUserStatus.Verified;
 
   return (
     <>

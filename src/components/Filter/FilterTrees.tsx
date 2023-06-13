@@ -4,7 +4,8 @@ import {FilterTreeButton} from 'components/Filter/FilterTreeButton';
 
 export type FilterTree<T> = {
   title: T;
-  count: number;
+  t: string;
+  count?: number;
   color: string;
 };
 

@@ -8,7 +8,6 @@ import {userNonceSagas} from './modules/userNonce/userNonce';
 import {userSignSagas} from './modules/userSign/userSign';
 import {netInfoSagas} from './modules/netInfo/netInfo';
 import {profileSagas} from './modules/profile/profile';
-import {planterSagas} from './modules/profile/planter';
 import {contractsSagas} from './modules/contracts/contracts';
 import {countriesSagas} from './modules/countris/countries';
 import {offlineMapSagas} from './modules/offlineMap/offlineMap';
@@ -40,7 +39,6 @@ export default function* root(store: TStoreRedux) {
     userSignSagas(),
     netInfoSagas(store),
     profileSagas(),
-    planterSagas(),
     contractsSagas(),
     countriesSagas(),
     offlineMapSagas(store),

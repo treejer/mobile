@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -26,6 +26,7 @@ import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {useConfig, useMagic, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {TUserStatus} from 'webServices/profile/profile';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -57,7 +58,7 @@ export function TransferScreen() {
 
   const isConnected = useNetInfoConnected();
 
-  const isVerified = profile?.isVerified;
+  const isVerified = profile?.userStatus === TUserStatus.Verified;
   const skipStats = !wallet || !isVerified;
 
   const [filters, setFilters] = useState<TTransactionEvent[]>([]);
@@ -234,6 +235,7 @@ export function TransferScreen() {
       <ScreenTitle title={t('withdraw')} goBack />
       <PullToRefresh onRefresh={handleRefetch}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={isWeb() ? undefined : <RefreshControl refreshing={loading} onRefresh={handleRefetch} />}
         >

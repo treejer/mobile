@@ -15,7 +15,6 @@ export type NotVerifiedTree = {
   birthDate?: number;
   countryCode?: number;
   treeId?: number;
-  signature: string;
   status: number;
   createdAt: string;
   updatedAt: string;

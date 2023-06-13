@@ -60,7 +60,7 @@ export function useArrayFilter<T, D = any>({
     if (data && defaultData) {
       handleFilterLocalData();
     }
-  }, [filters]);
+  }, [filters, defaultData]);
 
   const handleFilterData = useCallback(
     (data: D[], checkWhat?: string) => {

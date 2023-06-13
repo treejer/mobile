@@ -27,9 +27,10 @@ import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {isWeb} from 'utilities/helpers/web';
 import getCroppedImg from 'utilities/helpers/cropImage';
-import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useVerification} from 'ranger-redux/modules/verification/useVerification';
+import {TUserStatus} from 'webServices/profile/profile';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -66,7 +67,7 @@ function VerifyProfile(props: Props) {
   const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
   const phoneRef = useRef<PhoneInput>(null);
 
-  const {profile, status} = useProfile();
+  const {profile} = useProfile();
 
   const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!profile?.mobile);
   const [phoneNumber, setPhoneNumber] = useState(profile?.mobile || '');
@@ -315,14 +316,14 @@ function VerifyProfile(props: Props) {
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
           <Spacer times={4} />
 
-          {status === UserStatus.Pending && (
+          {profile?.userStatus === TUserStatus.Pending && (
             <>
               <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
               <Spacer times={6} />
             </>
           )}
 
-          {status === UserStatus.Unverified && (
+          {profile?.userStatus === TUserStatus.NotVerified && (
             <>
               <Steps.Container currentStep={currentStep} style={{width: 300}}>
                 {/* Step 1 - Add wallet */}

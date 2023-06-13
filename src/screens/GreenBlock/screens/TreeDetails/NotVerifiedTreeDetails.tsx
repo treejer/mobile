@@ -17,7 +17,6 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {NotVerifiedTreeImage} from 'components/TreeListV2/NotVerifiedTreeImage';
 import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
-import {shortenedString} from 'utilities/helpers/shortenedString';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {useDeleteTreeEvent} from 'ranger-redux/modules/submitTreeEvents/deleteTreeEvent';
 
@@ -40,7 +39,7 @@ export function NotVerifiedTreeDetails() {
   const {t} = useTranslation();
 
   const handleDeleteTreeEvent = useCallback(() => {
-    if (tree.treeId && tree.birthDate && tree.countryCode) {
+    if (tree.treeId && tree.birthDate && tree.countryCode !== undefined) {
       dispatchDeleteAssignedEvent(tree?._id);
     } else if (tree.treeId) {
       dispatchDeleteUpdateEvent(tree?._id);
@@ -151,14 +150,6 @@ export function NotVerifiedTreeDetails() {
                   <Spacer times={6} />
                 </>
               ) : null}
-
-              <Text testID="tree-signature-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
-                {t('notVerifiedTreeDetails.signature')}
-              </Text>
-              <Text testID="tree-signature" style={[globalStyles.h5, globalStyles.textCenter]}>
-                {shortenedString(tree.signature, 16, 4)}
-              </Text>
-              <Spacer times={6} />
 
               <TouchableOpacity
                 testID="tree-location-btn"

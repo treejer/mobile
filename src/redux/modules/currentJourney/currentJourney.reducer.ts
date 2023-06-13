@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
-import {Tree, TreeInList} from 'types';
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {canUpdateJourneyLocation} from 'utilities/helpers/canUpdateJourneyLocation';
@@ -25,7 +25,7 @@ export type CurrentJourneyAction = {
   fromGallery?: boolean;
   userLocation?: TPoint;
   photoLocation?: TPoint;
-  tree?: Omit<Tree | TreeInList, '__typename'>;
+  tree?: SubmittedTree;
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
   journey?: TCurrentJourney;

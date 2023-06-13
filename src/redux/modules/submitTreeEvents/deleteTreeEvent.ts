@@ -7,14 +7,13 @@ import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'ut
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {
-  DeleteTreeEvents,
   TDeleteTreeEventAction,
   TDeleteTreeEventPayload,
   TDeleteTreeEventRes,
 } from 'webServices/submitTreeEvents/deleteTreeEvent';
 import {TReduxState} from 'ranger-redux/store';
 import {Routes} from 'navigation/Navigation';
-import {TreeLife} from 'utilities/helpers/treeInventory';
+import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {navigationRef} from 'navigation/navigationRef';
 
 const DeleteTreeEvent = new ReduxFetchState<TDeleteTreeEventRes, TDeleteTreeEventPayload, string>('deleteTreeEvent');
@@ -38,7 +37,15 @@ export function* watchDeleteTreeEvent({payload}: TDeleteTreeEventAction) {
     navigationRef()?.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{name: Routes.GreenBlock, params: {tabFilter: TreeLife.NotVerified}}],
+        routes: [
+          {
+            name: Routes.GreenBlock,
+            params: {
+              tabFilter: TreeLife.NotVerified,
+              notVerifiedFilter: [event],
+            },
+          },
+        ],
       }),
     );
   } catch (e: any) {
@@ -60,21 +67,21 @@ export function useDeleteTreeEvent() {
 
   const dispatchDeletePlantEvent = useCallback(
     (id: string) => {
-      dispatch(DeleteTreeEvent.actions.load({event: DeleteTreeEvents.Plant, id}));
+      dispatch(DeleteTreeEvent.actions.load({event: NotVerifiedTreeStatus.Plant, id}));
     },
     [dispatch],
   );
 
   const dispatchDeleteAssignedEvent = useCallback(
     (id: string) => {
-      dispatch(DeleteTreeEvent.actions.load({event: DeleteTreeEvents.Assigned, id}));
+      dispatch(DeleteTreeEvent.actions.load({event: NotVerifiedTreeStatus.Assigned, id}));
     },
     [dispatch],
   );
 
   const dispatchDeleteUpdateEvent = useCallback(
     (id: string) => {
-      dispatch(DeleteTreeEvent.actions.load({event: DeleteTreeEvents.Update, id}));
+      dispatch(DeleteTreeEvent.actions.load({event: NotVerifiedTreeStatus.Update, id}));
     },
     [dispatch],
   );

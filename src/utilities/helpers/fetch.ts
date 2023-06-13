@@ -68,12 +68,11 @@ export function* sagaFetch<Data, Form = any>(
         ...(options.headers || {}),
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
-        // 'x-auth-userid': userId,
       },
     };
   }
 
-  console.log(config[configUrl] + url, 'url is herex', options.headers, 'headers are here');
+  console.log(config[configUrl] + url, 'url is here', options.headers, 'headers are here');
 
   return yield fetch<Data, Form>(config[configUrl] + url, options);
 }

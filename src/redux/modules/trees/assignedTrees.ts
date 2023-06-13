@@ -26,7 +26,9 @@ export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
         },
       },
     );
-    yield put(setPaginationTotal(PaginationName.AssignedTrees, res.result.count));
+    if (res?.result?.count) {
+      yield put(setPaginationTotal(PaginationName.AssignedTrees, res.result.count));
+    }
     const persistedAssignedTrees: TAssignedTreesRes = yield select(getAssignedTrees);
     if (res.result.count === [...(persistedAssignedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.AssignedTrees));

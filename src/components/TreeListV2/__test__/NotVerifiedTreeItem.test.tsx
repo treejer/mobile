@@ -34,8 +34,6 @@ describe('NotVerifiedTreeItem component', () => {
       const treeLocationImage = getElementByTestId('location-image');
       const createdAtDateLabel = getElementByTestId('createdAt-date-text');
       const createdAtDate = getElementByTestId('date-text-createdAt');
-      const signatureLabel = getElementByTestId('signature-date-text');
-      const signature = getElementByTestId('text-signature');
       const treeName = getElementByTestId('tree-name');
 
       const treeSpecs = JSON.parse(notVerifiedTreesMock[0].treeSpecs);
@@ -58,10 +56,6 @@ describe('NotVerifiedTreeItem component', () => {
       expect(createdAtDateLabel.props.children).toBe('treeInventoryV2.createdAt');
       expect(createdAtDate).toBeTruthy();
       expect(createdAtDate.props.children).toBe(moment(notVerifiedTreesMock[0].createdAt).locale('en').fromNow());
-      expect(signatureLabel).toBeTruthy();
-      expect(signatureLabel.props.children).toBe('treeInventoryV2.signature');
-      expect(signature).toBeTruthy();
-      expect(signature.props.children).toBe(notVerifiedTreesMock[0].signature);
     });
   });
 
@@ -84,8 +78,6 @@ describe('NotVerifiedTreeItem component', () => {
       const treeLocationImage = queryElementByTestId('location-image');
       const createdAtDateLabel = queryElementByTestId('createdAt-date-text');
       const createdAtDate = queryElementByTestId('date-text-createdAt');
-      const signatureLabel = queryElementByTestId('signature-date-text');
-      const signature = queryElementByTestId('text-signature');
       const treeName = getElementByTestId('tree-name');
 
       expect(treeName).toBeTruthy();
@@ -95,8 +87,6 @@ describe('NotVerifiedTreeItem component', () => {
       expect(treeLocationImage).toBeFalsy();
       expect(createdAtDateLabel).toBeFalsy();
       expect(createdAtDate).toBeFalsy();
-      expect(signatureLabel).toBeFalsy();
-      expect(signature).toBeFalsy();
     });
   });
 });

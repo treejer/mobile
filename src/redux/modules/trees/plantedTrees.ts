@@ -23,7 +23,9 @@ export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
         filters: filters ? JSON.stringify(filters) : undefined,
       },
     });
-    yield put(setPaginationTotal(PaginationName.PlantedTrees, res.result.count));
+    if (res?.result?.count) {
+      yield put(setPaginationTotal(PaginationName.PlantedTrees, res?.result?.count));
+    }
     const persistedPlantedTrees: TPlantedTreesRes = yield select(getPlantedTrees);
     if (res.result.count === [...(persistedPlantedTrees?.data || []), ...res.result.data].length) {
       yield put(paginationReachedEnd(PaginationName.PlantedTrees));

@@ -4,6 +4,7 @@ import {put, takeEvery} from 'redux-saga/effects';
 import {TUpdateTreeAction, TUpdateTreePayload, TUpdateTreeRes} from 'webServices/submitTreeEvents/updateTree';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {updatedTreesActions} from 'ranger-redux/modules/trees/updatedTrees';
 
 const UpdateTree = new ReduxFetchState<TUpdateTreeRes, TUpdateTreePayload, string | string[]>('updateTree');
 
@@ -19,6 +20,7 @@ export function* watchUpdateTree({payload}: TUpdateTreeAction) {
         signature,
       },
     });
+    yield put(updatedTreesActions.load());
     yield put(UpdateTree.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

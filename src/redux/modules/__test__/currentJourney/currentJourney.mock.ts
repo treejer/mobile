@@ -1,6 +1,7 @@
 import {onBoardingOne} from '../../../../../assets/images';
 import config, {BlockchainNetwork} from 'services/config';
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
+import {TUserStatus} from 'webServices/profile/profile';
 
 export const mockPlantJourneyWithDraftId = {
   draftId: 'hehehehe',
@@ -115,7 +116,7 @@ export const mockProfile = {
   emailVerifiedAt: '2023-05-14T20:34:23.075Z',
   firstName: 'Developer',
   idCard: 'ID',
-  isVerified: true,
+  userStatus: TUserStatus.Verified,
   lastName: 'TEST',
   mobile: 'number',
   mobileCountry: 'country',

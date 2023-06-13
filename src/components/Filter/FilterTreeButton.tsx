@@ -40,7 +40,7 @@ export function FilterTreeButton<T>(props: FilterTreeButtonProps<T>) {
       </DropShadow>
       <Spacer />
       <Text testID="filter-tree-title" style={[styles.title, {color: tree.color}]}>
-        {t(tree.title)}
+        {t(`${tree.t}.${tree.title}`)}
       </Text>
     </View>
   );

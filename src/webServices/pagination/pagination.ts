@@ -1,4 +1,5 @@
 export type PaginationRes<T> = {
   data: T[];
-  count: number;
+  count?: number;
+  hasMore?: boolean;
 };

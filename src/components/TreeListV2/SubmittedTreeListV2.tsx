@@ -18,13 +18,13 @@ import {Hex2Dec} from 'utilities/helpers/hex';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {TreeInList} from 'types';
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
 
 export type SubmittedTreeListV2Props = {
   testID?: string;
   treeItemUI: TreeItemUI;
   setTreeItemUI: React.Dispatch<React.SetStateAction<TreeItemUI>>;
-  verifiedTrees: TreeInList[] | null;
+  verifiedTrees: SubmittedTree[] | null;
   treeUpdateInterval: number;
   refetching?: boolean;
   loading?: boolean;
@@ -84,7 +84,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const handlePressTree = useCallback(
-    (tree: TreeInList) => {
+    (tree: SubmittedTree) => {
       if (tree.id) {
         if (tree.treeStatus == '2') {
           if (checkExistAnyDraftOfTree(tree?.id)) {
@@ -153,7 +153,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const treeItemRenderItem = useCallback(
-    ({item}: ListRenderItemInfo<TreeInList>) => {
+    ({item}: ListRenderItemInfo<SubmittedTree>) => {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <SubmittedTreeItemV2
@@ -172,7 +172,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   const renderListWithDiffCol = useCallback(
     (col: number, testID?: string) => {
       return (
-        <FlashList<TreeInList>
+        <FlashList<SubmittedTree>
           testID={testID}
           data={verifiedTrees}
           estimatedItemSize={80}

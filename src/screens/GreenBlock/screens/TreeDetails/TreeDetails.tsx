@@ -166,7 +166,7 @@ function TreeDetails(_: Props) {
     } else {
       if (tree?.id) {
         const {__typename, ...treeData} = treeDetails;
-        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeData});
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeData as any});
       }
     }
   };

@@ -6,7 +6,6 @@ import {
   updateLoadingReducer,
   updateTreeReducer,
 } from 'screens/TreeSubmissionV2/components/__test__/PreviewTreeDetails.mock';
-import {shortenedString} from 'utilities/helpers/shortenedString';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {Hex2Dec} from 'utilities/helpers/hex';
 
@@ -41,8 +40,6 @@ describe('PreviewTreeDetails component', () => {
       const treeCoords = getElementByTestId('tree-coords');
       const treeSubmittedAtLabel = getElementByTestId('tree-submittedAt-date-label');
       const treeSubmittedAt = getElementByTestId('tree-submittedAt-date');
-      const treeSignatureLabel = getElementByTestId('tree-signature-label');
-      const treeSignature = getElementByTestId('tree-signature');
       const treeLocationBtn = getElementByTestId('tree-location-btn');
       const treeLocation = getElementByTestId('tree-location-image');
       const treePhotos = getElementByTestId('tree-photos-slider');
@@ -84,12 +81,6 @@ describe('PreviewTreeDetails component', () => {
 
       expect(treeSubmittedAt).toBeTruthy();
       expect(treeSubmittedAt.props.children).toBe(new Date().toLocaleDateString());
-
-      expect(treeSignatureLabel).toBeTruthy();
-      expect(treeSignatureLabel.props.children).toBe('previewTreeDetails.signature');
-
-      expect(treeSignature).toBeTruthy();
-      expect(treeSignature.props.children).toBe(shortenedString('0000000000000000', 16, 4));
 
       expect(treeLocationBtn).toBeTruthy();
       expect(treeLocation).toBeTruthy();
@@ -134,8 +125,6 @@ describe('PreviewTreeDetails component', () => {
       const treeCoords = getElementByTestId('tree-coords');
       const treeSubmittedAtLabel = getElementByTestId('tree-submittedAt-date-label');
       const treeSubmittedAt = getElementByTestId('tree-submittedAt-date');
-      const treeSignatureLabel = getElementByTestId('tree-signature-label');
-      const treeSignature = getElementByTestId('tree-signature');
       const treeLocationBtn = getElementByTestId('tree-location-btn');
       const treeLocation = getElementByTestId('tree-location-image');
       const treePhotos = getElementByTestId('tree-photos-slider');
@@ -177,12 +166,6 @@ describe('PreviewTreeDetails component', () => {
 
       expect(treeSubmittedAt).toBeTruthy();
       expect(treeSubmittedAt.props.children).toBe(new Date().toLocaleDateString());
-
-      expect(treeSignatureLabel).toBeTruthy();
-      expect(treeSignatureLabel.props.children).toBe('previewTreeDetails.signature');
-
-      expect(treeSignature).toBeTruthy();
-      expect(treeSignature.props.children).toBe(shortenedString('0000000000000000', 16, 4));
 
       expect(treeLocationBtn).toBeTruthy();
       expect(treeLocation).toBeTruthy();
@@ -230,8 +213,6 @@ describe('PreviewTreeDetails component', () => {
       const treeCoords = queryElementByTestId('tree-coords');
       const treeSubmittedAtLabel = queryElementByTestId('tree-submittedAt-date-label');
       const treeSubmittedAt = queryElementByTestId('tree-submittedAt-date');
-      const treeSignatureLabel = queryElementByTestId('tree-signature-label');
-      const treeSignature = queryElementByTestId('tree-signature');
       const treeLocationBtn = queryElementByTestId('tree-location-btn');
       const treeLocation = queryElementByTestId('tree-location-image');
       const treePhotos = queryElementByTestId('tree-photos-slider');
@@ -260,10 +241,6 @@ describe('PreviewTreeDetails component', () => {
       expect(treeSubmittedAtLabel).toBeFalsy();
 
       expect(treeSubmittedAt).toBeFalsy();
-
-      expect(treeSignatureLabel).toBeFalsy();
-
-      expect(treeSignature).toBeFalsy();
 
       expect(treeLocationBtn).toBeFalsy();
       expect(treeLocation).toBeFalsy();

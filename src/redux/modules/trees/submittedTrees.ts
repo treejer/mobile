@@ -9,26 +9,23 @@ import {getPaginationByName} from 'ranger-redux/modules/pagination/pagination.sa
 import {paginationReachedEnd, setPaginationTotal} from 'ranger-redux/modules/pagination/pagination.action';
 import {PaginationName, TPaginationItem, useReduxPagination} from 'ranger-redux/modules/pagination/pagination.reducer';
 import {TReduxState} from 'ranger-redux/store';
-import {getWallet} from 'ranger-redux/modules/web3/web3';
 
 export const SubmittedTrees = new ReduxFetchState<TSubmittedTreesRes, null, string>('submittedTrees');
 
 export function* watchSubmittedTrees() {
   try {
-    const wallet = yield select(getWallet);
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.SubmittedTrees));
-    const res: FetchResult<TSubmittedTreesRes> = yield sagaFetch<TSubmittedTreesRes>('/submitted/me', {
+    const res: FetchResult<TSubmittedTreesRes> = yield sagaFetch<TSubmittedTreesRes>(`/submitted_trees/me`, {
       configUrl: 'treejerNestApiUrl',
       params: {
         skip: page,
         limit: perPage,
-        planterAddress: wallet.toLocaleLowerCase(),
       },
     });
-    yield put(setPaginationTotal(PaginationName.SubmittedTrees, res.result.count));
     const persistedSubmittedTrees: TSubmittedTreesRes = yield select(getSubmittedTrees);
-    if (res.result.count === [...(persistedSubmittedTrees?.data || []), ...res.result.data].length) {
+    if (!res.result?.hasMore) {
       yield put(paginationReachedEnd(PaginationName.SubmittedTrees));
+      yield put(setPaginationTotal(PaginationName.SubmittedTrees, persistedSubmittedTrees?.data?.length));
     }
     yield put(
       SubmittedTrees.actions.loadSuccess({

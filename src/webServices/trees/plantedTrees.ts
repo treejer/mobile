@@ -8,7 +8,6 @@ export type PlantedTree = {
   treeSpecs: string;
   birthDate: number;
   countryCode: number;
-  signature: string;
   status: number;
   createdAt: string;
   updatedAt: string;

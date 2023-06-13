@@ -16,16 +16,19 @@ describe('FilterTrees component', () => {
     const mockFilters = [
       {
         title: SubmittedTreeStatus.Verified,
+        t: 'submittedFilters',
         count: 20,
         color: colors.green,
       },
       {
         title: SubmittedTreeStatus.Pending,
+        t: 'submittedFilters',
         count: 15,
         color: colors.pink,
       },
       {
-        title: SubmittedTreeStatus.Update,
+        title: SubmittedTreeStatus.CanUpdate,
+        t: 'submittedFilters',
         count: 42,
         color: colors.gray,
       },
@@ -36,7 +39,7 @@ describe('FilterTrees component', () => {
         <FilterTrees
           testID="filter-trees-cpt"
           filterList={mockFilters}
-          filters={[SubmittedTreeStatus.Update]}
+          filters={[SubmittedTreeStatus.CanUpdate]}
           onFilter={() => {}}
         />,
       );

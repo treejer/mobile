@@ -9,6 +9,7 @@ import {
 } from 'webServices/submitTreeEvents/plantTree';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
 
 const PlantTree = new ReduxFetchState<TPlantTreeRes, TPlantTreePayload, string | string[]>('plantTree');
 
@@ -26,6 +27,7 @@ export function* watchPlantTree({payload}: TPlantTreeAction) {
         countryCode: 0,
       },
     });
+    yield put(plantedTreesActions.load());
     yield put(PlantTree.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

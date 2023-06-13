@@ -631,4 +631,15 @@ export const en = {
     photos: 'Photos',
     coords: 'lat: {{lat}}\n long: {{long}}',
   },
+  submittedFilters: {
+    Verified: 'Verified',
+    Pending: 'Pending',
+    CanUpdate: 'Can Update',
+    Assigned: 'New Assigned',
+  },
+  notVerifiedFilters: {
+    Plant: 'Plant',
+    Update: 'Update',
+    Assigned: 'Assigned',
+  },
 };

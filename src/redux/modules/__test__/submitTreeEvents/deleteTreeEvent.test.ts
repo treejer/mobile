@@ -10,10 +10,10 @@ import {
 } from 'ranger-redux/modules/submitTreeEvents/deleteTreeEvent';
 import {DeleteResMock} from 'ranger-redux/modules/__test__/submitTreeEvents/deleteTreeEvent.mock';
 import {assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
-import {DeleteTreeEvents} from 'webServices/submitTreeEvents/deleteTreeEvent';
 import {handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
+import {NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
 
 describe('deleteTreeEvent', () => {
   it('deleteTreeEvent module should be defined', () => {
@@ -44,11 +44,11 @@ describe('deleteTreeEvent', () => {
     it('watchDeleteTreeEvent success (Delete Plant Request)', () => {
       const gen = watchDeleteTreeEvent({
         type: deleteTreeEventActionTypes.load,
-        payload: {event: DeleteTreeEvents.Plant, id: '11221'},
+        payload: {event: NotVerifiedTreeStatus.Plant, id: '11221'},
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Plant.toString().toLowerCase()}_requests/11221`, {
+        sagaFetch(`/${NotVerifiedTreeStatus.Plant.toString().toLowerCase()}_requests/11221`, {
           configUrl: 'treejerNestApiUrl',
           method: 'DELETE',
         }),
@@ -71,11 +71,11 @@ describe('deleteTreeEvent', () => {
     it('watchDeleteTreeEvent success (Delete Update Request)', () => {
       const gen = watchDeleteTreeEvent({
         type: deleteTreeEventActionTypes.load,
-        payload: {event: DeleteTreeEvents.Update, id: '11221'},
+        payload: {event: NotVerifiedTreeStatus.Update, id: '11221'},
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Update.toString().toLowerCase()}_requests/11221`, {
+        sagaFetch(`/${NotVerifiedTreeStatus.Update.toString().toLowerCase()}_requests/11221`, {
           configUrl: 'treejerNestApiUrl',
           method: 'DELETE',
         }),
@@ -98,11 +98,11 @@ describe('deleteTreeEvent', () => {
     it('watchDeleteTreeEvent success (Delete Assigned Request)', () => {
       const gen = watchDeleteTreeEvent({
         type: deleteTreeEventActionTypes.load,
-        payload: {event: DeleteTreeEvents.Assigned, id: '11221'},
+        payload: {event: NotVerifiedTreeStatus.Assigned, id: '11221'},
       });
       assert.deepEqual(
         gen.next().value,
-        sagaFetch(`/${DeleteTreeEvents.Assigned.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
+        sagaFetch(`/${NotVerifiedTreeStatus.Assigned.toString().toLowerCase()}_requests/${Hex2Dec('11221')}`, {
           configUrl: 'treejerNestApiUrl',
           method: 'DELETE',
         }),
@@ -127,7 +127,7 @@ describe('deleteTreeEvent', () => {
       const gen = watchDeleteTreeEvent({
         type: assignedTreeActionTypes.load,
         payload: {
-          event: DeleteTreeEvents.Plant,
+          event: NotVerifiedTreeStatus.Plant,
           id: '0000',
         },
       });

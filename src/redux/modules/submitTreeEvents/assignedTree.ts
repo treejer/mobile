@@ -9,6 +9,7 @@ import {
 } from 'webServices/submitTreeEvents/assignedTree';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {assignedTreesActions} from 'ranger-redux/modules/trees/assignedTrees';
 
 const AssignedTree = new ReduxFetchState<TAssignedTreeRes, TAssignedTreePayload, string | string[]>('assignedTree');
 
@@ -29,6 +30,7 @@ export function* watchAssignedTree({payload}: TAssignedTreeAction) {
         },
       },
     );
+    yield put(assignedTreesActions.load());
     yield put(AssignedTree.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);

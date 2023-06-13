@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useCallback, useMemo} from 'react';
+import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import ReduxFetchState from 'redux-fetch-state';
 import {takeEvery, put, select} from 'redux-saga/effects';
@@ -18,6 +18,7 @@ import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
 import {plantedTreesActions} from '../trees/plantedTrees';
 import {updatedTreesActions} from '../trees/updatedTrees';
 import {assignedTreesActions} from '../trees/assignedTrees';
+import {submittedTreesActions} from 'ranger-redux/modules/trees/submittedTrees';
 
 const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 
@@ -38,13 +39,6 @@ export function* profileSagas() {
   yield takeEvery(Profile.actionTypes.load, watchProfile);
 }
 
-export enum UserStatus {
-  Loading,
-  Unverified,
-  Pending,
-  Verified,
-}
-
 export function useProfile() {
   const {data, ...profileState} = useAppSelector(state => state.profile);
   const dispatch = useAppDispatch();
@@ -57,19 +51,6 @@ export function useProfile() {
   const dispatchProfile = useCallback(() => {
     dispatch(Profile.actions.load());
   }, [dispatch]);
-
-  const status: UserStatus = useMemo(() => {
-    if (!data) {
-      return UserStatus.Loading;
-    }
-    if (!data?.isVerified && !data?.firstName) {
-      return UserStatus.Unverified;
-    }
-    if (!data.isVerified && data?.firstName) {
-      return UserStatus.Pending;
-    }
-    return UserStatus.Verified;
-  }, [data]);
 
   const handleLogout = useCallback(
     async (userPressed?: boolean) => {
@@ -101,6 +82,7 @@ export function useProfile() {
         dispatch(plantedTreesActions.resetCache());
         dispatch(updatedTreesActions.resetCache());
         dispatch(assignedTreesActions.resetCache());
+        dispatch(submittedTreesActions.resetCache());
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);
@@ -139,7 +121,6 @@ export function useProfile() {
     ...profileState,
     dispatchProfile,
     profile: data,
-    status,
     handleLogout,
   };
 }

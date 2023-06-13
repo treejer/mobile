@@ -23,20 +23,15 @@ import {
   TreeLife,
 } from 'utilities/helpers/treeInventory';
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
-import {usePagination} from 'utilities/hooks/usePagination';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
-import {submittedTreeStatusCount} from 'utilities/helpers/treeColorsV2';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
-import planterTreeQuery, {
-  PlanterTreesQueryQueryData,
-  PlanterTreesQueryQueryPartialData,
-} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
-import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
+import {useSubmittedTrees} from 'ranger-redux/modules/trees/submittedTrees';
+import {SubmittedTree} from 'webServices/trees/submittedTrees';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -69,29 +64,9 @@ export function TreeInventory(props: TreeInventoryProps) {
   const [submittedTreeItemUI, setSubmittedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
   const [notVerifiedTreeItemUI, setNotVerifiedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
 
-  const walletAddress = useWalletAccount();
   const treeUpdateInterval = useTreeUpdateInterval();
 
   const {t} = useTranslation();
-
-  const {
-    persistedData: submittedTrees,
-    loading: submittedTreesLoading,
-    refetchData: refetchSubmittedTrees,
-    refetching: submittedTreesRefetching,
-    loadMore: submittedTreesLoadMore,
-  } = usePagination<
-    PlanterTreesQueryQueryData,
-    PlanterTreesQueryQueryData.Variables,
-    PlanterTreesQueryQueryPartialData.Trees[]
-  >(
-    planterTreeQuery,
-    {
-      address: walletAddress.toString().toLocaleLowerCase(),
-    },
-    'trees',
-    TreeLife.Submitted,
-  );
 
   const {filters: notVerifiedTreeFilters, handleSetFilter: handleSetFilterNotVerifiedTrees} =
     useArrayFilter<NotVerifiedTreeStatus>({
@@ -108,21 +83,29 @@ export function TreeInventory(props: TreeInventoryProps) {
   const {planted, updated, assigned, current: currentTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
 
   const {
+    submittedTrees,
+    loading: submittedTreesLoading,
+    refetching: submittedTreesRefetching,
+    dispatchRefetch: dispatchRefetchSubmittedTrees,
+    dispatchLoadMore: dispatchLoadMoreSubmittedTrees,
+  } = useSubmittedTrees(true);
+
+  const {
     filters: submittedTreeFilters,
     handleSetFilter: handleSetFilterSubmittedTrees,
     data: filteredSubmittedTrees,
-  } = useArrayFilter<SubmittedTreeStatus, PlanterTreesQueryQueryPartialData.Trees>({
+  } = useArrayFilter<SubmittedTreeStatus, SubmittedTree>({
     defaultFilters: filter?.tab === TreeLife.Submitted && filter?.submittedStatus ? filter?.submittedStatus : [],
-    defaultData: submittedTrees,
-    customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters, treeUpdateInterval),
+    defaultData: submittedTrees?.data,
+    customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters),
     canSelectMultiple: false,
   });
 
-  console.log({filteredSubmittedTrees: filteredSubmittedTrees?.length, submittedTrees: submittedTrees?.length});
+  console.log({filteredSubmittedTrees: filteredSubmittedTrees?.length, submittedTrees: submittedTrees?.data?.length});
 
-  useRefocusEffect(async () => {
+  useRefocusEffect(() => {
     if (!submittedTreesLoading) {
-      await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
+      dispatchRefetchSubmittedTrees();
       currentTrees.dispatchRefetch();
     }
   });
@@ -135,11 +118,6 @@ export function TreeInventory(props: TreeInventoryProps) {
         ? colors.pink
         : colors.red,
     [notVerifiedTreeFilter],
-  );
-
-  const submittedTreesCountOf = useMemo(
-    () => submittedTreeStatusCount(submittedTrees, treeUpdateInterval),
-    [submittedTrees, treeUpdateInterval],
   );
 
   return (
@@ -167,7 +145,7 @@ export function TreeInventory(props: TreeInventoryProps) {
             <Tab testID="submitted-tab" style={globalStyles.fill} tab={TreeLife.Submitted}>
               <FilterTrees<SubmittedTreeStatus>
                 testID="filter-submitted-trees-cpt"
-                filterList={submittedTreesButtons(submittedTreesCountOf)}
+                filterList={submittedTreesButtons()}
                 filters={submittedTreeFilters}
                 onFilter={handleSetFilterSubmittedTrees}
               />
@@ -178,10 +156,10 @@ export function TreeInventory(props: TreeInventoryProps) {
                 treeItemUI={submittedTreeItemUI}
                 setTreeItemUI={setSubmittedTreeItemUI}
                 treeUpdateInterval={treeUpdateInterval}
-                onRefetch={refetchSubmittedTrees}
-                onEndReached={submittedTreesLoadMore}
-                loading={submittedTreesLoading}
-                refetching={submittedTreesRefetching}
+                onRefetch={dispatchRefetchSubmittedTrees}
+                onEndReached={dispatchLoadMoreSubmittedTrees}
+                loading={submittedTreesLoading && !submittedTreesRefetching}
+                refetching={submittedTreesRefetching && !submittedTreesLoading}
               />
               <Spacer times={6} />
             </Tab>

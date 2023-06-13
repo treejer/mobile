@@ -11,7 +11,6 @@ import Spacer from 'components/Spacer';
 import {Tree} from 'components/Icons';
 import {RenderIf} from 'components/Common/RenderIf';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
-import {shortenedString} from 'utilities/helpers/shortenedString';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {TreeImage} from '../../../assets/icons';
 
@@ -31,7 +30,10 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
 
   const treeSpecs = JSON.parse(tree.treeSpecs);
 
-  const hasLocation = useMemo(() => !!(treeSpecs.location.latitude && treeSpecs.location.longitude), [treeSpecs]);
+  const hasLocation = useMemo(
+    () => !!(treeSpecs?.location?.latitude && treeSpecs?.location?.longitude),
+    [treeSpecs?.location?.latitude, treeSpecs?.location?.longitude],
+  );
 
   const cptSize = useMemo(() => (withDetail ? 'big' : 'small'), [withDetail]);
 
@@ -90,14 +92,6 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
               </Text>
             </View>
             <Spacer />
-            <View style={styles.dateContainer}>
-              <Text testID="signature-date-text" style={styles.dateText}>
-                {t('treeInventoryV2.signature')}
-              </Text>
-              <Text testID="text-signature" style={styles.dateText}>
-                {shortenedString(tree.signature, 12, 4)}
-              </Text>
-            </View>
           </View>
         </RenderIf>
       </View>

@@ -1,3 +1,9 @@
+export enum TUserStatus {
+  NotVerified = 1,
+  Pending = 2,
+  Verified = 3,
+}
+
 export type TProfile = {
   _id: string;
   firstName: string;
@@ -10,6 +16,7 @@ export type TProfile = {
   mobile?: string | null;
   mobileCountry?: string | null;
   mobileVerifiedAt?: string | null;
-  isVerified: boolean;
+  // isVerified: boolean;
   plantingNonce: number;
+  userStatus: TUserStatus;
 };

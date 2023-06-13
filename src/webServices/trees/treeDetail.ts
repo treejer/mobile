@@ -22,25 +22,34 @@ export type TTreeDetailRes = {
     generationType: string;
   };
   treeSpecsEntity: {
-    id: string;
-    name: string;
-    description: string;
-    externalUrl: string;
-    imageFs: string;
-    imageHash: string;
-    symbolFs: string;
-    symbolHash: string;
-    animationUrl: string;
-    diameter: string;
-    latitude: string;
-    longitude: string;
-    attributes: string;
-    updates?: string;
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    externalUrl?: string | null;
+    imageFs?: string | null;
+    imageHash?: string | null;
+    symbolFs?: string | null;
+    symbolHash?: string | null;
+    animationUrl?: string | null;
+    diameter?: number | null;
+    latitude?: string | null;
+    longitude?: string | null;
+    attributes?: string | null;
+    updates?: string | null;
+    nursery?: string | null;
+    locations?: string | null;
   };
   attributes: {
     trait_type: string;
     value: string;
   }[];
+  lastUpdate: {
+    id: String;
+    updateStatus: number;
+    updateSpecs: String;
+    createdAt: number;
+    updatedAt: number;
+  };
   background_color: string;
   image: string;
   external_url: string;
