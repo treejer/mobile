@@ -9,8 +9,9 @@ import {
   watchAssignedTree,
 } from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 import {assignedTreeRes} from 'ranger-redux/modules/__test__/submitTreeEvents/assignedTree.mock';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {assignedTreesActions} from 'ranger-redux/modules/trees/assignedTrees';
+import {currentTimestamp} from 'utilities/helpers/date';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 
 describe('AssignedTree module', () => {
@@ -55,6 +56,11 @@ describe('AssignedTree module', () => {
       });
       gen.next();
       const nextValue = {result: assignedTreeRes, status: 201};
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(assignedTreesActions.load()),
+        'should dispatch assignedTreesActions load action',
+      );
       assert.deepEqual(
         gen.next(nextValue).value,
         put(assignedTreeActions.loadSuccess(assignedTreeRes)),

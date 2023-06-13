@@ -56,11 +56,6 @@ describe('submittedTrees module', () => {
       gen.next(nextValue);
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(setPaginationTotal(PaginationName.SubmittedTrees, nextValue.result.count)),
-        'should dispatch setPaginationTotal to set count of data',
-      );
-      assert.deepEqual(
-        gen.next(nextValue).value,
         select(getSubmittedTrees),
         'should select persisted submitted trees data',
       );
@@ -69,7 +64,7 @@ describe('submittedTrees module', () => {
         put(
           submittedTreesActions.loadSuccess({
             data: [...submittedTreesMock.data, ...nextValue.data],
-            count: submittedTreesMock.count,
+            hasMore: submittedTreesMock.hasMore,
           } as any),
         ),
         'should dispatch submittedTreeActions success',
@@ -88,11 +83,7 @@ describe('submittedTrees module', () => {
       };
       gen.next();
       gen.next(nextValue);
-      assert.deepEqual(
-        gen.next(nextValue).value,
-        put(setPaginationTotal(PaginationName.SubmittedTrees, nextValue.result.count)),
-        'should dispatch setPaginationTotal to set count of data',
-      );
+
       assert.deepEqual(
         gen.next(nextValue).value,
         select(getSubmittedTrees),
@@ -105,10 +96,15 @@ describe('submittedTrees module', () => {
       );
       assert.deepEqual(
         gen.next(nextValue).value,
+        put(setPaginationTotal(PaginationName.SubmittedTrees, [...nextValue.result.data, ...nextValue.data].length)),
+        'should dispatch setPaginationTotal to set count of data',
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
         put(
           submittedTreesActions.loadSuccess({
             data: [...reachedEndSubmittedTreesMock.data, ...nextValue.data],
-            count: reachedEndSubmittedTreesMock.count,
+            hasMore: reachedEndSubmittedTreesMock.hasMore,
           } as any),
         ),
         'should dispatch submittedTreeActions success',

@@ -1,8 +1,8 @@
 import {render} from '@testing-library/react-native';
 
+import {colors} from 'constants/values';
 import {FilterTreeButton} from 'components/Filter/FilterTreeButton';
 import {SubmittedTreeStatus} from 'utilities/helpers/treeInventory';
-import {colors} from 'constants/values';
 import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 import {TreeImage} from '../../../../assets/icons';
 
@@ -51,7 +51,7 @@ describe('FilterTreeButton component', () => {
       expect(stylesToOneObject(treeImage.props.style).tintColor).toBe(tree.color);
 
       expect(filterCount.props.children).toBe(tree.count);
-      expect(filterTitle.props.children).toBe(tree.title);
+      expect(filterTitle.props.children).toBe(`${tree.t}.${tree.title}`);
     });
   });
   describe('FilterTreeButton isActive = false', () => {
@@ -93,7 +93,7 @@ describe('FilterTreeButton component', () => {
       expect(stylesToOneObject(treeImage.props.style).tintColor).toBe(tree.color);
 
       expect(filterCount.props.children).toBe(tree.count);
-      expect(filterTitle.props.children).toBe(tree.title);
+      expect(filterTitle.props.children).toBe(`${tree.t}.${tree.title}`);
     });
   });
 });

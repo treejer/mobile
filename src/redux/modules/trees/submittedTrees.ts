@@ -25,7 +25,12 @@ export function* watchSubmittedTrees() {
     const persistedSubmittedTrees: TSubmittedTreesRes = yield select(getSubmittedTrees);
     if (!res.result?.hasMore) {
       yield put(paginationReachedEnd(PaginationName.SubmittedTrees));
-      yield put(setPaginationTotal(PaginationName.SubmittedTrees, persistedSubmittedTrees?.data?.length));
+      yield put(
+        setPaginationTotal(
+          PaginationName.SubmittedTrees,
+          [...persistedSubmittedTrees?.data, ...res.result.data]?.length,
+        ),
+      );
     }
     yield put(
       SubmittedTrees.actions.loadSuccess({

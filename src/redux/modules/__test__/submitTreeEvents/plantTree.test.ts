@@ -9,8 +9,9 @@ import {
   watchPlantTree,
 } from 'ranger-redux/modules/submitTreeEvents/plantTree';
 import {plantTreeRes} from 'ranger-redux/modules/__test__/submitTreeEvents/plantTree.mock';
-import {currentTimestamp} from 'utilities/helpers/date';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {plantedTreesActions} from 'ranger-redux/modules/trees/plantedTrees';
+import {currentTimestamp} from 'utilities/helpers/date';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 
 describe('plantTree module', () => {
@@ -53,6 +54,11 @@ describe('plantTree module', () => {
       });
       gen.next();
       const nextValue = {result: plantTreeRes, status: 201};
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(plantedTreesActions.load()),
+        'should dispatch plantedTreeActions load action',
+      );
       assert.deepEqual(
         gen.next(nextValue).value,
         put(plantTreeActions.loadSuccess(plantTreeRes)),

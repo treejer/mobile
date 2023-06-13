@@ -1,12 +1,9 @@
-import {GraphQLError} from 'graphql/error';
-import {MockedProviderProps} from '@apollo/client/testing';
-
-import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {render, act, waitFor, fireEvent, screen} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
+
 import {Routes} from 'navigation/Navigation';
+import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
-import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
 
 describe('EmptyTreeList component', () => {
@@ -15,35 +12,31 @@ describe('EmptyTreeList component', () => {
     expect(typeof EmptyTreeList).toBe('function');
   });
 
-  const mockQuery: MockedProviderProps['mocks'] = [
-    {
-      request: {
-        query: doucment,
-        variables: {},
-      },
-      result: {
-        errors: [new GraphQLError('error is here')],
-      },
-    },
-  ];
-
   describe('EmptyTreeList component', () => {
     let getElementByTestId, getAllByTestId;
 
     beforeEach(() => {
       const element = render(
         <TestSubmissionStack stack={Routes.GreenBlock} name={Routes.TreeInventory_V2} component={<TreeInventory />} />,
-        reducersWithDraftsAndTreeList,
-        mockQuery as any,
+        {
+          ...reducersWithDraftsAndTreeList,
+          submittedTrees: {
+            data: {
+              data: [],
+              hasMore: false,
+            },
+            hasMore: false,
+            loading: false,
+            loaded: true,
+            error: null,
+          },
+        },
       );
       getElementByTestId = element.findByTestId;
       getAllByTestId = element.getAllByTestId;
     });
 
     it('components/elements should be defined', async () => {
-      const loading = await getElementByTestId('tree-list-v2-loading');
-      expect(loading).toBeTruthy();
-
       const emptyListCpt = await getElementByTestId('empty-list-cpt');
       const startPlantButton = await getElementByTestId('start-plant-btn');
       const visitNotVerifiedButton = await getElementByTestId('visit-notVerified-btn');

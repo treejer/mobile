@@ -1,9 +1,9 @@
 export const submittedTreesMock = {
   data: [{}, {}],
-  count: 5,
+  hasMore: true,
 };
 
 export const reachedEndSubmittedTreesMock = {
   data: [{}, {}],
-  count: 2,
+  hasMore: false,
 };

@@ -10,6 +10,7 @@ import {
 } from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {updateTreeRes} from 'ranger-redux/modules/__test__/submitTreeEvents/updateTree.mock';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {updatedTreesActions} from 'ranger-redux/modules/trees/updatedTrees';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 
 describe('updateTree module', () => {
@@ -53,11 +54,16 @@ describe('updateTree module', () => {
       const nextValue = {result: updateTreeRes, status: 201};
       assert.deepEqual(
         gen.next(nextValue).value,
+        put(updatedTreesActions.load()),
+        'should dispatch updatedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
         put(updateTreeActions.loadSuccess(updateTreeRes)),
         'should dispatch updateTreeActions success',
       );
     });
-    it('plant tree failure', () => {
+    it('update tree failure', () => {
       const gen = watchUpdateTree({
         type: updateTreeActionTypes.load,
         payload: {signature: '', treeSpecs: '', treeId: 21},

@@ -20,7 +20,7 @@ describe('pagination reducer', () => {
       ...initialState,
       [PaginationName.PlantedTrees]: {
         page: 1,
-        perPage: 20,
+        perPage: 30,
         total: 0,
         hasMore: true,
         loading: true,
@@ -35,7 +35,7 @@ describe('pagination reducer', () => {
       ...initialState,
       [PaginationName.PlantedTrees]: {
         page: 0,
-        perPage: 20,
+        perPage: 30,
         total: 34,
         hasMore: true,
         loading: false,
@@ -54,7 +54,7 @@ describe('pagination reducer', () => {
       ...initialState,
       [PaginationName.PlantedTrees]: {
         page: 0,
-        perPage: 20,
+        perPage: 30,
         total: 0,
         hasMore: false,
         loading: false,
@@ -72,7 +72,7 @@ describe('pagination reducer', () => {
       ...initialState,
       [PaginationName.PlantedTrees]: {
         page: 3,
-        perPage: 20,
+        perPage: 30,
         total: 30,
         hasMore: false,
         loading: false,
