@@ -9,7 +9,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {DraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
-import {treeImageSrcV2} from 'utilities/helpers/tree';
+import {treeImageSrc} from 'utilities/helpers/tree';
 import {TreeImage} from '../../../assets/icons';
 
 export type DraftItemProps = {
@@ -41,11 +41,7 @@ export function DraftItem(props: DraftItemProps) {
             <Image testID="tree-image" source={TreeImage} style={styles.treeImage} />
           )
         ) : (
-          <Image
-            testID="tree-imageFs"
-            source={treeImageSrcV2(tree)}
-            style={[styles.treeImage, {tintColor: undefined}]}
-          />
+          <Image testID="tree-imageFs" source={treeImageSrc(tree)} style={[styles.treeImage, {tintColor: undefined}]} />
         )}
         <Spacer times={4} />
         <View>

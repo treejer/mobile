@@ -18,13 +18,13 @@ import {Hex2Dec} from 'utilities/helpers/hex';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
+import {Tree} from 'types';
 
 export type SubmittedTreeListV2Props = {
   testID?: string;
   treeItemUI: TreeItemUI;
   setTreeItemUI: React.Dispatch<React.SetStateAction<TreeItemUI>>;
-  verifiedTrees: SubmittedTree[] | null;
+  verifiedTrees: Tree[] | null;
   treeUpdateInterval: number;
   refetching?: boolean;
   loading?: boolean;
@@ -84,9 +84,9 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const handlePressTree = useCallback(
-    (tree: SubmittedTree) => {
+    (tree: Tree) => {
       if (tree.id) {
-        if (tree.treeStatus == '2') {
+        if (tree.treeStatus == 2) {
           if (checkExistAnyDraftOfTree(tree?.id)) {
             openAlertModal({
               title: {
@@ -129,7 +129,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
             });
             handleNavigateToSubmission();
           }
-        } else if (tree?.treeStatus == '3') {
+        } else if (tree?.treeStatus == 3) {
           showAlert({
             title: 'warning',
             message: 'notVerifiedTree',
@@ -153,7 +153,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const treeItemRenderItem = useCallback(
-    ({item}: ListRenderItemInfo<SubmittedTree>) => {
+    ({item}: ListRenderItemInfo<Tree>) => {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <SubmittedTreeItemV2
@@ -172,7 +172,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   const renderListWithDiffCol = useCallback(
     (col: number, testID?: string) => {
       return (
-        <FlashList<SubmittedTree>
+        <FlashList<Tree>
           testID={testID}
           data={verifiedTrees}
           estimatedItemSize={80}

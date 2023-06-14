@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
 import {EmitterSubscription} from 'react-native/Libraries/vendor/emitter/EventEmitter';
+
+import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
 
 export function useInitialDeepLinking() {
   useEffect(() => {

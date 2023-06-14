@@ -50,13 +50,6 @@ export const reducersWithDraftsAndTreeList = {
   draftedJourneys: {
     drafts: [draftTwo, draftOne],
   },
-  submittedTrees: {
-    data: {
-      data: submittedTreesMock.data,
-      hasMore: true,
-    },
-    loading: false,
-  },
   plantedTrees: {
     data: {
       data: notVerifiedTreesMock,

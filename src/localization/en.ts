@@ -61,6 +61,7 @@ export const en = {
     photo: 'Photo',
     photos: 'Photos',
     update: 'Update',
+    coords: 'lat: {{lat}}\n long: {{long}}',
   },
   warning: 'Warning',
   notVerifiedTree: 'Not verified tree, please wait until being verified!',

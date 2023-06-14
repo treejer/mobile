@@ -28,7 +28,7 @@ export function* watchSubmittedTrees() {
       yield put(
         setPaginationTotal(
           PaginationName.SubmittedTrees,
-          [...persistedSubmittedTrees?.data, ...res.result.data]?.length,
+          [...(persistedSubmittedTrees?.data || []), ...res.result.data]?.length,
         ),
       );
     }

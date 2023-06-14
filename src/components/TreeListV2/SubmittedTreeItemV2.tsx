@@ -6,19 +6,19 @@ import moment from 'moment';
 import {mapboxPrivateToken} from 'services/config';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import TreeSymbol from 'components/TreeList/TreeSymbol';
 import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
+import {Tree} from 'types';
 
 export type TreeItemV2Props<T> = {
   testID?: string;
   onPress?: () => void;
   withDetail?: boolean;
   treeUpdateInterval: number;
-  tree: SubmittedTree;
+  tree: Tree;
 };
 
 export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {

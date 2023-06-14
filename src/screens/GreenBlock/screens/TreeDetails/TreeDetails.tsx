@@ -165,8 +165,7 @@ function TreeDetails(_: Props) {
       });
     } else {
       if (tree?.id) {
-        const {__typename, ...treeData} = treeDetails;
-        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeData as any});
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
       }
     }
   };
@@ -174,14 +173,14 @@ function TreeDetails(_: Props) {
   if (loading) {
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator color={colors.green} size="large" />
+        <ActivityIndicator testID="loading-indicator" color={colors.green} size="large" />
       </View>
     );
   }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <ScreenTitle goBack rightContent={<Avatar size={40} type="active" />} />
+      <ScreenTitle testID="screen-title-cpt" goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={[globalStyles.screenView, globalStyles.fill]}
@@ -195,8 +194,9 @@ function TreeDetails(_: Props) {
           <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
             {treeDetails ? (
               <TreeImage
+                testID="tree-image-cpt"
                 color={colors.green}
-                tree={treeDetails as any}
+                tree={treeDetails}
                 size={120}
                 style={{alignSelf: 'center'}}
                 treeUpdateInterval={treeUpdateInterval}
@@ -204,7 +204,9 @@ function TreeDetails(_: Props) {
             ) : null}
 
             {treeDetails?.id ? (
-              <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails.id)}</Text>
+              <Text testID="tree-id-text" style={[globalStyles.h3, globalStyles.textCenter]}>
+                {Hex2Dec(treeDetails.id)}
+              </Text>
             ) : null}
             {/* Tree id */}
             <Spacer times={8} />
@@ -214,6 +216,7 @@ function TreeDetails(_: Props) {
                 <View style={styles.updateButton}>
                   {treeDetails && (
                     <Button
+                      testID="tree-update-btn"
                       variant="success"
                       caption={t('treeDetails.update')}
                       textStyle={globalStyles.textCenter}
@@ -232,13 +235,20 @@ function TreeDetails(_: Props) {
 
                 {treeDetails?.treeSpecsEntity ? (
                   <>
-                    <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                    <Text
+                      testID="tree-gpsCoords-label"
+                      style={[globalStyles.h6, globalStyles.textCenter, styles.header]}
+                    >
                       {t('treeDetails.gpsCoords')}
                     </Text>
-                    <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-                      lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
-                      {'\n '}
-                      long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
+                    <Text testID="tree-gpsCoords" style={[globalStyles.h5, globalStyles.textCenter]}>
+                      {t('treeDetails.coords', {
+                        lat: Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6),
+                        long: Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6),
+                      })}
+                      {/*lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}*/}
+                      {/*{'\n '}*/}
+                      {/*long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}*/}
                     </Text>
                     <Spacer times={6} />
                   </>
@@ -250,29 +260,34 @@ function TreeDetails(_: Props) {
                 {/*/!* TBD *!/*/}
                 {/*<Spacer times={6} />*/}
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.funder')}</Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="tree-funder-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                  {t('treeDetails.funder')}
+                </Text>
+                <Text testID="tree-funder" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {treeDetails?.funder == null ? t('treeDetails.notFounded') : treeDetails?.funder?.id}
                 </Text>
                 <Spacer times={6} />
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                <Text testID="tree-lastUpdate-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
                   {t('treeDetails.lastUpdate')}
                 </Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="tree-lastUpdate" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {treeDetails?.lastUpdate != null
                     ? new Date(Number(treeDetails?.lastUpdate?.createdAt) * 1000).toLocaleDateString()
                     : new Date(Number(treeDetails?.plantDate) * 1000).toLocaleDateString()}
                 </Text>
                 <Spacer times={6} />
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.born')}</Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="born-date-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                  {t('treeDetails.born')}
+                </Text>
+                <Text testID="born-date" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {new Date(Number(treeDetails?.plantDate) * 1000).getFullYear()}
                 </Text>
                 <Spacer times={6} />
 
                 <TouchableOpacity
+                  testID="open-map-button"
                   style={{
                     marginHorizontal: -20,
                     marginBottom: -23,
@@ -285,6 +300,7 @@ function TreeDetails(_: Props) {
                   }}
                 >
                   <Image
+                    testID="tree-location-image"
                     resizeMode="cover"
                     style={{
                       alignSelf: 'center',
@@ -318,7 +334,12 @@ function TreeDetails(_: Props) {
                     <View style={styles.titleLine} />
                   </View>
                   <Spacer times={8} />
-                  <TreePhotos updatesCount={updatesCount} cardWidth={cardWidth} updates={updates} />
+                  <TreePhotos
+                    testID="tree-photos-cpt"
+                    updatesCount={updatesCount}
+                    cardWidth={cardWidth}
+                    updates={updates}
+                  />
                 </View>
               )}
             </View>

@@ -1,12 +1,12 @@
 import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {canUpdateJourneyLocation} from 'utilities/helpers/canUpdateJourneyLocation';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {Tree} from 'types';
 
 export enum JourneyMetadata {
   Photo = 'photo',
@@ -25,7 +25,7 @@ export type CurrentJourneyAction = {
   fromGallery?: boolean;
   userLocation?: TPoint;
   photoLocation?: TPoint;
-  tree?: SubmittedTree;
+  tree?: Tree;
   treeIdToUpdate?: string;
   treeIdToPlant?: string;
   journey?: TCurrentJourney;

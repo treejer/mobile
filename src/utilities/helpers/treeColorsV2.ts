@@ -1,7 +1,7 @@
 import {colors} from 'constants/values';
-import {SubmittedTreeStatus} from './treeInventory';
+import {isTheTimeToUpdate, isUpdatePended, SubmittedTreeStatus} from './treeInventory';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
+import {Tree} from 'types';
 
 export type TreeColorType = {
   [key in SubmittedTreeStatus]: {
@@ -23,28 +23,22 @@ export const treeColorTypes: TreeColorType = {
     title: 'update',
     color: colors.gray,
   },
-  [SubmittedTreeStatus.Assigned]: {
-    title: 'assigned',
-    color: colors.red,
-  },
 };
 
-export function treeColorV2(tree?: SubmittedTree): string | undefined {
+export function treeColorV2(tree?: Tree, treeUpdateInterval?: number): string | undefined {
   let color: string | undefined;
   const id = Number(Hex2Dec(tree?.id || ''));
-  if (tree?.status == SubmittedTreeStatus.Pending) {
-    color = colors.pink;
-  } else if (tree?.status === SubmittedTreeStatus.Verified) {
-    color = treeColorTypes.Verified.color;
+  if (id <= 10000) {
+    color = undefined;
     return color;
-  } else if (tree?.status === SubmittedTreeStatus.CanUpdate) {
+  }
+  if (isUpdatePended(tree)) {
+    color = colors.pink;
+  } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
     color = treeColorTypes.CanUpdate.color;
   } else {
-    if (id <= 10000) {
-      color = undefined;
-    } else {
-      color = colors.green;
-    }
+    // marketplace || planted by model
+    color = colors.green;
   }
 
   return color;

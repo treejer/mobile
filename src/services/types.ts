@@ -12,7 +12,7 @@ export interface UserSignForm {
 export interface UserNonceForm {
   wallet: string;
   magicToken: string;
-  loginData?: {mobile?: string; country?: string; email?: string};
+  loginData?: {mobile?: string | null; country?: string | null; email?: string | null};
 }
 
 export interface UserNonceRes {

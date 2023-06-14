@@ -5,13 +5,13 @@ import globalStyles from 'constants/styles';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {TreeImage} from './TreeImage';
 import Spacer from 'components/Spacer';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
+import {Tree} from 'types';
 
 interface TreeSymbolPropsType {
   horizontal?: boolean;
   testID?: string;
   handlePress?: () => void;
-  tree?: SubmittedTree;
+  tree?: Tree;
   color?: string;
   size?: number;
   treeUpdateInterval: number;

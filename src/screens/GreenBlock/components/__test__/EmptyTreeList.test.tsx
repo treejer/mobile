@@ -1,10 +1,25 @@
 import {render, act, waitFor, fireEvent, screen} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
+import {MockedProviderProps} from '@apollo/client/testing';
+import {GraphQLError} from 'graphql/error';
 
 import {Routes} from 'navigation/Navigation';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
+import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+
+const mockQuery: MockedProviderProps['mocks'] = [
+  {
+    request: {
+      query: doucment,
+      variables: {},
+    },
+    result: {
+      errors: [new GraphQLError('error is here')],
+    },
+  },
+];
 
 describe('EmptyTreeList component', () => {
   it('EmptyTreeList component should be defined', () => {
@@ -20,23 +35,16 @@ describe('EmptyTreeList component', () => {
         <TestSubmissionStack stack={Routes.GreenBlock} name={Routes.TreeInventory_V2} component={<TreeInventory />} />,
         {
           ...reducersWithDraftsAndTreeList,
-          submittedTrees: {
-            data: {
-              data: [],
-              hasMore: false,
-            },
-            hasMore: false,
-            loading: false,
-            loaded: true,
-            error: null,
-          },
         },
+        mockQuery as any,
       );
       getElementByTestId = element.findByTestId;
       getAllByTestId = element.getAllByTestId;
     });
 
     it('components/elements should be defined', async () => {
+      const loading = await getElementByTestId('tree-list-v2-loading');
+      expect(loading).toBeTruthy();
       const emptyListCpt = await getElementByTestId('empty-list-cpt');
       const startPlantButton = await getElementByTestId('start-plant-btn');
       const visitNotVerifiedButton = await getElementByTestId('visit-notVerified-btn');

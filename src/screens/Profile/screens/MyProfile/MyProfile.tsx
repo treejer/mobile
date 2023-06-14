@@ -244,7 +244,7 @@ function MyProfile(props: MyProfileProps) {
                 {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
                 <Spacer times={5} />
 
-                {!route.params?.hideVerification && profile.userStatus === TUserStatus.NotVerified && !hasRefer && (
+                {!route.params?.hideVerification && profile?.userStatus === TUserStatus.NotVerified && !hasRefer && (
                   <ProfileGroupButton>
                     <Button
                       textAlign="center"

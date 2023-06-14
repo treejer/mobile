@@ -23,7 +23,7 @@ export type NotVerifiedTreeItemProps = {
 };
 
 export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
-  const {testID, withDetail, tree, tint = colors.gray, onPress} = props;
+  const {testID, withDetail, tree, tint = colors.yellow, onPress} = props;
 
   const {t} = useTranslation();
   const {locale} = useSettings();
@@ -63,10 +63,10 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
           {treeSpecs.nursery ? (
             <View testID="nursery-icon" style={styles.treesWrapper}>
               <View style={styles.trees}>
-                <Tree color={colors.grayLight} size={16} />
-                <Tree color={colors.grayLight} size={16} />
+                <Tree color={tint} size={16} />
+                <Tree color={tint} size={16} />
               </View>
-              <Tree color={colors.grayLight} size={16} />
+              <Tree color={tint} size={16} />
             </View>
           ) : (
             <Image

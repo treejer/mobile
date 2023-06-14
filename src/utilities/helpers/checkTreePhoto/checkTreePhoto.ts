@@ -1,6 +1,6 @@
+import {maxDistanceInKiloMeters} from 'services/config';
 import {BrowserPlatform} from 'utilities/hooks/useBrowserPlatform';
 import {calcDistanceInMeters, TPoint} from 'utilities/helpers/distanceInMeters';
-import {maxDistanceInKiloMeters} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {allCoordsAreExist} from 'utilities/helpers/allCoordsAreExist';
 import {JourneyMetadata} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';

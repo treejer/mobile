@@ -1,9 +1,28 @@
+import {MockedProviderProps} from '@apollo/client/testing';
 import {render, act, fireEvent, waitFor, screen} from 'ranger-testUtils/testingLibrary';
+
 import {TreeInventory} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
+import doucment from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
 import {reducersWithDraftsAndTreeList} from 'screens/GreenBlock/screens/__test__/TreeInventory.mock';
 import {TreeLife} from 'utilities/helpers/treeInventory';
 import {notVerifiedTreesMock} from 'components/TreeListV2/__test__/NotVerifiedTrees.mock';
-import {submittedTreesMock} from 'ranger-redux/modules/__test__/trees/submittedTrees.mock';
+import {verifiedTress} from 'components/TreeListV2/__test__/SubmittedTreeListV2.mock';
+
+const mockQuery: MockedProviderProps['mocks'] = [
+  {
+    request: {
+      query: doucment,
+      variables: {
+        first: 20,
+        skip: 0,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+        address: '',
+      },
+    },
+    result: {data: {trees: verifiedTress}},
+  },
+];
 
 describe('TreeInventory component', () => {
   it('TreeInventory component should be defined', () => {
@@ -14,7 +33,7 @@ describe('TreeInventory component', () => {
   describe('TreeInventory', () => {
     let getElementByTestId, queryElementByTestId;
     beforeEach(() => {
-      const element = render(<TreeInventory />, reducersWithDraftsAndTreeList);
+      const element = render(<TreeInventory />, reducersWithDraftsAndTreeList, mockQuery as any);
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
     });
@@ -43,9 +62,11 @@ describe('TreeInventory component', () => {
     });
 
     it('TreeList length should be 2', async () => {
+      const loading = await screen.findByTestId('tree-list-v2-loading');
+      expect(loading).toBeTruthy();
       const treeListV2 = await screen.findByTestId('with-id-flatList');
-      expect(treeListV2.props.data).toEqual(submittedTreesMock.data);
-      expect(treeListV2.props.data.length).toEqual(submittedTreesMock.data.length);
+      expect(treeListV2.props.data).toEqual(verifiedTress);
+      expect(treeListV2.props.data.length).toEqual(verifiedTress.length);
     });
 
     it('SearchInInventory component should visible', async () => {

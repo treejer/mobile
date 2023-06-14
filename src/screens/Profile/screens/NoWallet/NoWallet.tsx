@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {parsePhoneNumber} from 'libphonenumber-js';
 
 import {RootNavigationProp, Routes} from 'navigation/index';
 import globalStyles from 'constants/styles';
@@ -29,8 +30,6 @@ import {NoWalletImage} from '../../../../../assets/images';
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
 
 function NoWallet(props: NoWalletProps) {
-  const {navigation} = props;
-
   const {storeMagicToken, loading: web3Loading} = useUserWeb3();
   const {loading: profileLoading} = useProfile();
   const [isEmail, setIsEmail] = useState<boolean>(true);
@@ -38,8 +37,6 @@ function NoWallet(props: NoWalletProps) {
 
   const config = useConfig();
   const magic = useMagic();
-
-  // const {refetchUser} = useCurrentUser();
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -78,14 +75,6 @@ function NoWallet(props: NoWalletProps) {
       }
     })();
   }, []);
-
-  // useEffect(() => {
-  //   if (userId && accessToken) {
-  //     (async function () {
-  // fetchUserRequest({userId, accessToken});
-  //     })();
-  //   }
-  // }, [userId, accessToken, fetchUserRequest]);
 
   const handleLearnMore = useCallback(async () => {
     await Linking.openURL(config.learnMoreLink);
@@ -167,6 +156,14 @@ function NoWallet(props: NoWalletProps) {
         const result: OAuthRedirectResult = await magic.oauth.loginWithPopup({
           provider,
           redirectURI: oauthDeepLinkUrl(provider),
+        });
+        const {email, phoneNumber} = result.magic.userMetadata;
+        const country = phoneNumber ? parsePhoneNumber(phoneNumber)?.countryCallingCode : undefined;
+        console.log({email, country, phoneNumber}, 'userMetadata');
+        storeMagicToken(result.magic.idToken, {
+          email,
+          country,
+          mobile: phoneNumber,
         });
       } catch (e: any) {
         showAlert({
@@ -271,19 +268,19 @@ function NoWallet(props: NoWalletProps) {
                     <SocialLoginButton
                       name="Facebook"
                       disabled={loading}
-                      // onPress={() => handleConnectWithOauth('facebook')}
+                      onPress={() => handleConnectWithOauth('facebook')}
                     />
                     <Spacer times={4} />
                     <SocialLoginButton
                       name="Google"
                       disabled={loading}
-                      // onPress={() => handleConnectWithOauth('google')}
+                      onPress={() => handleConnectWithOauth('google')}
                     />
                     <Spacer times={4} />
                     <SocialLoginButton
                       name="Discord"
                       disabled={loading}
-                      // onPress={() => handleConnectWithOauth('discord')}
+                      onPress={() => handleConnectWithOauth('discord')}
                     />
                   </View>
                 </View>

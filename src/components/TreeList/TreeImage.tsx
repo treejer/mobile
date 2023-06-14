@@ -2,13 +2,13 @@ import React from 'react';
 import {ActivityIndicator, Image, ImageProps, View} from 'react-native';
 
 import TreeSvg from 'components/Icons/Tree';
-import {treeImageSrcV2} from 'utilities/helpers/tree';
+import {treeImageSrc} from 'utilities/helpers/tree';
 import {treeColorV2} from 'utilities/helpers/treeColorsV2';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
+import {Tree} from 'types';
 
 export interface TreeImageProps extends Omit<ImageProps, 'source'> {
   size?: number;
-  tree?: SubmittedTree;
+  tree?: Tree;
   tint?: boolean;
   color?: string;
   isNursery?: boolean;
@@ -18,7 +18,7 @@ export interface TreeImageProps extends Omit<ImageProps, 'source'> {
 export function TreeImage(props: TreeImageProps) {
   const {size = 64, tree, style, tint, color, isNursery, treeUpdateInterval, ...restProps} = props;
 
-  const tintColor = color || treeColorV2(tree);
+  const tintColor = color || treeColorV2(tree, treeUpdateInterval);
 
   const nurseryHasLocations = tree?.treeSpecsEntity?.locations?.length;
 
@@ -55,7 +55,7 @@ export function TreeImage(props: TreeImageProps) {
   return (
     <Image
       style={[{width: size, height: size, tintColor: tint && tintColor ? tintColor : undefined}, style]}
-      source={treeImageSrcV2(tree)}
+      source={treeImageSrc(tree)}
       {...restProps}
     />
   );

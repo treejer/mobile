@@ -1,5 +1,7 @@
+import humanize from 'humanize-duration';
 import {colors} from 'constants/values';
-import {SubmittedTree} from 'webServices/trees/submittedTrees';
+import {Tree} from 'types';
+import {currentTimestamp} from 'utilities/helpers/date';
 
 export enum TreeLife {
   Submitted = 'Submitted',
@@ -11,7 +13,7 @@ export enum SubmittedTreeStatus {
   Pending = 'Pending',
   Verified = 'Verified',
   CanUpdate = 'CanUpdate',
-  Assigned = 'Assigned',
+  // Assigned = 'Assigned',
 }
 
 export enum NotVerifiedTreeStatus {
@@ -55,12 +57,6 @@ export function submittedTreesButtons(countOf?: {[key in SubmittedTreeStatus]: n
       count: countOf?.CanUpdate,
       color: colors.gray,
     },
-    {
-      title: SubmittedTreeStatus.Assigned,
-      t: 'submittedFilters',
-      count: countOf?.Assigned,
-      color: colors.red,
-    },
   ];
 }
 
@@ -87,9 +83,45 @@ export function notVerifiedTreesButtons(countOf: {[key in NotVerifiedTreeStatus]
   ];
 }
 
-export function handleFilterSubmittedTrees(trees: SubmittedTree[], filters: SubmittedTreeStatus[]) {
+export function isUpdatePended(tree?: Tree): boolean {
+  return tree?.lastUpdate?.updateStatus?.toString() === '1';
+}
+
+export function diffUpdateTime(tree?: Tree, treeUpdateInterval?: number | string): number {
+  console.log(treeUpdateInterval, 'interval');
+  console.log(tree?.treeStatus, 'tree status');
+  const differUpdateTime =
+    Number(tree?.plantDate) + Number(((tree?.treeStatus as any) || 0) * 3600 + Number(treeUpdateInterval));
+  console.log({differUpdateTime});
+  return currentTimestamp() - differUpdateTime;
+  // if (return < 0) {Last update is pending} else {can update}
+}
+
+export function isTheTimeToUpdate(tree?: Tree, treeUpdateInterval?: number | string): boolean {
+  return diffUpdateTime(tree, treeUpdateInterval) >= 0;
+}
+
+export function treeDiffUpdateHumanized(diff: number, language = 'en') {
+  return humanize(diff * 1000, {language});
+}
+
+export function handleFilterSubmittedTrees(trees: Tree[], filters: SubmittedTreeStatus[], treeUpdateInterval: number) {
   return trees.filter(tree => {
     if (!filters.length) return tree;
-    return tree?.status === filters[0];
+    if (filters.includes(SubmittedTreeStatus.Verified)) {
+      if (!(isUpdatePended(tree) || isTheTimeToUpdate(tree, treeUpdateInterval))) {
+        return tree;
+      }
+    }
+    if (filters.includes(SubmittedTreeStatus.Pending)) {
+      if (isUpdatePended(tree)) {
+        return tree;
+      }
+    }
+    if (filters.includes(SubmittedTreeStatus.CanUpdate)) {
+      if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
+        return tree;
+      }
+    }
   });
 }
