@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {
   profileActions,
@@ -8,8 +8,14 @@ import {
   profileSagas,
   watchProfile,
 } from 'ranger-redux/modules/profile/profile';
-import {mockProfile} from 'ranger-redux/modules/__test__/currentJourney/currentJourney.mock';
+import {
+  mockConfig,
+  mockMainnetConfig,
+  mockProfile,
+} from 'ranger-redux/modules/__test__/currentJourney/currentJourney.mock';
 import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {pendingTreeIdsActions} from 'ranger-redux/modules/trees/pendingTreeIds';
+import {getConfig} from 'ranger-redux/modules/web3/web3';
 
 describe('profile module', () => {
   it('profile module should be defined', () => {
@@ -34,14 +40,36 @@ describe('profile module', () => {
     it('watchProfile should be defined', () => {
       expect(watchProfile).toBeDefined();
     });
-    it('watchProfile success', () => {
+    it('watchProfile success, main net', () => {
       const gen = watchProfile();
-      gen.next();
-      const nextValue = {result: mockProfile, status: 200};
+      assert.deepEqual(gen.next().value, select(getConfig), 'should select config');
+      gen.next({result: mockProfile, status: 200, ...mockMainnetConfig});
+      const nextValue = {result: mockProfile, status: 200, ...mockMainnetConfig};
       assert.deepEqual(
         gen.next(nextValue).value,
         put(changeCheckMetaData(true)),
         'should dispatch changeCheckMetaData to set true',
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(pendingTreeIdsActions.load()),
+        'should dispatch pendingTreeIdsAction load action',
+      );
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(profileActions.loadSuccess(mockProfile)),
+        'should dispatch profileActions success',
+      );
+    });
+    it('watchProfile success, test net', () => {
+      const gen = watchProfile();
+      assert.deepEqual(gen.next().value, select(getConfig), 'should select config');
+      gen.next({result: mockProfile, status: 200, ...mockConfig});
+      const nextValue = {result: mockProfile, status: 200, ...mockConfig};
+      assert.deepEqual(
+        gen.next(nextValue).value,
+        put(pendingTreeIdsActions.load()),
+        'should dispatch pendingTreeIdsAction load action',
       );
       assert.deepEqual(
         gen.next(nextValue).value,

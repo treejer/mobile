@@ -6,7 +6,7 @@ import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device
 
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
 import {TReduxState} from '../../store';
-import {profileActions} from '../profile/profile';
+import {profileActions, profileActionsTypes} from '../profile/profile';
 import {createWeb3, UPDATE_WEB3} from '../web3/web3';
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
 import {countriesActions} from '../countris/countries';
@@ -70,6 +70,7 @@ export function* watchInitApp() {
     const {accessToken, config}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
     if (accessToken) {
       yield put(profileActions.load());
+      yield take([profileActionsTypes.loadSuccess, profileActionsTypes.loadFailure]);
       if (config.isMainnet) {
         yield put(changeCheckMetaData(true));
       }

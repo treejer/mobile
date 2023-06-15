@@ -57,6 +57,7 @@ export interface PlanterTreesQueryQueryPartialData {
 export namespace PlanterTreesQueryQueryData {
   export interface Variables {
     address: string;
+    pendingIds?: (string | null)[] | null;
     first?: number | null;
     orderBy?: string | null;
     orderDirection?: string | null;

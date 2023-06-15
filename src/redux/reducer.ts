@@ -25,10 +25,10 @@ import {assignedTreeReducer} from './modules/submitTreeEvents/assignedTree';
 import {updateTreeReducer} from './modules/submitTreeEvents/updateTree';
 import {treeDetailReducer} from './modules/trees/treeDetails';
 import {deleteTreeEventReducer} from './modules/submitTreeEvents/deleteTreeEvent';
-import {submittedTreesReducer} from './modules/trees/submittedTrees';
 import {plantedTreesReducer} from './modules/trees/plantedTrees';
 import {updatedTreesReducer} from './modules/trees/updatedTrees';
 import {assignedTreesReducer} from './modules/trees/assignedTrees';
+import {pendingTreeIdsReducer} from './modules/trees/pendingTreeIds';
 
 const appReducer = combineReducers({
   init: initReducer,
@@ -55,10 +55,10 @@ const appReducer = combineReducers({
   assignedTree: assignedTreeReducer,
   updateTree: updateTreeReducer,
   treeDetails: treeDetailReducer,
-  submittedTrees: submittedTreesReducer,
   plantedTrees: plantedTreesReducer,
   updatedTrees: updatedTreesReducer,
   assignedTrees: assignedTreesReducer,
+  pendingTreeIds: pendingTreeIdsReducer,
   deleteTreeEvent: deleteTreeEventReducer,
 });
 

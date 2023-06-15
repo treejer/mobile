@@ -20,12 +20,12 @@ describe('FilterTrees component', () => {
         count: 20,
         color: colors.green,
       },
-      {
-        title: SubmittedTreeStatus.Pending,
-        t: 'submittedFilters',
-        count: 15,
-        color: colors.pink,
-      },
+      // {
+      //   title: SubmittedTreeStatus.Pending,
+      //   t: 'submittedFilters',
+      //   count: 15,
+      //   color: colors.pink,
+      // },
       {
         title: SubmittedTreeStatus.CanUpdate,
         t: 'submittedFilters',

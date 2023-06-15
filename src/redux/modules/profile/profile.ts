@@ -10,7 +10,7 @@ import {asyncAlert} from 'utilities/helpers/alert';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {useUserWeb3} from '../web3/web3';
+import {getConfig, TWeb3, useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 import {changeCheckMetaData} from '../settings/settings';
@@ -18,15 +18,20 @@ import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
 import {plantedTreesActions} from '../trees/plantedTrees';
 import {updatedTreesActions} from '../trees/updatedTrees';
 import {assignedTreesActions} from '../trees/assignedTrees';
-import {submittedTreesActions} from 'ranger-redux/modules/trees/submittedTrees';
+import {pendingTreeIdsActions} from '../trees/pendingTreeIds';
 
 const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 
 export function* watchProfile() {
   try {
+    const config: TWeb3['config'] = yield select(getConfig);
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
     // TODO: check here for check metadata
-    yield put(changeCheckMetaData(true));
+    console.log(config, 'isMainnet');
+    if (config.isMainnet) {
+      yield put(changeCheckMetaData(true));
+    }
+    yield put(pendingTreeIdsActions.load());
     yield put(Profile.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);
@@ -82,7 +87,7 @@ export function useProfile() {
         dispatch(plantedTreesActions.resetCache());
         dispatch(updatedTreesActions.resetCache());
         dispatch(assignedTreesActions.resetCache());
-        dispatch(submittedTreesActions.resetCache());
+        dispatch(pendingTreeIdsActions.resetCache());
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);

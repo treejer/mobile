@@ -11,10 +11,6 @@ export type TreeColorType = {
 };
 
 export const treeColorTypes: TreeColorType = {
-  [SubmittedTreeStatus.Pending]: {
-    title: 'pending',
-    color: colors.pink,
-  },
   [SubmittedTreeStatus.Verified]: {
     title: 'pending',
     color: colors.green,

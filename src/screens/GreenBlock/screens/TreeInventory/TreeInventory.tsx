@@ -25,16 +25,12 @@ import {
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
+import {useSubmittedTrees} from 'utilities/hooks/useSubmittedTrees';
 import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
 import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
-import {usePagination} from 'utilities/hooks/usePagination';
-import planterTreeQuery, {
-  PlanterTreesQueryQueryData,
-} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
-import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {Tree} from 'types';
 
 export enum TreeItemUI {
@@ -68,7 +64,6 @@ export function TreeInventory(props: TreeInventoryProps) {
   const [submittedTreeItemUI, setSubmittedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
   const [notVerifiedTreeItemUI, setNotVerifiedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
 
-  const walletAddress = useWalletAccount();
   const treeUpdateInterval = useTreeUpdateInterval();
 
   const {t} = useTranslation();
@@ -88,19 +83,12 @@ export function TreeInventory(props: TreeInventoryProps) {
   const {planted, updated, assigned, current: notVerifiedTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
 
   const {
-    persistedData: submittedTrees,
-    loading: submittedTreesLoading,
-    refetchData: refetchSubmittedTrees,
-    refetching: submittedTreesRefetching,
-    loadMore: submittedTreesLoadMore,
-  } = usePagination<PlanterTreesQueryQueryData, PlanterTreesQueryQueryData.Variables, Tree[]>(
-    planterTreeQuery,
-    {
-      address: walletAddress.toString().toLocaleLowerCase(),
-    },
-    'trees',
-    TreeLife.Submitted,
-  );
+    submittedTrees,
+    submittedTreesRefetching,
+    submittedTreesLoading,
+    submittedTreesLoadMore,
+    refetchSubmittedTrees,
+  } = useSubmittedTrees();
 
   const {
     filters: submittedTreeFilters,
@@ -130,7 +118,7 @@ export function TreeInventory(props: TreeInventoryProps) {
         ? colors.yellow
         : notVerifiedTreeFilter === NotVerifiedTreeStatus.Update
         ? colors.pink
-        : colors.red,
+        : undefined,
     [notVerifiedTreeFilter],
   );
 

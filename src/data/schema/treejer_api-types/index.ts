@@ -1,6 +1,10 @@
 export interface whereType {
   planter?: string | null;
 }
+export interface treesWhereType {
+  planter?: string | null;
+  id_not_in?: (string | null)[] | null;
+}
 export interface ApplyInput {
   firstName: string;
   lastName: string;

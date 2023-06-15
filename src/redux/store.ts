@@ -19,17 +19,24 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
   'treeFactory',
   'planter',
   'planterFund',
-  'countries',
-  'submittedTrees',
-  'plantedTrees',
-  'updatedTrees',
-  'assignedTrees',
 ]);
 
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
-  whitelist: ['settings', 'web3', 'profile', 'contracts', 'offlineMap', 'recentPlaces', 'draftedJourneys'],
+  whitelist: [
+    'settings',
+    'web3',
+    'profile',
+    'contracts',
+    'offlineMap',
+    'recentPlaces',
+    'draftedJourneys',
+    'countries',
+    'plantedTrees',
+    'updatedTrees',
+    'assignedTrees',
+  ],
   transforms: [saveSubsetBlacklistFilter],
 };
 

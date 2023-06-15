@@ -18,6 +18,7 @@ const mockQuery: MockedProviderProps['mocks'] = [
         orderBy: 'createdAt',
         orderDirection: 'desc',
         address: '',
+        pendingIds: ['222', '333'],
       },
     },
     result: {data: {trees: verifiedTress}},

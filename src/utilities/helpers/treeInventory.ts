@@ -10,7 +10,7 @@ export enum TreeLife {
 }
 
 export enum SubmittedTreeStatus {
-  Pending = 'Pending',
+  // Pending = 'Pending',
   Verified = 'Verified',
   CanUpdate = 'CanUpdate',
   // Assigned = 'Assigned',
@@ -45,12 +45,12 @@ export function submittedTreesButtons(countOf?: {[key in SubmittedTreeStatus]: n
       count: countOf?.Verified,
       color: colors.green,
     },
-    {
-      title: SubmittedTreeStatus.Pending,
-      t: 'submittedFilters',
-      count: countOf?.Pending,
-      color: colors.pink,
-    },
+    // {
+    //   title: SubmittedTreeStatus.Pending,
+    //   t: 'submittedFilters',
+    //   count: countOf?.Pending,
+    //   color: colors.pink,
+    // },
     {
       title: SubmittedTreeStatus.CanUpdate,
       t: 'submittedFilters',
@@ -88,8 +88,6 @@ export function isUpdatePended(tree?: Tree): boolean {
 }
 
 export function diffUpdateTime(tree?: Tree, treeUpdateInterval?: number | string): number {
-  console.log(treeUpdateInterval, 'interval');
-  console.log(tree?.treeStatus, 'tree status');
   const differUpdateTime =
     Number(tree?.plantDate) + Number(((tree?.treeStatus as any) || 0) * 3600 + Number(treeUpdateInterval));
   console.log({differUpdateTime});
@@ -110,11 +108,6 @@ export function handleFilterSubmittedTrees(trees: Tree[], filters: SubmittedTree
     if (!filters.length) return tree;
     if (filters.includes(SubmittedTreeStatus.Verified)) {
       if (!(isUpdatePended(tree) || isTheTimeToUpdate(tree, treeUpdateInterval))) {
-        return tree;
-      }
-    }
-    if (filters.includes(SubmittedTreeStatus.Pending)) {
-      if (isUpdatePended(tree)) {
         return tree;
       }
     }

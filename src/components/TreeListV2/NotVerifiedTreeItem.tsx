@@ -23,7 +23,7 @@ export type NotVerifiedTreeItemProps = {
 };
 
 export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
-  const {testID, withDetail, tree, tint = colors.yellow, onPress} = props;
+  const {testID, withDetail, tree, tint, onPress} = props;
 
   const {t} = useTranslation();
   const {locale} = useSettings();

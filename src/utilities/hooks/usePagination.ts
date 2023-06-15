@@ -1,6 +1,7 @@
 import {Dispatch, useCallback, useEffect, useMemo, useState} from 'react';
 import {NetworkStatus, OperationVariables, useQuery} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 
 export function usePagination<TQueryData, TVariables extends OperationVariables, TPersistedData>(
   Query: any,
@@ -10,8 +11,8 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
   keepData?: boolean,
   manualPerPage?: number,
 ) {
+  const {profile} = useProfile();
   const perPage = useMemo(() => manualPerPage || 20, []);
-
   const [page, setPage] = useState(0);
 
   const [persistedData, setPersistedData] = usePersistedData<TPersistedData>(storageKey);
@@ -33,7 +34,7 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
       ...variables,
       ...paginationProps(page),
     },
-    skip: !variables,
+    skip: !variables || !profile,
   });
 
   useEffect(() => {
