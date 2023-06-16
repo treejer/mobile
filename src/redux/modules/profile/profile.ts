@@ -26,8 +26,6 @@ export function* watchProfile() {
   try {
     const config: TWeb3['config'] = yield select(getConfig);
     const res: FetchResult<TProfile> = yield sagaFetch<TProfile>('/users/me');
-    // TODO: check here for check metadata
-    console.log(config, 'isMainnet');
     if (config.isMainnet) {
       yield put(changeCheckMetaData(true));
     }

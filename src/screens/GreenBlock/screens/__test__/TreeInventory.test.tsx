@@ -43,7 +43,6 @@ describe('TreeInventory component', () => {
       const screenTitle = getElementByTestId('screen-title-cpt');
       const screenTitleTxt = getElementByTestId('screen-title-text');
       const filterByType = getElementByTestId('filter-tab-cpt');
-      const searchButton = getElementByTestId('search-button-cpt');
 
       const tabContext = getElementByTestId('tab-context');
       const submittedTab = getElementByTestId('submitted-tab');
@@ -54,7 +53,6 @@ describe('TreeInventory component', () => {
       expect(screenTitleTxt).toBeTruthy();
       expect(screenTitleTxt.props.children).toBe('treeInventoryV2.titles.screen');
       expect(filterByType).toBeTruthy();
-      expect(searchButton).toBeTruthy();
 
       expect(tabContext).toBeTruthy();
       expect(submittedTab).toBeTruthy();
@@ -70,29 +68,6 @@ describe('TreeInventory component', () => {
       expect(treeListV2.props.data.length).toEqual(verifiedTress.length);
     });
 
-    it('SearchInInventory component should visible', async () => {
-      const searchButton = getElementByTestId('search-button-cpt');
-
-      await act(async () => {
-        await fireEvent.press(searchButton);
-      });
-      await waitFor(() => {
-        const searchInInventory = getElementByTestId('search-in-inventory-cpt');
-        expect(searchInInventory).toBeTruthy();
-      });
-      const closeButton = getElementByTestId('close-button');
-      await act(async () => {
-        await fireEvent.press(closeButton);
-      });
-      await waitFor(() => {
-        const searchInInventory = queryElementByTestId('search-in-inventory-cpt');
-        expect(searchInInventory).toBeFalsy();
-        const screenTitle = getElementByTestId('screen-title-cpt');
-        const searchButton = getElementByTestId('search-button-cpt');
-        expect(screenTitle).toBeTruthy();
-        expect(searchButton).toBeTruthy();
-      });
-    });
     it('Tab should change', async () => {
       const tabContext = getElementByTestId('tab-context');
       const submittedTab = getElementByTestId('submitted-tab');

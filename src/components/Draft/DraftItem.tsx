@@ -10,7 +10,6 @@ import {colors} from 'constants/values';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {DraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {treeImageSrc} from 'utilities/helpers/tree';
-import {TreeImage} from '../../../assets/icons';
 
 export type DraftItemProps = {
   testID?: string;
@@ -38,12 +37,16 @@ export function DraftItem(props: DraftItemProps) {
               <Tree color={colors.grayLight} size={16} />
             </View>
           ) : (
-            <Image testID="tree-image" source={TreeImage} style={styles.treeImage} />
+            <Image
+              testID="tree-image"
+              source={treeImageSrc(tree)}
+              style={[styles.treeImage, {tintColor: draft.journey.treeIdToPlant ? undefined : colors.gray}]}
+            />
           )
         ) : (
           <Image testID="tree-imageFs" source={treeImageSrc(tree)} style={[styles.treeImage, {tintColor: undefined}]} />
         )}
-        <Spacer times={4} />
+        <Spacer times={isNursery ? 3 : 4} />
         <View>
           <Text testID="draft-name" style={styles.draftName}>
             {draft.name}

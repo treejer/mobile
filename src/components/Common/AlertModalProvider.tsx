@@ -1,6 +1,7 @@
 import React, {useCallback, useContext, useMemo, useState} from 'react';
 import {Modal, StyleSheet, View, Text, TouchableOpacityProps, TextProps, TouchableOpacity} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {useTranslation} from 'react-i18next';
 
 import {colors} from 'constants/values';
@@ -39,7 +40,7 @@ export type AlertModalProviderProps = {
 
 const defaultStyles = {
   width: 320,
-  height: 150,
+  height: 170,
   bg: colors.khaki,
   paddingVertical: 20,
   paddingHorizontal: 20,
@@ -110,6 +111,9 @@ export function AlertModalProvider(props: AlertModalProviderProps) {
               justifyContent: 'space-between',
             }}
           >
+            <TouchableOpacity style={styles.cancelBtn} onPress={handleCloseAlertModal}>
+              <Icon name="close" size={14} />
+            </TouchableOpacity>
             <Text testID="alert-modal-card-title" {...title.props} style={[styles.title, title?.props?.style]}>
               {t(title.text, title.tParams)}
             </Text>
@@ -141,7 +145,13 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
   },
+  cancelBtn: {
+    position: 'absolute',
+    top: 10,
+    left: 15,
+  },
   container: {
+    position: 'relative',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

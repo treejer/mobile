@@ -21,10 +21,13 @@ import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/bro
 import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
 import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import {TReduxState} from 'ranger-redux/store';
-import * as actionsList from './currentJourney.action';
 import {TTreeDetailRes} from 'webServices/trees/treeDetail';
 import {navigationRef} from 'navigation/navigationRef';
 import {Routes} from 'navigation/Navigation';
+import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
+import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
+import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
+import * as actionsList from './currentJourney.action';
 
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
 
@@ -171,6 +174,8 @@ export function* watchSubmitJourney() {
         }),
       );
       yield take(updateTreeActionTypes.loadSuccess);
+      yield put(updatedTreesActions.load());
+      yield take([updatedTreesActionTypes.loadSuccess, updatedTreesActionTypes.loadFailure]);
     } else if (treeIdToPlant && treeDetail) {
       const currentTimeStamp = currentTimestamp();
       const signature = yield generateTreeFactorySignature({
@@ -195,6 +200,8 @@ export function* watchSubmitJourney() {
         }),
       );
       yield take(assignedTreeActionTypes.loadSuccess);
+      yield put(assignedTreesActions.load());
+      yield take([assignedTreesActionTypes.loadSuccess, assignedTreesActionTypes.loadFailure]);
     } else {
       const currentTimeStamp = currentTimestamp();
       const signature = yield generateTreeFactorySignature({
@@ -217,6 +224,8 @@ export function* watchSubmitJourney() {
         }),
       );
       yield take(plantTreeActionTypes.loadSuccess);
+      yield put(plantedTreesActions.load());
+      yield take([plantedTreesActionTypes.loadSuccess, plantedTreesActionTypes.loadFailure]);
     }
     yield showSagaAlert({
       title: 'success',

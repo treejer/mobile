@@ -12,8 +12,7 @@ export function useSubmittedTrees() {
 
   const {pendingTreeIds} = usePendingTreeIds();
 
-  console.log(pendingTreeIds, 'pendingTreeIds');
-
+  console.log(pendingTreeIds);
   const {
     persistedData: submittedTrees,
     loading: submittedTreesLoading,
@@ -24,7 +23,7 @@ export function useSubmittedTrees() {
     planterTreeQuery,
     {
       address: walletAddress.toString().toLocaleLowerCase(),
-      pendingIds: pendingTreeIds,
+      pendingIds: pendingTreeIds && pendingTreeIds?.length > 0 ? pendingTreeIds : [''],
     },
     'trees',
     TreeLife.Submitted,

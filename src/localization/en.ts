@@ -635,12 +635,15 @@ export const en = {
   submittedFilters: {
     Verified: 'Verified',
     Pending: 'Pending',
-    CanUpdate: 'Can Update',
+    Update: 'Update',
     Assigned: 'New Assigned',
   },
   notVerifiedFilters: {
     Plant: 'Plant',
     Update: 'Update',
     Assigned: 'Assigned',
+  },
+  responseCodeMessage: {
+    '204': 'Successfully Removed.',
   },
 };

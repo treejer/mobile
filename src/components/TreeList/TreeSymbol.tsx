@@ -19,6 +19,8 @@ interface TreeSymbolPropsType {
   tint?: boolean;
   autoHeight?: boolean;
   hideId?: boolean;
+  disabled?: boolean;
+  autoWidth?: boolean;
 }
 const TreeSymbol = (props: TreeSymbolPropsType) => {
   const {
@@ -33,19 +35,23 @@ const TreeSymbol = (props: TreeSymbolPropsType) => {
     autoHeight,
     tint = true,
     hideId,
+    disabled,
+    autoWidth,
   } = props;
 
   return (
     <TouchableOpacity
       testID={testID}
       style={[
-        {height: autoHeight ? undefined : 80, marginBottom: autoHeight ? 0 : 15},
+        {height: autoHeight ? undefined : 80, width: autoWidth ? undefined : 52, marginBottom: autoHeight ? 0 : 15},
         styles.tree,
         horizontal
           ? [globalStyles.flexRow, globalStyles.alignItemsCenter, {margin: 0, width: undefined, padding: 0}]
           : {},
       ]}
       onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={disabled ? 1 : undefined}
     >
       <TreeImage
         tree={tree}
@@ -67,7 +73,6 @@ export default TreeSymbol;
 
 const styles = StyleSheet.create({
   tree: {
-    width: 52,
     marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'space-between',

@@ -166,11 +166,13 @@ function NoWallet(props: NoWalletProps) {
           mobile: phoneNumber,
         });
       } catch (e: any) {
-        showAlert({
-          title: t('createWallet.failed.title'),
-          message: e?.message || t('tryAgain'),
-          mode: AlertMode.Error,
-        });
+        if (e.code !== 'cancel') {
+          showAlert({
+            title: t('createWallet.failed.title'),
+            message: e?.rawMessage || e?.message || t('tryAgain'),
+            mode: AlertMode.Error,
+          });
+        }
       }
     },
     [magic.oauth, t],
@@ -192,7 +194,11 @@ function NoWallet(props: NoWalletProps) {
   return (
     <SafeAreaView style={[globalStyles.screenView, {flex: 1}]}>
       <View style={[globalStyles.screenView, globalStyles.fill, {height: '100%'}]}>
-        <ScrollView keyboardShouldPersistTaps="always" style={[{height: '100%', flex: 1}, globalStyles.screenView]}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          style={[{height: '100%', flex: 1}, globalStyles.screenView]}
+        >
           <KeyboardAwareScrollView
             keyboardShouldPersistTaps="always"
             contentContainerStyle={{height: '100%', flex: 1}}

@@ -1,10 +1,10 @@
 import {useCallback} from 'react';
 
-import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import * as actionsList from './draftedJourneys.action';
-import {navigateToGreenBlock} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
 import {sortByDate} from 'utilities/helpers/sortByDate';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
+import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {navigateToGreenBlock} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
+import * as actionsList from './draftedJourneys.action';
 
 export enum DraftType {
   Draft = 'Draft',
@@ -120,7 +120,7 @@ export const useDraftedJourneys = () => {
 
   const checkExistAnyDraftOfTree = useCallback(
     (treeId: string) => {
-      return drafts.some(draft => draft.journey.treeIdToPlant === treeId);
+      return drafts.some(draft => [draft.journey.treeIdToPlant, draft.journey.treeIdToUpdate].includes(treeId));
     },
     [drafts],
   );

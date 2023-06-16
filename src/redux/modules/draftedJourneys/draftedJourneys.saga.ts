@@ -18,7 +18,10 @@ export type SetDraftAsCurrentJourneyAction = {
 
 export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAction) {
   const {drafts}: TDraftedJourneysState = yield select(getDraftedJourneys);
-  const selectedDraft = drafts.find(draft => draft.id === id);
+  const selectedDraft = drafts.find(draft =>
+    [draft.id, draft.journey.treeIdToPlant, draft.journey.treeIdToUpdate].includes(id),
+  );
+  console.log(selectedDraft, 'selectedDraft');
 
   if (selectedDraft) {
     yield put(setJourneyFromDrafts({journey: {...selectedDraft.journey, draftId: selectedDraft.id}}));

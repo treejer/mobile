@@ -15,7 +15,7 @@ export const treeColorTypes: TreeColorType = {
     title: 'pending',
     color: colors.green,
   },
-  [SubmittedTreeStatus.CanUpdate]: {
+  [SubmittedTreeStatus.Update]: {
     title: 'update',
     color: colors.gray,
   },
@@ -31,7 +31,7 @@ export function treeColorV2(tree?: Tree, treeUpdateInterval?: number): string | 
   if (isUpdatePended(tree)) {
     color = colors.pink;
   } else if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-    color = treeColorTypes.CanUpdate.color;
+    color = treeColorTypes.Update.color;
   } else {
     // marketplace || planted by model
     color = colors.green;

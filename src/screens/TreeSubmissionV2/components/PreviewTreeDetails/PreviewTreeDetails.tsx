@@ -44,7 +44,7 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
   const {testID, isVisible, currentJourney, onClose, onSubmit, onDraft} = props;
 
   const {profile} = useProfile();
-  const {treeDetails, dispatchGetTreeDetails, loading: treeDetailsLoading} = useTreeDetails();
+  const {treeDetails, dispatchGetTreeDetails, loading: treeDetailsLoading, dispatchClearTreeDetails} = useTreeDetails();
 
   const {t} = useTranslation();
 
@@ -57,19 +57,25 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
         dispatchGetTreeDetails(currentJourney.treeIdToPlant);
       }
     }
+
+    return () => {
+      dispatchClearTreeDetails();
+    };
   }, [isVisible]);
 
   const treeSpecs = useMemo(() => treeDetails?.treeSpecsEntity, [treeDetails?.treeSpecsEntity]);
 
+  console.log(treeSpecs?.updates);
+
   const updates = useMemo(
     () =>
-      !currentJourney.isUpdate || !currentJourney.treeIdToPlant
-        ? [{preview: currentJourney.photo}]
-        : typeof treeSpecs?.updates != 'undefined' && treeSpecs?.updates != '' && treeSpecs?.updates != null
-        ? [...treeSpecs?.updates, {preview: currentJourney.photo}]
-        : [],
+      typeof treeSpecs?.updates != 'undefined' && treeSpecs?.updates != '' && treeSpecs?.updates != null
+        ? [...JSON.parse(treeSpecs?.updates), {preview: currentJourney.photo}]
+        : [{preview: currentJourney.photo}],
     [treeSpecs?.updates, currentJourney.photo, currentJourney.isUpdate, currentJourney.treeIdToPlant],
   );
+
+  console.log(updates, 'updates');
 
   const updatesCount = useMemo(() => updates?.length, [updates?.length]);
 

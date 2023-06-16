@@ -44,6 +44,9 @@ import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/tre
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
+import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
+import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
+import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
 describe('currentJourney sagas', () => {
@@ -431,6 +434,16 @@ describe('currentJourney sagas', () => {
         'should wait to plantTree request success response',
       );
       assert.deepEqual(
+        gen.next().value,
+        put(plantedTreesActions.load()),
+        'should dispatch plantedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([plantedTreesActionTypes.loadSuccess, plantedTreesActionTypes.loadFailure]),
+        'should wait for the result of the plantedTreesActions load action',
+      );
+      assert.deepEqual(
         gen.next(mockPlantJourneyWithDraftId).value,
         showSagaAlert({
           title: 'success',
@@ -531,6 +544,16 @@ describe('currentJourney sagas', () => {
         gen.next().value,
         take(plantTreeActionTypes.loadSuccess),
         'should wait to plantTree request success response',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        put(plantedTreesActions.load()),
+        'should dispatch plantedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([plantedTreesActionTypes.loadSuccess, plantedTreesActionTypes.loadFailure]),
+        'should wait for the result of the plantedTreesActions load action',
       );
       assert.deepEqual(
         gen.next(mockPlantJourneyWithoutDraftId).value,
@@ -651,6 +674,16 @@ describe('currentJourney sagas', () => {
         gen.next().value,
         take(updateTreeActionTypes.loadSuccess),
         'should wait to updateTree request success response',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        put(updatedTreesActions.load()),
+        'should dispatch updatedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([updatedTreesActionTypes.loadSuccess, updatedTreesActionTypes.loadFailure]),
+        'should wait for the result of the updatedTreesActions load action',
       );
       assert.deepEqual(
         gen.next(mockUpdateJourneyWithDraftId).value,
@@ -779,6 +812,16 @@ describe('currentJourney sagas', () => {
         'should wait to updateTree request success response',
       );
       assert.deepEqual(
+        gen.next().value,
+        put(updatedTreesActions.load()),
+        'should dispatch updatedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([updatedTreesActionTypes.loadSuccess, updatedTreesActionTypes.loadFailure]),
+        'should wait for the result of the updatedTreesActions load action',
+      );
+      assert.deepEqual(
         gen.next(mockUpdateJourneyWithoutDraftId).value,
         showSagaAlert({
           title: 'success',
@@ -903,6 +946,17 @@ describe('currentJourney sagas', () => {
         gen.next().value,
         take(assignedTreeActionTypes.loadSuccess),
         'should wait to assignedTree request success response',
+      );
+
+      assert.deepEqual(
+        gen.next().value,
+        put(assignedTreesActions.load()),
+        'should dispatch assignedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([assignedTreesActionTypes.loadSuccess, assignedTreesActionTypes.loadFailure]),
+        'should wait for the result of the assignedTreesActions load action',
       );
 
       assert.deepEqual(
@@ -1042,6 +1096,18 @@ describe('currentJourney sagas', () => {
         take(assignedTreeActionTypes.loadSuccess),
         'should wait to assignedTree request success response',
       );
+
+      assert.deepEqual(
+        gen.next().value,
+        put(assignedTreesActions.load()),
+        'should dispatch assignedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([assignedTreesActionTypes.loadSuccess, assignedTreesActionTypes.loadFailure]),
+        'should wait for the result of the assignedTreesActions load action',
+      );
+
       assert.deepEqual(
         gen.next(mockAssignedJourneyWithoutDraftId).value,
         showSagaAlert({
@@ -1173,6 +1239,16 @@ describe('currentJourney sagas', () => {
         gen.next().value,
         take(assignedTreeActionTypes.loadSuccess),
         'should wait to assignedTree request success response',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        put(assignedTreesActions.load()),
+        'should dispatch assignedTreesActions load action',
+      );
+      assert.deepEqual(
+        gen.next().value,
+        take([assignedTreesActionTypes.loadSuccess, assignedTreesActionTypes.loadFailure]),
+        'should wait for the result of the assignedTreesActions load action',
       );
       assert.deepEqual(
         gen.next(mockAssignedJourneyWithoutDraftId).value,

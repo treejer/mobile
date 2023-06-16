@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, take, takeEvery} from 'redux-saga/effects';
 import {CommonActions} from '@react-navigation/native';
 
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
@@ -11,10 +11,14 @@ import {
   TDeleteTreeEventPayload,
   TDeleteTreeEventRes,
 } from 'webServices/submitTreeEvents/deleteTreeEvent';
-import {TReduxState} from 'ranger-redux/store';
 import {Routes} from 'navigation/Navigation';
 import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {navigationRef} from 'navigation/navigationRef';
+import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
+import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
+import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
+import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
+import {TReduxState} from 'ranger-redux/store';
 
 const DeleteTreeEvent = new ReduxFetchState<TDeleteTreeEventRes, TDeleteTreeEventPayload, string>('deleteTreeEvent');
 
@@ -28,10 +32,25 @@ export function* watchDeleteTreeEvent({payload}: TDeleteTreeEventAction) {
         method: 'DELETE',
       },
     );
+    yield put(pendingTreeIdsActions.load());
+    yield take([pendingTreeIdsActionTypes.loadSuccess, pendingTreeIdsActionTypes.loadFailure]);
+    if (event === NotVerifiedTreeStatus.Plant) {
+      yield put(plantedTreesActions.load());
+      yield take([plantedTreesActionTypes.loadSuccess, plantedTreesActionTypes.loadFailure]);
+    } else if (event === NotVerifiedTreeStatus.Update) {
+      yield put(updatedTreesActions.load());
+      yield take([updatedTreesActionTypes.loadSuccess, updatedTreesActionTypes.loadFailure]);
+    } else {
+      yield put(assignedTreesActions.load());
+      yield take([assignedTreesActionTypes.loadSuccess, assignedTreesActionTypes.loadFailure]);
+    }
     yield showSagaAlert({
       title: '',
-      message: res.result,
+      message: 'responseCodeMessage.204',
       mode: AlertMode.Success,
+      alertOptions: {
+        translate: true,
+      },
     });
     yield put(DeleteTreeEvent.actions.loadSuccess(res.result));
     navigationRef()?.dispatch(

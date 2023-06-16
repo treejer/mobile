@@ -12,7 +12,7 @@ export enum TreeLife {
 export enum SubmittedTreeStatus {
   // Pending = 'Pending',
   Verified = 'Verified',
-  CanUpdate = 'CanUpdate',
+  Update = 'Update',
   // Assigned = 'Assigned',
 }
 
@@ -52,9 +52,9 @@ export function submittedTreesButtons(countOf?: {[key in SubmittedTreeStatus]: n
     //   color: colors.pink,
     // },
     {
-      title: SubmittedTreeStatus.CanUpdate,
+      title: SubmittedTreeStatus.Update,
       t: 'submittedFilters',
-      count: countOf?.CanUpdate,
+      count: countOf?.Update,
       color: colors.gray,
     },
   ];
@@ -103,18 +103,18 @@ export function treeDiffUpdateHumanized(diff: number, language = 'en') {
   return humanize(diff * 1000, {language});
 }
 
-export function handleFilterSubmittedTrees(trees: Tree[], filters: SubmittedTreeStatus[], treeUpdateInterval: number) {
-  return trees.filter(tree => {
-    if (!filters.length) return tree;
-    if (filters.includes(SubmittedTreeStatus.Verified)) {
-      if (!(isUpdatePended(tree) || isTheTimeToUpdate(tree, treeUpdateInterval))) {
-        return tree;
-      }
-    }
-    if (filters.includes(SubmittedTreeStatus.CanUpdate)) {
-      if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
-        return tree;
-      }
-    }
-  });
-}
+// export function handleFilterSubmittedTrees(trees: Tree[], filters: SubmittedTreeStatus[], treeUpdateInterval: number) {
+//   return trees.filter(tree => {
+//     if (!filters.length) return tree;
+//     if (filters.includes(SubmittedTreeStatus.Verified)) {
+//       if (!(isUpdatePended(tree) || isTheTimeToUpdate(tree, treeUpdateInterval))) {
+//         return tree;
+//       }
+//     }
+//     if (filters.includes(SubmittedTreeStatus.Update)) {
+//       if (isTheTimeToUpdate(tree, treeUpdateInterval)) {
+//         return tree;
+//       }
+//     }
+//   });
+// }

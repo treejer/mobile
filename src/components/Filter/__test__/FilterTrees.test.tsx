@@ -27,7 +27,7 @@ describe('FilterTrees component', () => {
       //   color: colors.pink,
       // },
       {
-        title: SubmittedTreeStatus.CanUpdate,
+        title: SubmittedTreeStatus.Update,
         t: 'submittedFilters',
         count: 42,
         color: colors.gray,
@@ -39,7 +39,7 @@ describe('FilterTrees component', () => {
         <FilterTrees
           testID="filter-trees-cpt"
           filterList={mockFilters}
-          filters={[SubmittedTreeStatus.CanUpdate]}
+          filters={[SubmittedTreeStatus.Update]}
           onFilter={() => {}}
         />,
       );

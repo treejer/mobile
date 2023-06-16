@@ -13,10 +13,11 @@ export type FilterTreeButtonProps<T> = {
   tree: FilterTree<T>;
   onPress: () => void;
   isActive: boolean;
+  disabled?: boolean;
 };
 
 export function FilterTreeButton<T>(props: FilterTreeButtonProps<T>) {
-  const {testID, tree, isActive, onPress} = props;
+  const {testID, tree, isActive, disabled, onPress} = props;
 
   const {t} = useTranslation();
 
@@ -29,6 +30,8 @@ export function FilterTreeButton<T>(props: FilterTreeButtonProps<T>) {
       >
         <TouchableOpacity
           testID="filter-tree-button-image-container"
+          disabled={disabled}
+          activeOpacity={disabled ? 1 : undefined}
           onPress={onPress}
           style={[styles.imageContainer, {backgroundColor: `${tree.color}59`}]}
         >

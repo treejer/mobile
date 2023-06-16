@@ -80,7 +80,13 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       closeAlertModal();
       handleNavigateToSubmission();
     },
-    [dispatchRemoveDraftedJourney, dispatchSetDraftAsCurrentJourney, handleNavigateToSubmission, closeAlertModal],
+    [
+      dispatchRemoveDraftedJourney,
+      dispatchSetDraftAsCurrentJourney,
+      handleNavigateToSubmission,
+      closeAlertModal,
+      dispatchClearJourney,
+    ],
   );
 
   const handlePressTree = useCallback(

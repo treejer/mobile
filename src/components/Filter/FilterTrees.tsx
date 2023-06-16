@@ -14,10 +14,11 @@ export type FilterTreesProps<T> = {
   filterList: FilterTree<T>[];
   filters: T[];
   onFilter: (filter: T) => void;
+  disabled?: boolean;
 };
 
 export function FilterTrees<T>(props: FilterTreesProps<T>) {
-  const {testID, filterList, filters, onFilter} = props;
+  const {testID, filterList, filters, onFilter, disabled} = props;
 
   return (
     <View testID={testID} style={styles.flexRow}>
@@ -28,6 +29,7 @@ export function FilterTrees<T>(props: FilterTreesProps<T>) {
           isActive={filters.includes(filter.title)}
           tree={filter}
           onPress={() => onFilter(filter.title)}
+          disabled={disabled}
         />
       ))}
     </View>
@@ -36,6 +38,7 @@ export function FilterTrees<T>(props: FilterTreesProps<T>) {
 
 const styles = StyleSheet.create({
   flexRow: {
+    // paddingHorizontal: globalStyles.p2.padding,
     flexDirection: 'row',
     alignItems: 'center',
   },

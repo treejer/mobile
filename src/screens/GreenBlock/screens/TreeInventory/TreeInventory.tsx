@@ -12,9 +12,7 @@ import {Tab} from 'components/Tabs/Tab';
 import {DraftList} from 'components/Draft/DraftList';
 import Spacer from 'components/Spacer';
 import {FilterTrees} from 'components/Filter/FilterTrees';
-import {useSearchValue} from 'utilities/hooks/useSearchValue';
 import {
-  handleFilterSubmittedTrees,
   notVerifiedTreesButtons,
   NotVerifiedTreeStatus,
   submittedTreesButtons,
@@ -26,12 +24,9 @@ import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useSubmittedTrees} from 'utilities/hooks/useSubmittedTrees';
-import {SearchButton} from 'screens/GreenBlock/components/SearchButton/SearchButton';
-import {SearchInInventory} from 'screens/GreenBlock/components/SearchInInventory/SearchInInventory';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
-import {Tree} from 'types';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -49,9 +44,6 @@ export type TreeInventoryProps = {
 
 export function TreeInventory(props: TreeInventoryProps) {
   const {testID, filter} = props;
-
-  const [openSearchBox, setOpenSearchBox] = useState(false);
-  const searchValue = useSearchValue();
 
   const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
 
@@ -90,20 +82,16 @@ export function TreeInventory(props: TreeInventoryProps) {
     refetchSubmittedTrees,
   } = useSubmittedTrees();
 
-  const {
-    filters: submittedTreeFilters,
-    handleSetFilter: handleSetFilterSubmittedTrees,
-    data: filteredSubmittedTrees,
-  } = useArrayFilter<SubmittedTreeStatus, Tree>({
-    defaultFilters: filter?.tab === TreeLife.Submitted && filter?.submittedStatus ? filter?.submittedStatus : [],
-    defaultData: submittedTrees,
-    customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters, treeUpdateInterval),
-    canSelectMultiple: false,
-  });
-
-  console.log(filteredSubmittedTrees?.[0]);
-
-  console.log({filteredSubmittedTrees: filteredSubmittedTrees?.length, submittedTrees: submittedTrees?.length});
+  // const {
+  //   filters: submittedTreeFilters,
+  //   handleSetFilter: handleSetFilterSubmittedTrees,
+  //   data: filteredSubmittedTrees,
+  // } = useArrayFilter<SubmittedTreeStatus, Tree>({
+  //   defaultFilters: filter?.tab === TreeLife.Submitted && filter?.submittedStatus ? filter?.submittedStatus : [],
+  //   defaultData: submittedTrees,
+  //   customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters, treeUpdateInterval),
+  //   canSelectMultiple: false,
+  // });
 
   useRefocusEffect(async () => {
     if (!submittedTreesLoading) {
@@ -124,15 +112,7 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   return (
     <SafeAreaView testID={testID} style={[globalStyles.screenView, globalStyles.fill]}>
-      {openSearchBox ? (
-        <SearchInInventory testID="search-in-inventory-cpt" {...searchValue} onClose={() => setOpenSearchBox(false)} />
-      ) : (
-        <ScreenTitle
-          testID="screen-title-cpt"
-          title={t('treeInventoryV2.titles.screen')}
-          rightContent={<SearchButton testID="search-button-cpt" onPress={() => setOpenSearchBox(true)} />}
-        />
-      )}
+      <ScreenTitle testID="screen-title-cpt" title={t('treeInventoryV2.titles.screen')} />
       <View style={globalStyles.fill}>
         <View style={globalStyles.fill}>
           <View style={globalStyles.p1}>
@@ -148,13 +128,14 @@ export function TreeInventory(props: TreeInventoryProps) {
               <FilterTrees<SubmittedTreeStatus>
                 testID="filter-submitted-trees-cpt"
                 filterList={submittedTreesButtons()}
-                filters={submittedTreeFilters}
-                onFilter={handleSetFilterSubmittedTrees}
+                filters={[]}
+                onFilter={() => {}}
+                disabled={true}
               />
               <Spacer times={6} />
               <SubmittedTreeListV2
                 testID="submitted-tree-list-v2"
-                verifiedTrees={filteredSubmittedTrees}
+                verifiedTrees={submittedTrees}
                 treeItemUI={submittedTreeItemUI}
                 setTreeItemUI={setSubmittedTreeItemUI}
                 treeUpdateInterval={treeUpdateInterval}

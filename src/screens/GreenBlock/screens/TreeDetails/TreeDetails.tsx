@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -43,6 +43,8 @@ import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useCurrentJourney as useNewCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import {useAlertModal} from 'components/Common/AlertModalProvider';
 
 interface Props {}
 
@@ -56,7 +58,10 @@ function TreeDetails(_: Props) {
   const {releaseDate, changeCheckMetaData} = useSettings();
   const {isMainnet, useV1Submission} = useConfig();
 
+  const {checkExistAnyDraftOfTree, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} =
+    useDraftedJourneys();
   const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useNewCurrentJourney();
+  const {openAlertModal, closeAlertModal} = useAlertModal();
 
   const {setNewJourney} = useCurrentJourney();
 
@@ -109,6 +114,42 @@ function TreeDetails(_: Props) {
     }
   }, []);
 
+  const handleNavigateToSubmission = useCallback(() => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.TreeSubmission_V2,
+            params: {
+              initialRouteName: Routes.SubmitTree_V2,
+            },
+          },
+        ],
+      }),
+    );
+  }, [navigation]);
+
+  const handleContinueDraftedJourney = useCallback(
+    (id: string, reset: boolean) => {
+      dispatchClearJourney();
+      if (reset) {
+        dispatchRemoveDraftedJourney({id});
+      } else {
+        dispatchSetDraftAsCurrentJourney({id});
+      }
+      closeAlertModal();
+      handleNavigateToSubmission();
+    },
+    [
+      dispatchRemoveDraftedJourney,
+      dispatchSetDraftAsCurrentJourney,
+      handleNavigateToSubmission,
+      closeAlertModal,
+      dispatchClearJourney,
+    ],
+  );
+
   const handleUpdate = () => {
     if (!treeDetails) {
       showAlert({
@@ -140,20 +181,20 @@ function TreeDetails(_: Props) {
     if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
-    dispatchClearJourney();
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2,
-            params: {
-              initialRouteName: useV1Submission ? Routes.SelectPhoto : Routes.SubmitTree_V2,
-            },
-          },
-        ],
-      }),
-    );
+    // dispatchClearJourney();
+    // navigation.dispatch(
+    //   CommonActions.reset({
+    //     index: 0,
+    //     routes: [
+    //       {
+    //         name: useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2,
+    //         params: {
+    //           initialRouteName: useV1Submission ? Routes.SelectPhoto : Routes.SubmitTree_V2,
+    //         },
+    //       },
+    //     ],
+    //   }),
+    // );
     if (useV1Submission) {
       setNewJourney({
         treeIdToUpdate: tree?.id,
@@ -165,7 +206,45 @@ function TreeDetails(_: Props) {
       });
     } else {
       if (tree?.id) {
-        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+        if (checkExistAnyDraftOfTree(tree?.id)) {
+          openAlertModal({
+            title: {
+              text: 'treeInventoryV2.existInDraft',
+              tParams: {
+                id: Hex2Dec(tree?.id).toString(),
+              },
+              props: {
+                style: styles.modalTitle,
+              },
+            },
+            buttons: [
+              {
+                text: 'reset',
+                onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
+                btnProps: {
+                  style: styles.resetBtn,
+                },
+                textProps: {
+                  style: styles.whiteText,
+                },
+              },
+              {
+                text: 'continue',
+                onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
+                btnProps: {
+                  style: styles.continueBtn,
+                },
+                textProps: {
+                  style: styles.whiteText,
+                },
+              },
+            ],
+          });
+        } else {
+          dispatchClearJourney();
+          dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+          handleNavigateToSubmission();
+        }
       }
     }
   };
@@ -374,6 +453,18 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignSelf: 'center',
+  },
+  modalTitle: {
+    fontSize: 12,
+  },
+  whiteText: {
+    color: colors.white,
+  },
+  resetBtn: {
+    backgroundColor: colors.yellow,
+  },
+  continueBtn: {
+    backgroundColor: colors.green,
   },
 });
 
