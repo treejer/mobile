@@ -12,7 +12,6 @@ export function useSubmittedTrees() {
 
   const {pendingTreeIds} = usePendingTreeIds();
 
-  console.log(pendingTreeIds);
   const {
     persistedData: submittedTrees,
     loading: submittedTreesLoading,

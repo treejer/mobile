@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "RangerTreejer",
+    "scheme": "ranger-treejer",
     "slug": "RangerTreejerV2",
     "version": "1.0.0",
     "orientation": "portrait",

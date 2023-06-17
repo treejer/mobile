@@ -157,14 +157,17 @@ function NoWallet(props: NoWalletProps) {
           provider,
           redirectURI: oauthDeepLinkUrl(provider),
         });
-        const {email, phoneNumber} = result.magic.userMetadata;
-        const country = phoneNumber ? parsePhoneNumber(phoneNumber)?.countryCallingCode : undefined;
-        console.log({email, country, phoneNumber}, 'userMetadata');
-        storeMagicToken(result.magic.idToken, {
-          email,
-          country,
-          mobile: phoneNumber,
-        });
+        if (result) {
+          const {email, phoneNumber} = result.magic.userMetadata;
+          const country = phoneNumber ? parsePhoneNumber(phoneNumber)?.countryCallingCode : undefined;
+          console.log({email, country, phoneNumber}, 'userMetadata');
+          return;
+          storeMagicToken(result.magic.idToken, {
+            email,
+            country,
+            mobile: phoneNumber,
+          });
+        }
       } catch (e: any) {
         if (e.code !== 'cancel') {
           showAlert({

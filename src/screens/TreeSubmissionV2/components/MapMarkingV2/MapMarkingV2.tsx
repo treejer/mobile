@@ -17,22 +17,23 @@ import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {SearchBox} from 'components/Map/SearchBox';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {Routes} from 'navigation/Navigation';
 
 export type MapMarkingProps = {
   testID?: string;
   userLocation?: TUserLocation | null;
   permissionHasLocation?: boolean;
+  verifyProfile?: boolean;
+  onSubmit?: (location: GeoPosition) => void;
 };
 
 export function MapMarkingV2(props: MapMarkingProps) {
-  const {permissionHasLocation = false, userLocation, testID} = props;
+  const {permissionHasLocation = false, userLocation, verifyProfile, onSubmit, testID} = props;
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [loading, setLoading] = useState(!permissionHasLocation);
   const [isInitial, setIsInitial] = useState(true);
   const [location, setLocation] = useState<GeoPosition>();
 
-  const {dispatchSelectTreeLocation} = useCurrentJourney();
+  const {journey, dispatchSelectTreeLocation} = useCurrentJourney();
   const {dispatchCreateSubmittingOfflineMap} = useOfflineMap();
 
   const camera = useRef<MapboxGL.Camera>(null);
@@ -98,23 +99,28 @@ export function MapMarkingV2(props: MapMarkingProps) {
   }, [navigation]);
 
   const handleSubmit = useCallback(async () => {
-    const coords = await map.current?.getCenter();
-    const bounds = await map.current?.getVisibleBounds();
-
-    if (coords && bounds) {
-      dispatchCreateSubmittingOfflineMap({coords, name: offlineSubmittingMapName(), bounds, areaName: ''});
-    }
-
-    if (location?.coords) {
+    if (location) {
       const submittedLocation = {
         latitude: location?.coords?.latitude,
         longitude: location?.coords?.longitude,
       };
+      if (verifyProfile) {
+        onSubmit?.(location);
+      } else if (journey) {
+        const coords = await map.current?.getCenter();
+        const bounds = await map.current?.getVisibleBounds();
 
-      dispatchSelectTreeLocation({location: submittedLocation});
-      // navigation.navigate(Routes.SubmitTree_V2);
+        if (coords && bounds) {
+          dispatchCreateSubmittingOfflineMap({coords, name: offlineSubmittingMapName(), bounds, areaName: ''});
+        }
+
+        dispatchSelectTreeLocation({location: submittedLocation});
+        // navigation.navigate(Routes.SubmitTree_V2);
+      } else {
+        onSubmit?.(location);
+      }
     }
-  }, [dispatchCreateSubmittingOfflineMap, dispatchSelectTreeLocation, location]);
+  }, [dispatchCreateSubmittingOfflineMap, dispatchSelectTreeLocation, location, onSubmit, verifyProfile]);
 
   useEffect(() => {
     const watchId = Geolocation.watchPosition(

@@ -52,13 +52,13 @@ describe('profile module', () => {
       );
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(pendingTreeIdsActions.load()),
-        'should dispatch pendingTreeIdsAction load action',
+        put(profileActions.loadSuccess(mockProfile)),
+        'should dispatch profileActions success',
       );
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(profileActions.loadSuccess(mockProfile)),
-        'should dispatch profileActions success',
+        put(pendingTreeIdsActions.load()),
+        'should dispatch pendingTreeIdsAction load action',
       );
     });
     it('watchProfile success, test net', () => {
@@ -68,13 +68,13 @@ describe('profile module', () => {
       const nextValue = {result: mockProfile, status: 200, ...mockConfig};
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(pendingTreeIdsActions.load()),
-        'should dispatch pendingTreeIdsAction load action',
+        put(profileActions.loadSuccess(mockProfile)),
+        'should dispatch profileActions success',
       );
       assert.deepEqual(
         gen.next(nextValue).value,
-        put(profileActions.loadSuccess(mockProfile)),
-        'should dispatch profileActions success',
+        put(pendingTreeIdsActions.load()),
+        'should dispatch pendingTreeIdsAction load action',
       );
     });
     it('watchProfile failure', () => {

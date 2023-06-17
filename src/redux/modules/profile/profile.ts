@@ -29,8 +29,8 @@ export function* watchProfile() {
     if (config.isMainnet) {
       yield put(changeCheckMetaData(true));
     }
-    yield put(pendingTreeIdsActions.load());
     yield put(Profile.actions.loadSuccess(res.result));
+    yield put(pendingTreeIdsActions.load());
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(Profile.actions.loadFailure(message));
@@ -111,7 +111,6 @@ export function useProfile() {
         dispatch(clearUserNonce());
         // await resetWeb3Data();
         // @logout
-        // dispatch(profileActions.resetCache());
       } catch (e) {
         console.log(e, 'e inside handleLogout');
         return Promise.reject(e);

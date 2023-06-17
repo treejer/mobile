@@ -74,6 +74,8 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const {planted, updated, assigned, current: notVerifiedTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
 
+  console.log(notVerifiedTrees.trees, 'notVerifiedTrees is here');
+
   const {
     submittedTrees,
     submittedTreesRefetching,

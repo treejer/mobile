@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {
   pendingTreeIdsActions,
@@ -9,6 +9,9 @@ import {
   watchPendingTreeIds,
 } from 'ranger-redux/modules/trees/pendingTreeIds';
 import {handleSagaFetchError} from 'utilities/helpers/fetch';
+import {getProfile} from 'ranger-redux/modules/profile/profile';
+import {mockProfile} from 'ranger-redux/modules/__test__/currentJourney/currentJourney.mock';
+import {TUserStatus} from 'webServices/profile/profile';
 
 describe('pendingTreeIds module', () => {
   it('pendingTreeIds module should be defined', () => {
@@ -34,14 +37,24 @@ describe('pendingTreeIds module', () => {
     it('watchPendingTreeIds should be defined', () => {
       expect(watchPendingTreeIds).toBeDefined();
     });
-    it('watchPendingTreeIds success', () => {
+    it('watchPendingTreeIds success, verified user', () => {
       const gen = watchPendingTreeIds();
-      gen.next();
-      gen.next({result: ['12131'], status: 200});
+      assert.deepEqual(gen.next().value, select(getProfile), 'should select profile data');
+      gen.next({...mockProfile, result: [], status: 1});
+      gen.next({result: ['12131'], status: 200, ...mockProfile});
 
       assert.deepEqual(
-        gen.next({result: ['22324'], status: 200}).value,
+        gen.next({result: ['22324'], status: 200, ...mockProfile}).value,
         put(pendingTreeIdsActions.loadSuccess(['12131', '22324'])),
+      );
+    });
+    it('watchPendingTreeIds success, not verified user', () => {
+      const gen = watchPendingTreeIds();
+      assert.deepEqual(gen.next().value, select(getProfile), 'should select profile data');
+
+      assert.deepEqual(
+        gen.next({...mockProfile, userStatus: TUserStatus.NotVerified, result: [], status: 1}).value,
+        undefined,
       );
     });
     it('watchPendingTreeIds failure', () => {

@@ -2759,7 +2759,7 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
-"@magic-ext/react-native-bare-oauth@^12.1.1":
+"@magic-ext/react-native-bare-oauth@12.1.1":
   version "12.1.1"
   resolved "https://registry.yarnpkg.com/@magic-ext/react-native-bare-oauth/-/react-native-bare-oauth-12.1.1.tgz#7db4e69b47fac579bcb05f55f86f6ed06c255293"
   integrity sha512-fjtmRlPJm6XAHmav8btUr5+UV088YvQBeRablwoxOmROQmSVRGrEMV58WBp3mfFcF02PIyTX1cHzgyZsM77bOQ==
