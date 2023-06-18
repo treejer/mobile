@@ -1,12 +1,12 @@
-import {colors} from 'constants/values';
-import globalStyles from 'constants/styles';
-
 import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import MapMarking from 'screens/TreeSubmission/components/MapMarking/MapMarking';
-import {GeoPosition} from 'react-native-geolocation-service';
-import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {GeoPosition} from 'react-native-geolocation-service';
+
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {MapMarkingV2} from 'screens/TreeSubmissionV2/components/MapMarkingV2/MapMarkingV2';
+import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
 import {MapMarker} from '../../../../../assets/icons/index';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.SelectOnMapVerifyProfile> {}
@@ -36,7 +36,7 @@ function SelectOnMapVerifyProfile(props: Props) {
     <SafeAreaView style={globalStyles.fill}>
       <View style={globalStyles.fill}>
         <View style={styles.container}>
-          <MapMarking onSubmit={handleSubmit} verifyProfile />
+          <MapMarkingV2 onSubmit={handleSubmit} verifyProfile />
         </View>
         <View pointerEvents="none" style={styles.mapMarkerWrapper}>
           <Image style={styles.mapMarker} source={MapMarker} />
