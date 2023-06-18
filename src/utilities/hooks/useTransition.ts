@@ -1,5 +1,5 @@
 function useTransition(fill?: boolean) {
-  return fill ? 1 : 0;
+  return fill ? 0.9 : 0;
 }
 
 export default useTransition;

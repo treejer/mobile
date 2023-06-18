@@ -61,6 +61,6 @@ export async function checkTreePhoto({checkMetaData, userLocation, imageCoords, 
   });
 }
 
-export function shouldUseImageCoords(imageCoords: TPoint) {
-  return imageCoords.latitude && imageCoords.longitude;
+export function shouldUseImageCoords(imageCoords: Partial<TPoint>) {
+  return imageCoords?.latitude && imageCoords?.longitude;
 }

@@ -1,17 +1,21 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Image} from 'react-native-image-crop-picker';
-import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Platform} from 'react-native';
+import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Platform, Modal} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Trans, useTranslation} from 'react-i18next';
 
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
 import {RenderIf} from 'components/Common/RenderIf';
+import WebCam from 'components/WebCam/WebCam';
 import useCamera from 'utilities/hooks/useCamera';
 import {isWeb} from 'utilities/helpers/web';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
+import getCroppedImg from 'utilities/helpers/cropImage';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
+import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
+import {PickFromGalleryButton} from 'screens/TreeSubmissionV2/components/PickFromGalleryButton/PickFromGalleryButton';
 
 export type TOnSelectTree = {
   photo: Image | File;
@@ -32,7 +36,7 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
 
   const {openCameraHook, openLibraryHook} = useCamera();
   const [showCamera, setShowCamera] = useState(false);
-  const [pickedPhoto, setPickedPhoto] = useState();
+  const [pickedPhoto, setPickedPhoto] = useState<File | null>(null);
 
   const {t} = useTranslation();
 
@@ -60,6 +64,15 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
     }
   }, [onSelect, openCameraHook]);
 
+  const handleTakePhotoWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const selectedPhoto = await getCroppedImg(image, 'file.jpeg', croppedAreaPixels, rotation);
+      setShowCamera(false);
+      onSelect({photo: selectedPhoto, fromGallery: false, imageBase64: image});
+    },
+    [onSelect],
+  );
+
   const handleOpenGallery = useCallback(
     async e => {
       try {
@@ -67,24 +80,34 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
 
         let selectedPhoto;
         let photoLocation;
-        let imageBase64;
 
         if (isWeb()) {
           setPickedPhoto(e.target.files[0]);
+          return;
         } else {
           selectedPhoto = await openLibraryHook();
-          photoLocation = {
-            latitude: selectedPhoto.exif.Latitude,
-            longitude: selectedPhoto.exif.Longitude,
-          };
+          if (selectedPhoto) {
+            photoLocation = {
+              latitude: selectedPhoto?.exif?.Latitude,
+              longitude: selectedPhoto?.exif?.Longitude,
+            };
+            onSelect({photo: selectedPhoto, fromGallery: true, photoLocation});
+          }
         }
-
-        onSelect({photo: selectedPhoto, fromGallery: true, photoLocation, imageBase64});
       } catch (e) {
         console.log(e, 'error i pick from gallery');
       }
     },
     [onSelect, openLibraryHook],
+  );
+
+  const handleSelectPhotoFromLibraryWeb = useCallback(
+    async (image, croppedAreaPixels, rotation) => {
+      const selectedPhoto = await getCroppedImg(image, pickedPhoto?.name, croppedAreaPixels, rotation);
+      setPickedPhoto(null);
+      onSelect({photo: selectedPhoto, fromGallery: true, imageBase64: image});
+    },
+    [onSelect],
   );
 
   const Wrapper = useMemo(() => (treePhoto ? ImageBackground : React.Fragment), [treePhoto]);
@@ -100,6 +123,26 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         : {},
     [treePhoto],
   );
+
+  if (showCamera) {
+    return (
+      <Modal visible>
+        <WebCam handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
+      </Modal>
+    );
+  }
+
+  if (pickedPhoto) {
+    return (
+      <Modal visible transparent style={{flex: 1}}>
+        <WebImagePickerCropper
+          imageData={pickedPhoto}
+          handleDone={handleSelectPhotoFromLibraryWeb}
+          handleDismiss={() => setPickedPhoto(null)}
+        />
+      </Modal>
+    );
+  }
 
   return (
     <Card testID={testID} style={styles.container}>
@@ -153,18 +196,7 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
               </Text>
             </TouchableOpacity>
             <Spacer times={2} />
-            <TouchableOpacity
-              testID="gallery-button"
-              style={[styles.button, {backgroundColor: treePhoto ? colors.grayDarkerOpacity : colors.grayDarker}]}
-              disabled={disabled}
-              onPress={handleOpenGallery}
-            >
-              <Icon testID="gallery-button-icon" name="photo-video" color={colors.khaki} size={18} />
-              <Spacer times={3} />
-              <Text testID="gallery-button-text" style={styles.btnText}>
-                {t('submitTreeV2.gallery')}
-              </Text>
-            </TouchableOpacity>
+            <PickFromGalleryButton hasTreePhoto={!!treePhoto} disabled={disabled} onPress={handleOpenGallery} />
           </View>
         </View>
       </Wrapper>
