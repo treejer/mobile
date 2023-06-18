@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "REACT_APP_WEB=true expo start --web",
+    "web:build": "rm -rf ./web-build && REACT_APP_WEB=true npx expo-cli build:web",
     "code-gen": "yarn run graphql-typescript-definitions --schema-path 'build/schema.json' --schema-types-path 'src/data/schema' --custom-scalars '{\"Web3Result\": {\"name\": \"Record<string, any>\"}, \"Any\": {\"name\": \"any\"}}'",
     "test": "jest --coverage",
     "ios-permissions": "npx react-native setup-ios-permissions && cd ios && pod install && cd .."

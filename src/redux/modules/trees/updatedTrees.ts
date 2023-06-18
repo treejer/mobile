@@ -11,8 +11,8 @@ import {TReduxState} from 'ranger-redux/store';
 const UpdatedTrees = new ReduxFetchState<TUpdatedTreesRes, TUpdatedTreesPayload, string>('updatedTrees');
 
 export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
+  const {filters, sort = {signer: -1, nonce: -1}, resolve, reject} = payload || {};
   try {
-    const {filters, sort = {signer: -1, nonce: -1}} = payload || {};
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.UpdatedTrees));
     const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/verification/me', {
       configUrl: 'treejerNestApiUrl',
@@ -36,10 +36,13 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
         data: [...(page === 0 || !persistedUpdatedTrees?.data ? [] : persistedUpdatedTrees?.data), ...res.result.data],
       }),
     );
+    resolve?.();
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(UpdatedTrees.actions.loadFailure(message));
     yield handleSagaFetchError(e);
+    yield Promise.reject();
+    reject?.();
   }
 }
 

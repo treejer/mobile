@@ -146,7 +146,7 @@ export function TreeInventory(props: TreeInventoryProps) {
                 loading={submittedTreesLoading}
                 refetching={submittedTreesRefetching}
               />
-              <Spacer times={6} />
+              <Spacer times={7} />
             </Tab>
             <Tab testID="notVerified-tab" style={globalStyles.fill} tab={TreeLife.NotVerified}>
               <FilterTrees<NotVerifiedTreeStatus>
@@ -171,6 +171,7 @@ export function TreeInventory(props: TreeInventoryProps) {
                 onRefetch={notVerifiedTrees.dispatchRefetch}
                 onEndReached={notVerifiedTrees.dispatchLoadMore}
               />
+              <Spacer times={7} />
             </Tab>
             <Tab testID="drafted-tab" style={globalStyles.fill} tab={TreeLife.Drafted}>
               <DraftList testID="draft-list-cpt" />

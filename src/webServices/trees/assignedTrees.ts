@@ -18,6 +18,8 @@ export type TAssignedTreesRes = PaginationRes<NotVerifiedTree>;
 export type TAssignedTreesPayload = {
   filters?: {signer: string; nonce: number};
   sort?: {signer: number; nonce: number};
+  resolve?: (value?: unknown) => void;
+  reject?: (reason?: any) => void;
 };
 export type TAssignedTreesAction = {
   type: string;

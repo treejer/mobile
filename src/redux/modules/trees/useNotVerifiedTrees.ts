@@ -6,6 +6,9 @@ import {plantedTreesActions} from './plantedTrees';
 import {updatedTreesActions} from './updatedTrees';
 import {assignedTreesActions} from './assignedTrees';
 import {PaginationName, useReduxPagination} from 'ranger-redux/modules/pagination/pagination.reducer';
+import {TPlantedTreesPayload} from 'webServices/trees/plantedTrees';
+import {TUpdatedTreesPayload} from 'webServices/trees/updatedTrees';
+import {TAssignedTreesPayload} from 'webServices/trees/assignedTrees';
 
 export function useNotVerifiedTrees(
   fetchOnMount?: boolean,
@@ -34,27 +37,37 @@ export function useNotVerifiedTrees(
     }
   }, []);
 
-  const dispatchGetPlantedTrees = useCallback(() => {
-    dispatch(plantedTreesActions.load());
-  }, [dispatch]);
+  const dispatchGetPlantedTrees = useCallback(
+    (form?: TPlantedTreesPayload) => {
+      dispatch(plantedTreesActions.load(form));
+    },
+    [dispatch],
+  );
 
-  const dispatchGetUpdatedTrees = useCallback(() => {
-    dispatch(updatedTreesActions.load());
-  }, [dispatch]);
+  const dispatchGetUpdatedTrees = useCallback(
+    (form?: TUpdatedTreesPayload) => {
+      dispatch(updatedTreesActions.load(form));
+    },
+    [dispatch],
+  );
 
-  const dispatchGetAssignedTrees = useCallback(() => {
-    dispatch(assignedTreesActions.load());
-  }, [dispatch]);
+  const dispatchGetAssignedTrees = useCallback(
+    (form?: TAssignedTreesPayload) => {
+      dispatch(assignedTreesActions.load(form));
+    },
+    [dispatch],
+  );
 
   const planted = useMemo(
     () => ({
       trees: plantedTrees,
       ...plantedTreesState,
       refetching: !!plantedTrees?.data && plantedTreesState.loading,
-      dispatchRefetch: () => {
-        plantedTreesPagination.dispatchResetPagination();
-        dispatchGetPlantedTrees();
-      },
+      dispatchRefetch: (form?: TPlantedTreesPayload) =>
+        new Promise((resolve, reject) => {
+          plantedTreesPagination.dispatchResetPagination();
+          dispatchGetPlantedTrees({...form, resolve, reject});
+        }),
       dispatchLoadMore: () => plantedTreesPagination.dispatchNextPage(plantedTreesActions.load),
       pagination: plantedTreesPagination,
     }),
@@ -66,10 +79,11 @@ export function useNotVerifiedTrees(
       trees: updatedTrees,
       ...updatedTreesState,
       refetching: !!updatedTrees?.data && updatedTreesState.loading,
-      dispatchRefetch: () => {
-        updatedTreesPagination.dispatchResetPagination();
-        dispatchGetUpdatedTrees();
-      },
+      dispatchRefetch: (form?: TUpdatedTreesPayload) =>
+        new Promise((resolve, reject) => {
+          updatedTreesPagination.dispatchResetPagination();
+          dispatchGetUpdatedTrees({...form, resolve, reject});
+        }),
       dispatchLoadMore: () => updatedTreesPagination.dispatchNextPage(updatedTreesActions.load),
       pagination: updatedTreesPagination,
     }),
@@ -81,10 +95,11 @@ export function useNotVerifiedTrees(
       trees: assignedTrees,
       ...assignedTreesState,
       refetching: !!assignedTrees?.data && assignedTreesState.loading,
-      dispatchRefetch: () => {
-        assignedTreesPagination.dispatchResetPagination();
-        dispatchGetAssignedTrees();
-      },
+      dispatchRefetch: (form?: TAssignedTreesPayload) =>
+        new Promise((resolve, reject) => {
+          assignedTreesPagination.dispatchResetPagination();
+          dispatchGetAssignedTrees({...form, resolve, reject});
+        }),
       dispatchLoadMore: () => assignedTreesPagination.dispatchNextPage(assignedTreesActions.load),
       pagination: assignedTreesPagination,
     }),

@@ -10,6 +10,7 @@ import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import Spacer from 'components/Spacer';
 import {SubmittedTreeItemV2} from 'components/TreeListV2/SubmittedTreeItemV2';
+import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
@@ -28,7 +29,7 @@ export type SubmittedTreeListV2Props = {
   treeUpdateInterval: number;
   refetching?: boolean;
   loading?: boolean;
-  onRefetch?: () => void;
+  onRefetch?: () => Promise<any>;
   onEndReached?: () => void;
 };
 
@@ -178,22 +179,24 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   const renderListWithDiffCol = useCallback(
     (col: number, testID?: string) => {
       return (
-        <FlashList<Tree>
-          testID={testID}
-          data={verifiedTrees}
-          estimatedItemSize={80}
-          renderItem={treeItemRenderItem}
-          showsVerticalScrollIndicator={false}
-          numColumns={col}
-          ItemSeparatorComponent={Spacer}
-          keyExtractor={item => `list-${item.id}`}
-          contentContainerStyle={styles.list}
-          refreshing={refetching}
-          onRefresh={onRefetch}
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.1}
-          ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
-        />
+        <PullToRefresh onRefresh={onRefetch}>
+          <FlashList<Tree>
+            testID={testID}
+            data={verifiedTrees}
+            estimatedItemSize={80}
+            renderItem={treeItemRenderItem}
+            showsVerticalScrollIndicator={false}
+            numColumns={col}
+            ItemSeparatorComponent={Spacer}
+            keyExtractor={item => `list-${item.id}`}
+            contentContainerStyle={styles.list}
+            refreshing={refetching}
+            onRefresh={onRefetch}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.1}
+            ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+          />
+        </PullToRefresh>
       );
     },
     [refetching, onRefetch, onEndReached, treeItemRenderItem, verifiedTrees],

@@ -16,6 +16,8 @@ export type TUpdatedTreesRes = PaginationRes<NotVerifiedTree>;
 export type TUpdatedTreesPayload = {
   filters?: {signer: string; nonce: number};
   sort?: {signer: number; nonce: number};
+  resolve?: (value?: unknown) => void;
+  reject?: (reason?: any) => void;
 };
 export type TUpdatedTreesAction = {
   type: string;
