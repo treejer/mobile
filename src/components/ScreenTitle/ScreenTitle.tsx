@@ -3,11 +3,13 @@ import {ScreenTitleWithoutNavigation} from 'components/ScreenTitle/ScreenTitleWi
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from 'navigation/index';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
+import {TextStyle} from 'react-native';
 
 export type TScreenTitle = {
   testID?: string;
   goBack?: boolean;
   title?: string;
+  textStyle?: TextStyle;
   rightContent?: React.ReactElement;
 };
 

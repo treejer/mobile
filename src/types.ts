@@ -7,6 +7,14 @@ import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/he
 
 export type Tree = TreeDetailQueryQueryData.Tree;
 export type TreeInList = PlanterTreesQueryQueryPartialData.Trees;
+
+export enum TreeStatus {
+  PENDING = 1,
+  VERIFIED = 2,
+  REJECTED = 3,
+  DELETE = 4,
+}
+
 export type NotVerifiedTree = {
   _id: string;
   signer: string;
@@ -15,7 +23,7 @@ export type NotVerifiedTree = {
   birthDate?: number;
   countryCode?: number;
   treeId?: number;
-  status: number;
+  status: TreeStatus;
   createdAt: string;
   updatedAt: string;
 };

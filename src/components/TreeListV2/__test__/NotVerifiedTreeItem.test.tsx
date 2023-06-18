@@ -79,9 +79,12 @@ describe('NotVerifiedTreeItem component', () => {
       const createdAtDateLabel = queryElementByTestId('createdAt-date-text');
       const createdAtDate = queryElementByTestId('date-text-createdAt');
       const treeName = getElementByTestId('tree-name');
+      const rejectedIcon = getElementByTestId('rejected-icon');
 
       expect(treeName).toBeTruthy();
       expect(treeName.props.children).toBe(notVerifiedTreesMock[1].treeId);
+      expect(rejectedIcon).toBeTruthy();
+      expect(rejectedIcon.props.name).toBe('close');
 
       expect(nurseryIcon).toBeTruthy();
       expect(treeLocationImage).toBeFalsy();

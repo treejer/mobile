@@ -18,7 +18,7 @@ export const notVerifiedTreesMock = [
     countryCode: 2,
     treeId: 5,
     signature: 'string',
-    status: 2,
+    status: 3,
     createdAt: 'string',
     updatedAt: 'string',
   },

@@ -152,16 +152,24 @@ function NoWallet(props: NoWalletProps) {
   const handleConnectWithOauth = useCallback(
     async (provider: string) => {
       try {
-        // @ts-ignore
-        const result: OAuthRedirectResult = await magic.oauth.loginWithPopup({
-          provider,
-          redirectURI: oauthDeepLinkUrl(provider),
-        });
+        let result: OAuthRedirectResult;
+        if (isWeb()) {
+          // @ts-ignore
+          result = await magic.oauth.loginWithRedirect({
+            provider,
+            redirectURI: oauthDeepLinkUrl(provider),
+          });
+        } else {
+          // @ts-ignore
+          result = await magic.oauth.loginWithPopup({
+            provider,
+            redirectURI: oauthDeepLinkUrl(provider),
+          });
+        }
         if (result) {
           const {email, phoneNumber} = result.magic.userMetadata;
           const country = phoneNumber ? parsePhoneNumber(phoneNumber)?.countryCallingCode : undefined;
           console.log({email, country, phoneNumber}, 'userMetadata');
-          return;
           storeMagicToken(result.magic.idToken, {
             email,
             country,

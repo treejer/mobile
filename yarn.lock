@@ -2759,6 +2759,13 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
+"@magic-ext/oauth@^11.4.0":
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/@magic-ext/oauth/-/oauth-11.4.0.tgz#a14df3195d3936c5626a21efa55113b0806ff555"
+  integrity sha512-BDgQolLq6ck5JkFFH0eIs81NOaMQYmr/p4wBrRdxwBBIQtYg3FF5qLPsOoppdEO7BifNhrEKKWkyNzH//Eafmw==
+  dependencies:
+    "@magic-sdk/types" "^15.4.0"
+
 "@magic-ext/react-native-bare-oauth@12.1.1":
   version "12.1.1"
   resolved "https://registry.yarnpkg.com/@magic-ext/react-native-bare-oauth/-/react-native-bare-oauth-12.1.1.tgz#7db4e69b47fac579bcb05f55f86f6ed06c255293"
@@ -2830,6 +2837,11 @@
   version "15.1.1"
   resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-15.1.1.tgz#2aeb1079ee9ee6849d8e8920bd334b4784901c7c"
   integrity sha512-l6Iz2PtMnZOZEMgBcmTb0t6KYij10E8gi2ByzvqboWx8sTKKIqvFPMq24kwB/O13h7E2QkCbmUE0THJLiRFGyg==
+
+"@magic-sdk/types@^15.4.0":
+  version "15.4.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-15.4.0.tgz#ce9bdca28f414344075b3e2e0a1b05b15cd98867"
+  integrity sha512-gnkSCOrVcZ1vPbB5wdCKAbfe1EGWPfMFW9PpjwJet9B9EGkcksv+/irknBcSMBqx8tDJU/+nXt1B8AE4Iq+2RQ==
 
 "@mapbox/geo-viewport@>=0.4.0":
   version "0.5.0"

@@ -1,10 +1,10 @@
 import React, {useCallback, useMemo} from 'react';
-import {View, Text, TouchableOpacity, Linking, Image, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import {Dimensions, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 
-import {GreenBlockRouteParamList} from 'types';
+import {GreenBlockRouteParamList, TreeStatus} from 'types';
 import {mapboxPrivateToken} from 'services/config';
 import {colors} from 'constants/values';
 import globalStyles, {space} from 'constants/styles';
@@ -90,7 +90,13 @@ export function NotVerifiedTreeDetails() {
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <ScreenTitle testID="screen-title-cpt" goBack rightContent={<Avatar size={40} type="active" />} />
+      <ScreenTitle
+        testID="screen-title-cpt"
+        title={tree?.status === TreeStatus.REJECTED ? t('notVerifiedTreeDetails.rejected') : undefined}
+        textStyle={{color: colors.red}}
+        goBack
+        rightContent={<Avatar size={40} type="active" />}
+      />
       <ScrollView showsVerticalScrollIndicator={false} style={[globalStyles.screenView, globalStyles.fill]}>
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
           <View style={globalStyles.alignItemsCenter}>

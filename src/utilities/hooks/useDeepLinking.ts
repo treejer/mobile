@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {EmitterSubscription} from 'react-native/Libraries/vendor/emitter/EventEmitter';
 
 import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
+import {isWeb} from 'utilities/helpers/web';
 
 export function useInitialDeepLinking() {
   useEffect(() => {
@@ -128,5 +129,8 @@ export function convertUrlParams(url: string) {
 }
 
 export function oauthDeepLinkUrl(provider: string): string {
+  if (isWeb()) {
+    return isProd ? rangerUrl : 'http://localhost:19006/login';
+  }
   return `${deepLinkingUriSchema}oauth/${provider}`;
 }

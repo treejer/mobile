@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TextStyle, TouchableOpacity, View} from 'react-native';
 import {ChevronLeft} from 'components/Icons';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
@@ -9,11 +9,12 @@ export type TScreenTitleWithoutNavigation = {
   goBack?: boolean;
   handleGoBack?: () => void;
   title?: string;
+  textStyle?: TextStyle;
   rightContent?: React.ReactElement;
 };
 
 export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigation) {
-  const {testID, goBack, title, rightContent, handleGoBack} = props;
+  const {testID, goBack, title, textStyle, rightContent, handleGoBack} = props;
 
   return (
     <View testID={testID} style={styles.container}>
@@ -29,7 +30,7 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
       )}
       {title && (
         <View style={{flex: 4, justifyContent: 'center'}}>
-          <Text testID="screen-title-text" style={[globalStyles.textCenter, styles.title]}>
+          <Text testID="screen-title-text" style={[globalStyles.textCenter, styles.title, textStyle]}>
             {title}
           </Text>
         </View>

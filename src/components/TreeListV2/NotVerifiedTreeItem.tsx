@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
-import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
-import {NotVerifiedTree} from 'types';
+import {NotVerifiedTree, TreeStatus} from 'types';
 import {mapboxPrivateToken} from 'services/config';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -13,6 +13,7 @@ import {RenderIf} from 'components/Common/RenderIf';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {TreeImage} from '../../../assets/icons';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export type NotVerifiedTreeItemProps = {
   testID?: string;
@@ -60,6 +61,15 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
         <View
           style={withDetail ? [styles.treeImageContainer, hasLocation ? styles.centerTreeImage : undefined] : undefined}
         >
+          <RenderIf condition={tree?.status === TreeStatus.REJECTED}>
+            <Icon
+              testID="rejected-icon"
+              name="close"
+              style={[styles.rejectedIcon, {top: withDetail ? 12 : 5}]}
+              size={28}
+              color={colors.red}
+            />
+          </RenderIf>
           {treeSpecs.nursery ? (
             <View testID="nursery-icon" style={styles.treesWrapper}>
               <View style={styles.trees}>
@@ -144,6 +154,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
   treeImageContainer: {
+    position: 'relative',
     marginLeft: -8,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -170,5 +181,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+  },
+  rejectedIcon: {
+    position: 'absolute',
+    left: 5,
+    zIndex: 9999,
   },
 });

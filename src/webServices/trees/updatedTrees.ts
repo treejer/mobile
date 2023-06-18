@@ -1,5 +1,5 @@
 import {PaginationRes} from 'webServices/pagination/pagination';
-import {NotVerifiedTree} from 'types';
+import {NotVerifiedTree, TreeStatus} from 'types';
 
 export type UpdatedTree = {
   _id: string;
@@ -7,7 +7,7 @@ export type UpdatedTree = {
   nonce: number;
   treeId: number;
   treeSpecs: string;
-  status: number;
+  status: TreeStatus;
   createdAt: string;
   updatedAt: string;
 };

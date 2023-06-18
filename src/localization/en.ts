@@ -631,6 +631,7 @@ export const en = {
     photo: 'Photo',
     photos: 'Photos',
     coords: 'lat: {{lat}}\n long: {{long}}',
+    rejected: 'Rejected',
   },
   submittedFilters: {
     Verified: 'Verified',
