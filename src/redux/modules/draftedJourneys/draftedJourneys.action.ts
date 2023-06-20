@@ -6,27 +6,31 @@ export type DraftJourneyArgs = {
   draftType: DraftType;
   id: string;
   name?: string;
+  journeyImageB64?: string;
 };
 export const DRAFT_JOURNEY = 'DRAFT_JOURNEY';
-export const draftJourney = ({journey, name, draftType, id}: DraftJourneyArgs) => ({
+export const draftJourney = ({journey, name, draftType, id, journeyImageB64}: DraftJourneyArgs) => ({
   type: DRAFT_JOURNEY,
   journey,
   name,
   draftType,
   id,
+  journeyImageB64,
 });
 
 export type SaveDraftedJourneyArgs = {
   journey: TCurrentJourney;
   name?: string;
   draftType?: DraftType;
+  journeyImageB64?: string;
 };
 export const SAVE_DRAFTED_JOURNEY = 'SAVE_DRAFTED_JOURNEY';
-export const saveDraftedJourney = ({journey, name, draftType}: SaveDraftedJourneyArgs) => ({
+export const saveDraftedJourney = ({journey, name, draftType, journeyImageB64}: SaveDraftedJourneyArgs) => ({
   type: SAVE_DRAFTED_JOURNEY,
   journey,
   name,
   draftType,
+  journeyImageB64,
 });
 
 export type RemoveDraftedJourneyArgs = {
@@ -44,6 +48,26 @@ export const clearDraftedJourneys = () => ({
 });
 
 // * saga watcher actions
+
+export type DraftJourneyWatcherPayload = Omit<DraftJourneyArgs, 'journeyImageB64'>;
+export const DRAFT_JOURNEY_WATCHER = 'DRAFT_JOURNEY_WATCHER';
+export const draftJourneyWatcher = ({journey, draftType, id, name}: DraftJourneyWatcherPayload) => ({
+  type: DRAFT_JOURNEY_WATCHER,
+  journey,
+  draftType,
+  id,
+  name,
+});
+
+export type SaveDraftedJourneyWatcherPayload = Omit<SaveDraftedJourneyArgs, 'journeyImageB64'>;
+export const SAVE_DRAFTED_JOURNEY_WATCHER = 'SAVE_DRAFTED_JOURNEY_WATCHER';
+export const saveDraftedJourneyWatcher = ({journey, draftType, name}: SaveDraftedJourneyWatcherPayload) => ({
+  type: SAVE_DRAFTED_JOURNEY_WATCHER,
+  journey,
+  draftType,
+  name,
+});
+
 export type SetAsCurrentJourneyWatcherPayload = {
   id: string;
 };

@@ -570,6 +570,7 @@ export const en = {
     toast: {
       drafted: '{{name}} drafted successfully.',
       draftSaved: '{{name}} draft updated & saved successfully.',
+      draftNotFound: 'Selected draft data not found please remove it from your drafts.',
     },
     buttons: {
       grantAll: 'Grant All Permissions',

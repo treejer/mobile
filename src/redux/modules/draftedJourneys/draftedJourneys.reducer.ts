@@ -12,12 +12,13 @@ export enum DraftType {
 }
 
 export type DraftedJourney = {
-  journey: TCurrentJourney;
+  journey: string;
   draftType: DraftType;
   id: string;
-  name?: string;
   createdAt: Date;
   updatedAt: Date;
+  name?: string;
+  journeyImageB64?: string;
 };
 
 export type TDraftedJourneysState = {
@@ -35,6 +36,7 @@ export type TDraftedJourneysAction = {
   journey?: TCurrentJourney;
   id?: string;
   drafts?: DraftedJourney[];
+  journeyImageB64?: string;
 };
 
 export const draftedJourneysReducer = (
@@ -43,13 +45,15 @@ export const draftedJourneysReducer = (
 ) => {
   switch (action.type) {
     case actionsList.DRAFT_JOURNEY:
+      console.log(action, 'action is hehrehrehrehh');
       const newDraft = {
         id: action.id,
         createdAt: new Date(action?.id || ''),
         updatedAt: new Date(action?.id || ''),
-        journey: action.journey,
+        journey: JSON.stringify(action.journey),
         name: action.name || action.id,
         draftType: action.draftType,
+        journeyImageB64: action.journeyImageB64 || undefined,
       };
 
       navigateToGreenBlock({isNew: true, name: newDraft?.name});
@@ -63,12 +67,13 @@ export const draftedJourneysReducer = (
       };
     case actionsList.SAVE_DRAFTED_JOURNEY:
       const cloneDrafts = [...state.drafts];
-      const selectedDraftIndex = cloneDrafts.findIndex(draft => draft.id === action.journey?.draftId);
+      const selectedDraftIndex = cloneDrafts.findIndex(draft => draft.id === action?.journey?.draftId);
       const selectedDraft = {...cloneDrafts[selectedDraftIndex]};
-      selectedDraft.journey = action.journey || selectedDraft.journey;
-      selectedDraft.name = action.name || selectedDraft.name;
-      selectedDraft.draftType = action.draftType || selectedDraft.draftType;
+      selectedDraft.journey = action?.journey ? JSON.stringify(action.journey) : selectedDraft.journey;
+      selectedDraft.name = action?.name || selectedDraft.name;
+      selectedDraft.draftType = action?.draftType || selectedDraft.draftType;
       selectedDraft.updatedAt = new Date();
+      selectedDraft.journeyImageB64 = action.journeyImageB64 || selectedDraft.journeyImageB64;
       cloneDrafts[selectedDraftIndex] = selectedDraft;
 
       navigateToGreenBlock({isNew: false, name: selectedDraft?.name});
@@ -87,8 +92,8 @@ export const useDraftedJourneys = () => {
   const dispatch = useAppDispatch();
 
   const dispatchDraftJourney = useCallback(
-    (args: actionsList.DraftJourneyArgs) => {
-      dispatch(actionsList.draftJourney(args));
+    (args: actionsList.DraftJourneyWatcherPayload) => {
+      dispatch(actionsList.draftJourneyWatcher(args));
     },
     [dispatch],
   );
@@ -101,8 +106,8 @@ export const useDraftedJourneys = () => {
   );
 
   const dispatchSaveDraftedJourney = useCallback(
-    (args: actionsList.SaveDraftedJourneyArgs) => {
-      dispatch(actionsList.saveDraftedJourney(args));
+    (args: actionsList.SaveDraftedJourneyWatcherPayload) => {
+      dispatch(actionsList.saveDraftedJourneyWatcher(args));
     },
     [dispatch],
   );

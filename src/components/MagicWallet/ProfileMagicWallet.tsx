@@ -34,7 +34,7 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
       Clipboard.setString(wallet);
       showAlert({message: 'myProfile.copied', mode: AlertMode.Success, alertOptions: {translate: true}});
     }
-  }, [toast, wallet]);
+  }, [wallet]);
 
   return (
     <Card style={styles.container}>

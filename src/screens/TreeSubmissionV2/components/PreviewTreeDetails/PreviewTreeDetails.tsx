@@ -18,7 +18,6 @@ import {colors} from 'constants/values';
 import globalStyles, {space} from 'constants/styles';
 import {mapboxPrivateToken} from 'services/config';
 import {isWeb} from 'utilities/helpers/web';
-import {shortenedString} from 'utilities/helpers/shortenedString';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
@@ -65,8 +64,6 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
 
   const treeSpecs = useMemo(() => treeDetails?.treeSpecsEntity, [treeDetails?.treeSpecsEntity]);
 
-  console.log(treeSpecs?.updates);
-
   const updates = useMemo(
     () =>
       typeof treeSpecs?.updates != 'undefined' && treeSpecs?.updates != '' && treeSpecs?.updates != null
@@ -74,8 +71,6 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
         : [{preview: currentJourney.photo}],
     [treeSpecs?.updates, currentJourney.photo, currentJourney.isUpdate, currentJourney.treeIdToPlant],
   );
-
-  console.log(updates, 'updates');
 
   const updatesCount = useMemo(() => updates?.length, [updates?.length]);
 
@@ -116,7 +111,14 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
       propagateSwipe
       style={{marginBottom: 0, marginHorizontal: 0, marginTop: 8 * 12}}
     >
-      <View testID="modal-gesture" style={[globalStyles.screenView, globalStyles.fill, {borderRadius: 20}]}>
+      <View
+        testID="modal-gesture"
+        style={[
+          globalStyles.screenView,
+          globalStyles.fill,
+          {borderRadius: 20, width: '100%', maxWidth: 767, margin: 'auto'},
+        ]}
+      >
         <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter, {paddingVertical: 4}]}>
           <View style={{width: 48, height: 8, backgroundColor: colors.green, borderRadius: 20}} />
         </View>

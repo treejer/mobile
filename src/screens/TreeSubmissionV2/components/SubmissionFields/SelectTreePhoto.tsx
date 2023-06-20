@@ -117,7 +117,12 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
         ? {
             testID: 'select-tree-photo-bg',
             // @ts-ignore
-            source: treePhoto?.hasOwnProperty('path') ? {uri: treePhoto?.path} : treePhoto,
+            source: isWeb()
+              ? URL.createObjectURL(treePhoto as Blob)
+              : treePhoto?.hasOwnProperty('path')
+              ? // @ts-ignore
+                {uri: treePhoto?.path}
+              : treePhoto,
             imageStyle: styles.bgStyle,
           }
         : {},

@@ -204,11 +204,11 @@ export function* watchTransaction({transaction}: TAction) {
     yield put(cancelTransaction());
     yield put(getBalance());
 
-    toast.show('transfer.success.title', {type: AlertMode.Success, translate: true});
+    toast?.show('transfer.success.title', {type: AlertMode.Success, translate: true});
   } catch (e: any) {
     yield put(cancelTransaction());
     yield put(getBalance());
-    toast.show?.(e.message, {
+    toast?.show?.(e.message, {
       type: AlertMode.Error,
     });
   }
@@ -233,11 +233,11 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
       yield put(transactionFee({fee}));
     } else {
       yield put(cancelTransaction());
-      toast.show?.('transfer.error.fee', {type: AlertMode.Error, translate: true});
+      toast?.show?.('transfer.error.fee', {type: AlertMode.Error, translate: true});
     }
   } catch (e: any) {
     console.log(e.message);
-    toast.show?.(`transfer.error.${web3Error(e).code}`, {type: AlertMode.Error, translate: true});
+    toast?.show?.(`transfer.error.${web3Error(e).code}`, {type: AlertMode.Error, translate: true});
     yield put(cancelTransaction());
   }
 }

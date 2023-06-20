@@ -62,14 +62,14 @@ export function CreateModel(props: CreateModelProps) {
           useBiconomy,
         );
         console.log(receipt.transactionHash, 'create modal transaction hash');
-        toast.show('createModel.success', {
+        toast?.show('createModel.success', {
           type: AlertMode.Success,
           translate: true,
         });
         navigation.navigate(Routes.SelectModels);
       } catch (e: any) {
         console.log(e, 'error is here');
-        toast.show('createModel.failed', {
+        toast?.show('createModel.failed', {
           type: AlertMode.Error,
           translate: true,
         });

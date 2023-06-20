@@ -1,9 +1,10 @@
 import React, {useMemo, useRef, useState} from 'react';
 import {Image, TouchableOpacity, View} from 'react-native';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+
+import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {ChevronLeft, ChevronRight} from 'components/Icons';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {colors} from 'constants/values';
 
 export type TreePhotosProps = {
   testID?: string;
@@ -46,6 +47,7 @@ export function TreePhotos(props: TreePhotosProps) {
           ref={sliderRef}
           data={updates}
           renderItem={({item: update}) => {
+            console.log(update?.preview, 'update.preiwvew');
             return (
               <Image
                 style={{

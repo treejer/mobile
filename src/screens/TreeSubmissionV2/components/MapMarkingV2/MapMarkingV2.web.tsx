@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
@@ -26,7 +26,7 @@ interface MapMarkingProps {
   onSubmit?: (location: Partial<GeoPosition>) => void;
   verifyProfile?: boolean;
 }
-export default function MapMarkingV2(props: MapMarkingProps) {
+export function MapMarkingV2(props: MapMarkingProps) {
   const {onSubmit, userLocation, verifyProfile, permissionHasLocation = false} = props;
 
   const map = useRef<any>(null);

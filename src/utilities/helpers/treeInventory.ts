@@ -90,7 +90,6 @@ export function isUpdatePended(tree?: Tree): boolean {
 export function diffUpdateTime(tree?: Tree, treeUpdateInterval?: number | string): number {
   const differUpdateTime =
     Number(tree?.plantDate) + Number(((tree?.treeStatus as any) || 0) * 3600 + Number(treeUpdateInterval));
-  console.log({differUpdateTime});
   return currentTimestamp() - differUpdateTime;
   // if (return < 0) {Last update is pending} else {can update}
 }

@@ -207,7 +207,7 @@ export function MoreDetail(props: TMoreDetailProps) {
     if (txHash) {
       Clipboard.setString(txHash);
     }
-    toast.show('myProfile.copied', {type: AlertMode.Success, translate: true});
+    toast?.show('myProfile.copied', {type: AlertMode.Success, translate: true});
   }, [toast, txHash]);
 
   const handleOpenInBrowser = useCallback(async () => {

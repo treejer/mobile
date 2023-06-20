@@ -25,7 +25,7 @@ export function useInitialDeepLinking() {
     const listener = Linking.addEventListener('url', onReceiveURL);
 
     return () => {
-      listener.remove();
+      listener?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

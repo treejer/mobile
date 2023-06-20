@@ -1,11 +1,9 @@
 import React, {useEffect} from 'react';
 import {Route, NavigationProp} from '@react-navigation/native';
-import {useQuery} from '@apollo/client';
 import {createStackNavigator, StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 
 import {Routes} from 'navigation/index';
 import {TreeSubmissionRouteParamList} from 'types';
-import {useCurrentJourney} from 'services/currentJourney';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {isWeb} from 'utilities/helpers/web';
@@ -14,9 +12,6 @@ import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
 import {CheckOfflineMaps} from 'screens/TreeSubmission/components/CheckPermissions/CheckOfflineMaps';
 import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
-import TreeDetailQuery, {
-  TreeDetailQueryQueryData,
-} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {SelectOnMapV2} from 'screens/TreeSubmissionV2/screens/SelectOnMapV2/SelectOnMapV2';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
@@ -43,6 +38,19 @@ function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
 
   const {packs} = useOfflineMap();
   const isConnected = useNetInfoConnected();
+  // const {journey} = useCurrentJourney();
+  //
+  // useEffect(() => {
+  //   if (initRouteName === Routes.SelectPlantType_V2) return;
+  //   if (!journey.isUpdate || !journey.isSingle || !journey.isNursery || !journey.treeIdToPlant) {
+  //     navigation.dispatch(
+  //       CommonActions.reset({
+  //         index: 0,
+  //         routes: [{name: Routes.SelectPlantType_V2}],
+  //       }),
+  //     );
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType_V2) {

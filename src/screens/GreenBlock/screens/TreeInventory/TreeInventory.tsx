@@ -115,8 +115,8 @@ export function TreeInventory(props: TreeInventoryProps) {
   return (
     <SafeAreaView testID={testID} style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle testID="screen-title-cpt" title={t('treeInventoryV2.titles.screen')} />
-      <View style={globalStyles.fill}>
-        <View style={globalStyles.fill}>
+      <View style={[globalStyles.fill, globalStyles.alignItemsCenter]}>
+        <View style={[globalStyles.fill, {width: '100%', maxWidth: 468}]}>
           <View style={globalStyles.p1}>
             <FilterTabBar<TreeLife>
               testID="filter-tab-cpt"

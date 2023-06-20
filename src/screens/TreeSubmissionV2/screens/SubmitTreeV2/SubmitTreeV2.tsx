@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -7,10 +7,11 @@ import {CommonActions, useNavigation} from '@react-navigation/native';
 import {Routes} from 'navigation/Navigation';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
+import {isWeb} from 'utilities/helpers/web';
+import {Hex2Dec} from 'utilities/helpers/hex';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import {Hex2Dec} from 'utilities/helpers/hex';
 import {DraftJourneyModal} from 'screens/TreeSubmissionV2/components/DraftJourneyModal/DraftJourneyModal';
 import {SubmissionButtons} from 'screens/TreeSubmissionV2/components/SubmissionButtons/SubmissionButtons';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
@@ -55,6 +56,17 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   const navigation = useNavigation<any>();
   const {t} = useTranslation();
+
+  useEffect(() => {
+    if (typeof journey.isSingle === 'undefined' && typeof journey.isUpdate === 'undefined') {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: Routes.SelectPlantType_V2}],
+        }),
+      );
+    }
+  }, []);
 
   const handleSelectPhoto = useCallback(
     (photoArgs: TOnSelectTree) => {
@@ -173,7 +185,8 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
       />
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
         <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
-          <View style={[globalStyles.p1, globalStyles.pt1]}>
+          <View style={[globalStyles.p1, globalStyles.pt1, styles.webWidth]}>
+            {isWeb() ? <Spacer /> : null}
             <CheckPermissionsV2
               testID="check-permissions-box"
               lockSettings={canSubmit}
@@ -223,7 +236,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
           </View>
         </ScrollView>
         <RenderIf condition={journey?.canDraft || plantTreePermissions.cantProceed}>
-          <View style={[globalStyles.p1, globalStyles.pt1]}>
+          <View style={[globalStyles.p1, globalStyles.pt1, styles.webWidth]}>
             {journey.submitLoading ? (
               <View style={[globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
                 <ActivityIndicator
@@ -290,5 +303,10 @@ const styles = StyleSheet.create({
   },
   loader: {
     transform: [{scale: 2}],
+  },
+  webWidth: {
+    width: '100%',
+    maxWidth: isWeb() ? 468 : undefined,
+    margin: 'auto',
   },
 });

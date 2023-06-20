@@ -33,8 +33,18 @@ const config = {
         [Routes.GreenBlock]: {
           screens: {
             [Routes.TreeList]: 'trees',
+            [Routes.TreeInventory_V2]: 'tree-inventory',
             [Routes.TreeDetails]: {
-              path: 'trees/:tree_id/:tree',
+              path: 'tree-inventory/submitted/:tree_id/:tree',
+              parse: {
+                tree: (tree: any) => (tree ? JSON.parse(tree) : ''),
+              },
+              stringify: {
+                tree: () => '',
+              },
+            },
+            [Routes.NotVerifiedTreeDetails]: {
+              path: 'tree-inventory/not-verified/:tree_id/:tree',
               parse: {
                 tree: (tree: any) => (tree ? JSON.parse(tree) : ''),
               },
@@ -45,14 +55,21 @@ const config = {
           },
         },
         [Routes.MyProfile]: 'profile',
-        [Routes.TreeSubmission]: {
+        // [Routes.TreeSubmission]: {
+        //   screens: {
+        //     [Routes.SelectPlantType]: 'tree-submission/type',
+        //     [Routes.SelectPhoto]: 'tree-submission/photo',
+        //     [Routes.SelectOnMap]: 'tree-submission/location',
+        //     [Routes.SubmitTree]: 'tree-submission/submit',
+        //     [Routes.SelectModels]: 'tree-submission/models',
+        //     [Routes.CreateModel]: 'tree-submission/create-model',
+        //   },
+        // },
+        [Routes.TreeSubmission_V2]: {
           screens: {
-            [Routes.SelectPlantType]: 'tree-submission/type',
-            [Routes.SelectPhoto]: 'tree-submission/photo',
-            [Routes.SelectOnMap]: 'tree-submission/location',
-            [Routes.SubmitTree]: 'tree-submission/submit',
-            [Routes.SelectModels]: 'tree-submission/models',
-            [Routes.CreateModel]: 'tree-submission/create-model',
+            [Routes.SelectPlantType_V2]: 'tree-submission/type',
+            [Routes.SubmitTree_V2]: 'tree-submission/submit',
+            [Routes.SelectOnMap_V2]: 'tree-submission/map',
           },
         },
         [Routes.Withdraw]: {

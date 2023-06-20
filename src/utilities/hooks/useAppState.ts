@@ -10,7 +10,7 @@ export function useAppState() {
     });
 
     return () => {
-      listener.remove();
+      listener?.remove();
     };
   }, []);
 

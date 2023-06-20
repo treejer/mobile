@@ -26,7 +26,7 @@ export function FilterTreeButton<T>(props: FilterTreeButtonProps<T>) {
       {/* @ts-ignore */}
       <DropShadow
         testID="drop-shadow"
-        style={isActive ? stylesToOneObject([styles.shadow, {shadowColor: tree.color}]) : undefined}
+        style={isActive ? stylesToOneObject([styles.shadow, {shadowColor: tree.color, borderRadius: 8}]) : undefined}
       >
         <TouchableOpacity
           testID="filter-tree-button-image-container"
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   count: {
+    zIndex: 9,
     fontSize: 18,
     fontWeight: '600',
   },

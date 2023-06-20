@@ -35,7 +35,7 @@ export function ChatButton() {
         await handleOpenLink(chatItem);
       }
     } catch (e: any) {
-      toast.show(e.message, {type: AlertMode.Error});
+      toast?.show(e.message, {type: AlertMode.Error});
     }
   };
 

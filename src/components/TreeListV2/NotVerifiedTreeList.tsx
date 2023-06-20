@@ -1,7 +1,6 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View, FlatList, ListRenderItemInfo} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {colors} from 'constants/values';
@@ -37,7 +36,7 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
   const handleNavigate = useCallback(
     (tree: NotVerifiedTree) => {
       //@ts-ignore
-      navigation.navigate(Routes.NotVerifiedTreeDetails, {tree});
+      navigation.navigate(Routes.NotVerifiedTreeDetails, {tree, tree_id: tree.treeId || tree.nonce});
     },
     [navigation],
   );
@@ -63,15 +62,14 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
     (col: number, testID?: string) => {
       return (
         <PullToRefresh onRefresh={onRefetch}>
-          <FlashList<NotVerifiedTree>
+          <FlatList<NotVerifiedTree>
             testID={testID}
             data={notVerifiedTrees}
-            estimatedItemSize={80}
             renderItem={treeItemRenderItem}
             showsVerticalScrollIndicator={false}
             numColumns={col}
             ItemSeparatorComponent={Spacer}
-            keyExtractor={item => `list-${item._id}`}
+            keyExtractor={(item, index) => `list-${item._id}-${col}-${index}`}
             contentContainerStyle={styles.list}
             refreshing={refetching}
             onRefresh={onRefetch}

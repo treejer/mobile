@@ -23,9 +23,11 @@ export function PickFromGalleryButton(props: PickFromGalleryButtonProps) {
         borderRadius: 50,
         width: 120,
         height: 32,
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        cursor: 'pointer',
       }}
       htmlFor="inputFileV2"
     >

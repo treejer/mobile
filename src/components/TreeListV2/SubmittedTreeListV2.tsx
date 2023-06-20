@@ -1,6 +1,5 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {FlashList, ListRenderItemInfo} from '@shopify/flash-list';
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View, FlatList, ListRenderItemInfo} from 'react-native';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 
@@ -180,15 +179,14 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
     (col: number, testID?: string) => {
       return (
         <PullToRefresh onRefresh={onRefetch}>
-          <FlashList<Tree>
+          <FlatList<Tree>
             testID={testID}
             data={verifiedTrees}
-            estimatedItemSize={80}
             renderItem={treeItemRenderItem}
             showsVerticalScrollIndicator={false}
             numColumns={col}
             ItemSeparatorComponent={Spacer}
-            keyExtractor={item => `list-${item.id}`}
+            keyExtractor={(item, index) => `list-${item.id}-${col}-${index}`}
             contentContainerStyle={styles.list}
             refreshing={refetching}
             onRefresh={onRefetch}

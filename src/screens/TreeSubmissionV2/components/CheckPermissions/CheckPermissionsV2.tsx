@@ -7,7 +7,6 @@ import Animated, {useAnimatedStyle, useSharedValue, withTiming} from 'react-nati
 
 import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {PermissionItemV2, TPermissionItem} from 'components/CheckingPermissions/PermissionItemV2';
-import {isWeb} from 'utilities/helpers/web';
 import Card from 'components/Card';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
@@ -16,7 +15,7 @@ import {Hr} from 'components/Common/Hr';
 import {permissionsList} from 'utilities/helpers/permissionsList';
 import {SubmissionSettings} from 'components/SubmissionSettings/SubmissionSettings';
 
-const AnimatedView = isWeb() ? View : Animated.createAnimatedComponent(View);
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 export type TCheckPermissionsProps = {
   testID?: string;
