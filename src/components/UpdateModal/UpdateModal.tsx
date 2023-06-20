@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {colors} from 'constants/values';
 import GooglePlay from 'react-native-vector-icons/Ionicons';
 import {Image, Linking, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
@@ -8,7 +8,7 @@ import globalStyles from 'constants/styles';
 import {useTranslation} from 'react-i18next';
 import {googlePlayUrl} from 'services/config';
 import {useQuery} from '@apollo/client';
-import SettingsQuery, {SettingsQueryData, SettingsQueryPartialData} from 'services/graphql/Settings.graphql';
+import SettingsQuery, {SettingsQueryData} from 'services/graphql/Settings.graphql';
 import {version} from '../../../package.json';
 
 function versionToNumber(versionWithDot: string) {

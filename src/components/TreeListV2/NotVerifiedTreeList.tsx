@@ -1,9 +1,18 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View, FlatList, ListRenderItemInfo} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  FlatList,
+  ListRenderItemInfo,
+  RefreshControl,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {colors} from 'constants/values';
+import {isWeb} from 'utilities/helpers/web';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import {Tabs} from 'components/Tabs/Tabs';
@@ -73,9 +82,10 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
             contentContainerStyle={styles.list}
             refreshing={refetching}
             onRefresh={onRefetch}
-            onEndReached={onEndReached}
+            onEndReached={!loading ? onEndReached : undefined}
             onEndReachedThreshold={0.1}
             ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+            refreshControl={isWeb() ? undefined : <RefreshControl refreshing={!!refetching} onRefresh={onRefetch} />}
           />
         </PullToRefresh>
       );

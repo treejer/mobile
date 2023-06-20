@@ -23,6 +23,7 @@ export async function checkTreePhoto({checkMetaData, userLocation, imageCoords, 
   return new Promise(async (resolve, reject) => {
     const {fromGallery, inCheck, browserPlatform, imageBase64} = options || {};
     try {
+      console.log('in check tree photo');
       if (browserPlatform === BrowserPlatform.iOS || !checkMetaData) {
         return resolve({latitude: 0, longitude: 0});
       } else {
@@ -62,5 +63,5 @@ export async function checkTreePhoto({checkMetaData, userLocation, imageCoords, 
 }
 
 export function shouldUseImageCoords(imageCoords: Partial<TPoint>) {
-  return imageCoords?.latitude && imageCoords?.longitude;
+  return imageCoords?.latitude && imageCoords?.latitude > 0 && imageCoords?.longitude && imageCoords?.longitude > 0;
 }

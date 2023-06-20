@@ -1,5 +1,13 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View, FlatList, ListRenderItemInfo} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  FlatList,
+  ListRenderItemInfo,
+  RefreshControl,
+} from 'react-native';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 
@@ -15,6 +23,7 @@ import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {Routes} from 'navigation/Navigation';
 import {Hex2Dec} from 'utilities/helpers/hex';
+import {isWeb} from 'utilities/helpers/web';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
@@ -190,9 +199,10 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
             contentContainerStyle={styles.list}
             refreshing={refetching}
             onRefresh={onRefetch}
-            onEndReached={onEndReached}
+            onEndReached={!loading ? onEndReached : undefined}
             onEndReachedThreshold={0.1}
             ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+            refreshControl={isWeb() ? undefined : <RefreshControl refreshing={!!refetching} onRefresh={onRefetch} />}
           />
         </PullToRefresh>
       );

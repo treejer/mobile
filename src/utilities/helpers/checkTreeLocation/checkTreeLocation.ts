@@ -25,6 +25,7 @@ export function checkTreeLocation({
   return new Promise((resolve, reject) => {
     const error = isUpdate ? 'updateSingleTree' : 'newTree';
     try {
+      console.log('in check tree location');
       if (browserPlatform === BrowserPlatform.iOS || !checkMetaData) {
         return resolve(submittedLocation);
       }

@@ -12,7 +12,7 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
   manualPerPage?: number,
 ) {
   const {profile} = useProfile();
-  const perPage = useMemo(() => manualPerPage || 20, []);
+  const perPage = useMemo(() => manualPerPage || 30, []);
   const [page, setPage] = useState(0);
 
   const [persistedData, setPersistedData] = usePersistedData<TPersistedData>(storageKey);

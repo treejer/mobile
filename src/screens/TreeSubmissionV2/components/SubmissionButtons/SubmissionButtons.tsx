@@ -38,21 +38,21 @@ export function SubmissionButtons(props: SubmissionButtonsProps) {
           </Text>
         </TouchableOpacity>
       ) : null}
-      {canSubmit ? (
+      {canSubmit && !hasNoPermission ? (
         <TouchableOpacity testID="preview-submission" style={[styles.btn, styles.previewBtn]} onPress={onPreview}>
           <Text testID="preview-submission-text" style={styles.blackText}>
             {t(`submitTreeV2.buttons.preview${submissionType}`)}
           </Text>
         </TouchableOpacity>
       ) : null}
-      {canDraft ? (
+      {canDraft && !hasNoPermission ? (
         <TouchableOpacity testID="draft-submission" style={[styles.btn, styles.draftBtn]} onPress={onDraft}>
           <Text testID="draft-submission-text" style={styles.blackText}>
             {t(`submitTreeV2.buttons.draft${submissionType}`, {submissionType: t(actionType)})}
           </Text>
         </TouchableOpacity>
       ) : null}
-      {canSubmit ? (
+      {canSubmit && !hasNoPermission ? (
         <TouchableOpacity testID="submit-submission" style={[styles.btn, styles.submitBtn]} onPress={onSubmit}>
           <Text testID="submit-submission-text" style={styles[isConnected ? 'whiteText' : 'decoratedText']}>
             {t(`submitTreeV2.buttons.${actionType + submissionType}`)}

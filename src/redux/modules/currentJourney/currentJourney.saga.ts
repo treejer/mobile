@@ -8,18 +8,9 @@ import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLo
 import {generateTreeFactorySignature, TreeFactoryMethods} from 'utilities/helpers/submissionUtilsV2';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {upload} from 'utilities/helpers/IPFS';
+import {isWeb} from 'utilities/helpers/web';
 import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
-import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
-import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetails';
-import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
-import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
-import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
-import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
-import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
-import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
-import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import {TReduxState} from 'ranger-redux/store';
 import {TTreeDetailRes} from 'webServices/trees/treeDetail';
 import {navigationRef} from 'navigation/navigationRef';
@@ -27,6 +18,16 @@ import {Routes} from 'navigation/Navigation';
 import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
 import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
 import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
+import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
+import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetails';
+import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
+import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
+import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
+import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
+import {JourneyMetadata, TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
+import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
+import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import * as actionsList from './currentJourney.action';
 
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
@@ -47,6 +48,8 @@ export function* watchAssignJourneyTreePhoto({
     const {platform}: BrowserPlatformState = yield select(getBrowserPlatform);
     const journey: TCurrentJourney = yield select(getCurrentJourney);
 
+    console.log('before check tree photo');
+
     const photoCoords = yield checkTreePhoto({
       imageCoords: photoLocation,
       userLocation: userLocation,
@@ -58,18 +61,24 @@ export function* watchAssignJourneyTreePhoto({
       },
     });
 
+    console.log('after check tree photo, before check tree location');
+
+    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
+
     if (journey.location) {
       yield checkTreeLocation({
-        photoLocation,
+        photoLocation: isWeb() ? photoCoords : photoLocation,
         submittedLocation: journey.location,
         checkMetaData,
         browserPlatform: platform,
         isUpdate: journey.isUpdate,
+        inCheck: true,
       });
     }
-
-    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
   } catch (e: any) {
+    if (e.data === JourneyMetadata.Location) {
+      yield put(actionsList.removeJourneyLocation());
+    }
     yield showSagaAlert({
       title: i18next.t(e?.title),
       mode: e?.mode,
@@ -97,6 +106,7 @@ export function* watchAssignJourneyTreeLocation({location}: AssignJourneyTreeLoc
         photoLocation,
         isUpdate: !!isUpdate,
         browserPlatform: platform,
+        inCheck: true,
       });
       yield put(actionsList.setTreeLocation({coords}));
     }

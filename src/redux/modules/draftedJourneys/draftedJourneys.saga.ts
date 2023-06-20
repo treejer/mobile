@@ -21,16 +21,12 @@ export type DraftJourneyAction = {
 } & actionsList.DraftJourneyWatcherPayload;
 
 export function* watchDraftJourney(action: DraftJourneyAction) {
-  let journeyImageB64;
-  if (isWeb()) {
-    journeyImageB64 = yield photoToBase64(action.journey?.photo as File);
-  }
   const newDraft: actionsList.DraftJourneyArgs = {
     id: action.id,
     journey: action.journey,
     name: action.name || action.id,
     draftType: action.draftType,
-    journeyImageB64: journeyImageB64,
+    journeyImageB64: isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
   };
 
   yield put(actionsList.draftJourney(newDraft));
@@ -44,7 +40,7 @@ export function* watchSaveDraftedJourney(action: SaveDraftedJourneyAction) {
     journey: action.journey,
     name: action.name,
     draftType: action.draftType,
-    journeyImageB64: isWeb() ? (yield photoToBase64(action.journey?.photo as File)).toString() : undefined,
+    journeyImageB64: isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
   };
 
   yield put(actionsList.saveDraftedJourney(updatedDraft));
@@ -75,7 +71,7 @@ export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAct
   const currentJourney: TCurrentJourney = JSON.parse(selectedDraft.journey);
 
   let journeyPhoto;
-  if (isWeb()) {
+  if (isWeb() && selectedDraft.journeyImageB64) {
     journeyPhoto = yield getCroppedImg(selectedDraft.journeyImageB64, 'file');
   }
 

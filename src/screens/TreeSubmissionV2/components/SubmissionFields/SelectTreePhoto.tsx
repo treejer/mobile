@@ -44,7 +44,6 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
     try {
       let selectedPhoto;
       let photoLocation;
-      let imageBase64;
 
       if (isWeb()) {
         setShowCamera(true);
@@ -56,7 +55,7 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
             latitude: selectedPhoto?.exif?.Latitude,
             longitude: selectedPhoto?.exif?.Longitude,
           };
-          onSelect({photo: selectedPhoto, fromGallery: false, photoLocation, imageBase64});
+          onSelect({photo: selectedPhoto, fromGallery: false, photoLocation});
         }
       }
     } catch (e) {
@@ -129,83 +128,79 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
     [treePhoto],
   );
 
-  if (showCamera) {
-    return (
-      <Modal visible>
-        <WebCam handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
-      </Modal>
-    );
-  }
-
-  if (pickedPhoto) {
-    return (
-      <Modal visible transparent style={{flex: 1}}>
-        <WebImagePickerCropper
-          imageData={pickedPhoto}
-          handleDone={handleSelectPhotoFromLibraryWeb}
-          handleDismiss={() => setPickedPhoto(null)}
-        />
-      </Modal>
-    );
-  }
-
   return (
-    <Card testID={testID} style={styles.container}>
-      {/*@ts-ignore*/}
-      <Wrapper {...WrapperProps}>
-        <View
-          testID="select-tree-photo-content"
-          style={[styles.contentContainer, {backgroundColor: treePhoto ? colors.darkOpacity : colors.khaki}]}
-        >
+    <>
+      <RenderIf condition={showCamera}>
+        <Modal visible>
+          <WebCam handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
+        </Modal>
+      </RenderIf>
+      <RenderIf condition={!!pickedPhoto}>
+        <Modal visible transparent style={{flex: 1}}>
+          <WebImagePickerCropper
+            imageData={pickedPhoto as File}
+            handleDone={handleSelectPhotoFromLibraryWeb}
+            handleDismiss={() => setPickedPhoto(null)}
+          />
+        </Modal>
+      </RenderIf>
+      <Card testID={testID} style={styles.container}>
+        {/*@ts-ignore*/}
+        <Wrapper {...WrapperProps}>
           <View
-            testID="select-tree-photo-text-container"
-            style={[
-              styles.textContainer,
-              {backgroundColor: treePhoto ? colors.khakiOpacity : 'transparent'},
-              treePhoto ? colors.boxInBoxShadow : {},
-            ]}
+            testID="select-tree-photo-content"
+            style={[styles.contentContainer, {backgroundColor: treePhoto ? colors.darkOpacity : colors.khaki}]}
           >
-            <View style={styles.flexRow}>
-              <RenderIf condition={!!treePhoto}>
-                <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
-                <Spacer />
-              </RenderIf>
-              <Text testID="photo-title" style={styles.title}>
-                {t('submitTreeV2.photo')}
+            <View
+              testID="select-tree-photo-text-container"
+              style={[
+                styles.textContainer,
+                {backgroundColor: treePhoto ? colors.khakiOpacity : 'transparent'},
+                treePhoto ? colors.boxInBoxShadow : {},
+              ]}
+            >
+              <View style={styles.flexRow}>
+                <RenderIf condition={!!treePhoto}>
+                  <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
+                  <Spacer />
+                </RenderIf>
+                <Text testID="photo-title" style={styles.title}>
+                  {t('submitTreeV2.photo')}
+                </Text>
+              </View>
+              <Spacer times={1} />
+              <Text style={styles.desc}>
+                <Trans
+                  testID="photo-description"
+                  i18nKey={treePhoto ? 'submitTreeV2.changePhoto' : 'submitTreeV2.selectPhoto'}
+                  components={{
+                    Camera: <Text style={styles.bold} />,
+                    Gallery: <Text style={styles.bold} />,
+                  }}
+                />
               </Text>
             </View>
-            <Spacer times={1} />
-            <Text style={styles.desc}>
-              <Trans
-                testID="photo-description"
-                i18nKey={treePhoto ? 'submitTreeV2.changePhoto' : 'submitTreeV2.selectPhoto'}
-                components={{
-                  Camera: <Text style={styles.bold} />,
-                  Gallery: <Text style={styles.bold} />,
-                }}
-              />
-            </Text>
+            <Spacer />
+            <View>
+              <TouchableOpacity
+                testID="camera-button"
+                style={[styles.button, {backgroundColor: treePhoto ? colors.grayDarkerOpacity : colors.grayDarker}]}
+                disabled={disabled}
+                onPress={handleOpenCamera}
+              >
+                <Icon testID="camera-button-icon" name="camera" color={colors.khaki} size={18} />
+                <Spacer times={3} />
+                <Text testID="camera-button-text" style={styles.btnText}>
+                  {t('submitTreeV2.camera')}
+                </Text>
+              </TouchableOpacity>
+              <Spacer times={2} />
+              <PickFromGalleryButton hasTreePhoto={!!treePhoto} disabled={disabled} onPress={handleOpenGallery} />
+            </View>
           </View>
-          <Spacer />
-          <View>
-            <TouchableOpacity
-              testID="camera-button"
-              style={[styles.button, {backgroundColor: treePhoto ? colors.grayDarkerOpacity : colors.grayDarker}]}
-              disabled={disabled}
-              onPress={handleOpenCamera}
-            >
-              <Icon testID="camera-button-icon" name="camera" color={colors.khaki} size={18} />
-              <Spacer times={3} />
-              <Text testID="camera-button-text" style={styles.btnText}>
-                {t('submitTreeV2.camera')}
-              </Text>
-            </TouchableOpacity>
-            <Spacer times={2} />
-            <PickFromGalleryButton hasTreePhoto={!!treePhoto} disabled={disabled} onPress={handleOpenGallery} />
-          </View>
-        </View>
-      </Wrapper>
-    </Card>
+        </Wrapper>
+      </Card>
+    </>
   );
 }
 
