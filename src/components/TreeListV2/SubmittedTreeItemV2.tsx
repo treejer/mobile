@@ -57,17 +57,14 @@ export function SubmittedTreeItemV2<T>(props: TreeItemV2Props<T>) {
         </View>
       </RenderIf>
       <View style={[styles.contentContainer, {justifyContent: withDetail ? 'flex-end' : 'center'}]}>
-        <View
-          style={
-            withDetail ? [styles.treeImageContainer, !hasLocation ? styles.centerTreeImage : undefined] : undefined
-          }
-        >
+        <View style={withDetail ? [!hasLocation ? styles.centerTreeImage : undefined] : undefined}>
           <TreeSymbol
             testID="tree-symbol-cpt"
             treeUpdateInterval={treeUpdateInterval}
             size={size}
             tint
             autoHeight
+            autoWidth={withDetail}
             tree={tree}
             horizontal={withDetail}
             handlePress={onPress}
@@ -147,9 +144,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.tooBlack,
     fontWeight: '300',
-  },
-  treeImageContainer: {
-    marginLeft: -8,
   },
   centerTreeImage: {
     justifyContent: 'center',

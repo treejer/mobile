@@ -179,6 +179,14 @@ export function useCurrentJourney() {
     [dispatch],
   );
 
+  const dispatchRemoveJourneyPhoto = useCallback(() => {
+    dispatch(actionsList.removeJourneyPhoto());
+  }, [dispatch]);
+
+  const dispatchRemoveJourneyLocation = useCallback(() => {
+    dispatch(actionsList.removeJourneyLocation());
+  }, [dispatch]);
+
   const dispatchSubmitJourney = useCallback(() => {
     dispatch(actionsList.submitJourneyWatcher());
   }, [dispatch]);
@@ -193,5 +201,7 @@ export function useCurrentJourney() {
     dispatchSetTreeDetailToUpdate,
     dispatchSubmitJourney,
     dispatchStartPlantAssignedTree,
+    dispatchRemoveJourneyPhoto,
+    dispatchRemoveJourneyLocation,
   };
 }

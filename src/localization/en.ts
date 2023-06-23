@@ -541,6 +541,7 @@ export const en = {
     defDesc: 'Grant above permissions',
   },
   submitTreeV2: {
+    remove: 'Remove',
     location: 'Location',
     selectOnMap: 'Select the tree location\nfrom <Map>Map</Map>',
     SelectOnMapToChange: 'Change the tree location\nfrom <Map>Map</Map>',

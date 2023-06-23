@@ -28,11 +28,12 @@ export type SelectTreePhotoProps = {
   testID?: string;
   treePhoto?: Image | File;
   disabled?: boolean;
+  onRemove?: () => void;
   onSelect: (args: TOnSelectTree) => void;
 };
 
 export function SelectTreePhoto(props: SelectTreePhotoProps) {
-  const {testID, disabled, treePhoto, onSelect} = props;
+  const {testID, disabled, treePhoto, onRemove, onSelect} = props;
 
   const {openCameraHook, openLibraryHook} = useCamera();
   const [showCamera, setShowCamera] = useState(false);
@@ -159,14 +160,21 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
                 treePhoto ? colors.boxInBoxShadow : {},
               ]}
             >
-              <View style={styles.flexRow}>
-                <RenderIf condition={!!treePhoto}>
-                  <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
-                  <Spacer />
+              <View style={[styles.flexRow, globalStyles.justifyContentBetween]}>
+                <View style={styles.flexRow}>
+                  <RenderIf condition={!!treePhoto}>
+                    <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
+                    <Spacer />
+                  </RenderIf>
+                  <Text testID="photo-title" style={styles.title}>
+                    {t('submitTreeV2.photo')}
+                  </Text>
+                </View>
+                <RenderIf condition={!!(treePhoto && onRemove && !disabled)}>
+                  <TouchableOpacity disabled={disabled} activeOpacity={disabled ? 1 : undefined} onPress={onRemove}>
+                    <Text style={styles.removeText}>{t('submitTreeV2.remove')}</Text>
+                  </TouchableOpacity>
                 </RenderIf>
-                <Text testID="photo-title" style={styles.title}>
-                  {t('submitTreeV2.photo')}
-                </Text>
               </View>
               <Spacer times={1} />
               <Text style={styles.desc}>
@@ -257,6 +265,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  removeText: {
+    color: colors.red,
+    fontWeight: '600',
+    textDecorationColor: colors.red,
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    fontSize: 12,
   },
   flexRow: {
     flexDirection: 'row',

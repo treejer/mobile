@@ -1,5 +1,5 @@
 import {Dispatch, useCallback, useEffect, useMemo, useState} from 'react';
-import {NetworkStatus, OperationVariables, useQuery} from '@apollo/client';
+import {OperationVariables, useQuery} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 
@@ -37,11 +37,14 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
     skip: !variables || !profile,
   });
 
+  // console.log(query.data?.[dataKey], 'hehere');
+
   useEffect(() => {
     (async function () {
       // console.log(query.data, 'data is here');
       if (query.data?.[dataKey] !== undefined) {
         if (keepData && page !== 0) {
+          console.log(keepData, page);
           if (query.data?.[dataKey]?.length > 0) {
             // @ts-ignore
             setPersistedData([...persistedData, ...query.data[dataKey]]);

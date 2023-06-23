@@ -47,7 +47,14 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const [openSettingsAlert, setOpenSettingsAlert] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  const {journey, dispatchSelectTreePhoto, dispatchClearJourney, dispatchSubmitJourney} = useCurrentJourney();
+  const {
+    journey,
+    dispatchSelectTreePhoto,
+    dispatchClearJourney,
+    dispatchSubmitJourney,
+    dispatchRemoveJourneyPhoto,
+    dispatchRemoveJourneyLocation,
+  } = useCurrentJourney();
   const {dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
 
   const {sendEvent} = useAnalytics();
@@ -203,6 +210,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
                 testID="select-tree-photo-cpt"
                 treePhoto={journey?.photo}
                 onSelect={handleSelectPhoto}
+                onRemove={dispatchRemoveJourneyPhoto}
                 disabled={!!journey.submitLoading}
               />
             ) : (
@@ -218,6 +226,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
                   }}
                   testID="select-tree-location-cpt"
                   onSelect={handleNavigateToMap}
+                  onRemove={dispatchRemoveJourneyLocation}
                   disabled={!!journey.submitLoading}
                 />
                 <RenderIf condition={!!(journey?.treeIdToUpdate && journey?.isNursery)}>

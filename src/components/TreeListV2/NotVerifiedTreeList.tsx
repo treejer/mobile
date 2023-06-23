@@ -1,26 +1,18 @@
 import React, {useCallback} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  FlatList,
-  ListRenderItemInfo,
-  RefreshControl,
-} from 'react-native';
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {ListRenderItemInfo} from '@shopify/flash-list';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {colors} from 'constants/values';
-import {isWeb} from 'utilities/helpers/web';
 import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
+import {OptimizedList} from 'components/TreeListV2/OptimizedList';
+import {NotVerifiedTreeItem} from 'components/TreeListV2/NotVerifiedTreeItem';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
-import {NotVerifiedTreeItem} from 'components/TreeListV2/NotVerifiedTreeItem';
 import {NotVerifiedTree} from 'types';
 import {Routes} from 'navigation/Navigation';
 
@@ -68,26 +60,21 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
   );
 
   const renderListWithDiffCol = useCallback(
-    (col: number, testID?: string) => {
+    (col: number, itemSize: number, testID?: string) => {
       return (
-        <PullToRefresh onRefresh={onRefetch}>
-          <FlatList<NotVerifiedTree>
-            testID={testID}
-            data={notVerifiedTrees}
-            renderItem={treeItemRenderItem}
-            showsVerticalScrollIndicator={false}
-            numColumns={col}
-            ItemSeparatorComponent={Spacer}
-            keyExtractor={(item, index) => `list-${item._id}-${col}-${index}`}
-            contentContainerStyle={styles.list}
-            refreshing={refetching}
-            onRefresh={onRefetch}
-            onEndReached={!loading ? onEndReached : undefined}
-            onEndReachedThreshold={0.1}
-            ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
-            refreshControl={isWeb() ? undefined : <RefreshControl refreshing={!!refetching} onRefresh={onRefetch} />}
-          />
-        </PullToRefresh>
+        <OptimizedList<NotVerifiedTree>
+          testID={testID}
+          data={notVerifiedTrees}
+          col={col}
+          renderItem={treeItemRenderItem}
+          estimatedItemSize={itemSize}
+          keyExtractor={(item, index) => `list-${item._id}-${col}-${index}`}
+          contentContainerStyle={styles.list}
+          refetching={refetching}
+          onRefetch={onRefetch}
+          onEndReached={!loading ? onEndReached : undefined}
+          ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+        />
       );
     },
     [refetching, onRefetch, onEndReached, treeItemRenderItem, notVerifiedTrees],
@@ -123,10 +110,10 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
       ) : (
         <Tabs testID="tab-trees-context" style={globalStyles.fill} tab={treeItemUI}>
           <Tab testID="withId-tab" style={styles.listContainer} tab={TreeItemUI.WithId}>
-            {renderListWithDiffCol(4, 'with-id-flatList')}
+            {renderListWithDiffCol(4, 87, 'with-id-flatList')}
           </Tab>
           <Tab testID="withDetail-tab" style={styles.listContainer} tab={TreeItemUI.WithDetail}>
-            {renderListWithDiffCol(2, 'with-detail-flatList')}
+            {renderListWithDiffCol(2, 173, 'with-detail-flatList')}
           </Tab>
         </Tabs>
       )}

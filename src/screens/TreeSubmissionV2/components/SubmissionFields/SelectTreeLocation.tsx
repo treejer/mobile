@@ -21,11 +21,12 @@ export type SelectTreeLocationProps = {
     canUpdate?: boolean;
   };
   onSelect: () => void;
+  onRemove?: () => void;
   disabled?: boolean;
 };
 
 export function SelectTreeLocation(props: SelectTreeLocationProps) {
-  const {testID, hasLocation, disabled, onSelect} = props;
+  const {testID, hasLocation, disabled, onSelect, onRemove} = props;
 
   const {t} = useTranslation();
 
@@ -71,14 +72,21 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
               hasLocation?.coords ? colors.boxInBoxShadow : {},
             ]}
           >
-            <View style={styles.flexRow}>
-              <RenderIf condition={!!hasLocation?.coords}>
-                <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
-                <Spacer />
+            <View style={[styles.flexRow, globalStyles.justifyContentBetween]}>
+              <View style={styles.flexRow}>
+                <RenderIf condition={!!hasLocation?.coords}>
+                  <Icon testID="check-icon" name="check-circle" color={colors.green} size={20} />
+                  <Spacer />
+                </RenderIf>
+                <Text testID="select-location-title" style={styles.title}>
+                  {t('submitTreeV2.location')}
+                </Text>
+              </View>
+              <RenderIf condition={!!(hasLocation?.coords && hasLocation?.canUpdate && onRemove && !disabled)}>
+                <TouchableOpacity onPress={onRemove} disabled={disabled} activeOpacity={disabled ? 1 : undefined}>
+                  <Text style={styles.removeText}>{t('submitTreeV2.remove')}</Text>
+                </TouchableOpacity>
               </RenderIf>
-              <Text testID="select-location-title" style={styles.title}>
-                {t('submitTreeV2.location')}
-              </Text>
             </View>
             <Spacer times={1} />
             <Text style={styles.desc}>
@@ -166,6 +174,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  removeText: {
+    color: colors.red,
+    fontWeight: '600',
+    textDecorationColor: colors.red,
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    fontSize: 12,
   },
   flexRow: {
     flexDirection: 'row',

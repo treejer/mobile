@@ -1,15 +1,8 @@
 import React, {useCallback} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  FlatList,
-  ListRenderItemInfo,
-  RefreshControl,
-} from 'react-native';
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import {CommonActions, useNavigation} from '@react-navigation/native';
+import {ListRenderItemInfo} from '@shopify/flash-list';
 
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
@@ -17,13 +10,12 @@ import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
 import Spacer from 'components/Spacer';
 import {SubmittedTreeItemV2} from 'components/TreeListV2/SubmittedTreeItemV2';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
+import {OptimizedList} from 'components/TreeListV2/OptimizedList';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {Routes} from 'navigation/Navigation';
 import {Hex2Dec} from 'utilities/helpers/hex';
-import {isWeb} from 'utilities/helpers/web';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
@@ -185,26 +177,21 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   );
 
   const renderListWithDiffCol = useCallback(
-    (col: number, testID?: string) => {
+    (col: number, itemSize: number, testID?: string) => {
       return (
-        <PullToRefresh onRefresh={onRefetch}>
-          <FlatList<Tree>
-            testID={testID}
-            data={verifiedTrees}
-            renderItem={treeItemRenderItem}
-            showsVerticalScrollIndicator={false}
-            numColumns={col}
-            ItemSeparatorComponent={Spacer}
-            keyExtractor={(item, index) => `list-${item.id}-${col}-${index}`}
-            contentContainerStyle={styles.list}
-            refreshing={refetching}
-            onRefresh={onRefetch}
-            onEndReached={!loading ? onEndReached : undefined}
-            onEndReachedThreshold={0.1}
-            ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
-            refreshControl={isWeb() ? undefined : <RefreshControl refreshing={!!refetching} onRefresh={onRefetch} />}
-          />
-        </PullToRefresh>
+        <OptimizedList<Tree>
+          testID={testID}
+          col={col}
+          data={verifiedTrees}
+          estimatedItemSize={itemSize}
+          renderItem={treeItemRenderItem}
+          keyExtractor={(item, index) => `list-${item.id}-${col}-${index}`}
+          contentContainerStyle={styles.list}
+          refetching={!!refetching}
+          onRefetch={onRefetch}
+          onEndReached={!loading && !refetching ? onEndReached : undefined}
+          ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
+        />
       );
     },
     [refetching, onRefetch, onEndReached, treeItemRenderItem, verifiedTrees],
@@ -239,10 +226,10 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       ) : (
         <Tabs testID="tab-trees-context" style={globalStyles.fill} tab={treeItemUI}>
           <Tab testID="withId-tab" style={styles.listContainer} tab={TreeItemUI.WithId}>
-            {renderListWithDiffCol(4, 'with-id-flatList')}
+            {renderListWithDiffCol(4, 87, 'with-id-flatList')}
           </Tab>
           <Tab testID="withDetail-tab" style={styles.listContainer} tab={TreeItemUI.WithDetail}>
-            {renderListWithDiffCol(2, 'with-detail-flatList')}
+            {renderListWithDiffCol(2, 173, 'with-detail-flatList')}
           </Tab>
         </Tabs>
       )}

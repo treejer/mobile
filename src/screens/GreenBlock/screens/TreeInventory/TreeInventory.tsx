@@ -22,7 +22,6 @@ import {
 } from 'utilities/helpers/treeInventory';
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
-import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {useSubmittedTrees} from 'utilities/hooks/useSubmittedTrees';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
@@ -74,8 +73,6 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const {planted, updated, assigned, current: notVerifiedTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
 
-  console.log(notVerifiedTrees.trees, 'notVerifiedTrees is here');
-
   const {
     submittedTrees,
     submittedTreesRefetching,
@@ -95,12 +92,12 @@ export function TreeInventory(props: TreeInventoryProps) {
   //   canSelectMultiple: false,
   // });
 
-  useRefocusEffect(async () => {
-    if (!submittedTreesLoading) {
-      await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
-      notVerifiedTrees.dispatchRefetch();
-    }
-  });
+  // useRefocusEffect(async () => {
+  //   if (!submittedTreesLoading) {
+  //     await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
+  //     await notVerifiedTrees.dispatchRefetch();
+  //   }
+  // });
 
   const notVerifiedTintColor = useMemo(
     () =>
