@@ -1,16 +1,16 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Image, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Linking, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TFunction, useTranslation} from 'react-i18next';
 import FIcon from 'react-native-vector-icons/Feather';
 import IIcon from 'react-native-vector-icons/Ionicons';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {useToast} from 'react-native-toast-notifications';
 import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 import moment from 'moment';
 
 import {Hr} from 'components/Common/Hr';
 import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
+import {RenderIf} from 'components/Common/RenderIf';
 import globalStyles from 'constants/styles';
 import {AlertMode} from 'utilities/helpers/alert';
 import {wrapUpString} from 'utilities/helpers/shortenedString';
@@ -50,17 +50,20 @@ export enum ContractTypes {
 export type TActivityItemProps = {
   activity: GetUserActivitiesQueryPartialData.AddressHistories;
   isLast: boolean;
+  inModal?: boolean;
+  onClose?: () => void;
 };
 
 export function ActivityItem(props: TActivityItemProps) {
-  const {activity, isLast} = props;
+  const {activity, isLast, inModal, onClose} = props;
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(inModal || false);
+  const [openModal, setOpenModal] = useState(false);
 
   const {t} = useTranslation();
 
   useEffect(() => {
-    setIsOpen(false);
+    setIsOpen(inModal || false);
   }, [props]);
 
   const AIcon = ActivityStatus.BalanceWithdrew === activity.event ? IIcon : FIcon;
@@ -135,59 +138,72 @@ export function ActivityItem(props: TActivityItemProps) {
   }, [activity]);
 
   const handleOpenDetails = useCallback(() => {
-    setIsOpen(prevIsOpen => !prevIsOpen);
+    if (isWeb()) {
+      setOpenModal(prevOpenModal => !prevOpenModal);
+    } else {
+      setIsOpen(prevIsOpen => !prevIsOpen);
+    }
   }, []);
 
   return (
-    <View style={globalStyles.alignItemsCenter}>
-      <Spacer />
-      <View style={[styles.container, isOpen && colors.smShadow]}>
-        <View style={styles.row}>
-          {isRelatedToTree ? (
-            <View style={[styles.image, {backgroundColor: bgTree[activity.event as string]}]}>
-              <Image source={Tree} style={styles.tree} />
-            </View>
-          ) : (
-            <View
-              style={[
-                styles.image,
-                {backgroundColor: bgTree[activity.event as string] || bgTree.gray, borderRadius: 22},
-              ]}
-            >
-              <AIcon name={iconName} size={22} color={colors.white} />
-            </View>
-          )}
-          <Spacer />
-          <View style={[styles.row, styles.detail]}>
-            <View>
-              <Text style={styles.title}>{title}</Text>
-              <Spacer times={0.5} />
-              <Text style={styles.date}>{date}</Text>
-            </View>
-            <TouchableOpacity style={styles.row} onPress={handleOpenDetails}>
-              <Text style={styles.status}>{t(`activities.${activity.event}`)}</Text>
-              <Spacer />
-              <FIcon
-                style={{marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]}}
-                name="chevron-down"
-                size={20}
-                color={colors.grayLight}
-              />
-            </TouchableOpacity>
+    <>
+      <RenderIf condition={isWeb() && openModal}>
+        <Modal visible={openModal} transparent onRequestClose={() => setOpenModal(false)}>
+          <View style={styles.modalContainer}>
+            <ActivityItem isLast={isLast} activity={activity} inModal onClose={() => setOpenModal(false)} />
           </View>
-        </View>
-        {isOpen && (
-          <>
+        </Modal>
+      </RenderIf>
+      <View style={globalStyles.alignItemsCenter}>
+        <Spacer />
+        <View style={[styles.container, isOpen && colors.smShadow]}>
+          <View style={styles.row}>
+            {isRelatedToTree ? (
+              <View style={[styles.image, {backgroundColor: bgTree[activity.event as string]}]}>
+                <Image source={Tree} style={styles.tree} />
+              </View>
+            ) : (
+              <View
+                style={[
+                  styles.image,
+                  {backgroundColor: bgTree[activity.event as string] || bgTree.gray, borderRadius: 22},
+                ]}
+              >
+                <AIcon name={iconName} size={22} color={colors.white} />
+              </View>
+            )}
             <Spacer />
-            <Hr styles={{width: '100%'}} />
-            <Spacer times={4} />
-            <MoreDetail t={t} txHash={activity.transactionHash} />
-          </>
-        )}
+            <View style={[styles.row, styles.detail]}>
+              <View>
+                <Text style={styles.title}>{title}</Text>
+                <Spacer times={0.5} />
+                <Text style={styles.date}>{date}</Text>
+              </View>
+              <TouchableOpacity style={styles.row} onPress={inModal ? onClose : handleOpenDetails}>
+                <Text style={styles.status}>{t(`activities.${activity.event}`)}</Text>
+                <Spacer />
+                <FIcon
+                  style={!isWeb() ? {marginTop: 4, transform: [{rotate: isOpen ? '180deg' : '0deg'}]} : undefined}
+                  name={isWeb() ? (inModal ? 'x' : 'more-vertical') : 'chevron-down'}
+                  size={20}
+                  color={colors.grayLight}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          {isOpen && (
+            <>
+              <Spacer />
+              <Hr styles={{width: '100%'}} />
+              <Spacer times={4} />
+              <MoreDetail t={t} txHash={activity.transactionHash} />
+            </>
+          )}
+        </View>
+        <Spacer />
+        {!isOpen && !isLast && <Hr styles={{width: 340, marginBottom: 8}} />}
       </View>
-      <Spacer />
-      {!isOpen && !isLast && <Hr styles={{width: 340, marginBottom: 8}} />}
-    </View>
+    </>
   );
 }
 
@@ -198,8 +214,6 @@ export type TMoreDetailProps = {
 
 export function MoreDetail(props: TMoreDetailProps) {
   const {t, txHash} = props;
-
-  const toast = useToast();
 
   const {explorerUrl} = useConfig();
 
@@ -254,28 +268,29 @@ export function MoreDetail(props: TMoreDetailProps) {
         <Text style={styles.receipt} onPress={handleOpenInBrowser}>
           {t('activities.receipt')} <IIcon name="open-outline" size={14} />
         </Text>
-        <Text style={styles.address} onPress={handleCopy}>
-          {wrapUpString(`${explorerUrl}/tx/${txHash}`, 20, 3)} <FIcon name="copy" size={14} />
-        </Text>
+        <TouchableOpacity onPress={handleCopy}>
+          <Text style={styles.address}>
+            {wrapUpString(`${explorerUrl}/tx/${txHash}`, 20, 3)} <FIcon name="copy" size={14} />
+          </Text>
+        </TouchableOpacity>
       </View>
-      {/*<Spacer times={3} />*/}
-      {/*<TouchableOpacity onPress={() => console.log('show more details pressed')}>*/}
-      {/*  <Text style={styles.showMore}>{t('activities.showMore')}</Text>*/}
-      {/*</TouchableOpacity>*/}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // open: {
-  // marginTop: -9,
-  // marginBottom: 24,
-  // },
   container: {
     width: 358,
     padding: 8,
     backgroundColor: colors.khaki,
     borderRadius: 10,
+  },
+  modalContainer: {
+    position: 'relative',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.modalBg,
   },
   tree: {
     width: 25,
