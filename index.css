@@ -48,6 +48,10 @@ body {
     display: none;
 }
 
+#ptr-container > div {
+    height: 100% !important;
+}
+
 @media all and (max-height: 677px) {
     .mapboxgl-ctrl-top-right {
         bottom: 13vh !important;

@@ -35,7 +35,10 @@ export function EmptyTreeList(props: EmptyTreeListProps) {
   }, [navigation]);
 
   return (
-    <View testID={testID} style={[globalStyles.fill, globalStyles.justifyContentCenter, globalStyles.alignItemsCenter]}>
+    <View
+      testID={testID}
+      style={[globalStyles.fill, globalStyles.justifyContentCenter, globalStyles.alignItemsCenter, {width: '100%'}]}
+    >
       <EmptyList testID="empty-list-cpt" />
       <Spacer times={4} />
       <Button

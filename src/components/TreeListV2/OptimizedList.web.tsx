@@ -1,12 +1,12 @@
 import React from 'react';
-import {FlatList, ListRenderItemInfo, ViewStyle} from 'react-native';
+import {ListRenderItemInfo, ViewStyle} from 'react-native';
+import BigList from 'react-native-big-list';
 
-import Spacer from 'components/Spacer';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 
 export type OptimizedListProps<T> = {
   testID?: string;
-  data: T[] | undefined | null;
+  data: T[] | undefined;
   renderItem: ({item}: ListRenderItemInfo<T>) => JSX.Element;
   estimatedItemSize: number;
   loading?: boolean;
@@ -16,41 +16,55 @@ export type OptimizedListProps<T> = {
   col?: number;
   keyExtractor?: (item: T, index: number) => string;
   contentContainerStyle?: ViewStyle;
-  ListEmptyComponent?: JSX.Element;
+  ListEmptyComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | null
+    | undefined;
 };
 
-export function OptimizedList<T>(props: OptimizedListProps<T>) {
+function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.LegacyRef<BigList<T>>) {
   const {
     testID,
     data,
     col,
     refetching,
+    loading,
     ListEmptyComponent,
     keyExtractor,
-    onRefetch,
-    onEndReached,
+    estimatedItemSize,
     renderItem,
     contentContainerStyle,
+    onRefetch,
+    onEndReached,
   } = props;
 
   return (
     <PullToRefresh onRefresh={onRefetch}>
-      <FlatList<T>
+      <BigList<T>
+        renderHeader={() => <></>}
+        renderFooter={() => <></>}
         testID={testID}
+        ref={ref}
         data={data}
+        itemHeight={estimatedItemSize}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         numColumns={col}
-        ItemSeparatorComponent={Spacer}
         keyExtractor={keyExtractor}
         contentContainerStyle={contentContainerStyle}
         refreshing={refetching}
         onRefresh={onRefetch}
         onEndReached={onEndReached}
-        onEndReachedThreshold={20}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={ListEmptyComponent}
         refreshControl={undefined}
+        centerContent={!data || !data?.length}
       />
     </PullToRefresh>
   );
 }
+
+export const OptimizedList = React.forwardRef(OptimizedListComponent) as <T>(
+  props: OptimizedListProps<T> & {ref?: React.LegacyRef<BigList<T>> | undefined},
+) => ReturnType<typeof OptimizedListComponent>;

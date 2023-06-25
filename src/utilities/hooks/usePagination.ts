@@ -37,14 +37,11 @@ export function usePagination<TQueryData, TVariables extends OperationVariables,
     skip: !variables || !profile,
   });
 
-  // console.log(query.data?.[dataKey], 'hehere');
-
   useEffect(() => {
     (async function () {
       // console.log(query.data, 'data is here');
       if (query.data?.[dataKey] !== undefined) {
         if (keepData && page !== 0) {
-          console.log(keepData, page);
           if (query.data?.[dataKey]?.length > 0) {
             // @ts-ignore
             setPersistedData([...persistedData, ...query.data[dataKey]]);

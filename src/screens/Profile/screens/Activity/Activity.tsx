@@ -11,7 +11,6 @@ import Spacer from 'components/Spacer';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {ActivityList} from 'components/Activity/ActivityList';
 import {ActivityStatus} from 'components/Activity/ActivityItem';
-import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
 import {FilterList} from 'components/Filter/FilterList';
 import {Loading} from 'components/AppLoading/Loading';
 import {useDebounce} from 'utilities/hooks/useDebounce';
@@ -59,6 +58,7 @@ export function Activity(props: Props) {
     refetchData: refetchUserActivity,
     query: activityQuery,
     refetching: activityRefetching,
+    loading: activityLoading,
     loadMore: ActivityLoadMore,
   } = useGetUserActivitiesQuery(wallet, debouncedFilters);
 
@@ -100,18 +100,19 @@ export function Activity(props: Props) {
           <FilterList categories={categories} filters={filters} onFilterOption={handleSelectFilterOption} />
           <Spacer times={4} />
           {!activityQuery.loading && (
-            <PullToRefresh onRefresh={refetchUserActivity}>
+            <>
               <ActivityList
                 ref={listRef}
                 wallet={wallet}
                 filters={filters}
                 activities={activities}
+                loading={activityLoading}
                 refreshing={activityRefetching}
                 onRefresh={refetchUserActivity}
                 onLoadMore={ActivityLoadMore}
               />
               <Spacer times={6} />
-            </PullToRefresh>
+            </>
           )}
           <Spacer times={4} />
         </View>

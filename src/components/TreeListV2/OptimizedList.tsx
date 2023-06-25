@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef, LegacyRef} from 'react';
 import {ContentStyle, FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 
 import Spacer from 'components/Spacer';
@@ -15,10 +15,14 @@ export type OptimizedListProps<T> = {
   col?: number;
   keyExtractor?: (item: T, index: number) => string;
   contentContainerStyle?: ContentStyle;
-  ListEmptyComponent?: JSX.Element;
+  ListEmptyComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | null
+    | undefined;
 };
 
-export function OptimizedList<T>(props: OptimizedListProps<T>) {
+function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.LegacyRef<FlashList<T>>) {
   const {
     testID,
     data,
@@ -37,6 +41,7 @@ export function OptimizedList<T>(props: OptimizedListProps<T>) {
   return (
     <FlashList<T>
       testID={testID}
+      ref={ref}
       estimatedItemSize={estimatedItemSize}
       data={data}
       renderItem={renderItem}
@@ -47,9 +52,13 @@ export function OptimizedList<T>(props: OptimizedListProps<T>) {
       contentContainerStyle={contentContainerStyle}
       refreshing={refetching}
       onRefresh={onRefetch}
-      onEndReached={!loading ? onEndReached : undefined}
+      onEndReached={onEndReached}
       onEndReachedThreshold={0.1}
       ListEmptyComponent={ListEmptyComponent}
     />
   );
 }
+
+export const OptimizedList = React.forwardRef(OptimizedListComponent) as <T>(
+  props: OptimizedListProps<T> & {ref?: React.LegacyRef<FlashList<T>> | undefined},
+) => ReturnType<typeof OptimizedListComponent>;

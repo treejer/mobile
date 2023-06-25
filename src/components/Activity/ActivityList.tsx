@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, forwardRef} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
@@ -9,21 +9,23 @@ import {colors} from 'constants/values';
 import {GetUserActivitiesQueryPartialData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import Spacer from 'components/Spacer';
 import {ActivityItem, ActivityStatus} from 'components/Activity/ActivityItem';
-import {isWeb} from 'utilities/helpers/web';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
+import {OptimizedList} from 'components/TreeListV2/OptimizedList';
 
 export type TActivityListProps = {
-  ref: React.RefObject<FlashList<any>>;
   wallet: string;
   filters: ActivityStatus[];
   activities: GetUserActivitiesQueryPartialData.AddressHistories[] | null;
   refreshing: boolean;
-  onRefresh: () => void;
+  loading: boolean;
+  onRefresh: () => Promise<any>;
   onLoadMore: () => void;
 };
 
-export function ActivityList(props: TActivityListProps) {
-  const {activities, refreshing, ref, onRefresh, onLoadMore} = props;
+export const ActivityList = forwardRef<
+  FlashList<GetUserActivitiesQueryPartialData.AddressHistories>,
+  TActivityListProps
+>((props, ref) => {
+  const {activities, refreshing, loading, onRefresh, onLoadMore} = props;
 
   const {t} = useTranslation();
 
@@ -52,24 +54,25 @@ export function ActivityList(props: TActivityListProps) {
   }, [activities]);
 
   return (
-    <View style={[{flex: 1, width: '100%'}, globalStyles.screenView]}>
-      <FlashList<GetUserActivitiesQueryPartialData.AddressHistories>
+    <View style={[{width: '100%', flex: 1}, globalStyles.screenView]}>
+      <OptimizedList<GetUserActivitiesQueryPartialData.AddressHistories>
         ref={ref}
-        refreshing
-        onRefresh={onRefresh}
+        refetching={refreshing}
+        loading={loading}
+        onRefetch={onRefresh}
         data={activities}
         renderItem={renderItem}
-        estimatedItemSize={100}
+        estimatedItemSize={78}
         ListEmptyComponent={emptyList}
-        showsVerticalScrollIndicator={false}
-        refreshControl={isWeb() ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        onEndReachedThreshold={0.1}
-        onEndReached={onLoadMore}
+        onEndReached={() => {
+          console.log('reached end');
+          onLoadMore();
+        }}
         keyExtractor={item => (item.id as string).toString()}
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
