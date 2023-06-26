@@ -20,6 +20,7 @@ export type OptimizedListProps<T> = {
     | React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | null
     | undefined;
+  separate?: boolean;
 };
 
 function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.LegacyRef<FlashList<T>>) {
@@ -27,8 +28,8 @@ function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.Lega
     testID,
     data,
     refetching,
-    loading,
     renderItem,
+    separate = true,
     col,
     keyExtractor,
     contentContainerStyle,
@@ -47,7 +48,7 @@ function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.Lega
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}
       numColumns={col}
-      ItemSeparatorComponent={Spacer}
+      ItemSeparatorComponent={separate ? Spacer : undefined}
       keyExtractor={keyExtractor}
       contentContainerStyle={contentContainerStyle}
       refreshing={refetching}

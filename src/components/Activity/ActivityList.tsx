@@ -64,11 +64,9 @@ export const ActivityList = forwardRef<
         renderItem={renderItem}
         estimatedItemSize={78}
         ListEmptyComponent={emptyList}
-        onEndReached={() => {
-          console.log('reached end');
-          onLoadMore();
-        }}
+        onEndReached={onLoadMore}
         keyExtractor={item => (item.id as string).toString()}
+        separate={false}
       />
     </View>
   );

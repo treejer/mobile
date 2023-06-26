@@ -21,6 +21,7 @@ export type OptimizedListProps<T> = {
     | React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | null
     | undefined;
+  separate?: boolean;
 };
 
 function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.LegacyRef<BigList<T>>) {
@@ -29,7 +30,6 @@ function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.Lega
     data,
     col,
     refetching,
-    loading,
     ListEmptyComponent,
     keyExtractor,
     estimatedItemSize,

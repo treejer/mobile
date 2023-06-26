@@ -155,7 +155,7 @@ export function ActivityItem(props: TActivityItemProps) {
         </Modal>
       </RenderIf>
       <View style={globalStyles.alignItemsCenter}>
-        <Spacer />
+        <Spacer times={isWeb() ? 1 : 0.5} />
         <View style={[styles.container, isOpen && colors.smShadow]}>
           <View style={styles.row}>
             {isRelatedToTree ? (
