@@ -94,7 +94,7 @@ describe('currentJourney sagas', () => {
       const settingsMockData = {checkMetaData: true, locale: 'en', showSupportChat: false, releaseDate: 231231231321};
       //@ts-ignore
       next = gen.next(settingsMockData);
-      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform'); //
+      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform');
 
       const browserPlatformMockData = {
         platform: BrowserPlatform.Android,
@@ -130,27 +130,21 @@ describe('currentJourney sagas', () => {
 
       //@ts-ignore
       next = gen.next(photoLocation);
-      assert.deepEqual(
-        next.value,
-        checkTreePhoto({
-          imageCoords: photoLocation as TPoint,
-          userLocation: userLocation as TUserLocation,
-          checkMetaData: true,
-          options: {
-            imageBase64: '',
-            browserPlatform: BrowserPlatform.Android,
-            fromGallery: false,
-          },
-        }),
-      );
-
-      const discardUpdateLocation =
-        currentJourneyMockData.isUpdate &&
-        canUpdateTreeLocation(currentJourneyMockData, !!currentJourneyMockData?.isNursery);
+      assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
 
       //@ts-ignore
       next = gen.next(photoLocation);
-      assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
+      assert.deepEqual(
+        next.value,
+        checkTreeLocation({
+          photoLocation,
+          isUpdate: currentJourneyMockData.isUpdate,
+          inCheck: true,
+          submittedLocation: currentJourneyMockData.location,
+          checkMetaData: true,
+          browserPlatform: browserPlatformMockData.platform,
+        }),
+      );
     });
 
     it('watchAssignJourneyTreePhoto success, without location', () => {

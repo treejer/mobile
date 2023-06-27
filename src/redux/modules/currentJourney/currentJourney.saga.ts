@@ -11,10 +11,10 @@ import {upload} from 'utilities/helpers/IPFS';
 import {isWeb} from 'utilities/helpers/web';
 import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
-import {TReduxState} from 'ranger-redux/store';
 import {TTreeDetailRes} from 'webServices/trees/treeDetail';
 import {navigationRef} from 'navigation/navigationRef';
 import {Routes} from 'navigation/Navigation';
+import {TReduxState} from 'ranger-redux/store';
 import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
 import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
 import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
@@ -48,8 +48,6 @@ export function* watchAssignJourneyTreePhoto({
     const {platform}: BrowserPlatformState = yield select(getBrowserPlatform);
     const journey: TCurrentJourney = yield select(getCurrentJourney);
 
-    console.log('before check tree photo');
-
     const photoCoords = yield checkTreePhoto({
       imageCoords: photoLocation,
       userLocation: userLocation,
@@ -60,8 +58,6 @@ export function* watchAssignJourneyTreePhoto({
         fromGallery,
       },
     });
-
-    console.log('after check tree photo, before check tree location');
 
     yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
 
@@ -143,7 +139,6 @@ export function* watchSubmitJourney() {
     }
 
     if (isUpdate) {
-      console.log(treeDetail, 'tree Detail');
       jsonData = yield updateTreeJSON(config.ipfsGetURL, {
         journey,
         tree: treeDetail as any,

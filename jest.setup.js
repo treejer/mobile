@@ -237,3 +237,13 @@ jest.mock('./src/screens/GreenBlock/screens/TreeDetails/TreePhotos', () => {
     TreePhotos: Icon,
   };
 });
+
+jest.mock('./src/utilities/helpers/photoToBase64', () => {
+  return {
+    photoToBase64: () => 'base 64 generated',
+  };
+});
+
+jest.mock('./src/utilities/helpers/cropImage', () => {
+  return () => 1;
+});

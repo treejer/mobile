@@ -18,18 +18,46 @@ describe('draftedJourneys reducer', () => {
   it('should return the initial state', () => {
     expect(draftedJourneysReducer(initialState, {type: ''})).toEqual(initialState);
   });
-  it('should handle DRAFT_JOURNEY', () => {
+  it('should handle DRAFT_JOURNEY, native', () => {
     const date = new Date(jest.now());
     const newDraft = {
       journey,
       draftType: DraftType.Draft,
       name: `Draft ${date}`,
       id: date.toString(),
+      journeyImageB64: undefined,
     };
     const expectedValue = {
       drafts: [
         ...initialState.drafts,
-        {...newDraft, createdAt: new Date(newDraft.id), updatedAt: new Date(newDraft.id)},
+        {
+          ...newDraft,
+          journey: JSON.stringify(newDraft.journey),
+          createdAt: new Date(newDraft.id),
+          updatedAt: new Date(newDraft.id),
+        },
+      ],
+    };
+    expect(draftedJourneysReducer(initialState, actionsList.draftJourney(newDraft))).toEqual(expectedValue);
+  });
+  it('should handle DRAFT_JOURNEY, web', () => {
+    const date = new Date(jest.now());
+    const newDraft = {
+      journey,
+      draftType: DraftType.Draft,
+      name: `Draft ${date}`,
+      id: date.toString(),
+      journeyImageB64: 'image base 64',
+    };
+    const expectedValue = {
+      drafts: [
+        ...initialState.drafts,
+        {
+          ...newDraft,
+          journey: JSON.stringify(newDraft.journey),
+          createdAt: new Date(newDraft.id),
+          updatedAt: new Date(newDraft.id),
+        },
       ],
     };
     expect(draftedJourneysReducer(initialState, actionsList.draftJourney(newDraft))).toEqual(expectedValue);
@@ -37,7 +65,7 @@ describe('draftedJourneys reducer', () => {
   it('should handle REMOVE_DRAFTED_JOURNEY', () => {
     const date = new Date(jest.now());
     const draft = {
-      journey,
+      journey: JSON.stringify(journey),
       draftType: DraftType.Draft,
       name: `Draft ${date}`,
       id: date.toString(),
@@ -50,7 +78,7 @@ describe('draftedJourneys reducer', () => {
 
     expect(draftedJourneysReducer(state, actionsList.removeDraftedJourney({id: draft.id}))).toEqual(initialState);
   });
-  it('should handle SAVE_DRAFTED_JOURNEY', () => {
+  it('should handle SAVE_DRAFTED_JOURNEY, native', () => {
     const draftDate = new Date(jest.now());
     const draft = {
       journey,
@@ -61,7 +89,7 @@ describe('draftedJourneys reducer', () => {
       updatedAt: new Date(draftDate.toString()),
     };
     const state = {
-      drafts: [...initialState.drafts, draft],
+      drafts: [...initialState.drafts, {...draft, journey: JSON.stringify(draft.journey)}],
     };
     const updatedDraft = {
       journey: {
@@ -80,7 +108,7 @@ describe('draftedJourneys reducer', () => {
       updatedAt: new Date(jest.now()),
     };
     const updatedState = {
-      drafts: [...initialState.drafts, updatedDraft],
+      drafts: [...initialState.drafts, {...updatedDraft, journey: JSON.stringify(updatedDraft.journey)}],
     };
     expect(
       draftedJourneysReducer(
@@ -89,6 +117,52 @@ describe('draftedJourneys reducer', () => {
           journey: updatedDraft.journey,
           draftType: updatedDraft.draftType,
           name: updatedDraft.name,
+        }),
+      ),
+    ).toEqual(updatedState);
+  });
+  it('should handle SAVE_DRAFTED_JOURNEY, web', () => {
+    const draftDate = new Date(jest.now());
+    const draft = {
+      journey,
+      draftType: DraftType.Draft,
+      name: `Draft ${draftDate}`,
+      id: draftDate.toString(),
+      createdAt: new Date(draftDate.toString()),
+      updatedAt: new Date(draftDate.toString()),
+      journeyImageB64: 'image base 64',
+    };
+    const state = {
+      drafts: [...initialState.drafts, {...draft, journey: JSON.stringify(draft.journey)}],
+    };
+    const updatedDraft = {
+      journey: {
+        ...journey,
+        draftId: draft.id,
+        photo: onBoardingOne,
+        photoLocation: {
+          latitude: 2000,
+          longitude: 2000,
+        },
+      },
+      draftType: DraftType.Draft,
+      name: draft.name,
+      id: draft.id,
+      createdAt: new Date(draft.id.toString()),
+      updatedAt: new Date(jest.now()),
+      journeyImageB64: 'image base 64 updated',
+    };
+    const updatedState = {
+      drafts: [...initialState.drafts, {...updatedDraft, journey: JSON.stringify(updatedDraft.journey)}],
+    };
+    expect(
+      draftedJourneysReducer(
+        state,
+        actionsList.saveDraftedJourney({
+          journey: updatedDraft.journey,
+          draftType: updatedDraft.draftType,
+          name: updatedDraft.name,
+          journeyImageB64: 'image base 64 updated',
         }),
       ),
     ).toEqual(updatedState);
@@ -104,7 +178,7 @@ describe('draftedJourneys reducer', () => {
       updatedAt: date,
     };
     const state = {
-      drafts: [...initialState.drafts, draft],
+      drafts: [...initialState.drafts, {...draft, journey: JSON.stringify(draft.journey)}],
     };
     expect(draftedJourneysReducer(state, actionsList.setDraftAsCurrentJourneyWatcher({id: draft.id}))).toEqual(state);
   });
@@ -119,7 +193,7 @@ describe('draftedJourneys reducer', () => {
       updatedAt: date,
     };
     const state = {
-      drafts: [...initialState.drafts, draft],
+      drafts: [...initialState.drafts, {...draft, journey: JSON.stringify(draft.journey)}],
     };
     expect(draftedJourneysReducer(state, actionsList.clearDraftedJourneys())).toEqual(initialState);
   });

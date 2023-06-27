@@ -21,29 +21,45 @@ export type DraftJourneyAction = {
 } & actionsList.DraftJourneyWatcherPayload;
 
 export function* watchDraftJourney(action: DraftJourneyAction) {
-  const newDraft: actionsList.DraftJourneyArgs = {
-    id: action.id,
-    journey: action.journey,
-    name: action.name || action.id,
-    draftType: action.draftType,
-    journeyImageB64: isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
-  };
+  try {
+    const newDraft: actionsList.DraftJourneyArgs = {
+      id: action.id,
+      journey: action.journey,
+      name: action.name || action.id,
+      draftType: action.draftType,
+      journeyImageB64:
+        isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
+    };
 
-  yield put(actionsList.draftJourney(newDraft));
+    yield put(actionsList.draftJourney(newDraft));
+  } catch (e: any) {
+    yield showSagaAlert({
+      message: e.message,
+      mode: AlertMode.Error,
+    });
+  }
 }
 
 export type SaveDraftedJourneyAction = {
   type: string;
 } & actionsList.SaveDraftedJourneyWatcherPayload;
 export function* watchSaveDraftedJourney(action: SaveDraftedJourneyAction) {
-  const updatedDraft: actionsList.SaveDraftedJourneyArgs = {
-    journey: action.journey,
-    name: action.name,
-    draftType: action.draftType,
-    journeyImageB64: isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
-  };
+  try {
+    const updatedDraft: actionsList.SaveDraftedJourneyArgs = {
+      journey: action.journey,
+      name: action.name,
+      draftType: action.draftType,
+      journeyImageB64:
+        isWeb() && action.journey?.photo ? yield photoToBase64(action.journey?.photo as File) : undefined,
+    };
 
-  yield put(actionsList.saveDraftedJourney(updatedDraft));
+    yield put(actionsList.saveDraftedJourney(updatedDraft));
+  } catch (e: any) {
+    yield showSagaAlert({
+      message: e.message,
+      mode: AlertMode.Error,
+    });
+  }
 }
 
 export type SetDraftAsCurrentJourneyAction = {
@@ -51,54 +67,60 @@ export type SetDraftAsCurrentJourneyAction = {
 } & actionsList.SetAsCurrentJourneyWatcherPayload;
 
 export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAction) {
-  const {drafts}: TDraftedJourneysState = yield select(getDraftedJourneys);
-  const selectedDraft = drafts.find(draft => {
-    const selectedJourney = JSON.parse(draft.journey);
-    return [draft.id, selectedJourney.treeIdToPlant, selectedJourney.treeIdToUpdate].includes(id);
-  });
-
-  if (!selectedDraft) {
-    yield showSagaAlert({
-      message: 'toast.draftNotFound',
-      mode: AlertMode.Error,
-      alertOptions: {
-        translate: true,
-      },
+  try {
+    const {drafts}: TDraftedJourneysState = yield select(getDraftedJourneys);
+    const selectedDraft = drafts.find(draft => {
+      const selectedJourney = JSON.parse(draft.journey);
+      return [draft.id, selectedJourney.treeIdToPlant, selectedJourney.treeIdToUpdate].includes(id);
     });
-    return;
-  }
 
-  const currentJourney: TCurrentJourney = JSON.parse(selectedDraft.journey);
-
-  let journeyPhoto;
-  if (isWeb() && selectedDraft.journeyImageB64) {
-    journeyPhoto = yield getCroppedImg(selectedDraft.journeyImageB64, 'file');
-  }
-
-  if (selectedDraft) {
-    yield put(
-      setJourneyFromDrafts({
-        journey: {
-          ...currentJourney,
-          draftId: selectedDraft.id,
-          photo: isWeb() ? journeyPhoto : currentJourney.photo,
+    if (!selectedDraft) {
+      yield showSagaAlert({
+        message: 'toast.draftNotFound',
+        mode: AlertMode.Error,
+        alertOptions: {
+          translate: true,
         },
-      }),
-    );
-    // @ts-ignore
-    navigationRef()?.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: Routes.TreeSubmission_V2,
-            params: {
-              initialRouteName: Routes.SubmitTree_V2,
-            },
+      });
+      return;
+    }
+
+    const currentJourney: TCurrentJourney = JSON.parse(selectedDraft.journey);
+
+    let journeyPhoto;
+    if (isWeb() && selectedDraft.journeyImageB64) {
+      journeyPhoto = yield getCroppedImg(selectedDraft.journeyImageB64, 'file');
+    }
+
+    if (selectedDraft) {
+      yield put(
+        setJourneyFromDrafts({
+          journey: {
+            ...currentJourney,
+            draftId: selectedDraft.id,
+            photo: isWeb() ? journeyPhoto : currentJourney.photo,
           },
-        ],
-      }),
-    );
+        }),
+      );
+      navigationRef()?.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: Routes.TreeSubmission_V2,
+              params: {
+                initialRouteName: Routes.SubmitTree_V2,
+              },
+            },
+          ],
+        }),
+      );
+    }
+  } catch (e: any) {
+    yield showSagaAlert({
+      message: e.message,
+      mode: AlertMode.Error,
+    });
   }
 }
 

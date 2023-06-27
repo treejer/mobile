@@ -8,6 +8,8 @@ import {setJourneyFromDrafts} from 'ranger-redux/modules/currentJourney/currentJ
 import {
   draftedJourneysSagas,
   getDraftedJourneys,
+  watchDraftJourney,
+  watchSaveDraftedJourney,
   watchSetDraftAsCurrentJourney,
 } from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
 
@@ -15,17 +17,69 @@ describe('draftedJourneys saga', () => {
   it('functions should be defined', () => {
     expect(draftedJourneysSagas).toBeDefined();
     expect(watchSetDraftAsCurrentJourney).toBeDefined();
+    expect(watchDraftJourney).toBeDefined();
+    expect(watchSaveDraftedJourney).toBeDefined();
   });
 
   it('draftedJourneysSaga', () => {
     const gen = draftedJourneysSagas();
     assert.deepEqual(
       gen.next().value,
+      takeEvery(actionsList.DRAFT_JOURNEY_WATCHER, watchDraftJourney),
+      'should yield takeEvery draftJourney watcher',
+    );
+    assert.deepEqual(
+      gen.next().value,
+      takeEvery(actionsList.SAVE_DRAFTED_JOURNEY_WATCHER, watchSaveDraftedJourney),
+      'should yield takeEvery saveDraftedJourney watcher',
+    );
+    assert.deepEqual(
+      gen.next().value,
       takeEvery(actionsList.SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER, watchSetDraftAsCurrentJourney),
+      'should yield takeEvery setDraftAsCurrentJourney watcher',
     );
   });
 
-  it('setDraftAsCurrentJourney', () => {
+  it('watchDraftJourney', () => {
+    const date = new Date(jest.now());
+    const draft = {
+      draftType: DraftType.Draft,
+      id: date.toString(),
+      name: 'Name',
+      journey: {
+        photo: onBoardingOne,
+        photoLocation: {
+          latitude: 2000,
+          longitude: 2000,
+        },
+      },
+      journeyImageB64: undefined,
+    };
+    const gen = watchDraftJourney({type: actionsList.DRAFT_JOURNEY_WATCHER, ...draft});
+    assert.deepEqual(gen.next().value, put(actionsList.draftJourney(draft)), 'should yield put draftJourney action');
+  });
+
+  it('watchSaveDraftedJourney', () => {
+    const draft = {
+      draftType: DraftType.Draft,
+      name: 'Name',
+      journey: {
+        photo: onBoardingOne,
+        photoLocation: {
+          latitude: 2000,
+          longitude: 2000,
+        },
+      },
+      journeyImageB64: undefined,
+    };
+    const gen = watchSaveDraftedJourney({
+      type: actionsList.SAVE_DRAFTED_JOURNEY_WATCHER,
+      ...draft,
+    });
+    assert.deepEqual(gen.next().value, put(actionsList.saveDraftedJourney(draft)));
+  });
+
+  it('watchSetDraftAsCurrentJourney', () => {
     const date = new Date(jest.now());
     const gen = watchSetDraftAsCurrentJourney({
       id: date.toString(),
@@ -36,13 +90,13 @@ describe('draftedJourneys saga', () => {
 
     const draftOne = {
       id: date.toString(),
-      journey: {
+      journey: JSON.stringify({
         photo: onBoardingOne,
         photoLocation: {
           latitude: 2000,
           longitude: 2000,
         },
-      },
+      }),
       draftType: DraftType.Draft,
       createdAt: date,
       updatedAt: date,
@@ -50,12 +104,12 @@ describe('draftedJourneys saga', () => {
     const dateTwo = new Date();
     const draftTwo = {
       id: dateTwo.toString(),
-      journey: {
+      journey: JSON.stringify({
         location: {
           latitude: 2000,
           longitude: 2000,
         },
-      },
+      }),
       draftType: DraftType.Offline,
       name: 'Name',
       createdAt: dateTwo,
@@ -65,7 +119,7 @@ describe('draftedJourneys saga', () => {
     next = gen.next({drafts: [draftOne, draftTwo]});
     assert.deepEqual(
       next.value,
-      put(setJourneyFromDrafts({journey: {...draftOne.journey, draftId: draftOne.id.toString()}})),
+      put(setJourneyFromDrafts({journey: {...JSON.parse(draftOne.journey), draftId: draftOne.id.toString()}})),
     );
   });
 });
