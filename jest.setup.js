@@ -247,3 +247,7 @@ jest.mock('./src/utilities/helpers/photoToBase64', () => {
 jest.mock('./src/utilities/helpers/cropImage', () => {
   return () => 1;
 });
+
+jest.mock('./src/screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper', () => {
+  return () => <Icon />;
+});

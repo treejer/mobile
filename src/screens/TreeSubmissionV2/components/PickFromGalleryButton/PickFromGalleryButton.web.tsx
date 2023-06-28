@@ -7,6 +7,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 
 export type PickFromGalleryButtonProps = {
+  testID?: string;
   disabled?: boolean;
   hasTreePhoto: boolean;
   onPress?: (e: any) => void;

@@ -7,19 +7,20 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 
 export type PickFromGalleryButtonProps = {
+  testID?: string;
   disabled?: boolean;
   hasTreePhoto: boolean;
   onPress?: (e: any) => void;
 };
 
 export function PickFromGalleryButton(props: PickFromGalleryButtonProps) {
-  const {disabled, hasTreePhoto, onPress} = props;
+  const {testID, disabled, hasTreePhoto, onPress} = props;
 
   const {t} = useTranslation();
 
   return (
     <TouchableOpacity
-      testID="gallery-button"
+      testID={testID}
       style={[styles.button, {backgroundColor: hasTreePhoto ? colors.grayDarkerOpacity : colors.grayDarker}]}
       disabled={disabled}
       onPress={onPress}

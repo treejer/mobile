@@ -131,12 +131,11 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
 
   return (
     <>
-      <Modal visible={isWeb() && showCamera}>
-        <WebCam testID="web-cam-cpt" handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
+      <Modal testID="web-cam-modal" visible={isWeb() && showCamera}>
+        <WebCam handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
       </Modal>
-      <Modal visible={isWeb() && !!pickedPhoto} transparent style={{flex: 1}}>
+      <Modal testID="web-image-picker-cropper-modal" visible={isWeb() && !!pickedPhoto} transparent style={{flex: 1}}>
         <WebImagePickerCropper
-          testID="web-image-picker-cropper-cpt"
           imageData={pickedPhoto as File}
           handleDone={handleSelectPhotoFromLibraryWeb}
           handleDismiss={() => setPickedPhoto(null)}
@@ -207,7 +206,12 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
                 </Text>
               </TouchableOpacity>
               <Spacer times={2} />
-              <PickFromGalleryButton hasTreePhoto={!!treePhoto} disabled={disabled} onPress={handleOpenGallery} />
+              <PickFromGalleryButton
+                testID="gallery-button"
+                hasTreePhoto={!!treePhoto}
+                disabled={disabled}
+                onPress={handleOpenGallery}
+              />
             </View>
           </View>
         </Wrapper>
