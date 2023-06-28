@@ -23,7 +23,7 @@ export function useTreeUpdateInterval() {
         } catch (e) {}
       })
       .catch(e => console.log(e, 'e is here'));
-  }, [treeFactory.methods]);
+  }, [treeFactory?.methods]);
 
   useEffect(() => {
     (async function () {

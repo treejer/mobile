@@ -1,20 +1,22 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import Cropper from 'react-easy-crop';
 import {useTranslation} from 'react-i18next';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+
 import {colors} from 'constants/values';
-import Icon from 'react-native-vector-icons/AntDesign';
 
 const bottomSheetSpace = 80;
 
-interface WebCamProps {
+interface WebImagePickerCropperProps {
+  testID?: string;
   imageData: File;
   handleDone: (image: string | ArrayBuffer | null, croppedAreaPixels: number | null, rotation: number) => void;
   handleDismiss: () => void;
 }
 
-function WebImagePickerCropper(props: WebCamProps) {
-  const {handleDone, imageData, handleDismiss} = props;
+function WebImagePickerCropper(props: WebImagePickerCropperProps) {
+  const {testID, handleDone, imageData, handleDismiss} = props;
 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -43,7 +45,7 @@ function WebImagePickerCropper(props: WebCamProps) {
   );
 
   return (
-    <View style={{backgroundColor: colors.grayOpacity, flex: 1}}>
+    <View testID={testID} style={{backgroundColor: colors.grayOpacity, flex: 1}}>
       <View style={{flex: 1, position: 'relative', maxWidth: 768, width: '100%', margin: 'auto'}}>
         <View style={{flex: 1}}>
           {image ? (

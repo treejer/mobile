@@ -22,12 +22,12 @@ describe('DraftItem component', () => {
         <DraftItem
           draft={{
             name: 'SAMPLE',
-            journey: {
+            journey: JSON.stringify({
               ...journey,
               isSingle: false,
               isNursery: true,
               nurseryCount: 2,
-            },
+            }),
             draftType: DraftType.Draft,
             id: dateOne,
             createdAt: new Date(dateOne),
@@ -75,11 +75,11 @@ describe('DraftItem component', () => {
         <DraftItem
           draft={{
             name: 'SAMPLE',
-            journey: {
+            journey: JSON.stringify({
               ...journey,
               isSingle: true,
               isNursery: false,
-            },
+            }),
             draftType: DraftType.Draft,
             id: dateOne,
             createdAt: new Date(dateOne),
@@ -128,7 +128,7 @@ describe('DraftItem component', () => {
         <DraftItem
           draft={{
             name: 'SAMPLE',
-            journey: {
+            journey: JSON.stringify({
               ...journey,
               tree: {
                 treeSpecsEntity: {
@@ -137,7 +137,7 @@ describe('DraftItem component', () => {
               } as any,
               isSingle: true,
               isNursery: false,
-            },
+            }),
             draftType: DraftType.Draft,
             id: dateOne,
             createdAt: new Date(dateOne),

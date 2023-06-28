@@ -83,8 +83,15 @@ export function SelectTreeLocation(props: SelectTreeLocationProps) {
                 </Text>
               </View>
               <RenderIf condition={!!(hasLocation?.coords && hasLocation?.canUpdate && onRemove && !disabled)}>
-                <TouchableOpacity onPress={onRemove} disabled={disabled} activeOpacity={disabled ? 1 : undefined}>
-                  <Text style={styles.removeText}>{t('submitTreeV2.remove')}</Text>
+                <TouchableOpacity
+                  testID="remove-location-button"
+                  onPress={onRemove}
+                  disabled={disabled}
+                  activeOpacity={disabled ? 1 : undefined}
+                >
+                  <Text testID="remove-location-text" style={styles.removeText}>
+                    {t('submitTreeV2.remove')}
+                  </Text>
                 </TouchableOpacity>
               </RenderIf>
             </View>

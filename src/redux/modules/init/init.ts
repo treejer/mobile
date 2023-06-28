@@ -65,7 +65,6 @@ export function* watchInitApp() {
     yield take(UPDATE_WATCH_CONNECTION);
     yield put(createWeb3());
     yield take(UPDATE_WEB3);
-    yield put(countriesActions.load());
     console.log('started');
     const {accessToken, config}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
     if (accessToken) {

@@ -20,7 +20,7 @@ export type DraftItemProps = {
 
 export function DraftItem(props: DraftItemProps) {
   const {testID, draft, onPressDraft, onRemoveDraft} = props;
-  const {isNursery, tree} = draft.journey;
+  const {isNursery, tree, treeIdToPlant} = JSON.parse(draft.journey);
 
   const {locale} = useSettings();
 
@@ -40,7 +40,7 @@ export function DraftItem(props: DraftItemProps) {
             <Image
               testID="tree-image"
               source={treeImageSrc(tree)}
-              style={[styles.treeImage, {tintColor: draft.journey.treeIdToPlant ? undefined : colors.gray}]}
+              style={[styles.treeImage, {tintColor: treeIdToPlant ? undefined : colors.gray}]}
             />
           )
         ) : (

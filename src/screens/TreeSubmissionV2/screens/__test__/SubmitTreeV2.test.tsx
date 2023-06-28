@@ -1,7 +1,6 @@
 import {screen} from '@testing-library/react-native';
 import {MockedProviderProps} from '@apollo/client/testing';
 
-import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 import {render, act, fireEvent, waitFor} from 'ranger-testUtils/testingLibrary';
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
 import {DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
@@ -13,6 +12,7 @@ import {
   mockPlantTreePermissionsLocationGranted,
 } from 'screens/TreeSubmissionV2/components/__test__/mock';
 import {onBoardingOne} from '../../../../../assets/images';
+import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 import document from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
 
 const canPlantMockQuery: MockedProviderProps['mocks'] = [
@@ -21,7 +21,6 @@ const canPlantMockQuery: MockedProviderProps['mocks'] = [
       query: document,
       variables: {
         id: '',
-        // id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
       },
     },
     result: {
@@ -48,7 +47,6 @@ const cantPlantMockQuery = [
       query: document,
       variables: {
         id: '',
-        // id: '0x2adec9ea34c04731d84e6110edc9f63b999da0cb',
       },
     },
     result: {
@@ -85,7 +83,12 @@ describe('SubmitTreeV2 component', () => {
           name={Routes.SubmitTree_V2}
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
         />,
-        goerliReducers,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isSingle: true,
+          },
+        },
         cantPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
@@ -155,7 +158,12 @@ describe('SubmitTreeV2 component', () => {
           name={Routes.SubmitTree_V2}
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsGranted} />}
         />,
-        goerliReducers,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isSingle: true,
+          },
+        },
         canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;
@@ -198,7 +206,12 @@ describe('SubmitTreeV2 component', () => {
           name={Routes.SubmitTree_V2}
           component={<SubmitTreeV2 plantTreePermissions={mockPlantTreePermissionsLocationGranted} />}
         />,
-        goerliReducers,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isSingle: true,
+          },
+        },
         canPlantMockQuery as any,
       );
       getElementByTestId = element.getByTestId;

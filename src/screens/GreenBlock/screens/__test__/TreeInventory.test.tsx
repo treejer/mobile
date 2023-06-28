@@ -13,7 +13,7 @@ const mockQuery: MockedProviderProps['mocks'] = [
     request: {
       query: doucment,
       variables: {
-        first: 20,
+        first: 30,
         skip: 0,
         orderBy: 'createdAt',
         orderDirection: 'desc',

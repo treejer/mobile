@@ -17,7 +17,12 @@ describe('SelectPlantTypeV2 screen', () => {
     beforeEach(() => {
       const element = render(
         <TestSubmissionStack name={Routes.SelectPlantType_V2} component={<SelectPlantTypeV2 />} />,
-        goerliReducers,
+        {
+          ...goerliReducers,
+          currentJourney: {
+            isSingle: true,
+          },
+        },
       );
       getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;

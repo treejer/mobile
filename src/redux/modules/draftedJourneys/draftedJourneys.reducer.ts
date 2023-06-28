@@ -3,7 +3,6 @@ import {useCallback} from 'react';
 import {sortByDate} from 'utilities/helpers/sortByDate';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {navigateToGreenBlock} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
 import * as actionsList from './draftedJourneys.action';
 
 export enum DraftType {
@@ -45,7 +44,6 @@ export const draftedJourneysReducer = (
 ) => {
   switch (action.type) {
     case actionsList.DRAFT_JOURNEY:
-      console.log(action, 'action is hehrehrehrehh');
       const newDraft = {
         id: action.id,
         createdAt: new Date(action?.id || ''),
@@ -56,7 +54,6 @@ export const draftedJourneysReducer = (
         journeyImageB64: action.journeyImageB64 || undefined,
       };
 
-      navigateToGreenBlock({isNew: true, name: newDraft?.name});
       return {
         drafts: [newDraft, ...state.drafts],
       };
@@ -76,7 +73,6 @@ export const draftedJourneysReducer = (
       selectedDraft.journeyImageB64 = action.journeyImageB64 || selectedDraft.journeyImageB64;
       cloneDrafts[selectedDraftIndex] = selectedDraft;
 
-      navigateToGreenBlock({isNew: false, name: selectedDraft?.name});
       return {
         drafts: sortByDate(cloneDrafts, 'updatedAt'),
       };

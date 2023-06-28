@@ -81,24 +81,6 @@ export function TreeInventory(props: TreeInventoryProps) {
     refetchSubmittedTrees,
   } = useSubmittedTrees();
 
-  // const {
-  //   filters: submittedTreeFilters,
-  //   handleSetFilter: handleSetFilterSubmittedTrees,
-  //   data: filteredSubmittedTrees,
-  // } = useArrayFilter<SubmittedTreeStatus, Tree>({
-  //   defaultFilters: filter?.tab === TreeLife.Submitted && filter?.submittedStatus ? filter?.submittedStatus : [],
-  //   defaultData: submittedTrees,
-  //   customFilterHandler: (data, filters) => handleFilterSubmittedTrees(data, filters, treeUpdateInterval),
-  //   canSelectMultiple: false,
-  // });
-
-  // useRefocusEffect(async () => {
-  //   if (!submittedTreesLoading) {
-  //     await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
-  //     await notVerifiedTrees.dispatchRefetch();
-  //   }
-  // });
-
   const notVerifiedTintColor = useMemo(
     () =>
       notVerifiedTreeFilter === NotVerifiedTreeStatus.Plant

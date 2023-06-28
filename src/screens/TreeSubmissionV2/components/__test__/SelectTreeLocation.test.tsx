@@ -30,6 +30,8 @@ describe('SelectTreeLocation component', () => {
       const mapText = getElementByTestId('select-location-map');
       const locationIcon = getElementByTestId('select-location-icon');
       const selectLocationBtn = getElementByTestId('select-location-button');
+      const removeBtn = queryElementByTestId('remove-location-button');
+      const removeBtnText = queryElementByTestId('remove-location-text');
 
       expect(container).toBeTruthy();
       expect(stylesToOneObject(container.props.style).height).toBe(104);
@@ -59,6 +61,9 @@ describe('SelectTreeLocation component', () => {
       expect(locationIcon).toBeTruthy();
       expect(locationIcon.props.name).toBe('map-marked-alt');
       expect(locationIcon.props.color).toBe(colors.khaki);
+
+      expect(removeBtn).toBeFalsy();
+      expect(removeBtnText).toBeFalsy();
     });
   });
 
@@ -75,7 +80,12 @@ describe('SelectTreeLocation component', () => {
 
     beforeEach(() => {
       const element = render(
-        <SelectTreeLocation testID="select-location-cpt" hasLocation={hasLocation} onSelect={() => {}} />,
+        <SelectTreeLocation
+          testID="select-location-cpt"
+          hasLocation={hasLocation}
+          onSelect={() => {}}
+          onRemove={() => {}}
+        />,
       );
       getElementByTestId = element.getByTestId;
     });
@@ -98,6 +108,8 @@ describe('SelectTreeLocation component', () => {
       const mapText = getElementByTestId('select-location-map');
       const locationIcon = getElementByTestId('select-location-icon');
       const selectLocationBtn = getElementByTestId('select-location-button');
+      const removeBtn = getElementByTestId('remove-location-button');
+      const removeBtnText = getElementByTestId('remove-location-text');
 
       const checkIcon = getElementByTestId('check-icon');
 
@@ -134,11 +146,15 @@ describe('SelectTreeLocation component', () => {
       expect(locationIcon).toBeTruthy();
       expect(locationIcon.props.name).toBe('map-marked-alt');
       expect(locationIcon.props.color).toBe(colors.khaki);
+
+      expect(removeBtn).toBeTruthy();
+      expect(removeBtnText).toBeTruthy();
+      expect(removeBtnText.props.children).toBe('submitTreeV2.remove');
     });
   });
 
   describe("SelectTreeLocation state = has location can't change", () => {
-    let getElementByTestId;
+    let getElementByTestId, queryElementByTestId;
 
     const hasLocation = {
       coords: {
@@ -153,6 +169,7 @@ describe('SelectTreeLocation component', () => {
         <SelectTreeLocation testID="select-location-cpt" hasLocation={hasLocation} onSelect={() => {}} />,
       );
       getElementByTestId = element.getByTestId;
+      queryElementByTestId = element.queryByTestId;
     });
 
     const imageUrl = getStaticMapboxUrl(
@@ -173,6 +190,8 @@ describe('SelectTreeLocation component', () => {
       const mapText = getElementByTestId('select-location-map');
       const locationIcon = getElementByTestId('select-location-icon');
       const selectLocationBtn = getElementByTestId('select-location-button');
+      const removeBtn = queryElementByTestId('remove-location-button');
+      const removeBtnText = queryElementByTestId('remove-location-text');
 
       const checkIcon = getElementByTestId('check-icon');
 
@@ -209,6 +228,9 @@ describe('SelectTreeLocation component', () => {
       expect(locationIcon).toBeTruthy();
       expect(locationIcon.props.name).toBe('map-marked-alt');
       expect(locationIcon.props.color).toBe(colors.khaki);
+
+      expect(removeBtn).toBeFalsy();
+      expect(removeBtnText).toBeFalsy();
     });
   });
 });

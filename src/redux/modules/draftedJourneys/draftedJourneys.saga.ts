@@ -32,6 +32,7 @@ export function* watchDraftJourney(action: DraftJourneyAction) {
     };
 
     yield put(actionsList.draftJourney(newDraft));
+    navigateToGreenBlock({isNew: true, name: action?.name || action?.id});
   } catch (e: any) {
     yield showSagaAlert({
       message: e.message,
@@ -54,6 +55,7 @@ export function* watchSaveDraftedJourney(action: SaveDraftedJourneyAction) {
     };
 
     yield put(actionsList.saveDraftedJourney(updatedDraft));
+    navigateToGreenBlock({isNew: false, name: action?.name});
   } catch (e: any) {
     yield showSagaAlert({
       message: e.message,

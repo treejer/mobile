@@ -41,7 +41,6 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
     const {message} = handleFetchError(e);
     yield put(UpdatedTrees.actions.loadFailure(message));
     yield handleSagaFetchError(e);
-    yield Promise.reject();
     reject?.();
   }
 }

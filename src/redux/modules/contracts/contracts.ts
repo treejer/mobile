@@ -204,7 +204,7 @@ export function* watchTransaction({transaction}: TAction) {
     yield put(cancelTransaction());
     yield put(getBalance());
 
-    toast?.show('transfer.success.title', {type: AlertMode.Success, translate: true});
+    toast?.show?.('transfer.success.title', {type: AlertMode.Success, translate: true});
   } catch (e: any) {
     yield put(cancelTransaction());
     yield put(getBalance());

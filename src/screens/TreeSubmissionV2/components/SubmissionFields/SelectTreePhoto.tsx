@@ -131,20 +131,17 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
 
   return (
     <>
-      <RenderIf condition={showCamera}>
-        <Modal visible>
-          <WebCam handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
-        </Modal>
-      </RenderIf>
-      <RenderIf condition={!!pickedPhoto}>
-        <Modal visible transparent style={{flex: 1}}>
-          <WebImagePickerCropper
-            imageData={pickedPhoto as File}
-            handleDone={handleSelectPhotoFromLibraryWeb}
-            handleDismiss={() => setPickedPhoto(null)}
-          />
-        </Modal>
-      </RenderIf>
+      <Modal visible={isWeb() && showCamera}>
+        <WebCam testID="web-cam-cpt" handleDone={handleTakePhotoWeb} handleDismiss={() => setShowCamera(false)} />
+      </Modal>
+      <Modal visible={isWeb() && !!pickedPhoto} transparent style={{flex: 1}}>
+        <WebImagePickerCropper
+          testID="web-image-picker-cropper-cpt"
+          imageData={pickedPhoto as File}
+          handleDone={handleSelectPhotoFromLibraryWeb}
+          handleDismiss={() => setPickedPhoto(null)}
+        />
+      </Modal>
       <Card testID={testID} style={styles.container}>
         {/*@ts-ignore*/}
         <Wrapper {...WrapperProps}>
@@ -171,8 +168,15 @@ export function SelectTreePhoto(props: SelectTreePhotoProps) {
                   </Text>
                 </View>
                 <RenderIf condition={!!(treePhoto && onRemove && !disabled)}>
-                  <TouchableOpacity disabled={disabled} activeOpacity={disabled ? 1 : undefined} onPress={onRemove}>
-                    <Text style={styles.removeText}>{t('submitTreeV2.remove')}</Text>
+                  <TouchableOpacity
+                    testID="remove-photo-button"
+                    disabled={disabled}
+                    activeOpacity={disabled ? 1 : undefined}
+                    onPress={onRemove}
+                  >
+                    <Text testID="remove-photo-text" style={styles.removeText}>
+                      {t('submitTreeV2.remove')}
+                    </Text>
                   </TouchableOpacity>
                 </RenderIf>
               </View>

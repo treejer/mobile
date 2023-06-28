@@ -78,7 +78,6 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const handleSelectPhoto = useCallback(
     (photoArgs: TOnSelectTree) => {
       if (userLocation) {
-        console.log(photoArgs, 'photoArgs');
         dispatchSelectTreePhoto({...photoArgs, userLocation});
       }
     },
