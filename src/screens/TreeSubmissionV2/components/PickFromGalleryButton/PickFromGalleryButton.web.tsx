@@ -10,7 +10,7 @@ export type PickFromGalleryButtonProps = {
   testID?: string;
   disabled?: boolean;
   hasTreePhoto: boolean;
-  onPress?: (e: any) => void;
+  onPress: (e: any) => void;
 };
 export function PickFromGalleryButton(props: PickFromGalleryButtonProps) {
   const {hasTreePhoto, disabled, onPress} = props;
