@@ -72,12 +72,13 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
           contentContainerStyle={styles.list}
           refetching={refetching}
           onRefetch={onRefetch}
-          onEndReached={!loading ? onEndReached : undefined}
+          loading={loading}
+          onEndReached={onEndReached}
           ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
         />
       );
     },
-    [refetching, onRefetch, onEndReached, treeItemRenderItem, notVerifiedTrees],
+    [refetching, loading, onRefetch, onEndReached, treeItemRenderItem, notVerifiedTrees],
   );
 
   return (

@@ -48,7 +48,7 @@ export function useSearchPlaces() {
   );
 
   const dispatchResetSearchPlaces = useCallback(() => {
-    dispatch(SearchPlaces.actions.loadSuccess(null));
+    dispatch(SearchPlaces.actions.resetCache());
   }, [dispatch]);
 
   return {

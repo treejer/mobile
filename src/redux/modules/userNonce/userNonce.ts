@@ -53,9 +53,14 @@ export function useUserNonce() {
     dispatch(UserNonce.actions.load());
   }, [dispatch]);
 
+  const dispatchResetUserNonce = useCallback(() => {
+    dispatch(UserNonce.actions.resetCache());
+  }, [dispatch]);
+
   return {
     ...userNonceState,
     dispatchUserNonce,
+    dispatchResetUserNonce,
     userNonce: data,
   };
 }

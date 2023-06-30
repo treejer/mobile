@@ -35,6 +35,7 @@ function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.Lega
     contentContainerStyle,
     ListEmptyComponent,
     estimatedItemSize,
+    loading,
     onEndReached,
     onRefetch,
   } = props;
@@ -53,7 +54,7 @@ function OptimizedListComponent<T>(props: OptimizedListProps<T>, ref: React.Lega
       contentContainerStyle={contentContainerStyle}
       refreshing={refetching}
       onRefresh={onRefetch}
-      onEndReached={onEndReached}
+      onEndReached={!loading ? onEndReached : undefined}
       onEndReachedThreshold={0.1}
       ListEmptyComponent={ListEmptyComponent}
     />

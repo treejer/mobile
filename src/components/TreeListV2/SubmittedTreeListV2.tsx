@@ -188,13 +188,14 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
           keyExtractor={(item, index) => `list-${item.id}-${col}-${index}`}
           contentContainerStyle={styles.list}
           refetching={!!refetching}
+          loading={loading}
           onRefetch={onRefetch}
-          onEndReached={!loading && !refetching ? onEndReached : undefined}
+          onEndReached={onEndReached}
           ListEmptyComponent={<EmptyTreeList testID="empty-tree-list-cpt" />}
         />
       );
     },
-    [refetching, onRefetch, onEndReached, treeItemRenderItem, verifiedTrees],
+    [refetching, loading, onRefetch, onEndReached, treeItemRenderItem, verifiedTrees],
   );
 
   return (

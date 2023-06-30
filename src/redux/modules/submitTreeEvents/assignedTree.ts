@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
 import {put, takeEvery} from 'redux-saga/effects';
 
@@ -9,7 +10,7 @@ import {
 } from 'webServices/submitTreeEvents/assignedTree';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
-import {assignedTreesActions} from 'ranger-redux/modules/trees/assignedTrees';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 const AssignedTree = new ReduxFetchState<TAssignedTreeRes, TAssignedTreePayload, string | string[]>('assignedTree');
 
@@ -30,7 +31,6 @@ export function* watchAssignedTree({payload}: TAssignedTreeAction) {
         },
       },
     );
-    yield put(assignedTreesActions.load());
     yield put(AssignedTree.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);
@@ -42,6 +42,29 @@ export function* watchAssignedTree({payload}: TAssignedTreeAction) {
 
 export function* assignedTreeSagas() {
   yield takeEvery(AssignedTree.actionTypes.load, watchAssignedTree);
+}
+
+export function useAssignedTree() {
+  const {data: assignedTree, ...assignedTreeState} = useAppSelector(state => state.assignedTree);
+  const dispatch = useAppDispatch();
+
+  const dispatchAssignedTree = useCallback(
+    (form: TAssignedTreePayload) => {
+      dispatch(AssignedTree.actions.load(form));
+    },
+    [dispatch],
+  );
+
+  const dispatchResetAssignedTree = useCallback(() => {
+    dispatch(AssignedTree.actions.resetCache());
+  }, [dispatch]);
+
+  return {
+    assignedTree,
+    ...assignedTreeState,
+    dispatchAssignedTree,
+    dispatchResetAssignedTree,
+  };
 }
 
 export const {

@@ -24,6 +24,13 @@ export function addNewPlace(newPlace: TPlace) {
   };
 }
 
+export const RESET_RECENT_PLACES = 'RESET_RECENT_PLACES';
+export function resetRecentPlaces() {
+  return {
+    type: RESET_RECENT_PLACES,
+  };
+}
+
 export function recentPlacesReducer(
   state: TRecentPlacesState = recentPlacesInitialState,
   action: TRecentPlacesAction,
@@ -49,6 +56,9 @@ export function recentPlacesReducer(
         recentPlaces: cloneRecentPlaces,
       };
     }
+    case RESET_RECENT_PLACES: {
+      return recentPlacesInitialState;
+    }
     default: {
       return state;
     }
@@ -66,8 +76,13 @@ export function useRecentPlaces() {
     [dispatch],
   );
 
+  const dispatchResetRecentPlaces = useCallback(() => {
+    dispatch(resetRecentPlaces());
+  }, [dispatch]);
+
   return {
     ...recentPlaces,
     dispatchAddNewPlace,
+    dispatchResetRecentPlaces,
   };
 }

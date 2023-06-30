@@ -23,6 +23,7 @@ import {
 import {useArrayFilter} from 'utilities/hooks/useArrayFilter';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import {useSubmittedTrees} from 'utilities/hooks/useSubmittedTrees';
+import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
@@ -80,6 +81,13 @@ export function TreeInventory(props: TreeInventoryProps) {
     submittedTreesLoadMore,
     refetchSubmittedTrees,
   } = useSubmittedTrees();
+
+  useRefocusEffect(async () => {
+    if (!submittedTreesLoading && !submittedTreesRefetching) {
+      await refetchSubmittedTrees(undefined, !!submittedTrees?.length);
+      await notVerifiedTrees.dispatchRefetch();
+    }
+  });
 
   const notVerifiedTintColor = useMemo(
     () =>

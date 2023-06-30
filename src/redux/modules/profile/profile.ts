@@ -15,10 +15,18 @@ import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 import {changeCheckMetaData} from '../settings/settings';
 import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
-import {plantedTreesActions} from '../trees/plantedTrees';
-import {updatedTreesActions} from '../trees/updatedTrees';
-import {assignedTreesActions} from '../trees/assignedTrees';
-import {pendingTreeIdsActions} from '../trees/pendingTreeIds';
+import {pendingTreeIdsActions, usePendingTreeIds} from '../trees/pendingTreeIds';
+import {usePlantTree} from '../submitTreeEvents/plantTree';
+import {useAssignedTree} from '../submitTreeEvents/assignedTree';
+import {useTreeDetails} from '../trees/treeDetails';
+import {useDeleteTreeEvent} from '../submitTreeEvents/deleteTreeEvent';
+import {useUserNonce} from '../userNonce/userNonce';
+import {useUserSign} from '../userSign/userSign';
+import {useSearchPlaces} from '../searchPlaces/searchPlaces';
+import {useRecentPlaces} from '../recentPlaces/recentPlaces';
+import {useNotVerifiedTrees} from '../trees/useNotVerifiedTrees';
+import {useVerification} from '../verification/useVerification';
+import {useUpdateTree} from '../submitTreeEvents/updateTree';
 
 const Profile = new ReduxFetchState<TProfile, null, string>('profile');
 
@@ -49,6 +57,18 @@ export function useProfile() {
   const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
   const {dispatchClearDraftedJourneys} = useDraftedJourneys();
   const {network: currentNetwork} = useUserWeb3();
+  const {dispatchResetRecentPlaces} = useRecentPlaces();
+  const {dispatchResetAll} = useNotVerifiedTrees();
+  const {dispatchResetPendingTreeIds} = usePendingTreeIds();
+  const {dispatchResetSearchPlaces} = useSearchPlaces();
+  const {dispatchResetUserSign} = useUserSign();
+  const {dispatchResetUserNonce} = useUserNonce();
+  const {dispatchResetDeleteEvent} = useDeleteTreeEvent();
+  const {dispatchResetVerification} = useVerification();
+  const {dispatchClearTreeDetails} = useTreeDetails();
+  const {dispatchResetAssignedTree} = useAssignedTree();
+  const {dispatchResetPlantTree} = usePlantTree();
+  const {dispatchResetUpdateTree} = useUpdateTree();
   const {t} = useTranslation();
 
   const dispatchProfile = useCallback(() => {
@@ -82,10 +102,18 @@ export function useProfile() {
         }
 
         dispatchClearDraftedJourneys();
-        dispatch(plantedTreesActions.resetCache());
-        dispatch(updatedTreesActions.resetCache());
-        dispatch(assignedTreesActions.resetCache());
-        dispatch(pendingTreeIdsActions.resetCache());
+        dispatchResetUpdateTree();
+        dispatchResetPlantTree();
+        dispatchResetAssignedTree();
+        dispatchClearTreeDetails();
+        dispatchResetVerification();
+        dispatchResetDeleteEvent();
+        dispatchResetUserNonce();
+        dispatchResetUserSign();
+        dispatchResetSearchPlaces();
+        dispatchResetPendingTreeIds();
+        dispatchResetAll();
+        dispatchResetRecentPlaces();
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);
@@ -116,7 +144,28 @@ export function useProfile() {
         return Promise.reject(e);
       }
     },
-    [currentNetwork, dispatch, dispatchResetOfflineTrees, offlineTrees.planted, offlineTrees.updated, t],
+    [
+      currentNetwork,
+      dispatch,
+      dispatchResetOfflineTrees,
+      offlineTrees.planted,
+      offlineTrees.updated,
+      t,
+      dispatchResetRecentPlaces,
+      dispatchClearDraftedJourneys,
+      dispatchResetUpdateTree,
+      dispatchResetPlantTree,
+      dispatchResetAssignedTree,
+      dispatchClearTreeDetails,
+      dispatchResetVerification,
+      dispatchResetDeleteEvent,
+      dispatchResetUserNonce,
+      dispatchResetUserSign,
+      dispatchResetSearchPlaces,
+      dispatchResetPendingTreeIds,
+      dispatchResetAll,
+      dispatchResetRecentPlaces,
+    ],
   );
 
   return {

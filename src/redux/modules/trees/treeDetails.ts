@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
 import {put, takeEvery} from 'redux-saga/effects';
 
@@ -6,7 +7,6 @@ import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'ut
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {useCallback} from 'react';
 
 export const TreeDetails = new ReduxFetchState<TTreeDetailRes, TTreeDetailPayload, string>('treeDetail');
 
@@ -52,4 +52,8 @@ export function useTreeDetails() {
   };
 }
 
-export const {reducer: treeDetailReducer, actions: treeDetailActions, actionTypes: treeDetailActionTypes} = TreeDetails;
+export const {
+  reducer: treeDetailsReducer,
+  actions: treeDetailsActions,
+  actionTypes: treeDetailsActionTypes,
+} = TreeDetails;

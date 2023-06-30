@@ -39,7 +39,7 @@ export function usePendingTreeIds() {
     dispatch(PendingTreeIds.actions.load());
   }, [dispatch]);
 
-  const dispatchClearPendingTreeIds = useCallback(() => {
+  const dispatchResetPendingTreeIds = useCallback(() => {
     dispatch(PendingTreeIds.actions.resetCache());
   }, [dispatch]);
 
@@ -47,7 +47,7 @@ export function usePendingTreeIds() {
     pendingTreeIds,
     ...pendingTreeIdsState,
     dispatchGetPendingTreeIds,
-    dispatchClearPendingTreeIds,
+    dispatchResetPendingTreeIds,
   };
 }
 

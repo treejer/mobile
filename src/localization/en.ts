@@ -649,4 +649,8 @@ export const en = {
   responseCodeMessage: {
     '204': 'Successfully Removed.',
   },
+  developing: {
+    title: 'Developing',
+    message: 'Coming Soon...',
+  },
 };

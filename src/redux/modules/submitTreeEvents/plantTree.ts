@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
 import {put, takeEvery} from 'redux-saga/effects';
 
@@ -9,7 +10,7 @@ import {
 } from 'webServices/submitTreeEvents/plantTree';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
-import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
+import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 const PlantTree = new ReduxFetchState<TPlantTreeRes, TPlantTreePayload, string | string[]>('plantTree');
 
@@ -27,7 +28,6 @@ export function* watchPlantTree({payload}: TPlantTreeAction) {
         countryCode: 0,
       },
     });
-    yield put(plantedTreesActions.load());
     yield put(PlantTree.actions.loadSuccess(res.result));
   } catch (e: any) {
     const {message} = handleFetchError(e);
@@ -39,6 +39,29 @@ export function* watchPlantTree({payload}: TPlantTreeAction) {
 
 export function* plantTreeSagas() {
   yield takeEvery(PlantTree.actionTypes.load, watchPlantTree);
+}
+
+export function usePlantTree() {
+  const {data: assignedTree, ...plantTreeState} = useAppSelector(state => state.plantTree);
+  const dispatch = useAppDispatch();
+
+  const dispatchPlantTree = useCallback(
+    (form: TPlantTreePayload) => {
+      dispatch(PlantTree.actions.load(form));
+    },
+    [dispatch],
+  );
+
+  const dispatchResetPlantTree = useCallback(() => {
+    dispatch(PlantTree.actions.resetCache());
+  }, [dispatch]);
+
+  return {
+    assignedTree,
+    ...plantTreeState,
+    dispatchPlantTree,
+    dispatchResetPlantTree,
+  };
 }
 
 export const {reducer: plantTreeReducer, actions: plantTreeActions, actionTypes: plantTreeActionTypes} = PlantTree;

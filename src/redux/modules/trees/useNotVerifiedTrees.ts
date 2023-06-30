@@ -44,6 +44,10 @@ export function useNotVerifiedTrees(
     [dispatch],
   );
 
+  const dispatchResetPlantedTrees = useCallback(() => {
+    dispatch(plantedTreesActions.resetCache());
+  }, [dispatch]);
+
   const dispatchGetUpdatedTrees = useCallback(
     (form?: TUpdatedTreesPayload) => {
       dispatch(updatedTreesActions.load(form));
@@ -51,12 +55,26 @@ export function useNotVerifiedTrees(
     [dispatch],
   );
 
+  const dispatchResetUpdatedTrees = useCallback(() => {
+    dispatch(updatedTreesActions.resetCache());
+  }, [dispatch]);
+
   const dispatchGetAssignedTrees = useCallback(
     (form?: TAssignedTreesPayload) => {
       dispatch(assignedTreesActions.load(form));
     },
     [dispatch],
   );
+
+  const dispatchResetAssignedTrees = useCallback(() => {
+    dispatch(assignedTreesActions.resetCache());
+  }, [dispatch]);
+
+  const dispatchResetAll = useCallback(() => {
+    dispatchResetPlantedTrees();
+    dispatchResetUpdatedTrees();
+    dispatchResetAssignedTrees();
+  }, [dispatchResetAssignedTrees, dispatchResetUpdatedTrees]);
 
   const planted = useMemo(
     () => ({
@@ -70,8 +88,9 @@ export function useNotVerifiedTrees(
         }),
       dispatchLoadMore: () => plantedTreesPagination.dispatchNextPage(plantedTreesActions.load),
       pagination: plantedTreesPagination,
+      reset: dispatchResetPlantedTrees,
     }),
-    [plantedTrees, plantedTreesState, plantedTreesPagination, dispatchGetPlantedTrees],
+    [plantedTrees, plantedTreesState, plantedTreesPagination, dispatchGetPlantedTrees, dispatchResetPlantedTrees],
   );
 
   const updated = useMemo(
@@ -86,8 +105,9 @@ export function useNotVerifiedTrees(
         }),
       dispatchLoadMore: () => updatedTreesPagination.dispatchNextPage(updatedTreesActions.load),
       pagination: updatedTreesPagination,
+      reset: dispatchResetUpdatedTrees,
     }),
-    [updatedTrees, updatedTreesState, updatedTreesPagination, dispatchGetUpdatedTrees],
+    [updatedTrees, updatedTreesState, updatedTreesPagination, dispatchGetUpdatedTrees, dispatchResetUpdatedTrees],
   );
 
   const assigned = useMemo(
@@ -102,8 +122,9 @@ export function useNotVerifiedTrees(
         }),
       dispatchLoadMore: () => assignedTreesPagination.dispatchNextPage(assignedTreesActions.load),
       pagination: assignedTreesPagination,
+      reset: dispatchResetAssignedTrees,
     }),
-    [assignedTrees, assignedTreesState, assignedTreesPagination, dispatchGetAssignedTrees],
+    [assignedTrees, assignedTreesState, assignedTreesPagination, dispatchGetAssignedTrees, dispatchResetAssignedTrees],
   );
 
   const current = useMemo(() => {
@@ -118,6 +139,7 @@ export function useNotVerifiedTrees(
 
   return {
     dispatchGetAll,
+    dispatchResetAll,
     current,
     planted,
     updated,

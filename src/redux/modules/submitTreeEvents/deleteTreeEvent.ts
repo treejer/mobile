@@ -105,12 +105,17 @@ export function useDeleteTreeEvent() {
     [dispatch],
   );
 
+  const dispatchResetDeleteEvent = useCallback(() => {
+    dispatch(DeleteTreeEvent.actions.resetCache());
+  }, [dispatch]);
+
   return {
     ...deleteTreeEventState,
     deleteTreeEvent,
     dispatchDeletePlantEvent,
     dispatchDeleteAssignedEvent,
     dispatchDeleteUpdateEvent,
+    dispatchResetDeleteEvent,
   };
 }
 

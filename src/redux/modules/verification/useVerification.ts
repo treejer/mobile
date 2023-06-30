@@ -42,6 +42,13 @@ export function useVerification() {
     [dispatch],
   );
 
+  const dispatchResetVerification = useCallback(() => {
+    dispatch(mobileSendCodeActions.resetCache());
+    dispatch(mobileResendCodeActions.resetCache());
+    dispatch(verifyMobileActions.resetCache());
+    dispatch(verifyProfileActions.resetCache());
+  }, [dispatch]);
+
   return {
     mobileSendCode,
     mobileSendCodeState,
@@ -55,5 +62,6 @@ export function useVerification() {
     verifyProfile,
     verifyProfileState,
     dispatchVerifyProfile,
+    dispatchResetVerification,
   };
 }

@@ -19,7 +19,7 @@ import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules
 import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
 import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
 import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
-import {treeDetailActions, treeDetailActionTypes} from 'ranger-redux/modules/trees/treeDetails';
+import {treeDetailsActions, treeDetailsActionTypes} from 'ranger-redux/modules/trees/treeDetails';
 import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
@@ -29,6 +29,7 @@ import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/bro
 import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
 import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import * as actionsList from './currentJourney.action';
+import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
 
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
 
@@ -128,8 +129,8 @@ export function* watchSubmitJourney() {
 
     let treeDetail: TTreeDetailRes | undefined = undefined;
     if (treeIdToUpdate || treeIdToPlant) {
-      yield put(treeDetailActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
-      const {payload} = yield take(treeDetailActionTypes.loadSuccess);
+      yield put(treeDetailsActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
+      const {payload} = yield take(treeDetailsActionTypes.loadSuccess);
       treeDetail = yield payload;
     }
 
@@ -232,6 +233,8 @@ export function* watchSubmitJourney() {
       yield put(plantedTreesActions.load());
       yield take([plantedTreesActionTypes.loadSuccess, plantedTreesActionTypes.loadFailure]);
     }
+    yield put(pendingTreeIdsActions.load());
+    yield take([pendingTreeIdsActionTypes.loadSuccess, pendingTreeIdsActionTypes.loadFailure]);
     yield showSagaAlert({
       title: 'success',
       message: isUpdate ? 'submitTree.updated' : 'submitTree.submitted',

@@ -56,9 +56,14 @@ export function useUserSign() {
     dispatch(UserSign.actions.load());
   }, [dispatch]);
 
+  const dispatchResetUserSign = useCallback(() => {
+    dispatch(UserSign.actions.resetCache());
+  }, [dispatch]);
+
   return {
     ...userSignState,
     dispatchUserSign,
+    dispatchResetUserSign,
     userSign: data,
   };
 }
