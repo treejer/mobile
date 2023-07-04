@@ -16,7 +16,7 @@ const AssignedTree = new ReduxFetchState<TAssignedTreeRes, TAssignedTreePayload,
 
 export function* watchAssignedTree({payload}: TAssignedTreeAction) {
   try {
-    const {treeId, treeSpecs, signature, birthDate} = payload || {};
+    const {treeId, treeSpecs, treeSpecsJSON, signature, birthDate} = payload || {};
     const res: FetchResult<TAssignedTreeRes> = yield sagaFetch<TAssignedTreeRes, TAssignedTreeForm>(
       '/assigned_requests',
       {
@@ -25,6 +25,7 @@ export function* watchAssignedTree({payload}: TAssignedTreeAction) {
         data: {
           treeId,
           treeSpecs,
+          treeSpecsJSON,
           signature,
           birthDate,
           countryCode: 0,

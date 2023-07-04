@@ -17,7 +17,7 @@ export type NotVerifiedTreeImageProps = {
 export function NotVerifiedTreeImage(props: NotVerifiedTreeImageProps) {
   const {testID, tree, tint, tintColor = colors.gray, size = 38, style} = props;
 
-  const treeSpecs = JSON.parse(tree?.treeSpecs);
+  const treeSpecs = JSON.parse(tree?.treeSpecsJSON);
 
   if (treeSpecs.nursery) {
     return (

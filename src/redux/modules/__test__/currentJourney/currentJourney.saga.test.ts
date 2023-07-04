@@ -9,7 +9,7 @@ import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 import {assignedTreeJSON, canUpdateTreeLocation, newTreeJSON, updateTreeJSON} from 'utilities/helpers/submitTree';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLocation';
-import {upload} from 'utilities/helpers/IPFS';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {generateTreeFactorySignature, TreeFactoryMethods} from 'utilities/helpers/submissionUtilsV2';
 import {currentTimestamp} from 'utilities/helpers/date';
 import {changeCheckMetaData, getSettings} from 'ranger-redux/modules/settings/settings';
@@ -393,10 +393,16 @@ describe('currentJourney sagas', () => {
         'should execute treeSpecs',
       );
 
+      assert.deepEqual(
+        gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
       const currentTimestamp1 = currentTimestamp();
 
       assert.deepEqual(
-        gen.next(jsonData).value,
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           config: mockConfig,
@@ -417,7 +423,8 @@ describe('currentJourney sagas', () => {
           plantTreeActions.load({
             signature: 'signature',
             birthDate: currentTimestamp1,
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
           }),
         ),
         'should dispatch plantTree',
@@ -515,10 +522,16 @@ describe('currentJourney sagas', () => {
         'should execute treeSpecs',
       );
 
+      assert.deepEqual(
+        gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
       const currentTimestamp1 = currentTimestamp();
 
       assert.deepEqual(
-        gen.next(jsonData).value,
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           config: mockConfig,
@@ -539,7 +552,8 @@ describe('currentJourney sagas', () => {
           plantTreeActions.load({
             signature: 'signature',
             birthDate: currentTimestamp1,
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
           }),
         ),
         'should dispatch plantTree',
@@ -660,6 +674,12 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
+      assert.deepEqual(
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           magic: mockMagic as any,
@@ -678,7 +698,8 @@ describe('currentJourney sagas', () => {
         put(
           updateTreeActions.load({
             treeId: Number(mockUpdateJourneyWithDraftId.treeIdToUpdate),
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
             signature: 'signature',
           }),
         ),
@@ -806,6 +827,12 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
+      assert.deepEqual(
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           magic: mockMagic as any,
@@ -824,7 +851,8 @@ describe('currentJourney sagas', () => {
         put(
           updateTreeActions.load({
             treeId: Number(mockUpdateJourneyWithoutDraftId.treeIdToUpdate),
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
             signature: 'signature',
           }),
         ),
@@ -945,10 +973,16 @@ describe('currentJourney sagas', () => {
         'should execute treeSpecs',
       );
 
+      assert.deepEqual(
+        gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
       const currentTimestamp1 = currentTimestamp();
 
       assert.deepEqual(
-        gen.next(jsonData).value,
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           magic: mockMagic as any,
@@ -970,7 +1004,8 @@ describe('currentJourney sagas', () => {
           assignedTreeActions.load({
             birthDate: currentTimestamp1,
             treeId: Number(mockAssignedJourneyWithDraftId.treeIdToPlant),
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
             signature: 'signature',
           }),
         ),
@@ -1103,10 +1138,16 @@ describe('currentJourney sagas', () => {
         'should execute treeSpecs',
       );
 
+      assert.deepEqual(
+        gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
       const currentTimestamp1 = currentTimestamp();
 
       assert.deepEqual(
-        gen.next(jsonData).value,
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           magic: mockMagic as any,
@@ -1128,7 +1169,8 @@ describe('currentJourney sagas', () => {
           assignedTreeActions.load({
             birthDate: currentTimestamp1,
             treeId: Number(mockAssignedJourneyWithoutDraftId.treeIdToPlant),
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
             signature: 'signature',
           }),
         ),
@@ -1257,10 +1299,16 @@ describe('currentJourney sagas', () => {
         'should execute treeSpecs',
       );
 
+      assert.deepEqual(
+        gen.next(jsonData).value,
+        uploadContent(mockConfig.ipfsPostURL, JSON.stringify(jsonData)),
+        'should upload treeSpecs to IPFS',
+      );
+
       const currentTimestamp1 = currentTimestamp();
 
       assert.deepEqual(
-        gen.next(jsonData).value,
+        gen.next({Hash: 'HASH'}).value,
         generateTreeFactorySignature({
           wallet: mockWallet,
           magic: mockMagic as any,
@@ -1282,7 +1330,8 @@ describe('currentJourney sagas', () => {
           assignedTreeActions.load({
             birthDate: currentTimestamp1,
             treeId: Number(mockAssignedJourneyWithoutDraftId.treeIdToPlant),
-            treeSpecs: JSON.stringify(jsonData),
+            treeSpecs: 'HASH',
+            treeSpecsJSON: JSON.stringify(jsonData),
             signature: 'signature',
           }),
         ),

@@ -36,7 +36,7 @@ describe('NotVerifiedTreeItem component', () => {
       const createdAtDate = getElementByTestId('date-text-createdAt');
       const treeName = getElementByTestId('tree-name');
 
-      const treeSpecs = JSON.parse(notVerifiedTreesMock[0].treeSpecs);
+      const treeSpecs = JSON.parse(notVerifiedTreesMock[0].treeSpecsJSON);
 
       const locationImage = getStaticMapboxUrl(
         mapboxPrivateToken,

@@ -16,13 +16,14 @@ const PlantTree = new ReduxFetchState<TPlantTreeRes, TPlantTreePayload, string |
 
 export function* watchPlantTree({payload}: TPlantTreeAction) {
   try {
-    const {treeSpecs, signature, birthDate} = payload || {};
+    const {treeSpecs, treeSpecsJSON, signature, birthDate} = payload || {};
 
     const res: FetchResult<TPlantTreeRes> = yield sagaFetch<TPlantTreeRes, TPlantTreeForm>('/plant_requests', {
       configUrl: 'treejerNestApiUrl',
       method: 'POST',
       data: {
         treeSpecs,
+        treeSpecsJSON,
         signature,
         birthDate,
         countryCode: 0,

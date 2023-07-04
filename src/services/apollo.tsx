@@ -11,8 +11,8 @@ import {onError} from '@apollo/client/link/error';
 import {AbiMapping, EthereumLink} from 'apollo-link-ethereum';
 import {Web3JSResolver} from 'apollo-link-ethereum-resolver-web3js/lib';
 import camelCase from 'lodash/camelCase';
-import Web3 from 'services/Magic';
 
+import Web3 from 'services/Magic';
 import {NetworkConfig} from './config';
 import {useAccessToken, useConfig, useUserId, useWeb3} from 'ranger-redux/modules/web3/web3';
 

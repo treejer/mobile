@@ -137,7 +137,7 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
                   testID="tree-image-cpt"
                   tree={
                     {
-                      treeSpecs: JSON.stringify({
+                      treeSpecsJSON: JSON.stringify({
                         nursery: currentJourney.isNursery,
                         image: treeDetails?.treeSpecsEntity?.imageFs,
                       }),

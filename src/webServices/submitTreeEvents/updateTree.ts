@@ -13,6 +13,7 @@ export type TUpdateTreeRes = {
 export type TUpdateTreePayload = {
   treeId: number;
   treeSpecs: string;
+  treeSpecsJSON: string;
   signature: string;
 };
 

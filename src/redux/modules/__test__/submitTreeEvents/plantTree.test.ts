@@ -47,6 +47,7 @@ describe('plantTree module', () => {
         type: plantTreeActionTypes.load,
         payload: {
           birthDate: date,
+          treeSpecsJSON: '',
           signature: '',
           treeSpecs: '',
         },
@@ -63,7 +64,7 @@ describe('plantTree module', () => {
       const date = currentTimestamp();
       const gen = watchPlantTree({
         type: plantTreeActionTypes.load,
-        payload: {signature: '', treeSpecs: '', birthDate: date},
+        payload: {signature: '', treeSpecs: '', treeSpecsJSON: '', birthDate: date},
       });
       const error = new Error('error is here');
       gen.next();

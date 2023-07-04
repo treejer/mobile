@@ -17,7 +17,8 @@ jest.mock('@react-navigation/native', () => {
           _id: '1',
           signer: 'string',
           nonce: 2,
-          treeSpecs: JSON.stringify({
+          treeSpecs: 'Hash',
+          treeSpecsJSON: JSON.stringify({
             location: {latitude: 2000000, longitude: 213213123123},
             updates: [
               {

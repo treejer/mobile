@@ -16,12 +16,14 @@ export type TAssignedTreePayload = {
   treeId: number;
   birthDate: number;
   treeSpecs: string;
+  treeSpecsJSON: string;
   signature: string;
 };
 
 export type TAssignedTreeForm = {
   treeId: number;
   treeSpecs: string;
+  treeSpecsJSON: string;
   birthDate: number;
   countryCode: number;
   signature: string;

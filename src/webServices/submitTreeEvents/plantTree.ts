@@ -14,12 +14,14 @@ export type TPlantTreeRes = {
 export type TPlantTreePayload = {
   signature: string;
   treeSpecs: string;
+  treeSpecsJSON: string;
   birthDate: number;
 };
 
 export type TPlantTreeForm = {
   signature: string;
   treeSpecs: string;
+  treeSpecsJSON: string;
   birthDate: number;
   countryCode: number;
 };

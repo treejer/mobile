@@ -45,6 +45,7 @@ describe('updateTree module', () => {
         type: updateTreeActionTypes.load,
         payload: {
           signature: '',
+          treeSpecsJSON: '',
           treeSpecs: '',
           treeId: 21,
         },
@@ -60,7 +61,12 @@ describe('updateTree module', () => {
     it('update tree failure', () => {
       const gen = watchUpdateTree({
         type: updateTreeActionTypes.load,
-        payload: {signature: '', treeSpecs: '', treeId: 21},
+        payload: {
+          signature: '',
+          treeSpecsJSON: '',
+          treeSpecs: '',
+          treeId: 21,
+        },
       });
       const error = new Error('error is here');
       gen.next();

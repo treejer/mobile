@@ -11,13 +11,14 @@ const UpdateTree = new ReduxFetchState<TUpdateTreeRes, TUpdateTreePayload, strin
 
 export function* watchUpdateTree({payload}: TUpdateTreeAction) {
   try {
-    const {treeId, treeSpecs, signature} = payload || {};
+    const {treeId, treeSpecs, treeSpecsJSON, signature} = payload || {};
     const res: FetchResult<TUpdateTreeRes> = yield sagaFetch<TUpdateTreeRes, TUpdateTreePayload>('/update_requests', {
       configUrl: 'treejerNestApiUrl',
       method: 'POST',
       data: {
         treeId,
         treeSpecs,
+        treeSpecsJSON,
         signature,
       },
     });

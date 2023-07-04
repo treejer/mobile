@@ -7,7 +7,7 @@ import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {checkTreeLocation} from 'utilities/helpers/checkTreeLocation/checkTreeLocation';
 import {generateTreeFactorySignature, TreeFactoryMethods} from 'utilities/helpers/submissionUtilsV2';
 import {currentTimestamp} from 'utilities/helpers/date';
-import {upload} from 'utilities/helpers/IPFS';
+import {upload, uploadContent} from 'utilities/helpers/IPFS';
 import {isWeb} from 'utilities/helpers/web';
 import {NotVerifiedTreeStatus, TreeLife} from 'utilities/helpers/treeInventory';
 import {assignedTreeJSON, newTreeJSON, photoToUpload, updateTreeJSON} from 'utilities/helpers/submitTree';
@@ -160,6 +160,8 @@ export function* watchSubmitJourney() {
       }
     }
 
+    const metaDataUploadResult = yield uploadContent(config.ipfsPostURL, JSON.stringify(jsonData));
+
     if (isUpdate && treeDetail) {
       const signature = yield generateTreeFactorySignature({
         wallet,
@@ -169,13 +171,14 @@ export function* watchSubmitJourney() {
         requestParams: {
           treeId: Number(treeIdToUpdate),
           nonce: +profile?.plantingNonce!,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
         },
       });
       yield put(
         updateTreeActions.load({
           signature,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecsJSON: JSON.stringify(jsonData),
           treeId: Number(treeIdToUpdate),
         }),
       );
@@ -194,13 +197,14 @@ export function* watchSubmitJourney() {
           countryCode: 0,
           birthDate: currentTimeStamp,
           nonce: +profile?.plantingNonce!,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
         },
       });
       yield put(
         assignedTreeActions.load({
           signature,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecsJSON: JSON.stringify(jsonData),
           birthDate: currentTimeStamp,
           treeId: Number(treeIdToPlant),
         }),
@@ -219,13 +223,14 @@ export function* watchSubmitJourney() {
           countryCode: 0,
           birthDate: currentTimeStamp,
           nonce: +profile?.plantingNonce!,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
         },
       });
       yield put(
         plantTreeActions.load({
           signature,
-          treeSpecs: JSON.stringify(jsonData),
+          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecsJSON: JSON.stringify(jsonData),
           birthDate: currentTimeStamp,
         }),
       );

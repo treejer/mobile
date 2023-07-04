@@ -29,7 +29,7 @@ export function NotVerifiedTreeItem<T>(props: NotVerifiedTreeItemProps) {
   const {t} = useTranslation();
   const {locale} = useSettings();
 
-  const treeSpecs = JSON.parse(tree.treeSpecs);
+  const treeSpecs = JSON.parse(tree.treeSpecsJSON);
 
   const hasLocation = useMemo(
     () => !!(treeSpecs?.location?.latitude && treeSpecs?.location?.longitude),

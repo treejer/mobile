@@ -213,6 +213,10 @@ jest.mock('./src/utilities/helpers/IPFS', () => {
         resolve({Hash: 'https://www.file.com'});
       }),
     getHttpDownloadUrl: () => 'https://www.file.com',
+    uploadContent: () =>
+      new Promise((resolve, reject) => {
+        resolve({Hash: 'HASH'});
+      }),
   };
 });
 

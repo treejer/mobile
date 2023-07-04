@@ -20,6 +20,7 @@ export type NotVerifiedTree = {
   signer: string;
   nonce: number;
   treeSpecs: string;
+  treeSpecsJSON: string;
   birthDate?: number;
   countryCode?: number;
   treeId?: number;

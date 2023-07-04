@@ -49,6 +49,7 @@ describe('AssignedTree module', () => {
         payload: {
           birthDate: date,
           signature: '',
+          treeSpecsJSON: '',
           treeSpecs: '',
           treeId: 21,
         },
@@ -66,7 +67,7 @@ describe('AssignedTree module', () => {
 
       const gen = watchAssignedTree({
         type: assignedTreeActionTypes.load,
-        payload: {signature: '', treeSpecs: '', treeId: 21, birthDate: date},
+        payload: {signature: '', treeSpecs: '', treeSpecsJSON: '', treeId: 21, birthDate: date},
       });
       const error = new Error('error is here');
       gen.next();

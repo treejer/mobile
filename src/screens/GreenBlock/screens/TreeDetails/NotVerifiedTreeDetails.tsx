@@ -56,7 +56,7 @@ export function NotVerifiedTreeDetails() {
     dispatchDeletePlantEvent,
   ]);
 
-  const treeSpecs = useMemo(() => JSON.parse(tree.treeSpecs), [tree.treeSpecs]);
+  const treeSpecs = useMemo(() => JSON.parse(tree.treeSpecsJSON), [tree.treeSpecsJSON]);
 
   const staticMapUrl = useMemo(
     () =>
