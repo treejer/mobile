@@ -139,17 +139,17 @@ export function* watchSubmitJourney() {
       photoUploadResult = yield upload(config.ipfsPostURL, photoToUpload(journey?.photo));
     }
 
-    if (isUpdate) {
+    if (isUpdate && treeDetail) {
       jsonData = yield updateTreeJSON(config.ipfsGetURL, {
         journey,
-        tree: treeDetail as any,
+        tree: treeDetail,
         photoUploadHash: photoUploadResult.Hash,
       });
     } else {
       if (treeIdToPlant && treeDetail?.treeSpecsEntity != null) {
         jsonData = yield assignedTreeJSON(config.ipfsGetURL, {
           journey,
-          tree: treeDetail as any,
+          tree: treeDetail,
           photoUploadHash: photoUploadResult.Hash,
         });
       } else {

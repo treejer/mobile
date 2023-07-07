@@ -1,12 +1,12 @@
 import {PermissionItemV2} from 'components/CheckingPermissions/PermissionItemV2';
 import {render} from '@testing-library/react-native';
+import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
+import {colors} from 'constants/values';
 import {
   mockBlockedAllPermissions,
   mockCheckingAllPermissions,
   mockGrantedAllPermissions,
-} from 'screens/TreeSubmission/components/CheckPermissions/__test__/mock';
-import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
-import {colors} from 'constants/values';
+} from 'screens/TreeSubmissionV2/components/__test__/mock';
 
 describe('PermissionItemV2 component', () => {
   it('PermissionItemV2 component should be defined', () => {

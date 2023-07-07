@@ -17,7 +17,6 @@ export default function App() {
     <GestureHandlerRootView style={{flex: 1}}>
       <Provider store={store}>
         <PersistGate persistor={persistor} loading={null}>
-          {/* @ts-ignore */}
           <I18nextProvider i18n={i18next}>
             <SafeAreaProvider>
               <InitNavigation />

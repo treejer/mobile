@@ -7,13 +7,11 @@ import {Activity} from 'screens/Profile/screens/Activity/Activity';
 import GreenBlock from 'screens/GreenBlock/GreenBlock';
 import {Withdraw} from 'screens/Withdraw/Withdraw';
 import TreeSubmissionV2 from 'screens/TreeSubmissionV2';
-import TreeSubmission from 'screens/TreeSubmission';
 import {screenTitle} from 'utilities/helpers/documentTitle';
 import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
 import {usePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 import TabBar from 'components/TabBar/TabBar';
-import {useConfig} from 'ranger-redux/modules/web3/web3';
 
 export type VerifiedUserNavigationParamList = {
   [Routes.MyProfile]?: {
@@ -45,7 +43,6 @@ const VerifiedUserStack = createBottomTabNavigator<VerifiedUserNavigationParamLi
 
 export function VerifiedUserNavigation() {
   const plantTreePermissions = usePlantTreePermissions();
-  const {useV1Submission} = useConfig();
 
   return (
     <VerifiedUserStack.Navigator tabBar={props => <TabBar {...props} />} screenOptions={{headerShown: false}}>
@@ -54,14 +51,8 @@ export function VerifiedUserNavigation() {
         component={MyProfile}
         options={{title: screenTitle('Profile')}}
       />
-      <VerifiedUserStack.Screen name={useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2}>
-        {props =>
-          useV1Submission ? (
-            <TreeSubmission {...props} plantTreePermissions={plantTreePermissions} />
-          ) : (
-            <TreeSubmissionV2 {...props} plantTreePermissions={plantTreePermissions} />
-          )
-        }
+      <VerifiedUserStack.Screen name={Routes.TreeSubmission_V2}>
+        {props => <TreeSubmissionV2 {...props} plantTreePermissions={plantTreePermissions} />}
       </VerifiedUserStack.Screen>
       <VerifiedUserStack.Screen name={Routes.GreenBlock} component={GreenBlock} />
       <VerifiedUserStack.Screen name={Routes.Withdraw} component={Withdraw} />

@@ -14,8 +14,8 @@ import {TPoint} from 'utilities/helpers/distanceInMeters';
 import getCroppedImg from 'utilities/helpers/cropImage';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
-import WebImagePickerCropper from 'screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper';
 import {PickFromGalleryButton} from 'screens/TreeSubmissionV2/components/PickFromGalleryButton/PickFromGalleryButton';
+import WebImagePickerCropper from 'components/WebImagePickerCropper/WebImagePickerCropper';
 
 export type TOnSelectTree = {
   photo: Image | File;

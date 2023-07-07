@@ -14,11 +14,12 @@ import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 export type SubmissionSettingsProps = {
   testID?: string;
   cardStyle?: ViewStyle;
+  inSubmission?: boolean;
   shadow?: boolean;
 };
 
 export function SubmissionSettings(props: SubmissionSettingsProps) {
-  const {testID, cardStyle, shadow = true} = props;
+  const {testID, cardStyle, shadow = true, inSubmission} = props;
 
   const config = useConfig();
   const {ether} = useContracts();
@@ -35,7 +36,7 @@ export function SubmissionSettings(props: SubmissionSettingsProps) {
 
   return (
     <Card style={cardStyle} testID={testID} shadow={shadow}>
-      {config.useV1Submission ? (
+      {!inSubmission ? (
         <>
           <View style={styles.settingsItem}>
             <Text testID="use-biconomy" style={styles.text}>

@@ -19,8 +19,6 @@ import RadioButton from 'components/RadioButton/RadioButton';
 import WebCam from 'components/WebCam/WebCam';
 import TextField, {PhoneField} from 'components/TextField';
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
-import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
-import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
 import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
@@ -31,6 +29,8 @@ import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useVerification} from 'ranger-redux/modules/verification/useVerification';
 import {TUserStatus} from 'webServices/profile/profile';
+import SelectPhotoButton from 'screens/Profile/components/SelectPhotoButton';
+import {PickImageButton} from 'screens/Profile/components/PickImageButton';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 

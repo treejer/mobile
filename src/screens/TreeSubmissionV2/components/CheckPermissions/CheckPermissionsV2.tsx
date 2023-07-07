@@ -138,6 +138,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
                 <SubmissionSettings
                   testID="submission-settings-cpt"
                   shadow={false}
+                  inSubmission={true}
                   cardStyle={{backgroundColor: colors.khaki}}
                 />
               </>

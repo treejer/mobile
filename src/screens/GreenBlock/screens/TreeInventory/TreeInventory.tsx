@@ -47,12 +47,6 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const [activeTab, setActiveTab] = useState<TreeLife>(filter?.tab || TreeLife.Submitted);
 
-  useEffect(() => {
-    if (filter?.tab) {
-      setActiveTab(filter?.tab);
-    }
-  }, [filter]);
-
   const [submittedTreeItemUI, setSubmittedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
   const [notVerifiedTreeItemUI, setNotVerifiedTreeItemUI] = useState<TreeItemUI>(TreeItemUI.WithId);
 

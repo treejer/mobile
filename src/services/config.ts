@@ -67,7 +67,6 @@ export interface NetworkConfig {
   magicNetwork: BlockchainNetwork;
   chainId: string;
   explorerUrl: string;
-  useV1Submission: boolean;
 }
 
 export interface Config {
@@ -130,7 +129,6 @@ const config: Config = {
     magicNetwork: BlockchainNetwork.MaticMain,
     chainId: process.env.REACT_NATIVE_MATIC_MAIN_CHAIN_ID || '',
     explorerUrl: process.env.REACT_NATIVE_MATIC_MAIN_EXPLORER_URL || '',
-    useV1Submission: false,
   },
   [BlockchainNetwork.MaticTest]: {
     contracts: {
@@ -179,7 +177,6 @@ const config: Config = {
     magicNetwork: BlockchainNetwork.MaticTest,
     chainId: process.env.REACT_NATIVE_MATIC_TEST_CHAIN_ID || '',
     explorerUrl: process.env.REACT_NATIVE_MATIC_TEST_EXPLORER_URL || '',
-    useV1Submission: false,
   },
   [BlockchainNetwork.Goerli]: {
     contracts: {
@@ -236,7 +233,6 @@ const config: Config = {
     magicNetwork: BlockchainNetwork.Goerli,
     chainId: process.env.REACT_NATIVE_GOERLI_CHAIN_ID || '',
     explorerUrl: process.env.REACT_NATIVE_GOERLI_EXPLORER_URL || '',
-    useV1Submission: false,
   },
 };
 

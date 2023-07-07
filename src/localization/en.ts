@@ -205,7 +205,7 @@ export const en = {
   myProfile: {
     attention: 'Attention!',
     looseTree:
-      'You have {{treesLength}} {{treeText}} planted in offline mode and {{treeThereText}} waiting to submit, if you logout now, you will loose your {{treeText}}!',
+      'You have {{treesLength}} {{treeText}} in your draft storage {{treeThereText}} waiting to submit, if you logout now, you will loose your drafts!',
     logoutAndLoose: 'Logout & Loose',
     withdraw: {
       success: 'You successfully withdrew!',

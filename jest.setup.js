@@ -252,6 +252,6 @@ jest.mock('./src/utilities/helpers/cropImage', () => {
   return () => 1;
 });
 
-jest.mock('./src/screens/TreeSubmission/screens/SelectPhoto/WebImagePickerCropper', () => {
+jest.mock('./src/components/WebImagePickerCropper/WebImagePickerCropper', () => {
   return () => <Icon />;
 });

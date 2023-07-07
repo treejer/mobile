@@ -2,7 +2,10 @@ import React, {forwardRef, LegacyRef} from 'react';
 import MapboxGL, {MapViewProps} from '@rnmapbox/maps';
 import {mapboxPrivateToken} from 'services/config';
 
-import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
+export type locationType = {
+  lng: number;
+  lat: number;
+};
 
 MapboxGL.setWellKnownTileServer('Mapbox');
 MapboxGL.setAccessToken(mapboxPrivateToken);

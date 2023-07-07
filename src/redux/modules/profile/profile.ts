@@ -8,7 +8,6 @@ import {defaultNetwork, storageKeys} from 'services/config';
 import {TProfile} from 'webServices/profile/profile';
 import {asyncAlert} from 'utilities/helpers/alert';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
-import {offlineTreesStorageKey, offlineUpdatedTreesStorageKey, useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {getConfig, TWeb3, useUserWeb3} from '../web3/web3';
 import {clearUserNonce} from '../web3/web3';
@@ -54,8 +53,7 @@ export function useProfile() {
   const {data, ...profileState} = useAppSelector(state => state.profile);
   const dispatch = useAppDispatch();
 
-  const {offlineTrees, dispatchResetOfflineTrees} = useOfflineTrees();
-  const {dispatchClearDraftedJourneys} = useDraftedJourneys();
+  const {dispatchClearDraftedJourneys, drafts} = useDraftedJourneys();
   const {network: currentNetwork} = useUserWeb3();
   const {dispatchResetRecentPlaces} = useRecentPlaces();
   const {dispatchResetAll} = useNotVerifiedTrees();
@@ -80,21 +78,17 @@ export function useProfile() {
       try {
         if (userPressed) {
           try {
-            if (offlineTrees.planted || offlineTrees.updated) {
-              const trees = [...(offlineTrees.planted || []), ...(offlineTrees.updated || [])];
+            if (drafts.length > 0) {
+              const isMoreThanOne = drafts.length > 1;
+              const treeText = isMoreThanOne ? 'trees' : 'tree';
+              const treeThereText = isMoreThanOne ? 'they are' : 'it is';
 
-              if (trees.length) {
-                const isMoreThanOne = trees.length > 1;
-                const treeText = isMoreThanOne ? 'trees' : 'tree';
-                const treeThereText = isMoreThanOne ? 'they are' : 'it is';
-
-                await asyncAlert(
-                  t('myProfile.attention'),
-                  t('myProfile.looseTree', {treesLength: trees.length, treeText, treeThereText}),
-                  {text: t('myProfile.logoutAndLoose')},
-                  {text: t('cancel')},
-                );
-              }
+              await asyncAlert(
+                t('myProfile.attention'),
+                t('myProfile.looseTree', {treesLength: drafts.length, treeText, treeThereText}),
+                {text: t('myProfile.logoutAndLoose')},
+                {text: t('cancel')},
+              );
             }
           } catch (e) {
             return Promise.reject(e);
@@ -121,20 +115,11 @@ export function useProfile() {
         const network = currentNetwork || defaultNetwork;
         const keys = (await AsyncStorage.getAllKeys()) as string[];
         await AsyncStorage.multiRemove(keys);
-        dispatchResetOfflineTrees();
         // changeUseGSN(true);
         // * @logic-hook
         // await AsyncStorage.setItem(storageKeys.locale, locale || defaultLocale);
         // await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
         await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
-        if (!userPressed) {
-          if (offlineTrees.planted) {
-            await AsyncStorage.setItem(offlineTreesStorageKey, JSON.stringify(offlineTrees.planted));
-          }
-          if (offlineTrees.updated) {
-            await AsyncStorage.setItem(offlineUpdatedTreesStorageKey, JSON.stringify(offlineTrees.updated));
-          }
-        }
         dispatch(Profile.actions.resetCache());
         dispatch(clearUserNonce());
         // await resetWeb3Data();
@@ -145,12 +130,10 @@ export function useProfile() {
       }
     },
     [
-      currentNetwork,
-      dispatch,
-      dispatchResetOfflineTrees,
-      offlineTrees.planted,
-      offlineTrees.updated,
       t,
+      drafts,
+      dispatch,
+      currentNetwork,
       dispatchResetRecentPlaces,
       dispatchClearDraftedJourneys,
       dispatchResetUpdateTree,

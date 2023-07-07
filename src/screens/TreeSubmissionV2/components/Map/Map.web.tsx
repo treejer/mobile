@@ -1,7 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 
-import {locationType} from './MapMarking.web';
+import {locationType} from '../MapMarkingV2/MapMarkingV2.web';
 import MapBox from '../../../../components/Map/Map';
 
 interface MapProps {

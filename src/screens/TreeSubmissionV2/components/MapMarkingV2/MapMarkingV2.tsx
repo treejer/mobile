@@ -4,7 +4,7 @@ import MapboxGL from '@rnmapbox/maps';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 
-import Map from 'screens/TreeSubmission/components/MapMarking/Map';
+import Map from 'screens/TreeSubmissionV2/components/Map/Map';
 import {offlineSubmittingMapName} from 'services/config';
 import {colors} from 'constants/values';
 import Button from 'components/Button';

@@ -9,10 +9,10 @@ import {TUsePlantTreePermissions} from 'utilities/hooks/usePlantTreePermissions'
 import {isWeb} from 'utilities/helpers/web';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useOfflineMap} from 'ranger-redux/modules/offlineMap/offlineMap';
-import {CheckOfflineMaps} from 'screens/TreeSubmission/components/CheckPermissions/CheckOfflineMaps';
 import {SubmitTreeV2} from 'screens/TreeSubmissionV2/screens/SubmitTreeV2/SubmitTreeV2';
 import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTypeV2/SelectPlantTypeV2';
 import {SelectOnMapV2} from 'screens/TreeSubmissionV2/screens/SelectOnMapV2/SelectOnMapV2';
+import {CheckOfflineMaps} from 'screens/TreeSubmissionV2/components/CheckOfflineMaps/CheckOfflineMaps';
 
 export type TreeSubmissionStackNavigationProp<T extends keyof TreeSubmissionRouteParamList> = StackNavigationProp<
   TreeSubmissionRouteParamList,
@@ -38,19 +38,6 @@ function TreeSubmissionV2({route, navigation, plantTreePermissions}: Props) {
 
   const {packs} = useOfflineMap();
   const isConnected = useNetInfoConnected();
-  // const {journey} = useCurrentJourney();
-  //
-  // useEffect(() => {
-  //   if (initRouteName === Routes.SelectPlantType_V2) return;
-  //   if (!journey.isUpdate || !journey.isSingle || !journey.isNursery || !journey.treeIdToPlant) {
-  //     navigation.dispatch(
-  //       CommonActions.reset({
-  //         index: 0,
-  //         routes: [{name: Routes.SelectPlantType_V2}],
-  //       }),
-  //     );
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (initRouteName && initRouteName !== Routes.SelectPlantType_V2) {

@@ -5,7 +5,6 @@ import {NetworkStatus, useQuery} from '@apollo/client';
 import PlanterStatusQuery, {
   PlanterStatusQueryQueryData,
 } from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
-import {useOfflineTrees} from 'utilities/hooks/useOfflineTrees';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 
@@ -16,13 +15,9 @@ export const planterStatusQueryStorageKey = 'planterStatusQuery';
 export default function usePlanterStatusQuery(address: string, skipStats = false) {
   const [planter, setPlanter] = usePlanterStatusQueryPersisted();
 
-  const {offlineTrees} = useOfflineTrees();
-  const {useV1Submission} = useConfig();
   const {drafts} = useDraftedJourneys();
 
-  const draftedPlants = useV1Submission
-    ? offlineTrees.planted?.length
-    : drafts.filter(draft => !draft.journey.isUpdate).length;
+  const draftedPlants = drafts.filter(draft => !draft.journey.isUpdate).length;
 
   const query = useQuery<PlanterStatusQueryQueryData>(PlanterStatusQuery, {
     variables: {

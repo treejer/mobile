@@ -5,10 +5,8 @@ import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 
 import ApolloProvider from 'services/apollo';
 import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
-import CurrentJourneyProvider from 'services/currentJourney';
 import {RootNavigation, Routes} from 'navigation/Navigation';
 import {navigationContainerRef} from 'navigation/navigationRef';
-import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
 import {isWeb} from 'utilities/helpers/web';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import PreLoadImage from 'components/PreloadImage/PreLoadImage';
@@ -107,21 +105,17 @@ export function InitNavigation() {
     <AppLoading />
   ) : (
     <ApolloProvider>
-      <OfflineTreeProvider>
-        <CurrentJourneyProvider>
-          <AlertModalProvider>
-            <PreLoadImage />
-            <HeaderFixedButtons />
-            {isWeb() ? <ToastContainer /> : <></>}
-            {isWeb() ? <LandScapeModal /> : <></>}
-            {!isWeb() ? <UpdateModal /> : <></>}
-            <NavigationContainer ref={navigationContainerRef} linking={linking}>
-              <RootNavigation />
-            </NavigationContainer>
-            <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
-          </AlertModalProvider>
-        </CurrentJourneyProvider>
-      </OfflineTreeProvider>
+      <AlertModalProvider>
+        <PreLoadImage />
+        <HeaderFixedButtons />
+        {isWeb() ? <ToastContainer /> : <></>}
+        {isWeb() ? <LandScapeModal /> : <></>}
+        {!isWeb() ? <UpdateModal /> : <></>}
+        <NavigationContainer ref={navigationContainerRef} linking={linking}>
+          <RootNavigation />
+        </NavigationContainer>
+        <Toast ref={ref => (global.toast = ref)} offsetTop={top} {...toastProviderProps} />
+      </AlertModalProvider>
     </ApolloProvider>
   );
 }

@@ -1,4 +1,3 @@
-import CheckPermissions from 'screens/TreeSubmission/components/CheckPermissions/CheckPermissions';
 import {render} from 'ranger-testUtils/testingLibrary';
 import {CheckPermissionsV2} from 'screens/TreeSubmissionV2/components/CheckPermissions/CheckPermissionsV2';
 import {maticReducers} from 'components/SubmissionSettings/__test__/mock';
@@ -11,8 +10,8 @@ import {colors} from 'constants/values';
 
 describe('CheckPermissions component', () => {
   it('CheckPermissions component should exist', () => {
-    expect(CheckPermissions).toBeDefined();
-    expect(typeof CheckPermissions).toBe('function');
+    expect(CheckPermissionsV2).toBeDefined();
+    expect(typeof CheckPermissionsV2).toBe('function');
   });
 
   describe('check permissions = blocked', () => {

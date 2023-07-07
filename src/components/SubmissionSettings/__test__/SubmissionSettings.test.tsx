@@ -12,7 +12,7 @@ describe('SubmissionSettings component', () => {
     describe('matic elements should be defined', () => {
       let getElementByTestId, queryElementByTestId;
       beforeEach(() => {
-        const element = render(<SubmissionSettings />, maticReducers);
+        const element = render(<SubmissionSettings inSubmission={true} />, maticReducers);
         getElementByTestId = element.getByTestId;
         queryElementByTestId = element.queryByTestId;
       });
@@ -37,7 +37,7 @@ describe('SubmissionSettings component', () => {
     describe('goerli elements should be defined', () => {
       let getElementByTestId, queryElementByTestId;
       beforeEach(() => {
-        const element = render(<SubmissionSettings />, goerliReducers);
+        const element = render(<SubmissionSettings inSubmission={true} />, goerliReducers);
         getElementByTestId = element.getByTestId;
         queryElementByTestId = element.queryByTestId;
       });
@@ -59,6 +59,35 @@ describe('SubmissionSettings component', () => {
         expect(balanceLabel).toBeFalsy();
         // expect(balanceLabel.props.children).toBe('settings.ethBalance');
         expect(balanceValue).toBeFalsy();
+        expect(checkMetaDataLabel).toBeTruthy();
+        expect(checkMetaDataSwitch).toBeTruthy();
+      });
+    });
+    describe('in settings screen', () => {
+      let getElementByTestId, queryElementByTestId;
+      beforeEach(() => {
+        const element = render(<SubmissionSettings />, goerliReducers);
+        getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
+      });
+
+      it('elements should be defined', () => {
+        const biconomy = queryElementByTestId('use-biconomy');
+        const biconomyDetail = queryElementByTestId('biconomy-detail');
+        const transactionMethodSwitch = queryElementByTestId('transaction-switch');
+        const balanceLabel = queryElementByTestId('network-balance-label');
+        const balanceValue = queryElementByTestId('network-balance');
+        const checkMetaDataLabel = getElementByTestId('check-meta-data-label');
+        const checkMetaDataSwitch = getElementByTestId('check-meta-data-switch');
+
+        expect(biconomy).toBeTruthy();
+        expect(biconomyDetail).toBeTruthy();
+        expect(biconomyDetail.props.children).toBe('settings.gsnDetails');
+        expect(biconomy.props.children).toBe('settings.useBiconomy');
+        expect(transactionMethodSwitch).toBeTruthy();
+        expect(balanceLabel).toBeTruthy();
+        expect(balanceLabel.props.children).toBe('settings.ethBalance');
+        expect(balanceValue).toBeTruthy();
         expect(checkMetaDataLabel).toBeTruthy();
         expect(checkMetaDataSwitch).toBeTruthy();
       });

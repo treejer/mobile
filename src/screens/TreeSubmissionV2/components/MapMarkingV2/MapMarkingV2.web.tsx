@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {GeoCoordinates, GeoPosition} from 'react-native-geolocation-service';
 
 import {colors} from 'constants/values';
-import Map from 'screens/TreeSubmission/components/MapMarking/Map';
+import Map from 'screens/TreeSubmissionV2/components/Map/Map';
 import Button from 'components/Button';
 import {Check, Times} from 'components/Icons';
 import {MapDetail} from 'components/Map/MapDetail';

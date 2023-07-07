@@ -67,15 +67,6 @@ export function SelectPlantTypeV2() {
     inputRef?.current?.blur();
   }, [count, handleStart]);
 
-  // const handleSelectModels = useCallback(() => {
-  //   setByModel(true);
-  //   setIsSingle(null);
-  //
-  //   //@ts-ignore
-  //   navigation.navigate(Routes.SelectModels);
-  //   inputRef?.current?.blur();
-  // }, [navigation]);
-
   const handleFocus = () => {
     setByModel(false);
     setIsSingle(false);
@@ -127,13 +118,6 @@ export function SelectPlantTypeV2() {
         size="lg"
         type="nursery"
       />
-      {/*<StartPlantButton*/}
-      {/*  caption={t('submitTree.models')}*/}
-      {/*  onPress={handleSelectModels}*/}
-      {/*  color={modelColor}*/}
-      {/*  size="lg"*/}
-      {/*  type="model"*/}
-      {/*/>*/}
       {isSingle === true && (
         <Button
           testID="single-submit-tree"

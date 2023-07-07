@@ -1,6 +1,4 @@
 import {ContractType, treejerProtocol} from 'services/config';
-import Web3 from 'web3';
-const sigUtil = require('eth-sig-util');
 
 import {NetworkConfig} from 'services/config';
 import {TWeb3} from 'ranger-redux/modules/web3/web3';

@@ -38,11 +38,10 @@ import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {useCurrentJourney} from 'services/currentJourney';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
-import {useCurrentJourney as useNewCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
 
@@ -56,14 +55,12 @@ function TreeDetails(_: Props) {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
   const {releaseDate, changeCheckMetaData} = useSettings();
-  const {isMainnet, useV1Submission} = useConfig();
+  const {isMainnet} = useConfig();
 
   const {checkExistAnyDraftOfTree, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} =
     useDraftedJourneys();
-  const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useNewCurrentJourney();
+  const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useCurrentJourney();
   const {openAlertModal, closeAlertModal} = useAlertModal();
-
-  const {setNewJourney} = useCurrentJourney();
 
   const {sendEvent} = useAnalytics();
 
@@ -181,70 +178,45 @@ function TreeDetails(_: Props) {
     if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
-    // dispatchClearJourney();
-    // navigation.dispatch(
-    //   CommonActions.reset({
-    //     index: 0,
-    //     routes: [
-    //       {
-    //         name: useV1Submission ? Routes.TreeSubmission : Routes.TreeSubmission_V2,
-    //         params: {
-    //           initialRouteName: useV1Submission ? Routes.SelectPhoto : Routes.SubmitTree_V2,
-    //         },
-    //       },
-    //     ],
-    //   }),
-    // );
-    if (useV1Submission) {
-      setNewJourney({
-        treeIdToUpdate: tree?.id,
-        tree: treeDetails,
-        location: {
-          latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-          longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-        },
-      });
-    } else {
-      if (tree?.id) {
-        if (checkExistAnyDraftOfTree(tree?.id)) {
-          openAlertModal({
-            title: {
-              text: 'treeInventoryV2.existInDraft',
-              tParams: {
-                id: Hex2Dec(tree?.id).toString(),
+    if (tree?.id) {
+      if (checkExistAnyDraftOfTree(tree?.id)) {
+        openAlertModal({
+          title: {
+            text: 'treeInventoryV2.existInDraft',
+            tParams: {
+              id: Hex2Dec(tree?.id).toString(),
+            },
+            props: {
+              style: styles.modalTitle,
+            },
+          },
+          buttons: [
+            {
+              text: 'reset',
+              onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
+              btnProps: {
+                style: styles.resetBtn,
               },
-              props: {
-                style: styles.modalTitle,
+              textProps: {
+                style: styles.whiteText,
               },
             },
-            buttons: [
-              {
-                text: 'reset',
-                onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
-                btnProps: {
-                  style: styles.resetBtn,
-                },
-                textProps: {
-                  style: styles.whiteText,
-                },
+            {
+              text: 'continue',
+              onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
+              btnProps: {
+                style: styles.continueBtn,
               },
-              {
-                text: 'continue',
-                onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
-                btnProps: {
-                  style: styles.continueBtn,
-                },
-                textProps: {
-                  style: styles.whiteText,
-                },
+              textProps: {
+                style: styles.whiteText,
               },
-            ],
-          });
-        } else {
-          dispatchClearJourney();
-          dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
-          handleNavigateToSubmission();
-        }
+            },
+          ],
+        });
+      } else {
+        dispatchClearJourney();
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+        handleNavigateToSubmission();
       }
     }
   };
