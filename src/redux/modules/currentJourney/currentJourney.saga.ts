@@ -60,8 +60,6 @@ export function* watchAssignJourneyTreePhoto({
       },
     });
 
-    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
-
     if (journey.location) {
       yield checkTreeLocation({
         photoLocation: isWeb() ? photoCoords : photoLocation,
@@ -72,10 +70,9 @@ export function* watchAssignJourneyTreePhoto({
         inCheck: true,
       });
     }
+
+    yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
   } catch (e: any) {
-    if (e.data === JourneyMetadata.Location) {
-      yield put(actionsList.removeJourneyLocation());
-    }
     yield showSagaAlert({
       title: i18next.t(e?.title),
       mode: e?.mode,

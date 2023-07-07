@@ -130,10 +130,6 @@ describe('currentJourney sagas', () => {
 
       //@ts-ignore
       next = gen.next(photoLocation);
-      assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
-
-      //@ts-ignore
-      next = gen.next(photoLocation);
       assert.deepEqual(
         next.value,
         checkTreeLocation({
@@ -145,6 +141,10 @@ describe('currentJourney sagas', () => {
           browserPlatform: browserPlatformMockData.platform,
         }),
       );
+
+      //@ts-ignore
+      next = gen.next(photoLocation);
+      assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
     });
 
     it('watchAssignJourneyTreePhoto success, without location', () => {
