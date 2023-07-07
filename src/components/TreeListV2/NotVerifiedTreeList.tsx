@@ -9,7 +9,7 @@ import Spacer from 'components/Spacer';
 import globalStyles from 'constants/styles';
 import {Tabs} from 'components/Tabs/Tabs';
 import {Tab} from 'components/Tabs/Tab';
-import {OptimizedList} from 'components/TreeListV2/OptimizedList';
+import {OptimizedList} from 'components/OptimizedList/OptimizedList';
 import {NotVerifiedTreeItem} from 'components/TreeListV2/NotVerifiedTreeItem';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';

@@ -11,7 +11,7 @@ import {Tab} from 'components/Tabs/Tab';
 import Spacer from 'components/Spacer';
 import {SubmittedTreeItemV2} from 'components/TreeListV2/SubmittedTreeItemV2';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
-import {OptimizedList} from 'components/TreeListV2/OptimizedList';
+import {OptimizedList} from 'components/OptimizedList/OptimizedList';
 import {TreeItemUI} from 'screens/GreenBlock/screens/TreeInventory/TreeInventory';
 import {EmptyTreeList} from 'screens/GreenBlock/components/EmptyTreeList/EmptyTreeList';
 import {Routes} from 'navigation/Navigation';

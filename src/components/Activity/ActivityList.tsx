@@ -9,7 +9,7 @@ import {colors} from 'constants/values';
 import {GetUserActivitiesQueryPartialData} from 'screens/Profile/screens/Activity/graphQl/getUserActivites.graphql';
 import Spacer from 'components/Spacer';
 import {ActivityItem, ActivityStatus} from 'components/Activity/ActivityItem';
-import {OptimizedList} from 'components/TreeListV2/OptimizedList';
+import {OptimizedList} from 'components/OptimizedList/OptimizedList';
 
 export type TActivityListProps = {
   wallet: string;

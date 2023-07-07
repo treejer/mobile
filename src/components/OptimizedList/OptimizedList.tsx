@@ -1,4 +1,4 @@
-import React, {forwardRef, LegacyRef} from 'react';
+import React from 'react';
 import {ContentStyle, FlashList, ListRenderItemInfo} from '@shopify/flash-list';
 
 import Spacer from 'components/Spacer';
