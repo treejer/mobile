@@ -1,13 +1,14 @@
 import {select} from 'redux-saga/effects';
+
 import {TReduxState} from '../../store';
-import {defaultLocale} from 'services/config';
+import {checkMetadataCheckingReleaseDate, defaultLocale} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useBiconomy: boolean;
-  releaseDate: number;
+  checkMetadataReleaseDate: number;
   checkMetaData: boolean;
   showSupportChat: boolean;
 };
@@ -15,7 +16,7 @@ export type TSettings = {
 export const initialSettingsState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
-  releaseDate: 1672159176038,
+  checkMetadataReleaseDate: checkMetadataCheckingReleaseDate,
   useBiconomy: true,
   checkMetaData: true,
   showSupportChat: false,

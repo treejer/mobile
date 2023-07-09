@@ -260,6 +260,7 @@ export const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.
 
 export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN || '';
 export const mapboxPrivateToken = process.env.REACT_NATIVE_PRIVATE_MAPBOX_TOKEN || '';
+export const checkMetadataCheckingReleaseDate = Number(process.env.REACT_NATIVE_METADATA_CHECKING_RELEASE_DATE || '');
 
 export interface NetworkInfo {
   title: string;

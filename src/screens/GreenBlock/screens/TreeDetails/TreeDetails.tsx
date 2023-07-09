@@ -54,7 +54,7 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
-  const {releaseDate, changeCheckMetaData} = useSettings();
+  const {checkMetadataReleaseDate, changeCheckMetaData} = useSettings();
   const {isMainnet} = useConfig();
 
   const {checkExistAnyDraftOfTree, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} =
@@ -175,7 +175,7 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
-    if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
+    if (isMainnet && checkMetadataReleaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
     if (tree?.id) {
