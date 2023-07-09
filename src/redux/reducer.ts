@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 
+import {appInfoReducer} from './modules/appInfo/appInfo';
 import {initReducer} from './modules/init/init';
 import {paginationReducer} from './modules/pagination/pagination.reducer';
 import {web3Reducer} from './modules/web3/web3';
@@ -31,6 +32,7 @@ import {assignedTreesReducer} from './modules/trees/assignedTrees';
 import {pendingTreeIdsReducer} from './modules/trees/pendingTreeIds';
 
 const appReducer = combineReducers({
+  appInfo: appInfoReducer,
   init: initReducer,
   pagination: paginationReducer,
   web3: web3Reducer,

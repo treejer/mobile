@@ -1,6 +1,7 @@
 /* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
 import {ImageURISource} from 'react-native';
+import {version} from '../../package.json';
 
 import {MaticLogo, GoerliLogo} from '../../assets/images';
 
@@ -35,6 +36,7 @@ export interface StorageKeys {
   accessToken: string;
   blockchainNetwork: string;
   treeUpdateInterval: string;
+  resetStorage: string;
 }
 
 export enum BlockchainNetwork {
@@ -247,6 +249,7 @@ export const storageKeys: StorageKeys = {
   accessToken: '__TREEJER_ACCESS_TOKEN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
+  resetStorage: `__TREEJER_RESET_${version}`,
 };
 
 export const rangerUrl = 'https://ranger.treejer.com';

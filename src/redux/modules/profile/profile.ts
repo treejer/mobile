@@ -10,7 +10,6 @@ import {asyncAlert} from 'utilities/helpers/alert';
 import {FetchResult, handleFetchError, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {getConfig, TWeb3, useUserWeb3} from '../web3/web3';
-import {clearUserNonce} from '../web3/web3';
 import {TReduxState} from '../../store';
 import {changeCheckMetaData} from '../settings/settings';
 import {useDraftedJourneys} from '../draftedJourneys/draftedJourneys.reducer';
@@ -121,7 +120,6 @@ export function useProfile() {
         // await AsyncStorage.setItem(storageKeys.onBoarding, (onBoarding || 0).toString());
         await AsyncStorage.setItem(storageKeys.blockchainNetwork, network);
         dispatch(Profile.actions.resetCache());
-        dispatch(clearUserNonce());
         // await resetWeb3Data();
         // @logout
       } catch (e) {
