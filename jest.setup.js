@@ -138,6 +138,13 @@ jest.mock('web3', () => {
 
 jest.mock('@react-native-community/netinfo', () => {
   return {
+    fetch: () =>
+      new Promise(resolve => {
+        resolve({
+          isConnected: true,
+          isInternetReachable: true,
+        });
+      }),
     useNetInfo: () => ({
       isConnected: true,
       isInternetReachable: true,
@@ -227,12 +234,6 @@ jest.mock('./src/utilities/helpers/submitTree', () => {
     photoToUpload: file => {
       return 'storage://file';
     },
-  };
-});
-
-jest.mock('eth-sig-util', () => {
-  return {
-    recoverTypedSignature: (data, sig) => 'address',
   };
 });
 

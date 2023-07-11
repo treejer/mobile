@@ -1,7 +1,8 @@
-import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
 import {Action, Dispatch} from 'redux';
 import {put, select, takeEvery} from 'redux-saga/effects';
-import {TReduxState, TStoreRedux} from '../../store';
+import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
+
+import {TReduxState, TStoreRedux} from 'ranger-redux/store';
 import {useAppSelector} from 'utilities/hooks/useStore';
 
 export type TNetInfo = {
@@ -35,7 +36,7 @@ export const netInfoReducer = (state: TNetInfo = initialState, action: TNetInfoA
     }
     case UPDATE_WATCH_CONNECTION: {
       return {
-        isConnected: action.isConnected,
+        isConnected: action?.isConnected,
       };
     }
     default: {
@@ -44,11 +45,14 @@ export const netInfoReducer = (state: TNetInfo = initialState, action: TNetInfoA
   }
 };
 
-export function* watchStartWatchConnection(store) {
+export type startWatchConnectionPayload = {
+  dispatch: TNetInfoAction['dispatch'];
+};
+
+export function* watchStartWatchConnection({dispatch}: startWatchConnectionPayload) {
   try {
-    const {dispatch} = store;
     const state = yield NetInfo.fetch();
-    dispatch(updateWatchConnection(state.isConnected));
+    yield put(updateWatchConnection(state.isConnected));
 
     NetInfo.addEventListener((newState: NetInfoState) => {
       if (newState.isConnected !== null && newState.isInternetReachable !== null) {
@@ -60,11 +64,14 @@ export function* watchStartWatchConnection(store) {
   }
 }
 
-export function* netInfoSagas(store: TStoreRedux) {
-  yield takeEvery(START_WATCH_CONNECTION, watchStartWatchConnection, store);
+export function* netInfoSagas({dispatch}: TStoreRedux) {
+  yield takeEvery(START_WATCH_CONNECTION, watchStartWatchConnection, {dispatch});
 }
+
+export const getNetInfo = (state: TReduxState) => state.netInfo.isConnected;
+
 export function* selectNetInfo() {
-  return yield select((state: TReduxState) => state.netInfo.isConnected);
+  return yield select(getNetInfo);
 }
 
 export function useNetInfo(): TReduxState['netInfo'] {

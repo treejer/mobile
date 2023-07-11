@@ -9,13 +9,13 @@ import {t} from 'i18next';
 import {UserNonceForm} from 'services/types';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {selectNetInfo} from '../netInfo/netInfo';
-import {changeCheckMetaData} from '../settings/settings';
-import {getBalance, resetBalance} from '../contracts/contracts';
-import {profileActions, selectProfile} from '../profile/profile';
-import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
-import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
-import {TReduxState, TStoreRedux} from '../../store';
+import {selectNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {getBalance, resetBalance} from 'ranger-redux/modules/contracts/contracts';
+import {profileActions, selectProfile} from 'ranger-redux/modules/profile/profile';
+import {TUserSignSuccessAction, userSignActions} from 'ranger-redux/modules/userSign/userSign';
+import {TUserNonceSuccessAction, userNonceActions} from 'ranger-redux/modules/userNonce/userNonce';
+import {TReduxState, TStoreRedux} from 'ranger-redux/store';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -364,23 +364,27 @@ export const useWalletAccountTorus = (): Account | null => {
 export const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
 export const useUserId = () => useAppSelector(state => state.web3.userId);
 
-export function* selectConfig() {
-  return yield select((state: TReduxState) => state.web3.config);
-}
-
 export const getConfig = (state: TReduxState) => state.web3.config;
+export function* selectConfig() {
+  return yield select(getConfig);
+}
 
+export const getAccessToken = (state: TReduxState) => state.web3.accessToken;
+export function* selectAccessToken() {
+  return yield select(getAccessToken);
+}
+export const getWeb3 = (state: TReduxState) => state.web3.web3;
 export function* selectWeb3() {
-  return yield select((state: TReduxState) => state.web3.web3);
+  return yield select(getWeb3);
 }
 
-export function* selectMagic() {
-  return yield select((state: TReduxState) => state.web3.magic);
-}
 export const getMagic = (state: TReduxState) => state.web3.magic;
 
-export function* selectWallet() {
-  return yield select((state: TReduxState) => state.web3.wallet);
+export function* selectMagic() {
+  return yield select(getMagic);
 }
 
 export const getWallet = (state: TReduxState) => state.web3.wallet;
+export function* selectWallet() {
+  return yield select(getWallet);
+}

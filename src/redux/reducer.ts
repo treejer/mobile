@@ -10,7 +10,6 @@ import {contractsReducer} from './modules/contracts/contracts';
 import {profileReducer} from './modules/profile/profile';
 import {userSignReducer} from './modules/userSign/userSign';
 import {userNonceReducer} from './modules/userNonce/userNonce';
-import {countriesReducer} from './modules/countris/countries';
 import {offlineMap} from './modules/offlineMap/offlineMap';
 import {recentPlacesReducer} from './modules/recentPlaces/recentPlaces';
 import {searchPlacesReducer} from './modules/searchPlaces/searchPlaces';
@@ -43,7 +42,6 @@ const appReducer = combineReducers({
   profile: profileReducer,
   userSign: userSignReducer,
   userNonce: userNonceReducer,
-  countries: countriesReducer,
   searchPlaces: searchPlacesReducer,
   currentJourney: currentJourneyReducer,
   browserPlatform: browserPlatformReducer,
