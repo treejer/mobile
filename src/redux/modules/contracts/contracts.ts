@@ -2,14 +2,14 @@ import {useCallback} from 'react';
 import BN from 'bn.js';
 import Web3 from 'web3';
 import {Contract} from 'web3-eth-contract';
-import {put, takeEvery} from 'redux-saga/effects';
+import {put, select, takeEvery} from 'redux-saga/effects';
 
 import {NetworkConfig} from 'services/config';
 import {AlertMode} from 'utilities/helpers/alert';
 import {web3Error} from 'utilities/helpers/web3Error';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {TTransferFormData} from 'screens/Withdraw/components/TransferForm';
-import {selectConfig, selectWallet, selectWeb3} from '../web3/web3';
+import {getConfig, getWallet, getWeb3} from 'ranger-redux/modules/web3/web3';
 
 export type TContract = string | number | null;
 
@@ -40,15 +40,14 @@ export const initialContractsState: TContracts = {
   loading: false,
   submitting: false,
 };
+export const GET_BALANCE = 'GET_BALANCE';
+export function getBalance() {
+  return {type: GET_BALANCE};
+}
 
 export const GET_BALANCE_FAILED = 'GET_BALANCE_FAILED';
 export function getBalanceFailed() {
   return {type: GET_BALANCE_FAILED};
-}
-
-export const GET_BALANCE = 'GET_BALANCE';
-export function getBalance() {
-  return {type: GET_BALANCE};
 }
 
 export const SET_BALANCE = 'SET_BALANCE';
@@ -139,9 +138,9 @@ export function contractsReducer(state: TContracts = initialContractsState, acti
 
 export function* watchContracts() {
   try {
-    const config: NetworkConfig = yield selectConfig();
-    const wallet: string = yield selectWallet();
-    const web3: Web3 = yield selectWeb3();
+    const config: NetworkConfig = yield select(getConfig);
+    const wallet: string = yield select(getWallet);
+    const web3: Web3 = yield select(getWeb3);
 
     const contract = config.contracts.Dai;
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
@@ -160,8 +159,8 @@ export function* watchContracts() {
       type: AlertMode.Error,
       translate: true,
     });
-    yield put(getBalanceFailed());
     console.log(e, 'error is here');
+    yield put(getBalanceFailed());
   }
 }
 
@@ -189,15 +188,15 @@ export function* watchTransaction({transaction}: TAction) {
   try {
     const {amount, from, to} = form;
 
-    const config: NetworkConfig = yield selectConfig();
-    const web3: Web3 = yield selectWeb3();
+    const config: NetworkConfig = yield select(getConfig);
+    const web3: Web3 = yield select(getWeb3);
 
     const contract = config.contracts.Dai;
 
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
     const amountInEther = web3.utils.toWei(amount.toString(), 'ether');
 
-    const estimatedGas = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
+    const estimatedGas = yield daiContract.methods.transfer(to, web3.utils.toWei(`${amount}`)).estimateGas({from});
     const gasPrice = yield web3.eth.getGasPrice();
 
     yield asyncTransferDai(daiContract, from, to, amountInEther, estimatedGas, gasPrice);
@@ -219,13 +218,13 @@ export function* watchEstimateGasPrice({transaction}: TAction) {
   try {
     const {amount, from, to} = form;
 
-    const config: NetworkConfig = yield selectConfig();
-    const web3: Web3 = yield selectWeb3();
+    const config: NetworkConfig = yield select(getConfig);
+    const web3: Web3 = yield select(getWeb3);
 
     const contract = config.contracts.Dai;
 
     const daiContract = new web3.eth.Contract(contract.abi as any, contract.address);
-    const gasAmount = yield daiContract.methods.transfer(to, Web3.utils.toWei(`${amount}`)).estimateGas({from});
+    const gasAmount = yield daiContract.methods.transfer(to, web3.utils.toWei(`${amount}`)).estimateGas({from});
     const gasPrice = yield web3.eth.getGasPrice();
     const fee = gasAmount * gasPrice;
 
