@@ -428,7 +428,7 @@ describe('offlineMap saga functions', () => {
       };
       const mockPacks = [packOne, packTwo];
       assert.deepEqual(gen.next().value, select(getNetInfo));
-      assert.deepEqual(gen.next(true).value, select(getOfflineMapPacks));
+      assert.deepEqual(gen.next(true).value, select(offlineMap.getOfflineMapPacks));
       // @ts-ignore
       assert.deepEqual(gen.next(mockPacks).value, getAreaName(packOne.coords, mapboxPrivateToken));
       // @ts-ignore
