@@ -167,6 +167,7 @@ jest.mock('@rnmapbox/maps', () => {
     MapView: TransComponent,
     Camera: TransComponent,
     UserLocation: TransComponent,
+    offlineManager: {createPack: ({name, styleURl, minZoom, maxZoom, bounds}, fn, fn2) => {}},
   };
 });
 jest.mock('react-native-snap-carousel', () => {});
