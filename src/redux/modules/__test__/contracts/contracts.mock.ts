@@ -4,6 +4,18 @@ export const mockConfig = {
       abi: [],
       address: 'ADDRESS',
     },
+    TreeFactory: {
+      abi: [],
+      address: 'ADDRESS',
+    },
+    Planter: {
+      abi: [],
+      address: 'ADDRESS',
+    },
+    PlanterFund: {
+      abi: [],
+      address: 'ADDRESS',
+    },
   },
 };
 export const mockWeb3 = {
@@ -11,6 +23,12 @@ export const mockWeb3 = {
     toWei: (amount: string, unit?: string) => 'IN ETHER',
   },
   eth: {
+    sign: async (message: string, wallet: string) => {
+      return 'signature';
+    },
+    getAccounts: async callback => {
+      return callback('', ['WALLET']);
+    },
     getBalance: async (wallet: string) => '11',
     Contract: (abi: string, address: string) => {
       return {
@@ -38,6 +56,12 @@ export const mockWeb3 = {
 
 export const mockWeb3Error = {
   eth: {
+    sign: async (message: string, wallet: string) => {
+      return 'signature';
+    },
+    getAccounts: async callback => {
+      return callback('error is here!', '');
+    },
     Contract: (abi: string, address: string) => {
       return {
         methods: {
@@ -59,5 +83,15 @@ export const mockWeb3Error = {
       };
     },
     getGasPrice: async () => 2213123,
+  },
+};
+
+export const mockWeb3AccountsError = {
+  ...mockWeb3Error,
+  eth: {
+    ...mockWeb3Error.eth,
+    getAccounts: async callback => {
+      return callback('', undefined);
+    },
   },
 };

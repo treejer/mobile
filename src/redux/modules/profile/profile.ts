@@ -53,7 +53,7 @@ export function useProfile() {
   const dispatch = useAppDispatch();
 
   const {dispatchClearDraftedJourneys, drafts} = useDraftedJourneys();
-  const {network: currentNetwork} = useUserWeb3();
+  const {network: currentNetwork, clearUserNonce} = useUserWeb3();
   const {dispatchResetRecentPlaces} = useRecentPlaces();
   const {dispatchResetAll} = useNotVerifiedTrees();
   const {dispatchResetPendingTreeIds} = usePendingTreeIds();
@@ -107,6 +107,7 @@ export function useProfile() {
         dispatchResetPendingTreeIds();
         dispatchResetAll();
         dispatchResetRecentPlaces();
+        clearUserNonce();
 
         // * @logic-hook
         // const locale = await AsyncStorage.getItem(storageKeys.locale);
@@ -146,6 +147,7 @@ export function useProfile() {
       dispatchResetPendingTreeIds,
       dispatchResetAll,
       dispatchResetRecentPlaces,
+      clearUserNonce,
     ],
   );
 

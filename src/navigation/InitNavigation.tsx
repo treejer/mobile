@@ -16,6 +16,7 @@ import {ToastContainer, toastProviderProps} from 'components/Toast/ToastContaine
 import {HeaderFixedButtons} from 'components/HeaderFixedButtons/HeaderFixedButtons';
 import {AlertModalProvider} from 'components/Common/AlertModalProvider';
 import {useInit} from 'ranger-redux/modules/init/init';
+import {useSettings} from 'ranger-redux/modules/settings/settings';
 
 const config = {
   screens: {
@@ -96,6 +97,10 @@ const linking: LinkingOptions<any> = {
 export function InitNavigation() {
   const {loading, dispatchInit} = useInit();
   const {top} = useSafeAreaInsets();
+
+  const {checkMetaData} = useSettings();
+
+  console.log(checkMetaData, 'checkMetaData is here brooooooooooooooooooooooooooooo');
 
   useEffect(() => {
     dispatchInit();

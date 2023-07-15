@@ -68,4 +68,4 @@ export function useUserSign() {
   };
 }
 
-export const {actionTypes: userSignActionsTypes, actions: userSignActions, reducer: userSignReducer} = UserSign;
+export const {actionTypes: userSignActionTypes, actions: userSignActions, reducer: userSignReducer} = UserSign;

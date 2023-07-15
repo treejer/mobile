@@ -65,4 +65,4 @@ export function useUserNonce() {
   };
 }
 
-export const {actionTypes: userNonceActionsTypes, actions: userNonceActions, reducer: userNonceReducer} = UserNonce;
+export const {actionTypes: userNonceActionTypes, actions: userNonceActions, reducer: userNonceReducer} = UserNonce;

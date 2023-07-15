@@ -31,7 +31,7 @@ export default function* root(store: TStoreRedux) {
   yield all([
     paginationSagas(),
     initSagas(),
-    web3Sagas(store),
+    web3Sagas(),
     currentJourneySagas(),
     draftedJourneysSagas(),
     userNonceSagas(),
