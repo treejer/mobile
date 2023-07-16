@@ -24,12 +24,12 @@ import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
 import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
-import {JourneyMetadata, TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
 import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
 import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
-import * as actionsList from './currentJourney.action';
 import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
+import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
 

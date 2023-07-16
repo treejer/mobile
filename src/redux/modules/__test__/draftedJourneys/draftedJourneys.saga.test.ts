@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import {put, select, takeEvery} from 'redux-saga/effects';
+import {CommonActions} from '@react-navigation/native';
 
 import {onBoardingOne} from '../../../../../assets/images';
 import * as actionsList from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
@@ -8,10 +9,16 @@ import {setJourneyFromDrafts} from 'ranger-redux/modules/currentJourney/currentJ
 import {
   draftedJourneysSagas,
   getDraftedJourneys,
+  navigateToGreenBlock,
   watchDraftJourney,
   watchSaveDraftedJourney,
   watchSetDraftAsCurrentJourney,
 } from 'ranger-redux/modules/draftedJourneys/draftedJourneys.saga';
+import * as alerts from 'utilities/helpers/alert';
+import {AlertMode} from 'utilities/helpers/alert';
+import {TreeLife} from 'utilities/helpers/treeInventory';
+import {Routes} from 'navigation/Navigation';
+import * as navigation from 'navigation/navigationRef';
 
 describe('draftedJourneys saga', () => {
   it('functions should be defined', () => {
@@ -120,6 +127,88 @@ describe('draftedJourneys saga', () => {
     assert.deepEqual(
       next.value,
       put(setJourneyFromDrafts({journey: {...JSON.parse(draftOne.journey), draftId: draftOne.id.toString()}})),
+    );
+  });
+});
+
+describe('navigateToGreenBlock', () => {
+  it('should be defined', () => {
+    expect(navigateToGreenBlock).toBeDefined();
+  });
+  it('should navigate to green block, isNew', () => {
+    const mockDispatch = jest.fn((action: () => void) => {});
+    const _spy = jest.spyOn(navigation, 'navigationRef').mockImplementation(
+      () =>
+        ({
+          dispatch: mockDispatch,
+        } as any),
+    );
+    const showAlertSpy = jest.spyOn(alerts, 'showAlert');
+    navigateToGreenBlock({isNew: true, name: 'Name'});
+    expect(showAlertSpy).toHaveBeenCalled();
+    expect(showAlertSpy).toHaveBeenCalledWith({
+      message: 'submitTreeV2.toast.drafted',
+      mode: AlertMode.Success,
+      alertOptions: {
+        translate: true,
+        tParams: {
+          message: {
+            name: 'Name',
+          },
+        },
+      },
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.GreenBlock,
+            params: {
+              tabFilter: TreeLife.Drafted,
+            },
+          },
+        ],
+      }),
+    );
+  });
+  it('should navigate to green block, isNew=false', () => {
+    const mockDispatch = jest.fn((action: () => void) => {});
+    const _spy = jest.spyOn(navigation, 'navigationRef').mockImplementation(
+      () =>
+        ({
+          dispatch: mockDispatch,
+        } as any),
+    );
+    const showAlertSpy = jest.spyOn(alerts, 'showAlert');
+    navigateToGreenBlock({isNew: false, name: 'Name'});
+    expect(showAlertSpy).toHaveBeenCalled();
+    expect(showAlertSpy).toHaveBeenCalledWith({
+      message: 'submitTreeV2.toast.draftSaved',
+      mode: AlertMode.Success,
+      alertOptions: {
+        translate: true,
+        tParams: {
+          message: {
+            name: 'Name',
+          },
+        },
+      },
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.GreenBlock,
+            params: {
+              tabFilter: TreeLife.Drafted,
+            },
+          },
+        ],
+      }),
     );
   });
 });

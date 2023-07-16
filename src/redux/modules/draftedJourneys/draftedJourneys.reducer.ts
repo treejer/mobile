@@ -46,11 +46,11 @@ export const draftedJourneysReducer = (
     case actionsList.DRAFT_JOURNEY:
       const newDraft = {
         id: action.id,
-        createdAt: new Date(action?.id || ''),
-        updatedAt: new Date(action?.id || ''),
+        createdAt: new Date(action?.id!),
+        updatedAt: new Date(action?.id!),
         journey: JSON.stringify(action.journey),
-        name: action.name || action.id,
-        draftType: action.draftType,
+        name: action?.name || action?.id,
+        draftType: action?.draftType,
         journeyImageB64: action.journeyImageB64 || undefined,
       };
 
@@ -66,9 +66,8 @@ export const draftedJourneysReducer = (
       const cloneDrafts = [...state.drafts];
       const selectedDraftIndex = cloneDrafts.findIndex(draft => draft.id === action?.journey?.draftId);
       const selectedDraft = {...cloneDrafts[selectedDraftIndex]};
-      selectedDraft.journey = action?.journey ? JSON.stringify(action.journey) : selectedDraft.journey;
-      selectedDraft.name = action?.name || selectedDraft.name;
-      selectedDraft.draftType = action?.draftType || selectedDraft.draftType;
+      selectedDraft.journey = JSON.stringify(action.journey);
+      selectedDraft.draftType = action?.draftType!;
       selectedDraft.updatedAt = new Date();
       selectedDraft.journeyImageB64 = action.journeyImageB64 || selectedDraft.journeyImageB64;
       cloneDrafts[selectedDraftIndex] = selectedDraft;

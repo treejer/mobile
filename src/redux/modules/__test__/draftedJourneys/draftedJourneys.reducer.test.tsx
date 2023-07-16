@@ -1,6 +1,14 @@
-import {draftedJourneysReducer, DraftType} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
-import * as actionsList from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
+import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
+import {act, renderHook} from '@testing-library/react-hooks';
+
 import {onBoardingOne} from '../../../../../assets/images';
+import {
+  draftedJourneysReducer,
+  DraftType,
+  useDraftedJourneys,
+} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import * as actionsList from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
+import * as storeHook from 'utilities/hooks/useStore';
 
 describe('draftedJourneys reducer', () => {
   const initialState = {
@@ -17,6 +25,28 @@ describe('draftedJourneys reducer', () => {
 
   it('should return the initial state', () => {
     expect(draftedJourneysReducer(initialState, {type: ''})).toEqual(initialState);
+  });
+  it('should handle DRAFT_JOURNEY, without name', () => {
+    const date = new Date(jest.now());
+    const newDraft = {
+      journey,
+      draftType: DraftType.Draft,
+      id: date.toString(),
+      journeyImageB64: undefined,
+    };
+    const expectedValue = {
+      drafts: [
+        ...initialState.drafts,
+        {
+          ...newDraft,
+          name: date.toString(),
+          journey: JSON.stringify(newDraft.journey),
+          createdAt: new Date(newDraft.id),
+          updatedAt: new Date(newDraft.id),
+        },
+      ],
+    };
+    expect(draftedJourneysReducer(initialState, actionsList.draftJourney(newDraft))).toEqual(expectedValue);
   });
   it('should handle DRAFT_JOURNEY, native', () => {
     const date = new Date(jest.now());
@@ -196,5 +226,62 @@ describe('draftedJourneys reducer', () => {
       drafts: [...initialState.drafts, {...draft, journey: JSON.stringify(draft.journey)}],
     };
     expect(draftedJourneysReducer(state, actionsList.clearDraftedJourneys())).toEqual(initialState);
+  });
+});
+
+describe('draftedJourney hook', () => {
+  const mockDispatch = jest.fn((action: () => void) => {});
+  const _spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
+  const wrapper = {
+    wrapper: props => <AllTheProviders {...(props as any)} initialState={{draftedJourneys: {drafts: []}}} />,
+  };
+  const {result} = renderHook(() => useDraftedJourneys(), wrapper);
+
+  it('should return state value', () => {
+    expect(result.current.drafts).toEqual([]);
+  });
+
+  it('should handle dispatchClearDraftedJourneys', () => {
+    act(() => {
+      result.current.dispatchClearDraftedJourneys();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.clearDraftedJourneys());
+  });
+
+  it('should handle dispatchDraftJourney', () => {
+    act(() => {
+      result.current.dispatchDraftJourney({draftType: DraftType.Offline, id: 'X', name: 'NAME', journey: {}});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actionsList.draftJourneyWatcher({draftType: DraftType.Offline, id: 'X', name: 'NAME', journey: {}}),
+    );
+  });
+  it('should handle dispatchSetDraftAsCurrentJourney', () => {
+    act(() => {
+      result.current.dispatchSetDraftAsCurrentJourney({id: 'ID'});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.setDraftAsCurrentJourneyWatcher({id: 'ID'}));
+  });
+  it('should handle dispatchRemoveDraftedJourney', () => {
+    act(() => {
+      result.current.dispatchRemoveDraftedJourney({id: 'ID'});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.removeDraftedJourney({id: 'ID'}));
+  });
+  it('should handle dispatchRemoveDraftedJourney', () => {
+    act(() => {
+      result.current.dispatchSaveDraftedJourney({draftType: DraftType.Draft, name: 'name2', journey: {}});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actionsList.saveDraftedJourneyWatcher({draftType: DraftType.Draft, name: 'name2', journey: {}}),
+    );
+  });
+  it('should handle checkExistAnyDraftOfTree', () => {
+    expect(result.current.checkExistAnyDraftOfTree('X')).toBeFalsy();
   });
 });

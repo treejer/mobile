@@ -4,9 +4,10 @@ import {put, select, takeEvery} from 'redux-saga/effects';
 import * as contracts from 'ranger-redux/modules/contracts/contracts';
 import {getConfig, getWallet, getWeb3} from 'ranger-redux/modules/web3/web3';
 import {mockConfig, mockWeb3, mockWeb3Error} from 'ranger-redux/modules/__test__/contracts/contracts.mock';
-import {renderHook} from '@testing-library/react-hooks';
+import {act, renderHook} from '@testing-library/react-hooks';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
+import * as storeHook from 'utilities/hooks/useStore';
 
 describe('contracts actions', () => {
   it('get balance', () => {
@@ -341,6 +342,8 @@ describe('contracts saga functions', () => {
 });
 
 describe('contracts hook', () => {
+  const mockDispatch = jest.fn((action: () => void) => {});
+  const _spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
   const {result} = renderHook(() => useContracts(), {
     wrapper: props => (
       <AllTheProviders
@@ -355,5 +358,33 @@ describe('contracts hook', () => {
     expect(result.current.fee).toBe(null);
     expect(result.current.dai).toBe('DAI');
     expect(result.current.ether).toBe('ETHER');
+  });
+  it('should dispatch getBalance', () => {
+    act(() => {
+      result.current.getBalance();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(contracts.getBalance());
+  });
+  it('should dispatch submitTransaction', () => {
+    act(() => {
+      result.current.submitTransaction({from: 'X', to: 'Y', amount: '2'});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(contracts.submitTransaction({form: {from: 'X', to: 'Y', amount: '2'}}));
+  });
+  it('should dispatch cancelTransaction', () => {
+    act(() => {
+      result.current.cancelTransaction();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(contracts.cancelTransaction());
+  });
+  it('should dispatch estimateGasPrice', () => {
+    act(() => {
+      result.current.estimateGasPrice({from: 'X', to: 'Y', amount: '2'});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(contracts.estimateGasPrice({form: {from: 'X', to: 'Y', amount: '2'}}));
   });
 });

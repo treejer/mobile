@@ -1,12 +1,13 @@
 import {useCallback} from 'react';
 import {Image} from 'react-native-image-crop-picker';
 
+import {Tree} from 'types';
 import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 import {TPoint} from 'utilities/helpers/distanceInMeters';
 import {canUpdateJourneyLocation} from 'utilities/helpers/canUpdateJourneyLocation';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
-import {Tree} from 'types';
+import {getCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
 
 export enum JourneyMetadata {
   Photo = 'photo',
@@ -98,14 +99,12 @@ export const currentJourneyReducer = (
           action?.tree?.treeSpecsEntity?.nursery === 'true',
         ),
       };
-
     case actionsList.REMOVE_JOURNEY_LOCATION:
       return {
         ...state,
         location: undefined,
         canDraft: !!(state.photo && state.photoLocation),
       };
-
     case actionsList.REMOVE_JOURNEY_PHOTO:
       return {
         ...state,
@@ -133,7 +132,7 @@ export const currentJourneyReducer = (
 };
 
 export function useCurrentJourney() {
-  const journey = useAppSelector(state => state.currentJourney);
+  const journey = useAppSelector(getCurrentJourney);
   const dispatch = useAppDispatch();
 
   const dispatchStartPlantAssignedTree = useCallback(

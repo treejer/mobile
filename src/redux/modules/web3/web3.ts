@@ -360,19 +360,21 @@ export const usePlanter = () => useAppSelector(state => state.web3.planter);
 export const usePlanterFund = () => useAppSelector(state => state.web3.planterFund);
 
 export const useWalletAccount = (): string => {
-  return useAppSelector(state => state.web3.wallet);
+  return useAppSelector(getWallet);
 };
 export const useWalletAccountTorus = (): Account | null => {
   const web3 = useWalletWeb3();
   return web3?.eth?.accounts?.wallet?.length ? web3?.eth?.accounts?.wallet[0] : null;
 };
-export const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
-export const useUserId = () => useAppSelector(state => state.web3.userId);
+
+export const getUserId = (state: TReduxState) => state.web3.userId;
+export const useUserId = () => useAppSelector(getUserId);
 
 export const getConfig = (state: TReduxState) => state.web3.config;
 export function* selectConfig() {
   return yield select(getConfig);
 }
+export const useAccessToken = () => useAppSelector(getAccessToken);
 
 export const getAccessToken = (state: TReduxState) => state.web3.accessToken;
 export function* selectAccessToken() {

@@ -563,7 +563,7 @@ describe('web3 hook', () => {
   };
   describe('useUserWeb3', () => {
     const mockDispatch = jest.fn((action: () => void) => {});
-    const spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
+    const _spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
     const {result, waitFor} = renderHook(() => web3.useUserWeb3(), wrapper);
     it('should return state value', () => {
       expect(result.current.userId).toBe(web3.initialWeb3State.userId);

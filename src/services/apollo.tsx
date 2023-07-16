@@ -14,7 +14,7 @@ import camelCase from 'lodash/camelCase';
 
 import Web3 from 'services/Magic';
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from 'ranger-redux/modules/web3/web3';
+import {useAccessToken, useConfig, useUserId, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
@@ -143,7 +143,7 @@ interface Props {
 function ApolloProvider({children}: Props) {
   const accessToken = useAccessToken();
   const userId = useUserId();
-  const web3 = useWeb3();
+  const web3 = useWalletWeb3();
   const config = useConfig();
 
   const client = useMemo(

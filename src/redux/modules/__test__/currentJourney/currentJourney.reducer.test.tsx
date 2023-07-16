@@ -1,8 +1,12 @@
-import {currentJourneyReducer} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {act, renderHook} from '@testing-library/react-hooks';
+import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
+
+import {onBoardingOne} from '../../../../../assets/images';
+import {currentJourneyReducer, useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {treeDetail} from 'ranger-redux/modules/__test__/currentJourney/mock';
-import {onBoardingOne} from '../../../../../assets/images';
 import {canUpdateTreeLocation} from 'utilities/helpers/submitTree';
+import * as storeHook from 'utilities/hooks/useStore';
 
 describe('currentJourney reducer', () => {
   const initialState = {};
@@ -153,6 +157,21 @@ describe('currentJourney reducer', () => {
       expectedValue,
     );
   });
+  it('should handle SET_JOURNEY_FROM_DRAFTS, default state', () => {
+    const expectedValue = {
+      ...initialState,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.setJourneyFromDrafts({journey: undefined} as any))).toEqual(
+      expectedValue,
+    );
+  });
+  it('should handle SUBMIT_JOURNEY_WATCHER', () => {
+    const expectedValue = {
+      ...initialState,
+      submitLoading: true,
+    };
+    expect(currentJourneyReducer(initialState, actionsList.submitJourneyWatcher())).toEqual(expectedValue);
+  });
   it('should handle SET_SUBMIT_JOURNEY_LOADING, loading: true', () => {
     const expectedValue = {
       ...initialState,
@@ -166,5 +185,91 @@ describe('currentJourney reducer', () => {
       submitLoading: false,
     };
     expect(currentJourneyReducer(initialState, actionsList.setSubmitJourneyLoading(false))).toEqual(expectedValue);
+  });
+});
+
+describe('currentJourney hook', () => {
+  const mockDispatch = jest.fn((action: () => void) => {});
+  const _spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
+  const wrapper = {
+    wrapper: props => <AllTheProviders {...(props as any)} initialState={{currentJourney: {}}} />,
+  };
+  const {result} = renderHook(() => useCurrentJourney(), wrapper);
+  it('should return state value', () => {
+    expect(result.current.journey).toEqual({});
+  });
+  it('should dispatch dispatchClearJourney', () => {
+    act(() => {
+      result.current.dispatchClearJourney();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.clearJourney());
+  });
+  it('should dispatch dispatchRemoveJourneyLocation', () => {
+    act(() => {
+      result.current.dispatchRemoveJourneyLocation();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.removeJourneyLocation());
+  });
+  it('should dispatch dispatchRemoveJourneyPhoto', () => {
+    act(() => {
+      result.current.dispatchRemoveJourneyPhoto();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.removeJourneyPhoto());
+  });
+  it('should dispatch dispatchSelectTreePhoto', () => {
+    act(() => {
+      result.current.dispatchSelectTreePhoto({} as any);
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.assignJourneyTreePhotoWatcher({}));
+  });
+  it('should dispatch dispatchSelectTreeLocation', () => {
+    act(() => {
+      result.current.dispatchSelectTreeLocation({location: {latitude: 222, longitude: 22}});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actionsList.assignJourneyTreeLocationWatcher({location: {latitude: 222, longitude: 22}}),
+    );
+  });
+  it('should dispatch dispatchSetTreeDetailToUpdate', () => {
+    act(() => {
+      result.current.dispatchSetTreeDetailToUpdate({} as any);
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.setTreeDetailToUpdate({} as any));
+  });
+  it('should dispatch dispatchStartPlantAssignedTree', () => {
+    act(() => {
+      result.current.dispatchStartPlantAssignedTree({tree: treeDetail as any, treeIdToPlant: 'X'});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actionsList.startPlantAssignedTree({tree: treeDetail as any, treeIdToPlant: 'X'}),
+    );
+  });
+  it('should dispatch dispatchStartPlantNursery', () => {
+    act(() => {
+      result.current.dispatchStartPlantNursery({count: 2});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.startPlantNursery({count: 2}));
+  });
+  it('should dispatch dispatchStartPlantSingleTree', () => {
+    act(() => {
+      result.current.dispatchStartPlantSingleTree();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.startPlantSingleTree());
+  });
+  it('should dispatch dispatchSubmitJourney', () => {
+    act(() => {
+      result.current.dispatchSubmitJourney();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(actionsList.submitJourneyWatcher());
   });
 });
