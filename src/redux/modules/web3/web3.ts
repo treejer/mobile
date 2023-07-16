@@ -4,7 +4,6 @@ import {Contract} from 'web3-eth-contract';
 import configs, {BlockchainNetwork, ConfigContract, defaultNetwork, NetworkConfig} from 'services/config';
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {Account} from 'web3-core';
-import {t} from 'i18next';
 
 import {UserNonceForm} from 'services/types';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
@@ -227,7 +226,7 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
       yield put(getBalance());
     }
   } catch (error) {
-    console.log(error, 'update web3 error');
+    console.log(error, 'create web3 error');
   }
 }
 
@@ -236,7 +235,7 @@ export function* watchChangeNetwork(action: TWeb3Action) {
     const {newNetwork} = action;
     yield put(createWeb3(newNetwork));
   } catch (error) {
-    console.log(error, 'update web3 error');
+    console.log(error, 'change network error');
   }
 }
 
@@ -259,7 +258,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
     console.log('[[[try]]]');
     const web3Accounts = yield asyncGetAccounts(web3);
     if (!web3Accounts) {
-      return Promise.reject(new Error('There is no web3 accounts'));
+      return Promise.reject('There is no web3 accounts').catch(() => {});
     }
     const [wallet] = web3Accounts;
     const isConnected = yield select(getNetInfo);
@@ -286,7 +285,7 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
     }
   } catch (error: any) {
     console.log('[[[[catch]]]]');
-    let {error: {message = t('loginFailed.message')} = {}} = error;
+    let {error: {message = 'loginFailed.message'} = {}} = error;
     if (error.message) {
       message = error.message;
     }
@@ -353,7 +352,6 @@ export function useUserWeb3(): TUseUserWeb3 {
   };
 }
 
-export const useWeb3 = () => useAppSelector(state => state.web3.web3);
 export const useConfig = () => useAppSelector(state => state.web3.config);
 export const useMagic = () => useAppSelector(state => state.web3.magic);
 export const useWalletWeb3 = () => useAppSelector(state => state.web3.web3);
@@ -365,8 +363,8 @@ export const useWalletAccount = (): string => {
   return useAppSelector(state => state.web3.wallet);
 };
 export const useWalletAccountTorus = (): Account | null => {
-  const web3 = useWeb3();
-  return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+  const web3 = useWalletWeb3();
+  return web3?.eth?.accounts?.wallet?.length ? web3?.eth?.accounts?.wallet[0] : null;
 };
 export const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
 export const useUserId = () => useAppSelector(state => state.web3.userId);
