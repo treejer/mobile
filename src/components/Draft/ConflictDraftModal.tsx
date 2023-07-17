@@ -37,7 +37,7 @@ export function ConflictDraftModal(props: ConflictDraftModalProps) {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity testID="accept-btn" style={[styles.btn, styles.approveBtn]} onPress={onAccept}>
-              <Text testID="approve-btn-text" style={styles.whiteText}>
+              <Text testID="accept-btn-text" style={styles.whiteText}>
                 {t('accept')}
               </Text>
             </TouchableOpacity>
