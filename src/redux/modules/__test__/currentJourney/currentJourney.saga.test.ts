@@ -48,6 +48,8 @@ import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules
 import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
+import * as navigation from 'navigation/navigationRef';
+import {Routes} from 'navigation/Navigation';
 
 describe('currentJourney sagas', () => {
   it('functions should be defined', () => {
@@ -239,111 +241,7 @@ describe('currentJourney sagas', () => {
       assert.deepEqual(gen.throw(error).value, showSagaAlert(error));
     });
   });
-  describe('watchAssignJourneyTreeLocation', () => {
-    it('watchAssignJourneyTreeLocation success, without photo', () => {
-      const location = {
-        latitude: 20000,
-        longitude: 3133321,
-      };
-      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
 
-      let next = gen.next();
-      assert.deepEqual(next.value, select(getSettings), 'select settings');
-
-      const settingsState = {
-        checkMetaData: true,
-      };
-      //@ts-ignore
-      next = gen.next({...settingsState});
-      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform');
-
-      const browserPlatform = {
-        platform: BrowserPlatform.Android,
-      };
-      //@ts-ignore
-      next = gen.next({...settingsState, ...browserPlatform});
-      assert.deepEqual(next.value, select(getCurrentJourney), 'select current journey');
-
-      const currentJourney = {
-        isUpdate: false,
-        isNursery: false,
-        isSingle: true,
-        photo: undefined,
-        photoLocation: undefined,
-      };
-
-      //@ts-ignore
-      next = gen.next(location);
-      assert.deepEqual(next.value, put(actionsList.setTreeLocation({coords: location})), 'set tree location');
-    });
-
-    it('watchAssignJourneyTreeLocation success, with photo', () => {
-      const location = {
-        latitude: 20000,
-        longitude: 3133321,
-      };
-      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
-
-      let next = gen.next();
-      assert.deepEqual(next.value, select(getSettings), 'select settings');
-
-      const settingsState = {
-        checkMetaData: true,
-      };
-      //@ts-ignore
-      next = gen.next({...settingsState});
-      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform');
-
-      const browserPlatform = {
-        platform: BrowserPlatform.Android,
-      };
-      //@ts-ignore
-      next = gen.next({...settingsState, ...browserPlatform});
-      assert.deepEqual(next.value, select(getCurrentJourney), 'select current journey');
-
-      const currentJourney = {
-        isUpdate: false,
-        isNursery: false,
-        isSingle: true,
-        photoLocation: location,
-      };
-      //@ts-ignore
-      next = gen.next({...settingsState, ...browserPlatform, ...currentJourney});
-      assert.deepEqual(
-        next.value,
-        checkTreeLocation({
-          checkMetaData: settingsState.checkMetaData,
-          browserPlatform: browserPlatform.platform,
-          submittedLocation: location,
-          photoLocation: location,
-          isUpdate: currentJourney.isUpdate,
-        }),
-        'yield checkTreeLocation',
-      );
-
-      //@ts-ignore
-      next = gen.next(location);
-      assert.deepEqual(next.value, put(actionsList.setTreeLocation({coords: location})), 'set tree location');
-    });
-
-    it('watchAssignJourneyTreeLocation catch', () => {
-      const location = {
-        latitude: 0,
-        longitude: 0,
-      };
-      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
-
-      gen.next();
-
-      const error = {
-        title: 'map.newTree.errTitle',
-        mode: AlertMode.Error,
-        message: 'map.newTree.errMessage',
-      };
-
-      assert.deepEqual(gen.throw(error).value, showSagaAlert(error));
-    });
-  });
   describe('watchSubmitJourney', () => {
     it('plant tree with draftId', () => {
       const gen = watchSubmitJourney();
@@ -1381,6 +1279,131 @@ describe('currentJourney sagas', () => {
         put(changeCheckMetaData(true)),
         'should dispatch changeCheckMetaData with true arg',
       );
+    });
+  });
+  describe('watchAssignJourneyTreeLocation', () => {
+    it('watchAssignJourneyTreeLocation success, without photo', () => {
+      const mockNavigate = jest.fn(() => (route: Routes) => {});
+      const _spy = jest.spyOn(navigation, 'navigationRef').mockImplementation(
+        () =>
+          ({
+            navigate: mockNavigate,
+          } as any),
+      );
+      const location = {
+        latitude: 20000,
+        longitude: 3133321,
+      };
+      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
+
+      let next = gen.next();
+      assert.deepEqual(next.value, select(getSettings), 'select settings');
+
+      const settingsState = {
+        checkMetaData: true,
+      };
+      //@ts-ignore
+      next = gen.next({...settingsState});
+      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform');
+
+      const browserPlatform = {
+        platform: BrowserPlatform.Android,
+      };
+      //@ts-ignore
+      next = gen.next({...settingsState, ...browserPlatform});
+      assert.deepEqual(next.value, select(getCurrentJourney), 'select current journey');
+
+      const currentJourney = {
+        isUpdate: false,
+        isNursery: false,
+        isSingle: true,
+        photo: undefined,
+        photoLocation: undefined,
+      };
+
+      //@ts-ignore
+      next = gen.next(location);
+      assert.deepEqual(next.value, put(actionsList.setTreeLocation({coords: location})), 'set tree location');
+      gen.next();
+      expect(mockNavigate).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(Routes.SubmitTree_V2);
+    });
+
+    it('watchAssignJourneyTreeLocation success, with photo', () => {
+      const mockNavigate = jest.fn(() => (route: Routes) => {});
+      const _spy = jest.spyOn(navigation, 'navigationRef').mockImplementation(
+        () =>
+          ({
+            navigate: mockNavigate,
+          } as any),
+      );
+      const location = {
+        latitude: 20000,
+        longitude: 3133321,
+      };
+      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
+
+      let next = gen.next();
+      assert.deepEqual(next.value, select(getSettings), 'select settings');
+
+      const settingsState = {
+        checkMetaData: true,
+      };
+      //@ts-ignore
+      next = gen.next({...settingsState});
+      assert.deepEqual(next.value, select(getBrowserPlatform), 'select browser platform');
+
+      const browserPlatform = {
+        platform: BrowserPlatform.Android,
+      };
+      //@ts-ignore
+      next = gen.next({...settingsState, ...browserPlatform});
+      assert.deepEqual(next.value, select(getCurrentJourney), 'select current journey');
+
+      const currentJourney = {
+        isUpdate: false,
+        isNursery: false,
+        isSingle: true,
+        photoLocation: location,
+      };
+      //@ts-ignore
+      next = gen.next({...settingsState, ...browserPlatform, ...currentJourney});
+      assert.deepEqual(
+        next.value,
+        checkTreeLocation({
+          checkMetaData: settingsState.checkMetaData,
+          browserPlatform: browserPlatform.platform,
+          submittedLocation: location,
+          photoLocation: location,
+          isUpdate: currentJourney.isUpdate,
+        }),
+        'yield checkTreeLocation',
+      );
+
+      //@ts-ignore
+      next = gen.next(location);
+      assert.deepEqual(next.value, put(actionsList.setTreeLocation({coords: location})), 'set tree location');
+      gen.next();
+      expect(mockNavigate).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(Routes.SubmitTree_V2);
+    });
+
+    it('watchAssignJourneyTreeLocation catch', () => {
+      const location = {
+        latitude: 0,
+        longitude: 0,
+      };
+      const gen = watchAssignJourneyTreeLocation({type: actionsList.ASSIGN_JOURNEY_TREE_LOCATION_WATCHER, location});
+
+      gen.next();
+
+      const error = {
+        title: 'map.newTree.errTitle',
+        mode: AlertMode.Error,
+        message: 'map.newTree.errMessage',
+      };
+
+      assert.deepEqual(gen.throw(error).value, showSagaAlert(error));
     });
   });
 });

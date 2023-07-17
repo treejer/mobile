@@ -12,7 +12,8 @@ import {AlertMode, showAlert, showSagaAlert} from 'utilities/helpers/alert';
 import {TDraftedJourneysState} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {setJourneyFromDrafts} from 'ranger-redux/modules/currentJourney/currentJourney.action';
 import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import * as actionsList from './draftedJourneys.action';
+import * as actionsList from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
+import {getCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.saga';
 
 export const getDraftedJourneys = (state: TReduxState) => state.draftedJourneys;
 
@@ -32,7 +33,7 @@ export function* watchDraftJourney(action: DraftJourneyAction) {
     };
 
     yield put(actionsList.draftJourney(newDraft));
-    navigateToGreenBlock({isNew: true, name: action?.name || action?.id});
+    yield navigateToGreenBlock({isNew: true, name: action?.name || action?.id});
   } catch (e: any) {
     yield showSagaAlert({
       message: e.message,
@@ -55,7 +56,7 @@ export function* watchSaveDraftedJourney(action: SaveDraftedJourneyAction) {
     };
 
     yield put(actionsList.saveDraftedJourney(updatedDraft));
-    navigateToGreenBlock({isNew: false, name: action?.name});
+    yield navigateToGreenBlock({isNew: false, name: action?.name});
   } catch (e: any) {
     yield showSagaAlert({
       message: e.message,
@@ -94,30 +95,28 @@ export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAct
       journeyPhoto = yield getCroppedImg(selectedDraft.journeyImageB64, 'file');
     }
 
-    if (selectedDraft) {
-      yield put(
-        setJourneyFromDrafts({
-          journey: {
-            ...currentJourney,
-            draftId: selectedDraft.id,
-            photo: isWeb() ? journeyPhoto : currentJourney.photo,
-          },
-        }),
-      );
-      navigationRef()?.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: Routes.TreeSubmission_V2,
-              params: {
-                initialRouteName: Routes.SubmitTree_V2,
-              },
+    yield put(
+      setJourneyFromDrafts({
+        journey: {
+          ...currentJourney,
+          draftId: selectedDraft.id,
+          photo: isWeb() ? journeyPhoto : currentJourney.photo,
+        },
+      }),
+    );
+    navigationRef()?.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.TreeSubmission_V2,
+            params: {
+              initialRouteName: Routes.SubmitTree_V2,
             },
-          ],
-        }),
-      );
-    }
+          },
+        ],
+      }),
+    );
   } catch (e: any) {
     yield showSagaAlert({
       message: e.message,
@@ -126,10 +125,26 @@ export function* watchSetDraftAsCurrentJourney({id}: SetDraftAsCurrentJourneyAct
   }
 }
 
+export type WatchRemoveDraftedJourneyAction = actionsList.RemoveDraftedJourneyWatcherPayload & {
+  type: string;
+};
+export function* watchRemoveDraftedJourney({id}: WatchRemoveDraftedJourneyAction) {
+  try {
+    const journey: TCurrentJourney = yield select(getCurrentJourney);
+
+    if (id !== journey.draftId) {
+      yield put(actionsList.removeDraftedJourney({id}));
+    } else {
+      yield put(actionsList.conflictWhileRemoving({conflict: id}));
+    }
+  } catch (e: any) {}
+}
+
 export function* draftedJourneysSagas() {
   yield takeEvery(actionsList.DRAFT_JOURNEY_WATCHER, watchDraftJourney);
   yield takeEvery(actionsList.SAVE_DRAFTED_JOURNEY_WATCHER, watchSaveDraftedJourney);
   yield takeEvery(actionsList.SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER, watchSetDraftAsCurrentJourney);
+  yield takeEvery(actionsList.REMOVE_DRAFTED_JOURNEY_WATCHER, watchRemoveDraftedJourney);
 }
 
 export type navigateToGreenBlockArgs = {
@@ -137,7 +152,7 @@ export type navigateToGreenBlockArgs = {
   name?: string;
 };
 
-export function navigateToGreenBlock({isNew, name}: navigateToGreenBlockArgs) {
+export function* navigateToGreenBlock({isNew, name}: navigateToGreenBlockArgs) {
   showAlert({
     message: `submitTreeV2.toast.${isNew ? 'drafted' : 'draftSaved'}`,
     mode: AlertMode.Success,

@@ -47,6 +47,20 @@ export const clearDraftedJourneys = () => ({
   type: CLEAR_DRAFTED_JOURNEYS,
 });
 
+export type ConflictWhileRemoving = {
+  conflict: string;
+};
+export const CONFLICT_WHILE_REMOVING = 'CONFLICT_WHILE_REMOVING';
+export const conflictWhileRemoving = ({conflict}: ConflictWhileRemoving) => ({
+  type: CONFLICT_WHILE_REMOVING,
+  conflict,
+});
+
+export const RESOLVE_CONFLICT = 'RESOLVE_CONFLICT';
+export const resolveConflict = () => ({
+  type: RESOLVE_CONFLICT,
+});
+
 // * saga watcher actions
 
 export type DraftJourneyWatcherPayload = Omit<DraftJourneyArgs, 'journeyImageB64'>;
@@ -74,5 +88,14 @@ export type SetAsCurrentJourneyWatcherPayload = {
 export const SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER = 'SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER';
 export const setDraftAsCurrentJourneyWatcher = ({id}: SetAsCurrentJourneyWatcherPayload) => ({
   type: SET_DRAFT_AS_CURRENT_JOURNEY_WATCHER,
+  id,
+});
+
+export type RemoveDraftedJourneyWatcherPayload = {
+  id: string;
+};
+export const REMOVE_DRAFTED_JOURNEY_WATCHER = 'REMOVE_DRAFTED_JOURNEY_WATCHER';
+export const removeDraftedJourneyWatcher = ({id}: RemoveDraftedJourneyWatcherPayload) => ({
+  type: REMOVE_DRAFTED_JOURNEY_WATCHER,
   id,
 });

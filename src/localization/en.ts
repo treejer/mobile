@@ -605,6 +605,10 @@ export const en = {
     existInDraft:
       '#{{id}} tree is exist in your draft list.\nyou can continue submission, or you can reset your draft.\n(after press reset draft item will remove)',
   },
+  conflictDraftModal: {
+    title: 'This draft is currently used in tree submission',
+    description: 'It will be removed from your drafts and reset your tree submission.',
+  },
   drafted: 'Drafted',
   submitted: 'Submitted',
   NotVerified: 'Not Verified',

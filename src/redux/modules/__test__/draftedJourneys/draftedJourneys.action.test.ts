@@ -76,4 +76,24 @@ describe('draftedJourneys actions', () => {
     };
     expect(actionsList.clearDraftedJourneys()).toEqual(expectedAction);
   });
+  it('remove journey watcher', () => {
+    const expectedAction = {
+      type: actionsList.REMOVE_DRAFTED_JOURNEY_WATCHER,
+      id: 'ID',
+    };
+    expect(actionsList.removeDraftedJourneyWatcher({id: 'ID'})).toEqual(expectedAction);
+  });
+  it('conflict while removing', () => {
+    const expectedAction = {
+      type: actionsList.CONFLICT_WHILE_REMOVING,
+      conflict: 'ID',
+    };
+    expect(actionsList.conflictWhileRemoving({conflict: 'ID'})).toEqual(expectedAction);
+  });
+  it('resolve conflict', () => {
+    const expectedAction = {
+      type: actionsList.RESOLVE_CONFLICT,
+    };
+    expect(actionsList.resolveConflict()).toEqual(expectedAction);
+  });
 });

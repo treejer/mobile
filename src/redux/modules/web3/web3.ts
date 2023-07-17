@@ -352,12 +352,14 @@ export function useUserWeb3(): TUseUserWeb3 {
   };
 }
 
-export const useConfig = () => useAppSelector(state => state.web3.config);
-export const useMagic = () => useAppSelector(state => state.web3.magic);
-export const useWalletWeb3 = () => useAppSelector(state => state.web3.web3);
-export const useTreeFactory = () => useAppSelector(state => state.web3.treeFactory);
-export const usePlanter = () => useAppSelector(state => state.web3.planter);
-export const usePlanterFund = () => useAppSelector(state => state.web3.planterFund);
+export const getTreeFactory = (state: TReduxState) => state.web3.treeFactory;
+export const useTreeFactory = () => useAppSelector(getTreeFactory);
+
+export const getPlanter = (state: TReduxState) => state.web3.planter;
+export const usePlanter = () => useAppSelector(getPlanter);
+
+export const getPlanterFund = (state: TReduxState) => state.web3.planterFund;
+export const usePlanterFund = () => useAppSelector(getPlanterFund);
 
 export const useWalletAccount = (): string => {
   return useAppSelector(getWallet);
@@ -371,22 +373,24 @@ export const getUserId = (state: TReduxState) => state.web3.userId;
 export const useUserId = () => useAppSelector(getUserId);
 
 export const getConfig = (state: TReduxState) => state.web3.config;
+export const useConfig = () => useAppSelector(getConfig);
 export function* selectConfig() {
   return yield select(getConfig);
 }
-export const useAccessToken = () => useAppSelector(getAccessToken);
 
+export const useAccessToken = () => useAppSelector(getAccessToken);
 export const getAccessToken = (state: TReduxState) => state.web3.accessToken;
 export function* selectAccessToken() {
   return yield select(getAccessToken);
 }
 export const getWeb3 = (state: TReduxState) => state.web3.web3;
+export const useWalletWeb3 = () => useAppSelector(getWeb3);
 export function* selectWeb3() {
   return yield select(getWeb3);
 }
 
 export const getMagic = (state: TReduxState) => state.web3.magic;
-
+export const useMagic = () => useAppSelector(getMagic);
 export function* selectMagic() {
   return yield select(getMagic);
 }

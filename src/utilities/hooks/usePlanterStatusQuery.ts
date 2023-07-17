@@ -5,7 +5,6 @@ import {NetworkStatus, useQuery} from '@apollo/client';
 import PlanterStatusQuery, {
   PlanterStatusQueryQueryData,
 } from 'screens/Profile/screens/MyProfile/graphql/PlanterStatusQuery.graphql';
-import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 
 type Planter = PlanterStatusQueryQueryData.Planter;
@@ -17,7 +16,7 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
 
   const {drafts} = useDraftedJourneys();
 
-  const draftedPlants = drafts.filter(draft => !draft.journey.isUpdate).length;
+  const draftedPlants = drafts.filter(draft => !JSON.parse(draft.journey).isUpdate).length;
 
   const query = useQuery<PlanterStatusQueryQueryData>(PlanterStatusQuery, {
     variables: {
@@ -56,7 +55,9 @@ export default function usePlanterStatusQuery(address: string, skipStats = false
   }, [address, query, setPlanter]);
 
   const refetching = query.networkStatus === NetworkStatus.refetch;
+
   console.log(planter?.plantedCount, draftedPlants);
+
   const canPlant = planter
     ? Number(planter?.plantedCount || 0) + (draftedPlants || 0) <= Number(planter?.supplyCap)
     : null;
