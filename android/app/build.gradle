@@ -121,7 +121,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "2.0.0"
-        versionNameSuffix "-beta.1"
+        versionNameSuffix "-beta.2"
     }
 
     splits {
