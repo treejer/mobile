@@ -30,12 +30,12 @@ export function useKeyboardHeight() {
     [height],
   );
 
-  const keyboardBottomProps = {
-    _position: 'static',
-    _left: '0px',
-    _right: '0px',
-    _bottom: bottom,
-    bg: colors.khaki,
+  const keyboardBottomStyles = {
+    position: 'static',
+    left: '0px',
+    right: '0px',
+    bottom: bottom,
+    backgroundColor: colors.khaki,
   };
 
   const closeKeyboard = () => {
@@ -45,7 +45,7 @@ export function useKeyboardHeight() {
   return {
     height,
     keyboardBottom: bottom,
-    keyboardBottomProps,
+    keyboardBottomStyles,
     closeKeyboard,
   };
 }
