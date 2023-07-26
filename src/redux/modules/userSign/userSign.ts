@@ -1,15 +1,12 @@
 import {useCallback} from 'react';
 import ReduxFetchState from 'redux-fetch-state';
-import {takeEvery, put, call} from 'redux-saga/effects';
-import {Method} from 'axios';
+import {takeEvery, put} from 'redux-saga/effects';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {handleSagaFetchError} from 'utilities/helpers/fetch';
+import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {UserSignForm, UserSignRes} from 'services/types';
-import {NetworkConfig} from 'services/config';
-import {selectConfig} from '../web3/web3';
 
-const UserSign = new ReduxFetchState<UserSignRes, UserSignForm, string>('userSign');
+const UserSign = new ReduxFetchState<UserSignRes, UserSignForm, any>('userSign');
 
 export type TUserSignAction = {
   type: string;
@@ -23,21 +20,19 @@ export type TUserSignSuccessAction = {
 
 export function* watchUserSign(action: TUserSignAction) {
   try {
-    const {signature, wallet} = action.payload;
-    const {treejerNestApiUrl}: NetworkConfig = yield selectConfig();
+    const {signature, wallet} = action.payload || {};
 
-    const options = {
-      // configUrl: 'treejerApiUrl' as keyof NetworkConfig,
-      method: 'POST' as Method,
-      headers: {
-        'Content-Type': 'application/json',
+    const res: FetchResult<UserSignRes> = yield sagaFetch<UserSignRes, Pick<UserSignForm, 'signature'>>(
+      `/login/${wallet}`,
+      {
+        configUrl: 'treejerNestApiUrl',
+        method: 'POST',
+        data: {
+          signature,
+        },
       },
-      body: JSON.stringify({signature}),
-    };
-
-    const res = yield call(() => fetch(`${treejerNestApiUrl}/login/${wallet}`, options));
-    const data = yield res.json();
-    yield put(UserSign.actions.loadSuccess(data));
+    );
+    yield put(UserSign.actions.loadSuccess(res.result));
   } catch (e: any) {
     yield put(UserSign.actions.loadFailure(e));
     yield handleSagaFetchError(e);
@@ -52,19 +47,22 @@ export function useUserSign() {
   const {data, ...userSignState} = useAppSelector(state => state.userSign);
   const dispatch = useAppDispatch();
 
-  const dispatchUserSign = useCallback(() => {
-    dispatch(UserSign.actions.load());
-  }, [dispatch]);
+  const dispatchUserSign = useCallback(
+    (form: UserSignForm) => {
+      dispatch(UserSign.actions.load(form));
+    },
+    [dispatch],
+  );
 
   const dispatchResetUserSign = useCallback(() => {
     dispatch(UserSign.actions.resetCache());
   }, [dispatch]);
 
   return {
+    userSign: data,
     ...userSignState,
     dispatchUserSign,
     dispatchResetUserSign,
-    userSign: data,
   };
 }
 

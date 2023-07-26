@@ -1,10 +1,10 @@
 import assert from 'assert';
 import {put, select, takeEvery} from 'redux-saga/effects';
+import {act, renderHook} from '@testing-library/react-hooks';
 
 import * as contracts from 'ranger-redux/modules/contracts/contracts';
 import {getConfig, getWallet, getWeb3} from 'ranger-redux/modules/web3/web3';
 import {mockConfig, mockWeb3, mockWeb3Error} from 'ranger-redux/modules/__test__/contracts/contracts.mock';
-import {act, renderHook} from '@testing-library/react-hooks';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
 import * as storeHook from 'utilities/hooks/useStore';

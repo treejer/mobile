@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {UserNonceForm, UserNonceRes} from 'services/types';
 
-const UserNonce = new ReduxFetchState<UserNonceRes, UserNonceForm, string>('userNonce');
+const UserNonce = new ReduxFetchState<UserNonceRes, UserNonceForm, any>('userNonce');
 
 export type TUserNonceAction = {
   type: string;
@@ -20,7 +20,7 @@ export type TUserNonceSuccessAction = {
 
 export function* watchUserNonce(action: TUserNonceAction) {
   try {
-    const {wallet, magicToken, loginData} = action.payload;
+    const {wallet, magicToken, loginData} = action.payload || {};
 
     const searchParams = new URLSearchParams();
     // searchParams.set('wallet', wallet);
@@ -49,9 +49,12 @@ export function useUserNonce() {
   const {data, ...userNonceState} = useAppSelector(state => state.userNonce);
   const dispatch = useAppDispatch();
 
-  const dispatchUserNonce = useCallback(() => {
-    dispatch(UserNonce.actions.load());
-  }, [dispatch]);
+  const dispatchUserNonce = useCallback(
+    (form: UserNonceForm) => {
+      dispatch(UserNonce.actions.load(form));
+    },
+    [dispatch],
+  );
 
   const dispatchResetUserNonce = useCallback(() => {
     dispatch(UserNonce.actions.resetCache());

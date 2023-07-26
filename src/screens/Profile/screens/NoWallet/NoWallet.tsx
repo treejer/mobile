@@ -56,8 +56,6 @@ function NoWallet(props: NoWalletProps) {
 
   const {height} = useKeyboardHeight();
 
-  console.log(height, 'height ish ere');
-
   const phoneRef = useRef<PhoneInput>(null);
 
   const {t} = useTranslation();
