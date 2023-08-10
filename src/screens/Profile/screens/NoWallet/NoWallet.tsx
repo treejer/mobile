@@ -127,7 +127,7 @@ function NoWallet(props: NoWalletProps) {
     sendEvent('connect_wallet');
     setLoginPressed(true);
     try {
-      const result = await magic?.auth.loginWithMagicLink({email});
+      const result = await magic?.auth.loginWithEmailOTP({email});
       if (result) {
         storeMagicToken(result, {email});
         // await refetchUser();
