@@ -52,8 +52,8 @@ function PreLoadImage() {
   const allImages = useMemo(() => [...staticImages, ...(treeImagesUrl || [])], [treeImagesUrl]);
 
   const preFetchTreeImages = useCallback(() => {
-    treeImagesUrl?.forEach(image => {
-      NativeImage.prefetch(String(image));
+    treeImagesUrl?.forEach(async image => {
+      await NativeImage.prefetch(String(image));
     });
   }, [treeImagesUrl]);
 
