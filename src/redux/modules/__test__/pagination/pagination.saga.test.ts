@@ -31,6 +31,12 @@ describe('pagination module', () => {
       gen.next();
       assert.deepEqual(gen.next(defaultPaginationItem).value, put(action()), 'should dispatch passed action');
     });
+    it('watchSetNextPage should increase one page to selected pagination item', () => {
+      const name = PaginationName.PlantedTrees;
+      const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name, action: undefined});
+      gen.next();
+      assert.deepEqual(gen.next(defaultPaginationItem).value, undefined, 'should dispatch nothing');
+    });
     it('watchSetNextPage should do nothing | hasMore: false', () => {
       const name = PaginationName.PlantedTrees;
       const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name});
@@ -40,6 +46,16 @@ describe('pagination module', () => {
         undefined,
         'should do nothing because pagination reached end',
       );
+    });
+    it('watchSetNextPage error', () => {
+      const name = PaginationName.PlantedTrees;
+      const action = plantedTreesActions.load;
+      const mockLog = jest.spyOn(console, 'log');
+      const gen = watchSetNextPage({type: actionsList.SET_NEXT_PAGE, name, action});
+      gen.next();
+      const error = new Error('error is here');
+      gen.throw(error);
+      expect(mockLog).toHaveBeenCalled();
     });
   });
 });

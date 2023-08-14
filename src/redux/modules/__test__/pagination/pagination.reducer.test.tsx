@@ -1,9 +1,14 @@
 import {
   defaultPaginationItem,
+  paginationInitialState,
   PaginationName,
   paginationReducer,
+  useReduxPagination,
 } from 'ranger-redux/modules/pagination/pagination.reducer';
 import * as actionsList from 'ranger-redux/modules/pagination/pagination.action';
+import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
+import {act, renderHook} from '@testing-library/react-hooks';
+import * as storeHook from 'utilities/hooks/useStore';
 
 describe('pagination reducer', () => {
   const initialState = {
@@ -81,5 +86,35 @@ describe('pagination reducer', () => {
     expect(paginationReducer(state, {type: actionsList.RESET_PAGINATION, name: PaginationName.PlantedTrees})).toEqual(
       initialState,
     );
+  });
+});
+
+describe('pagination hook', () => {
+  const mockDispatch = jest.fn((action: () => void) => {});
+  const _spy = jest.spyOn(storeHook, 'useAppDispatch').mockImplementation(() => mockDispatch as any);
+  const wrapper = {
+    wrapper: props => <AllTheProviders {...(props as any)} initialState={{pagination: paginationInitialState}} />,
+  };
+  const {result} = renderHook(() => useReduxPagination(PaginationName.PlantedTrees), wrapper);
+  it('should return state value', () => {
+    expect(result.current.loading).toEqual(defaultPaginationItem.loading);
+    expect(result.current.page).toEqual(defaultPaginationItem.page);
+    expect(result.current.perPage).toEqual(defaultPaginationItem.perPage);
+    expect(result.current.hasMore).toEqual(defaultPaginationItem.hasMore);
+    expect(result.current.total).toEqual(defaultPaginationItem.total);
+  });
+
+  it('should dispatchNextPage', () => {
+    act(() => {
+      result.current.dispatchNextPage(() => {});
+    });
+    expect(mockDispatch).toHaveBeenCalled();
+  });
+
+  it('should dispatchResetPagination', () => {
+    act(() => {
+      result.current.dispatchResetPagination();
+    });
+    expect(mockDispatch).toHaveBeenCalled();
   });
 });
