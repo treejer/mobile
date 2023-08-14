@@ -5,16 +5,17 @@ import {colors} from 'constants/values';
 
 interface PullToRefreshProps {
   children: JSX.Element | JSX.Element[];
-  onRefresh: () => Promise<any>;
+  onRefresh?: () => Promise<any>;
   disabled?: boolean;
 }
 
 export default function PullToRefresh(props: PullToRefreshProps) {
   const {children, onRefresh, disabled = false} = props;
 
-  if (disabled) {
+  if (disabled || !onRefresh) {
     return <>{children}</>;
   }
+
   return (
     <PullToRefreshContainer
       pullDownContent={<PullDownContent />}

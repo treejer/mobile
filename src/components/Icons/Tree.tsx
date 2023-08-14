@@ -2,13 +2,14 @@ import React from 'react';
 import Svg, {Path} from 'react-native-svg';
 
 interface Props {
+  testID?: string;
   color?: string;
   size?: number;
 }
 
-function TreeSvg({color = 'white', size = 20}: Props) {
+function TreeSvg({color = 'white', size = 20, testID}: Props) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 17 20" fill="none">
+    <Svg testID={testID} width={size} height={size} viewBox="0 0 17 20" fill="none">
       <Path
         d="M9.30109 14.627H7.60684C3.80419 14.627 0.722275 11.5451 0.722275 7.74248C0.722275 3.93983 3.80419 0.85791 7.60684 0.85791H9.30109C13.1037 0.85791 16.1857 3.93983 16.1857 7.74248C16.1857 11.5451 13.1037 14.627 9.30109 14.627Z"
         stroke={color}

@@ -120,7 +120,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName "2.0.0"
+        versionNameSuffix "-beta.2"
     }
 
     splits {

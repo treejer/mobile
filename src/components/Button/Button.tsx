@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 export type TButtonProps = {
+  testID?: string;
   textAlign?: string;
   size?: 'sm' | 'lg';
   iconPlace?: 'left' | 'right';
@@ -47,11 +48,13 @@ function Button({
   textStyle = null,
   loading = false,
   onPress,
+  testID,
   ...props
 }: TButtonProps) {
   const Component = (disabled ? View : TouchableOpacity) as React.ComponentType<TouchableOpacityProps>;
   return (
     <Component
+      testID={testID}
       style={[styles[`${variant}Container`], round ? styles.round : null, style]}
       onPress={onPress}
       disabled={disabled}
@@ -61,11 +64,13 @@ function Button({
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: styles[`${variant}Text`].color ?? 'white',
+            testID: 'icon-left',
           })}
         </View>
       )}
       {!round && Boolean(caption) ? (
         <Text
+          testID="caption-text"
           style={[
             styles[`${variant}Text`],
             textStyle,
@@ -81,11 +86,13 @@ function Button({
         <View style={[styles[`${variant}IconWrapper`]]}>
           {React.createElement(icon, {
             color: styles[`${variant}Text`].color ?? 'white',
+            testID: 'icon-right',
           })}
         </View>
       )}
       {loading && (
         <ActivityIndicator
+          testID="loading-indicator"
           style={{marginHorizontal: 10}}
           color={styles[`${variant}Text`].color ?? 'white'}
           size="small"

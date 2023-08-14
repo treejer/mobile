@@ -12,13 +12,14 @@ export enum TZoomType {
 }
 
 export type TMapControllerProps = {
+  testID?: string;
   onZoom: (zoomType: TZoomType) => void;
   onLocate: () => void;
   disabled?: boolean;
 };
 
 export function MapController(props: TMapControllerProps) {
-  const {onZoom, onLocate, disabled} = props;
+  const {onZoom, onLocate, disabled, testID} = props;
 
   const [isHeld, setIsHeld] = useState<boolean>(false);
   const [zoomType, setZoomType] = useState<TZoomType | null>(null);
@@ -52,7 +53,7 @@ export function MapController(props: TMapControllerProps) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <TouchableOpacity
         onPress={() => onZoom(TZoomType.In)}
         onLongPress={() => handleLongPress(TZoomType.In)}

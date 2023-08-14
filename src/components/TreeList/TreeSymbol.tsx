@@ -1,11 +1,15 @@
 import React from 'react';
-import globalStyles from 'constants/styles';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {TreeImage} from './TreeImage';
+
+import globalStyles from 'constants/styles';
 import {Hex2Dec} from 'utilities/helpers/hex';
+import {TreeImage} from './TreeImage';
+import Spacer from 'components/Spacer';
 import {Tree} from 'types';
 
 interface TreeSymbolPropsType {
+  horizontal?: boolean;
+  testID?: string;
   handlePress?: () => void;
   tree?: Tree;
   color?: string;
@@ -15,14 +19,39 @@ interface TreeSymbolPropsType {
   tint?: boolean;
   autoHeight?: boolean;
   hideId?: boolean;
+  disabled?: boolean;
+  autoWidth?: boolean;
 }
 const TreeSymbol = (props: TreeSymbolPropsType) => {
-  const {handlePress, tree, color, size = 60, treeUpdateInterval, style, autoHeight, tint = true, hideId} = props;
+  const {
+    testID,
+    horizontal,
+    handlePress,
+    tree,
+    color,
+    size = 60,
+    treeUpdateInterval,
+    style,
+    autoHeight,
+    tint = true,
+    hideId,
+    disabled,
+    autoWidth,
+  } = props;
 
   return (
     <TouchableOpacity
-      style={[{height: autoHeight ? undefined : 80, marginBottom: autoHeight ? 0 : 15}, styles.tree]}
+      testID={testID}
+      style={[
+        {height: autoHeight ? undefined : 80, width: autoWidth ? undefined : 52, marginBottom: autoHeight ? 0 : 15},
+        styles.tree,
+        horizontal
+          ? [globalStyles.flexRow, globalStyles.alignItemsCenter, {margin: 0, width: undefined, padding: 0}]
+          : {},
+      ]}
       onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={disabled ? 1 : undefined}
     >
       <TreeImage
         tree={tree}
@@ -32,6 +61,7 @@ const TreeSymbol = (props: TreeSymbolPropsType) => {
         color={color}
         treeUpdateInterval={treeUpdateInterval}
       />
+      {horizontal ? <Spacer /> : null}
       {!hideId && (
         <Text style={[globalStyles.normal, globalStyles.textCenter, styles.treeName]}>{Hex2Dec(tree?.id!)}</Text>
       )}
@@ -43,7 +73,6 @@ export default TreeSymbol;
 
 const styles = StyleSheet.create({
   tree: {
-    width: 52,
     marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'space-between',

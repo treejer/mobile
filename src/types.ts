@@ -1,10 +1,33 @@
-import {TreeJourney} from 'screens/TreeSubmission/types';
+import {Routes} from 'navigation/index';
 import {TreeDetailQueryQueryData} from 'screens/GreenBlock/screens/TreeDetails/graphql/TreeDetailQuery.graphql';
 import {TreeFilter} from 'components/TreeList/TreeFilterItem';
-import {Routes} from 'navigation/index';
+import {PlanterTreesQueryQueryPartialData} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
+import {TreeLife, SubmittedTreeStatus, NotVerifiedTreeStatus} from 'utilities/helpers/treeInventory';
+import {TreeJourney_V2} from 'screens/TreeSubmissionV2/types';
 
 export type Tree = TreeDetailQueryQueryData.Tree;
+export type TreeInList = PlanterTreesQueryQueryPartialData.Trees;
 
+export enum TreeStatus {
+  PENDING = 1,
+  VERIFIED = 2,
+  REJECTED = 3,
+  DELETE = 4,
+}
+
+export type NotVerifiedTree = {
+  _id: string;
+  signer: string;
+  nonce: number;
+  treeSpecs: string;
+  treeSpecsJSON: string;
+  birthDate?: number;
+  countryCode?: number;
+  treeId?: number;
+  status: TreeStatus;
+  createdAt: string;
+  updatedAt: string;
+};
 export interface MainTabsParamList extends Record<string, any> {
   Profile: undefined;
   TreeSubmission: undefined;
@@ -12,6 +35,9 @@ export interface MainTabsParamList extends Record<string, any> {
     greenBlockIdToJoin?: string;
     shouldNavigateToTreeDetails: boolean;
     filter?: TreeFilter;
+    tabFilter?: TreeLife;
+    notVerifiedFilter?: NotVerifiedTreeStatus[];
+    submittedFilter?: SubmittedTreeStatus[];
   };
   Activity: {
     filters: string[];
@@ -28,9 +54,13 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
   };
   TreeDetails: {
     tree?: Tree;
-    treeJourney?: TreeJourney;
+    treeJourney?: TreeJourney_V2;
     offline?: boolean;
     tree_id: string;
+  };
+  NotVerifiedTreeDetails: {
+    tree: NotVerifiedTree;
+    tree_id?: string;
   };
   TreeUpdate: {
     treeIdToUpdate: string;
@@ -44,15 +74,12 @@ export interface GreenBlockRouteParamList extends Record<string, any> {
 }
 
 export interface TreeSubmissionRouteParamList extends Record<string, any> {
-  [Routes.SelectPlantType]?: {
+  [Routes.SelectPlantType_V2]?: {
     initialRouteName: string;
   };
-  [Routes.SelectModels]: undefined;
-  [Routes.CreateModel]: undefined;
-  [Routes.SelectPhoto]: undefined;
-  [Routes.SubmitTree]: undefined;
-  [Routes.SelectOnMap]: {
-    journey: TreeJourney;
+  [Routes.SubmitTree_V2]: undefined;
+  [Routes.SelectOnMap_V2]: {
+    journey: TreeJourney_V2;
   };
 }
 

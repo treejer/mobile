@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useMemo} from 'react';
 import {Image as NativeImage} from 'react-native';
 
 import {isWeb} from 'utilities/helpers/web';
-import usePlantedTrees from 'utilities/hooks/usePlantedTrees';
+import {useSubmittedTrees} from 'utilities/hooks/useSubmittedTrees';
 import {
   EastWoodMessage,
   MaticLogo,
@@ -16,13 +16,6 @@ import {
   onBoardingTwo,
 } from '../../../assets/images';
 import {MapMarker, TreeImage} from '../../../assets/icons/index';
-import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
-import {usePagination} from 'utilities/hooks/usePagination';
-import planterTreeQuery, {
-  PlanterTreesQueryQueryData,
-  PlanterTreesQueryQueryPartialData,
-} from 'screens/GreenBlock/screens/MyCommunity/graphql/PlanterTreesQuery.graphql';
-import {TreeFilter} from 'components/TreeList/TreeFilterItem';
 
 const staticImages = [
   MapMarker,
@@ -40,19 +33,7 @@ const staticImages = [
 ];
 
 function PreLoadImage() {
-  const address = useWalletAccount();
-  const {persistedData: plantedTrees} = usePagination<
-    PlanterTreesQueryQueryData,
-    PlanterTreesQueryQueryData.Variables,
-    PlanterTreesQueryQueryPartialData.Trees[]
-  >(
-    planterTreeQuery,
-    {
-      address: address.toString().toLocaleLowerCase(),
-    },
-    'trees',
-    TreeFilter.Submitted,
-  );
+  const {submittedTrees} = useSubmittedTrees();
 
   useEffect(() => {
     if (isWeb()) {
@@ -64,15 +45,15 @@ function PreLoadImage() {
   }, []);
 
   const treeImagesUrl = useMemo(
-    () => plantedTrees?.map(tree => tree?.treeSpecsEntity?.imageFs).filter(Boolean),
-    [plantedTrees],
+    () => submittedTrees?.map(tree => tree?.treeSpecsEntity?.imageFs).filter(Boolean),
+    [submittedTrees],
   );
 
   const allImages = useMemo(() => [...staticImages, ...(treeImagesUrl || [])], [treeImagesUrl]);
 
   const preFetchTreeImages = useCallback(() => {
-    treeImagesUrl?.forEach(image => {
-      NativeImage.prefetch(String(image));
+    treeImagesUrl?.forEach(async image => {
+      await NativeImage.prefetch(String(image));
     });
   }, [treeImagesUrl]);
 

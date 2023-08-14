@@ -7,13 +7,18 @@ import {isWeb} from 'utilities/helpers/web';
 import {useTranslation} from 'react-i18next';
 import {StyleSheet, Text, TouchableOpacity, View, Modal} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useCurrentJourney} from 'services/currentJourney';
+import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 
-function SubmitTreeOfflineWebModal() {
+export type SubmitTreeOfflineWebModalProps = {
+  testID?: string;
+};
+
+function SubmitTreeOfflineWebModal(props: SubmitTreeOfflineWebModalProps) {
+  const {testID} = props;
   const navigation = useNavigation();
   const {t} = useTranslation();
 
-  const {clearJourney} = useCurrentJourney();
+  const {dispatchClearJourney} = useCurrentJourney();
 
   const handleBack = () => {
     navigation.dispatch(() =>
@@ -26,11 +31,11 @@ function SubmitTreeOfflineWebModal() {
         ],
       }),
     );
-    clearJourney();
+    dispatchClearJourney();
   };
 
   return isWeb() ? (
-    <Modal visible transparent>
+    <Modal testID={testID} visible transparent>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modal}>
           <Text style={[{textAlign: 'center'}, globalStyles.h4, globalStyles.mb1]}>

@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
 import {EmitterSubscription} from 'react-native/Libraries/vendor/emitter/EventEmitter';
+
+import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
+import {isWeb} from 'utilities/helpers/web';
 
 export function useInitialDeepLinking() {
   useEffect(() => {
@@ -23,7 +25,7 @@ export function useInitialDeepLinking() {
     const listener = Linking.addEventListener('url', onReceiveURL);
 
     return () => {
-      listener.remove();
+      listener?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -127,5 +129,8 @@ export function convertUrlParams(url: string) {
 }
 
 export function oauthDeepLinkUrl(provider: string): string {
+  if (isWeb()) {
+    return isProd ? rangerUrl : 'http://localhost:19006/login';
+  }
   return `${deepLinkingUriSchema}oauth/${provider}`;
 }

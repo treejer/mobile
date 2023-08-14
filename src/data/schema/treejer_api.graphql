@@ -11,6 +11,7 @@ type User {
   mobileCountry: String
   mobileVerifiedAt: String
   isVerified: Boolean!
+  plantingNonce: Int!
 }
 
 type PlanterTreesCount {
@@ -164,7 +165,7 @@ type Query {
 
   planter(id: String): planter
   tempTrees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [tempTrees!]
-  trees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: whereType): [trees!]
+  trees(address: String, first: Int, skip: Int, orderBy: String, orderDirection: String, where: treesWhereType): [trees!]
   settings: Settings
   addressHistories(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereAddressHistories): [addressHistoriesResponse!]
   models(first: Int, skip: Int orderBy: String, orderDirection: String, where: WhereModels): [Models!]
@@ -178,6 +179,11 @@ type Query {
 
 input whereType {
   planter: String
+}
+
+input treesWhereType {
+  planter: String
+  id_not_in: [String]
 }
 
 input ApplyInput {

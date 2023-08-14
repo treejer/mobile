@@ -1,7 +1,7 @@
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -9,7 +9,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import PhoneInput from 'react-native-phone-number-input';
-import {useMutation, useQuery} from '@apollo/client';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 
 import {Routes, UnVerifiedUserNavigationProp} from 'navigation/index';
@@ -19,25 +18,19 @@ import Steps from 'components/Steps';
 import RadioButton from 'components/RadioButton/RadioButton';
 import WebCam from 'components/WebCam/WebCam';
 import TextField, {PhoneField} from 'components/TextField';
-import getMeQuery, {GetMeQueryData} from 'services/graphql/GetMeQuery.graphql';
-import userApplyMutation from 'screens/Profile/screens/VerifyProfile/graphql/UserApplyMutation.graphql';
-import updateMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/UpdateMobileMutation.graphql';
-import sendSmsMutation from 'screens/Profile/screens/VerifyProfile/graphql/SendSMSMutation.graphql';
-import verifyMobileMutation from 'screens/Profile/screens/VerifyProfile/graphql/VerifyMobileMutation.graphql';
 import ResendCodeButton from 'screens/Profile/screens/VerifyProfile/ResendCodeButton';
-import SelectPhotoButton from 'screens/TreeSubmission/screens/SelectPhoto/SelectPhotoButton';
-import {PickImageButton} from 'screens/TreeSubmission/screens/SelectPhoto/PickImageButton';
 import useDeepLinkingValue from 'utilities/hooks/useDeepLinking';
-import {restApiError} from 'utilities/helpers/error';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {useCamera} from 'utilities/hooks';
 import {urlToBlob} from 'utilities/helpers/urlToBlob';
 import {isWeb} from 'utilities/helpers/web';
 import getCroppedImg from 'utilities/helpers/cropImage';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {useProfile, UserStatus} from 'ranger-redux/modules/profile/profile';
-import {useUserId} from 'ranger-redux/modules/web3/web3';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
+import {useVerification} from 'ranger-redux/modules/verification/useVerification';
+import {TUserStatus} from 'webServices/profile/profile';
+import SelectPhotoButton from 'screens/Profile/components/SelectPhotoButton';
+import {PickImageButton} from 'screens/Profile/components/PickImageButton';
 
 interface Props extends UnVerifiedUserNavigationProp<Routes.VerifyProfile> {}
 
@@ -54,24 +47,30 @@ const radioItems = [
 
 function VerifyProfile(props: Props) {
   const {navigation, route} = props;
-  const {status} = useProfile();
-
-  const {openCameraHook, openLibraryHook} = useCamera();
-  const [verifyProfile, verifyProfileState] = useMutation(userApplyMutation);
-  const [updateMobile, updateMobileState] = useMutation(updateMobileMutation);
-  const [requestSMS, requestSMSState] = useMutation(sendSmsMutation);
-  const [verifyMobile, verifyMobileState] = useMutation(verifyMobileMutation);
-
-  const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
-  const phoneRef = useRef<PhoneInput>(null);
-  const {data} = useQuery<GetMeQueryData>(getMeQuery);
-  const {user} = data || {};
-
-  const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!user?.mobile);
-  const [phoneNumber, setPhoneNumber] = useState(user?.mobile || '');
 
   const {params} = route;
   const {journey} = params || {};
+
+  const {openCameraHook, openLibraryHook} = useCamera();
+
+  const {
+    dispatchVerifyProfile,
+    verifyProfileState,
+    dispatchVerifyMobile,
+    verifyMobileState,
+    dispatchPhoneSendCode,
+    mobileSendCodeState,
+    dispatchPhoneResendCode,
+    mobileResendCodeState,
+  } = useVerification();
+
+  const [idCardImageUri, setIdCardImageUri] = useState<string | any>('');
+  const phoneRef = useRef<PhoneInput>(null);
+
+  const {profile} = useProfile();
+
+  const [requestedMobileVerification, setRequestedMobileVerification] = useState(!!profile?.mobile);
+  const [phoneNumber, setPhoneNumber] = useState(profile?.mobile || '');
 
   const [organizationKey, setOrganizationKey] = useState<string>(radioItems[1].key);
   const [isCameraVisible, setIsCameraVisible] = useState<boolean>(false);
@@ -87,15 +86,16 @@ function VerifyProfile(props: Props) {
     setOrganizationKey(key);
   };
 
-  const userId = useUserId();
-
   const parsedPhoneNumber = useMemo(() => {
-    if (user?.mobile && user?.mobileCountry) {
-      return PhoneNumberUtil.getInstance().parse(user.mobile, user.mobileCountry)?.getNationalNumber()?.toString();
+    if (profile?.mobile && profile?.mobileCountry) {
+      return PhoneNumberUtil.getInstance()
+        .parse(profile.mobile, profile.mobileCountry)
+        ?.getNationalNumber()
+        ?.toString();
     }
 
     return '';
-  }, [user]);
+  }, [profile]);
 
   const phoneNumberForm = useForm<{
     phoneNumber: string;
@@ -121,8 +121,37 @@ function VerifyProfile(props: Props) {
     },
   });
 
+  useEffect(() => {
+    if (verifyMobileState.error) {
+      phoneNumberForm.setError('verificationCode', {
+        message: verifyMobileState.error || t('unknownError'),
+      });
+    }
+    if (mobileResendCodeState.error) {
+      phoneNumberForm.setError('verificationCode', {
+        message: mobileResendCodeState.error || t('unknownError'),
+      });
+    }
+    if (mobileSendCodeState.error) {
+      phoneNumberForm.setError('phoneNumber', {
+        message: mobileSendCodeState.error || t('unknownError'),
+      });
+    }
+    if (verifyProfileState.error) {
+      phoneNumberForm.setError('verificationCode', {
+        message: verifyProfileState.error || t('unknownError'),
+      });
+    }
+  }, [
+    verifyMobileState.error,
+    verifyProfileState.error,
+    mobileSendCodeState.error,
+    mobileResendCodeState.error,
+    phoneNumberForm,
+  ]);
+
   const currentStep = (() => {
-    if (!user?.mobileVerifiedAt) {
+    if (!profile?.mobileVerifiedAt) {
       return 2;
     }
 
@@ -153,108 +182,65 @@ function VerifyProfile(props: Props) {
       return;
     }
 
-    try {
-      const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
-      await updateMobile({
-        variables: {
-          input: {
-            mobileNumber,
-            country: `${phoneRef.current?.getCountryCode()}`,
-          },
-        },
-        errorPolicy: 'all',
-      });
-      setPhoneNumber(mobileNumber);
-      setRequestedMobileVerification(true);
-    } catch (e) {
-      phoneNumberForm.setError('phoneNumber', {
-        message: restApiError(e).message || t('unknownError'),
-      });
-    }
+    const mobileNumber = `+${phoneRef.current?.getCallingCode()}${phoneNumber}`;
+    dispatchPhoneSendCode({
+      mobileNumber,
+      country: `${phoneRef.current?.getCountryCode()}`,
+    });
+    setPhoneNumber(mobileNumber);
+    setRequestedMobileVerification(true);
   });
 
   const resendCode = async () => {
-    try {
-      await requestSMS();
-      phoneNumberForm.clearErrors('verificationCode');
-    } catch (e) {
-      phoneNumberForm.setError('verificationCode', {
-        message: restApiError(e).message || t('unknownError'),
-      });
-    }
+    dispatchPhoneResendCode();
+    phoneNumberForm.clearErrors('verificationCode');
   };
 
-  const handleMutationAlert = (error: any) => {
-    const message = restApiError(error).message || t('unknownError');
-    showAlert({
-      title: t('error'),
-      message,
-      mode: AlertMode.Error,
-    });
-  };
+  // const handleMutationAlert = (error: any) => {
+  //   const message = restApiError(error).message || t('unknownError');
+  //   showAlert({
+  //     title: t('error'),
+  //     message,
+  //     mode: AlertMode.Error,
+  //   });
+  // };
 
   const verifyPhone = phoneNumberForm.handleSubmit(async ({verificationCode}) => {
-    try {
-      await verifyMobile({
-        variables: {
-          input: {
-            verificationCode,
-          },
-        },
-        refetchQueries: [{query: getMeQuery}],
-        awaitRefetchQueries: true,
-        update: store => {
-          const currentUser = store.readQuery<GetMeQueryData>({query: getMeQuery});
-          store.writeQuery<GetMeQueryData>({
-            query: getMeQuery,
-            data: {
-              user: currentUser?.user && {
-                ...currentUser.user,
-                mobileVerifiedAt: new Date().toISOString(),
-              },
-            },
-          });
-        },
-      });
-    } catch (e) {
-      phoneNumberForm.setError('verificationCode', {
-        message: restApiError(e).message || t('unknownError'),
-      });
-    }
+    dispatchVerifyMobile({verifyMobileCode: verificationCode});
   });
 
   const submitApply = nameForm.handleSubmit(async data => {
-    try {
-      sendEvent('get_verified_submit');
-      const input = {
-        firstName: data.firstName,
-        lastName: lastNameForm.getValues().lastName,
-        idCardFile: idCardImageUri,
-        type: organizationKey,
-        organizationAddress: organization || '',
-        referrer: referrer || '',
-        longitude: journey?.location?.longitude,
-        latitude: journey?.location?.latitude,
-      };
-      await verifyProfile({
-        variables: {
-          input,
-          userId,
-        },
-        awaitRefetchQueries: true,
-        refetchQueries: [
-          {
-            query: getMeQuery,
-          },
-        ],
-      });
+    sendEvent('get_verified_submit');
+    const input = {
+      firstName: data.firstName,
+      lastName: lastNameForm.getValues().lastName,
+      file: idCardImageUri,
+      type: Number(organizationKey),
+      organizationAddress: organization || '',
+      referrer: referrer || '',
+      longitude: journey?.location?.longitude,
+      latitude: journey?.location?.latitude,
+    };
 
-      navigation.navigate(Routes.VerifyPending);
-    } catch (error) {
-      phoneNumberForm.setError('verificationCode', {
-        message: restApiError(error).message || t('unknownError'),
-      });
-    }
+    const formData = new FormData();
+    formData.append('firstName', input.firstName);
+    formData.append('lastName', input.lastName);
+    //@ts-ignore
+    formData.append('type', input.type);
+    formData.append('organizationAddress', input.organizationAddress);
+    formData.append('referrer', input.referrer);
+    //@ts-ignore
+    formData.append('longitude', input.longitude);
+    //@ts-ignore
+    formData.append('latitude', input.latitude);
+    formData.append('file', {
+      //@ts-ignore
+      uri: input.file.uri,
+      type: input.file.file.type === 'image/jpg' ? 'image/jpeg' : input.file.file.type,
+      name: input.file.file.name,
+    });
+
+    dispatchVerifyProfile(formData as any);
   });
 
   const pickImage = async () => {
@@ -266,16 +252,12 @@ function VerifyProfile(props: Props) {
       });
 
       if (result?.path) {
-        if (/file:\//.test(result.path)) {
-          setIdCardImageUri(result.path);
-        } else {
-          urlToBlob(result.path).then(blob => {
-            // eslint-disable-next-line no-undef
-            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
-            setIdCardImageUri(fileOfBlob);
-            return blob;
-          });
-        }
+        urlToBlob(result.path).then(blob => {
+          // eslint-disable-next-line no-undef
+          const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
+          setIdCardImageUri({file: fileOfBlob, uri: result.path});
+          return blob;
+        });
       }
     } else {
       setIsCameraVisible(true);
@@ -290,20 +272,16 @@ function VerifyProfile(props: Props) {
     const selectedPhoto = await openLibraryHook();
     if (selectedPhoto) {
       if (selectedPhoto?.path) {
-        if (/file:\//.test(selectedPhoto.path)) {
-          setIdCardImageUri(selectedPhoto.path);
-        } else {
-          urlToBlob(selectedPhoto.path).then(blob => {
-            // eslint-disable-next-line no-undef
-            const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
-            setIdCardImageUri(fileOfBlob);
-            return blob;
-          });
-        }
+        urlToBlob(selectedPhoto.path).then(blob => {
+          // eslint-disable-next-line no-undef
+          const fileOfBlob = new File([blob as Blob], 'file.jpg', {type: 'image/jpg'});
+          setIdCardImageUri({file: fileOfBlob, uri: selectedPhoto.path});
+          return blob;
+        });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [openLibraryHook]);
 
   const handleDonePicture = async (image, croppedAreaPixels, rotation) => {
     const selectedPhoto = await getCroppedImg(image, 'file.jpg', croppedAreaPixels, rotation);
@@ -338,14 +316,14 @@ function VerifyProfile(props: Props) {
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
           <Spacer times={4} />
 
-          {status === UserStatus.Pending && (
+          {profile?.userStatus === TUserStatus.Pending && (
             <>
               <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
               <Spacer times={6} />
             </>
           )}
 
-          {status === UserStatus.Unverified && (
+          {profile?.userStatus === TUserStatus.NotVerified && (
             <>
               <Steps.Container currentStep={currentStep} style={{width: 300}}>
                 {/* Step 1 - Add wallet */}
@@ -361,7 +339,7 @@ function VerifyProfile(props: Props) {
                 <Steps.Step step={2}>
                   <View style={{alignItems: 'flex-start'}}>
                     <Text style={globalStyles.h6}>
-                      {t(user?.mobile && requestedMobileVerification ? 'verifyPhone' : 'addPhone')}
+                      {t(profile?.mobile && requestedMobileVerification ? 'verifyPhone' : 'addPhone')}
                     </Text>
                     {renderAddPhone()}
                   </View>
@@ -464,7 +442,7 @@ function VerifyProfile(props: Props) {
               error={phoneNumberForm.formState.errors.phoneNumber}
               ref={phoneRef}
               textInputStyle={{height: 64, paddingLeft: 0}}
-              defaultCode={(user?.mobileCountry as any) ?? 'CA'}
+              defaultCode={(profile?.mobileCountry as any) ?? 'CA'}
               placeholder="Phone #"
               onSubmitEditing={submitPhoneNumber}
             />
@@ -473,8 +451,8 @@ function VerifyProfile(props: Props) {
               variant="success"
               onPress={submitPhoneNumber}
               caption={t('sendCode')}
-              disabled={updateMobileState.loading}
-              loading={updateMobileState.loading}
+              disabled={mobileSendCodeState.loading}
+              loading={mobileSendCodeState.loading}
             />
           </>
         )}
@@ -508,7 +486,7 @@ function VerifyProfile(props: Props) {
                 />
               </View>
               <View style={{flex: 0.6, alignItems: 'flex-start', paddingHorizontal: 4}}>
-                <ResendCodeButton resendCode={resendCode} loading={requestSMSState.loading} />
+                <ResendCodeButton resendCode={resendCode} loading={mobileResendCodeState.loading} />
               </View>
             </View>
           </>

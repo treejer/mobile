@@ -1,10 +1,15 @@
 /* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
 import {ImageURISource} from 'react-native';
+import {version} from '../../package.json';
 
 import {MaticLogo, GoerliLogo} from '../../assets/images';
 
-console.log(process.env);
+export const treejerProtocol = 'Treejer Protocol';
+
+if (process.env.NODE_ENV !== 'test') {
+  console.log(process.env);
+}
 
 export enum ContractType {
   TreeFactory = 'TreeFactory',
@@ -31,6 +36,7 @@ export interface StorageKeys {
   accessToken: string;
   blockchainNetwork: string;
   treeUpdateInterval: string;
+  resetStorage: string;
 }
 
 export enum BlockchainNetwork {
@@ -47,6 +53,7 @@ export interface NetworkConfig {
   isMainnet: boolean;
   web3Url: string;
   treejerApiUrl: string;
+  treejerNestApiUrl: string;
   thegraphUrl: string;
   ipfsPostURL: string;
   ipfsGetURL: string;
@@ -109,6 +116,7 @@ const config: Config = {
     isMainnet: true,
     web3Url: process.env.REACT_NATIVE_MATIC_MAIN_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_TREEJER_API_URL),
+    treejerNestApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_TREEJER_NEST_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_MAIN_IPFS_GET_URL),
@@ -156,6 +164,7 @@ const config: Config = {
     isMainnet: true,
     web3Url: process.env.REACT_NATIVE_MATIC_TEST_WEB3_PROVIDER || '',
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_TREEJER_API_URL),
+    treejerNestApiUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_TREEJER_NEST_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_MATIC_TEST_IPFS_GET_URL),
@@ -211,6 +220,7 @@ const config: Config = {
     //       }),
     // ),
     treejerApiUrl: formatUrl(process.env.REACT_NATIVE_GOERLI_TREEJER_API_URL),
+    treejerNestApiUrl: formatUrl(process.env.REACT_NATIVE_GOERLI_TREEJER_NEST_API_URL),
     thegraphUrl: formatUrl(process.env.REACT_NATIVE_GOERLI_THE_GRAPH_URL),
     ipfsPostURL: formatUrl(process.env.REACT_NATIVE_GOERLI_IPFS_POST_URL),
     ipfsGetURL: formatUrl(process.env.REACT_NATIVE_GOERLI_IPFS_GET_URL),
@@ -239,6 +249,7 @@ export const storageKeys: StorageKeys = {
   accessToken: '__TREEJER_ACCESS_TOKEN',
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
+  resetStorage: `__TREEJER_RESET_${version}`,
 };
 
 export const rangerUrl = 'https://ranger.treejer.com';
@@ -249,6 +260,7 @@ export const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.
 
 export const mapboxPublicToken = process.env.REACT_NATIVE_PUBLIC_MAPBOX_TOKEN || '';
 export const mapboxPrivateToken = process.env.REACT_NATIVE_PRIVATE_MAPBOX_TOKEN || '';
+export const checkMetadataCheckingReleaseDate = Number(process.env.REACT_NATIVE_METADATA_CHECKING_RELEASE_DATE || '');
 
 export interface NetworkInfo {
   title: string;

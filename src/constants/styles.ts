@@ -48,6 +48,12 @@ const globalStyles = StyleSheet.create({
   justifyContentEvenly: {
     justifyContent: 'space-evenly',
   },
+  justifyContentBetween: {
+    justifyContent: 'space-between',
+  },
+  flexRow: {
+    flexDirection: 'row',
+  },
   flexWrap: {
     flexWrap: 'wrap',
   },
@@ -100,6 +106,9 @@ const globalStyles = StyleSheet.create({
   },
   alignItemsStart: {
     alignItems: 'flex-start',
+  },
+  alignItemsEnd: {
+    alignItems: 'flex-end',
   },
   justifyContentEnd: {
     justifyContent: 'flex-end',

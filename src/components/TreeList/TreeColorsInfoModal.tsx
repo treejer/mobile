@@ -1,8 +1,7 @@
 import React from 'react';
 import {Modal, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {colors} from 'constants/values';
-import {Tree} from 'types';
-import {TreeColorType, treeColorTypes} from 'utilities/helpers/tree';
+import {treeColorTypes} from 'utilities/helpers/tree';
 import {useTranslation} from 'react-i18next';
 import {TreeImage} from 'components/TreeList/TreeImage';
 

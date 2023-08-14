@@ -4,10 +4,10 @@ import {takeEvery, put, call} from 'redux-saga/effects';
 import axios from 'axios';
 
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
+import {searchLocationUrl} from 'utilities/helpers/searchLocationUrl';
 import {TPlace, TPlaceForm} from 'components/Map/types';
-import {mapboxPublicToken} from 'services/config';
 
-const SearchPlaces = new ReduxFetchState<TPlace[] | null, TPlaceForm, string>('searchPlaces');
+const SearchPlaces = new ReduxFetchState<TPlace[] | null, TPlaceForm, any>('searchPlaces');
 
 export type TUserSignAction = {
   type: string;
@@ -19,14 +19,10 @@ export function* watchSearchPlaces(action: TUserSignAction) {
     const {search} = action.payload;
     if (!search) {
       yield put(SearchPlaces.actions.loadSuccess(null));
+    } else {
+      const {data} = yield call(() => axios.get(searchLocationUrl(search)));
+      yield put(SearchPlaces.actions.loadSuccess(data.features));
     }
-
-    const {data} = yield call(() =>
-      axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?proximity=ip&access_token=${mapboxPublicToken}`,
-      ),
-    );
-    yield put(SearchPlaces.actions.loadSuccess(data.features));
   } catch (e: any) {
     yield put(SearchPlaces.actions.loadFailure(e));
   }
@@ -48,7 +44,7 @@ export function useSearchPlaces() {
   );
 
   const dispatchResetSearchPlaces = useCallback(() => {
-    dispatch(SearchPlaces.actions.loadSuccess(null));
+    dispatch(SearchPlaces.actions.resetCache());
   }, [dispatch]);
 
   return {

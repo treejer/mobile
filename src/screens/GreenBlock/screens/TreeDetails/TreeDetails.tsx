@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -38,10 +38,12 @@ import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
 import {mapboxPrivateToken} from 'services/config';
 import PullToRefresh from 'components/PullToRefresh/PullToRefresh';
-import {useCurrentJourney} from 'services/currentJourney';
 import {ScreenTitle} from 'components/ScreenTitle/ScreenTitle';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
+import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
+import {useAlertModal} from 'components/Common/AlertModalProvider';
 
 interface Props {}
 
@@ -52,10 +54,13 @@ function TreeDetails(_: Props) {
   const {
     params: {tree},
   } = useRoute<RouteProp<GreenBlockRouteParamList, Routes.TreeDetails>>();
-  const {releaseDate, changeCheckMetaData} = useSettings();
+  const {checkMetadataReleaseDate, changeCheckMetaData} = useSettings();
   const {isMainnet} = useConfig();
 
-  const {setNewJourney} = useCurrentJourney();
+  const {checkExistAnyDraftOfTree, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} =
+    useDraftedJourneys();
+  const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useCurrentJourney();
+  const {openAlertModal, closeAlertModal} = useAlertModal();
 
   const {sendEvent} = useAnalytics();
 
@@ -106,6 +111,42 @@ function TreeDetails(_: Props) {
     }
   }, []);
 
+  const handleNavigateToSubmission = useCallback(() => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: Routes.TreeSubmission_V2,
+            params: {
+              initialRouteName: Routes.SubmitTree_V2,
+            },
+          },
+        ],
+      }),
+    );
+  }, [navigation]);
+
+  const handleContinueDraftedJourney = useCallback(
+    (id: string, reset: boolean) => {
+      dispatchClearJourney();
+      if (reset) {
+        dispatchRemoveDraftedJourney({id});
+      } else {
+        dispatchSetDraftAsCurrentJourney({id});
+      }
+      closeAlertModal();
+      handleNavigateToSubmission();
+    },
+    [
+      dispatchRemoveDraftedJourney,
+      dispatchSetDraftAsCurrentJourney,
+      handleNavigateToSubmission,
+      closeAlertModal,
+      dispatchClearJourney,
+    ],
+  );
+
   const handleUpdate = () => {
     if (!treeDetails) {
       showAlert({
@@ -134,44 +175,65 @@ function TreeDetails(_: Props) {
       return;
     }
     sendEvent('update_tree');
-    if (isMainnet && releaseDate > Number(treeDetails?.plantDate)) {
+    if (isMainnet && checkMetadataReleaseDate > Number(treeDetails?.plantDate)) {
       changeCheckMetaData(false);
     }
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: Routes.TreeSubmission,
-            params: {
-              initialRouteName: Routes.SelectPhoto,
+    if (tree?.id) {
+      if (checkExistAnyDraftOfTree(tree?.id)) {
+        openAlertModal({
+          title: {
+            text: 'treeInventoryV2.existInDraft',
+            tParams: {
+              id: Hex2Dec(tree?.id).toString(),
+            },
+            props: {
+              style: styles.modalTitle,
             },
           },
-        ],
-      }),
-    );
-    setNewJourney({
-      treeIdToUpdate: tree?.id,
-      tree: treeDetails,
-      location: {
-        latitude: Number(treeDetails?.treeSpecsEntity?.latitude) / Math.pow(10, 6),
-        longitude: Number(treeDetails?.treeSpecsEntity?.longitude) / Math.pow(10, 6),
-      },
-    });
+          buttons: [
+            {
+              text: 'reset',
+              onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
+              btnProps: {
+                style: styles.resetBtn,
+              },
+              textProps: {
+                style: styles.whiteText,
+              },
+            },
+            {
+              text: 'continue',
+              onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
+              btnProps: {
+                style: styles.continueBtn,
+              },
+              textProps: {
+                style: styles.whiteText,
+              },
+            },
+          ],
+        });
+      } else {
+        dispatchClearJourney();
+        dispatchSetTreeDetailToUpdate({treeIdToUpdate: tree?.id, tree: treeDetails});
+        handleNavigateToSubmission();
+      }
+    }
   };
 
   if (loading) {
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator color={colors.green} size="large" />
+        <ActivityIndicator testID="loading-indicator" color={colors.green} size="large" />
       </View>
     );
   }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
-      <ScreenTitle goBack rightContent={<Avatar size={40} type="active" />} />
+      <ScreenTitle testID="screen-title-cpt" goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={
           isWeb() ? undefined : (
@@ -183,6 +245,7 @@ function TreeDetails(_: Props) {
           <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.safeArea]}>
             {treeDetails ? (
               <TreeImage
+                testID="tree-image-cpt"
                 color={colors.green}
                 tree={treeDetails}
                 size={120}
@@ -192,7 +255,9 @@ function TreeDetails(_: Props) {
             ) : null}
 
             {treeDetails?.id ? (
-              <Text style={[globalStyles.h3, globalStyles.textCenter]}>{Hex2Dec(treeDetails.id)}</Text>
+              <Text testID="tree-id-text" style={[globalStyles.h3, globalStyles.textCenter]}>
+                {Hex2Dec(treeDetails.id)}
+              </Text>
             ) : null}
             {/* Tree id */}
             <Spacer times={8} />
@@ -202,6 +267,7 @@ function TreeDetails(_: Props) {
                 <View style={styles.updateButton}>
                   {treeDetails && (
                     <Button
+                      testID="tree-update-btn"
                       variant="success"
                       caption={t('treeDetails.update')}
                       textStyle={globalStyles.textCenter}
@@ -220,13 +286,20 @@ function TreeDetails(_: Props) {
 
                 {treeDetails?.treeSpecsEntity ? (
                   <>
-                    <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                    <Text
+                      testID="tree-gpsCoords-label"
+                      style={[globalStyles.h6, globalStyles.textCenter, styles.header]}
+                    >
                       {t('treeDetails.gpsCoords')}
                     </Text>
-                    <Text style={[globalStyles.h5, globalStyles.textCenter]}>
-                      lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}
-                      {'\n '}
-                      long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}
+                    <Text testID="tree-gpsCoords" style={[globalStyles.h5, globalStyles.textCenter]}>
+                      {t('treeDetails.coords', {
+                        lat: Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6),
+                        long: Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6),
+                      })}
+                      {/*lat: {Number(treeDetails?.treeSpecsEntity.latitude) / Math.pow(10, 6)}*/}
+                      {/*{'\n '}*/}
+                      {/*long: {Number(treeDetails?.treeSpecsEntity.longitude) / Math.pow(10, 6)}*/}
                     </Text>
                     <Spacer times={6} />
                   </>
@@ -238,29 +311,34 @@ function TreeDetails(_: Props) {
                 {/*/!* TBD *!/*/}
                 {/*<Spacer times={6} />*/}
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.funder')}</Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="tree-funder-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                  {t('treeDetails.funder')}
+                </Text>
+                <Text testID="tree-funder" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {treeDetails?.funder == null ? t('treeDetails.notFounded') : treeDetails?.funder?.id}
                 </Text>
                 <Spacer times={6} />
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                <Text testID="tree-lastUpdate-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
                   {t('treeDetails.lastUpdate')}
                 </Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="tree-lastUpdate" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {treeDetails?.lastUpdate != null
                     ? new Date(Number(treeDetails?.lastUpdate?.createdAt) * 1000).toLocaleDateString()
                     : new Date(Number(treeDetails?.plantDate) * 1000).toLocaleDateString()}
                 </Text>
                 <Spacer times={6} />
 
-                <Text style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>{t('treeDetails.born')}</Text>
-                <Text style={[globalStyles.h5, globalStyles.textCenter]}>
+                <Text testID="born-date-label" style={[globalStyles.h6, globalStyles.textCenter, styles.header]}>
+                  {t('treeDetails.born')}
+                </Text>
+                <Text testID="born-date" style={[globalStyles.h5, globalStyles.textCenter]}>
                   {new Date(Number(treeDetails?.plantDate) * 1000).getFullYear()}
                 </Text>
                 <Spacer times={6} />
 
                 <TouchableOpacity
+                  testID="open-map-button"
                   style={{
                     marginHorizontal: -20,
                     marginBottom: -23,
@@ -273,6 +351,7 @@ function TreeDetails(_: Props) {
                   }}
                 >
                   <Image
+                    testID="tree-location-image"
                     resizeMode="cover"
                     style={{
                       alignSelf: 'center',
@@ -306,7 +385,12 @@ function TreeDetails(_: Props) {
                     <View style={styles.titleLine} />
                   </View>
                   <Spacer times={8} />
-                  <TreePhotos updatesCount={updatesCount} cardWidth={cardWidth} updates={updates} />
+                  <TreePhotos
+                    testID="tree-photos-cpt"
+                    updatesCount={updatesCount}
+                    cardWidth={cardWidth}
+                    updates={updates}
+                  />
                 </View>
               )}
             </View>
@@ -341,6 +425,18 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignSelf: 'center',
+  },
+  modalTitle: {
+    fontSize: 12,
+  },
+  whiteText: {
+    color: colors.white,
+  },
+  resetBtn: {
+    backgroundColor: colors.yellow,
+  },
+  continueBtn: {
+    backgroundColor: colors.green,
   },
 });
 

@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {FetchResult, handleSagaFetchError, sagaFetch} from 'utilities/helpers/fetch';
 import {UserNonceForm, UserNonceRes} from 'services/types';
 
-const UserNonce = new ReduxFetchState<UserNonceRes, UserNonceForm, string>('userNonce');
+const UserNonce = new ReduxFetchState<UserNonceRes, UserNonceForm, any>('userNonce');
 
 export type TUserNonceAction = {
   type: string;
@@ -20,10 +20,10 @@ export type TUserNonceSuccessAction = {
 
 export function* watchUserNonce(action: TUserNonceAction) {
   try {
-    const {wallet, magicToken, loginData} = action.payload;
+    const {wallet, magicToken, loginData} = action.payload || {};
 
     const searchParams = new URLSearchParams();
-    searchParams.set('publicAddress', wallet);
+    // searchParams.set('wallet', wallet);
     searchParams.set('token', magicToken);
 
     if (loginData?.email) {
@@ -33,7 +33,7 @@ export function* watchUserNonce(action: TUserNonceAction) {
       searchParams.set('mobile', loginData.mobile);
       searchParams.set('country', loginData.country);
     }
-    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/user/nonce?${searchParams.toString()}`);
+    const res: FetchResult<UserNonceRes> = yield sagaFetch<UserNonceRes>(`/nonce/${wallet}?${searchParams.toString()}`);
     yield put(UserNonce.actions.loadSuccess(res.result));
   } catch (e: any) {
     yield put(UserNonce.actions.loadFailure(e));
@@ -49,15 +49,23 @@ export function useUserNonce() {
   const {data, ...userNonceState} = useAppSelector(state => state.userNonce);
   const dispatch = useAppDispatch();
 
-  const dispatchUserNonce = useCallback(() => {
-    dispatch(UserNonce.actions.load());
+  const dispatchUserNonce = useCallback(
+    (form: UserNonceForm) => {
+      dispatch(UserNonce.actions.load(form));
+    },
+    [dispatch],
+  );
+
+  const dispatchResetUserNonce = useCallback(() => {
+    dispatch(UserNonce.actions.resetCache());
   }, [dispatch]);
 
   return {
     ...userNonceState,
     dispatchUserNonce,
+    dispatchResetUserNonce,
     userNonce: data,
   };
 }
 
-export const {actionTypes: userNonceActionsTypes, actions: userNonceActions, reducer: userNonceReducer} = UserNonce;
+export const {actionTypes: userNonceActionTypes, actions: userNonceActions, reducer: userNonceReducer} = UserNonce;

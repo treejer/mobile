@@ -1,23 +1,16 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {colors} from 'constants/values';
-import GooglePlay from 'react-native-vector-icons/Ionicons';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Image, Linking, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {TreejerIcon} from '../../../assets/images';
-import globalStyles from 'constants/styles';
-import {useTranslation} from 'react-i18next';
-import {googlePlayUrl} from 'services/config';
+import GooglePlay from 'react-native-vector-icons/Ionicons';
 import {useQuery} from '@apollo/client';
-import SettingsQuery, {SettingsQueryData, SettingsQueryPartialData} from 'services/graphql/Settings.graphql';
-import {version} from '../../../package.json';
+import {useTranslation} from 'react-i18next';
 
-function versionToNumber(versionWithDot: string) {
-  return Number(versionWithDot.split('-')[0].split('.').join(''));
-}
-
-function checkVersion(newVersion) {
-  return versionToNumber(newVersion) > versionToNumber(version);
-}
+import {colors} from 'constants/values';
+import globalStyles from 'constants/styles';
+import {googlePlayUrl} from 'services/config';
+import SettingsQuery, {SettingsQueryData} from 'services/graphql/Settings.graphql';
+import {checkUpdateVersion} from 'utilities/helpers/appVersion';
+import {TreejerIcon} from '../../../assets/images';
 
 function UpdateModal() {
   const {data} = useQuery<SettingsQueryData>(SettingsQuery);
@@ -26,7 +19,7 @@ function UpdateModal() {
 
   useEffect(() => {
     if (data?.settings?.forceUpdate?.version) {
-      setIsShow(checkVersion(data.settings.forceUpdate.version));
+      setIsShow(checkUpdateVersion(data.settings.forceUpdate.version));
     }
   }, [data?.settings?.forceUpdate]);
 

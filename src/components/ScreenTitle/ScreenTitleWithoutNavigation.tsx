@@ -1,21 +1,23 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TextStyle, TouchableOpacity, View} from 'react-native';
 import {ChevronLeft} from 'components/Icons';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 
 export type TScreenTitleWithoutNavigation = {
+  testID?: string;
   goBack?: boolean;
   handleGoBack?: () => void;
   title?: string;
+  textStyle?: TextStyle;
   rightContent?: React.ReactElement;
 };
 
 export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigation) {
-  const {goBack, title, rightContent, handleGoBack} = props;
+  const {testID, goBack, title, textStyle, rightContent, handleGoBack} = props;
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       {goBack && handleGoBack ? (
         <TouchableOpacity
           style={[globalStyles.fill, globalStyles.justifyContentCenter, {alignSelf: 'stretch'}]}
@@ -28,7 +30,9 @@ export function ScreenTitleWithoutNavigation(props: TScreenTitleWithoutNavigatio
       )}
       {title && (
         <View style={{flex: 4, justifyContent: 'center'}}>
-          <Text style={[globalStyles.textCenter, styles.title]}>{title}</Text>
+          <Text testID="screen-title-text" style={[globalStyles.textCenter, styles.title, textStyle]}>
+            {title}
+          </Text>
         </View>
       )}
       {rightContent ? (

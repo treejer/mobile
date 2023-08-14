@@ -26,12 +26,20 @@ module.exports = function (api) {
             navigation: './src/navigation',
             types: './src/types',
             'ranger-redux': './src/redux',
+            'ranger-testUtils': './src/testUtils',
+            webServices: './src/webServices',
           },
         },
       ],
       'import-graphql',
-      '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
+      ...(process.env.NODE_ENV === 'test'
+        ? [
+            '@babel/plugin-proposal-export-namespace-from',
+            '@babel/plugin-proposal-private-methods',
+            '@babel/plugin-proposal-class-properties',
+          ]
+        : []),
     ],
   };
 };

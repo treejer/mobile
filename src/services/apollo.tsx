@@ -11,10 +11,10 @@ import {onError} from '@apollo/client/link/error';
 import {AbiMapping, EthereumLink} from 'apollo-link-ethereum';
 import {Web3JSResolver} from 'apollo-link-ethereum-resolver-web3js/lib';
 import camelCase from 'lodash/camelCase';
-import Web3 from 'services/Magic';
 
+import Web3 from 'services/Magic';
 import {NetworkConfig} from './config';
-import {useAccessToken, useConfig, useUserId, useWeb3} from 'ranger-redux/modules/web3/web3';
+import {useAccessToken, useConfig, useUserId, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 
 function createRestLink(config: NetworkConfig, accessToken: string, userId: string) {
   const errorLink = onError(({graphQLErrors, response, networkError}) => {
@@ -28,10 +28,10 @@ function createRestLink(config: NetworkConfig, accessToken: string, userId: stri
 
   return errorLink.concat(
     new RestLink({
-      uri: config.treejerApiUrl,
+      uri: config.treejerNestApiUrl,
       headers: {
-        'x-auth-userid': userId,
-        'x-auth-logintoken': accessToken,
+        // 'x-auth-userid': userId,
+        Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
       },
       bodySerializers: {
@@ -143,7 +143,7 @@ interface Props {
 function ApolloProvider({children}: Props) {
   const accessToken = useAccessToken();
   const userId = useUserId();
-  const web3 = useWeb3();
+  const web3 = useWalletWeb3();
   const config = useConfig();
 
   const client = useMemo(

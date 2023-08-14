@@ -1,10 +1,10 @@
 import {ImageSourcePropType} from 'react-native';
-import {Tree} from 'types';
+import humanize from 'humanize-duration';
 
+import {Tree} from 'types';
 import {Hex2Dec} from 'utilities/helpers/hex';
 import {colors} from 'constants/values';
 import {currentTimestamp} from 'utilities/helpers/date';
-import humanize from 'humanize-duration';
 import {TreeImage} from '../../../assets/icons';
 
 export function treeImageSrc(tree?: Tree): ImageSourcePropType {

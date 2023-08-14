@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import globalStyles from 'constants/styles';
 import {ContractType} from 'services/config';
@@ -22,10 +23,12 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import usePlanterStatusQuery from 'utilities/hooks/usePlanterStatusQuery';
 import {useGetTransactionHistory} from 'utilities/hooks/useGetTransactionHistory';
+import {useKeyboardHeight} from 'utilities/hooks/useKeyboardheight';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {useConfig, useMagic, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
+import {TUserStatus} from 'webServices/profile/profile';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -57,7 +60,7 @@ export function TransferScreen() {
 
   const isConnected = useNetInfoConnected();
 
-  const isVerified = profile?.isVerified;
+  const isVerified = profile?.userStatus === TUserStatus.Verified;
   const skipStats = !wallet || !isVerified;
 
   const [filters, setFilters] = useState<TTransactionEvent[]>([]);
@@ -75,6 +78,8 @@ export function TransferScreen() {
     refetchPlanterStatus: planterRefetch,
     refetching,
   } = usePlanterStatusQuery(wallet, skipStats);
+
+  const {height} = useKeyboardHeight();
 
   const handleSelectFilterOption = useCallback(
     async (option: string) => {
@@ -233,51 +238,60 @@ export function TransferScreen() {
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
       <ScreenTitle title={t('withdraw')} goBack />
       <PullToRefresh onRefresh={handleRefetch}>
-        <ScrollView
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={isWeb() ? undefined : <RefreshControl refreshing={loading} onRefresh={handleRefetch} />}
         >
-          {isWeb() && <Spacer times={4} />}
-          <View style={styles.container}>
-            <WithdrawSection
-              history={txHistory}
-              loading={loading}
-              handleWithdraw={handleWithdrawPlanterBalance}
-              planterWithdrawableBalance={planterWithdrawableBalance}
-              daiBalance={daiBalance}
-              redeeming={redeeming}
-            />
-          </View>
-          {!dai && !planterWithdrawableBalance ? (
-            <View style={globalStyles.alignItemsCenter}>
-              <Spacer times={8} />
-              <FilterList categories={historyCategories} filters={filters} onFilterOption={handleSelectFilterOption} />
-              <Spacer />
-              <TransactionList
-                disabled={isWeb()}
-                showHeader={true}
+          <View style={{flex: 1}}>
+            {isWeb() && <Spacer times={4} />}
+            <View style={styles.container}>
+              <WithdrawSection
                 history={txHistory}
-                onRefresh={refetchTxHistory}
-                refreshing={txHistoryRefetching || txHistoryQuery.loading}
-                onLoadMore={txHistoryLoadMore}
+                loading={loading}
+                handleWithdraw={handleWithdrawPlanterBalance}
+                planterWithdrawableBalance={planterWithdrawableBalance}
+                daiBalance={daiBalance}
+                redeeming={redeeming}
               />
             </View>
-          ) : (
-            !!daiBalance && (
-              <TransferForm
-                hasHistory={!!txHistory?.length}
-                daiBalance={dai}
-                userWallet={wallet}
-                fee={fee}
-                submitting={submitting}
-                handleSubmitTransaction={submitTransaction}
-                handleEstimateGasPrice={estimateGasPrice}
-                handleCancelTransaction={cancelTransaction}
-              />
-            )
-          )}
-          <Spacer times={8} />
-        </ScrollView>
+            {!dai && !planterWithdrawableBalance ? (
+              <View style={globalStyles.alignItemsCenter}>
+                <Spacer times={8} />
+                <FilterList
+                  categories={historyCategories}
+                  filters={filters}
+                  onFilterOption={handleSelectFilterOption}
+                />
+                <Spacer />
+                <TransactionList
+                  disabled={isWeb()}
+                  showHeader={true}
+                  history={txHistory}
+                  onRefresh={refetchTxHistory}
+                  refreshing={txHistoryRefetching || txHistoryQuery.loading}
+                  onLoadMore={txHistoryLoadMore}
+                />
+              </View>
+            ) : (
+              !!daiBalance && (
+                <TransferForm
+                  hasHistory={!!txHistory?.length}
+                  daiBalance={dai}
+                  userWallet={wallet}
+                  fee={fee}
+                  submitting={submitting}
+                  handleSubmitTransaction={submitTransaction}
+                  handleEstimateGasPrice={estimateGasPrice}
+                  handleCancelTransaction={cancelTransaction}
+                />
+              )
+            )}
+            <Spacer times={10} />
+            {height && Platform.OS === 'android' ? <View style={{height}} /> : null}
+          </View>
+        </KeyboardAwareScrollView>
       </PullToRefresh>
     </SafeAreaView>
   );

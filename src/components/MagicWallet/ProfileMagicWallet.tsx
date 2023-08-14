@@ -1,5 +1,4 @@
 import React, {useCallback, useMemo} from 'react';
-import {useToast} from 'react-native-toast-notifications';
 import Web3 from 'web3';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -11,7 +10,7 @@ import Spacer from 'components/Spacer';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import {shortenedString} from 'utilities/helpers/shortenedString';
-import {AlertMode} from 'utilities/helpers/alert';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 
@@ -26,7 +25,6 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const config = useConfig();
 
   const {t} = useTranslation();
-  const toast = useToast();
 
   const daiBalance = useMemo(() => Web3.utils.fromWei(dai as string), [dai]);
   const etherBalance = useMemo(() => Web3.utils.fromWei(ether as string), [ether]);
@@ -34,9 +32,9 @@ export function ProfileMagicWallet(props: ProfileMagicWalletProps) {
   const handleCopyWalletAddress = useCallback(() => {
     if (wallet) {
       Clipboard.setString(wallet);
-      toast.show('myProfile.copied', {type: AlertMode.Success, translate: true});
+      showAlert({message: 'myProfile.copied', mode: AlertMode.Success, alertOptions: {translate: true}});
     }
-  }, [toast, wallet]);
+  }, [wallet]);
 
   return (
     <Card style={styles.container}>

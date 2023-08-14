@@ -6,19 +6,20 @@ import {colors} from 'constants/values';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
 
 export type TMapDetailProps = {
+  testID?: string;
   location: TUserLocation;
   accuracyInMeters;
 };
 
 export function MapDetail(props: TMapDetailProps) {
-  const {accuracyInMeters, location} = props;
+  const {accuracyInMeters, location, testID} = props;
 
   const {t} = useTranslation();
 
   const NA = useMemo(() => t('mapMarking.NA'), [t]);
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <Text style={styles.text}>{t('mapMarking.lat', {lat: location?.latitude || NA})}</Text>
       <Text style={styles.text}>{t('mapMarking.long', {long: location?.longitude || NA})}</Text>
       <Text style={styles.text}>

@@ -61,11 +61,17 @@ export default async function getCroppedImg(
 
   // croppedAreaPixels values are bounding box relative
   // extract the cropped image using these values
-  const data = ctx.getImageData(pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height);
+
+  const data = ctx.getImageData(
+    pixelCrop?.x || image.x,
+    pixelCrop?.y || image.y,
+    pixelCrop?.width || image?.width,
+    pixelCrop?.height || image?.height,
+  );
 
   // set canvas width to final desired crop size - this will clear existing context
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  canvas.width = pixelCrop?.width || image.width;
+  canvas.height = pixelCrop?.height || image.height;
 
   // paste generated rotate image in the top left corner
   ctx.putImageData(data, 0, 0);
@@ -82,5 +88,20 @@ export default async function getCroppedImg(
     // const file = canvas.toDataURL('image/jpeg');
     // console.log(file, 'file');
     // resolve(file);
+  });
+}
+
+export function urlToFile(url, name) {
+  return new Promise((resolve, reject) => {
+    try {
+      fetch(url)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], name || 'File name', {type: 'image/png'});
+          resolve(file);
+        });
+    } catch (e) {
+      reject(e);
+    }
   });
 }

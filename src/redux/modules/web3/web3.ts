@@ -4,18 +4,21 @@ import {Contract} from 'web3-eth-contract';
 import configs, {BlockchainNetwork, ConfigContract, defaultNetwork, NetworkConfig} from 'services/config';
 import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {Account} from 'web3-core';
-import {t} from 'i18next';
 
 import {UserNonceForm} from 'services/types';
 import {AlertMode, showSagaAlert} from 'utilities/helpers/alert';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {selectNetInfo} from '../netInfo/netInfo';
-import {changeCheckMetaData} from '../settings/settings';
-import {getBalance, resetBalance} from '../contracts/contracts';
-import {profileActions, selectProfile} from '../profile/profile';
-import {TUserSignSuccessAction, userSignActions} from '../userSign/userSign';
-import {TUserNonceSuccessAction, userNonceActions} from '../userNonce/userNonce';
-import {TReduxState, TStoreRedux} from '../../store';
+import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {getBalance, resetBalance} from 'ranger-redux/modules/contracts/contracts';
+import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
+import {TUserSignSuccessAction, userSignActions, userSignActionTypes} from 'ranger-redux/modules/userSign/userSign';
+import {
+  TUserNonceSuccessAction,
+  userNonceActions,
+  userNonceActionTypes,
+} from 'ranger-redux/modules/userNonce/userNonce';
+import {TReduxState} from 'ranger-redux/store';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -33,11 +36,11 @@ export type TWeb3 = {
   planterFund: Contract;
 };
 
-const defaultConfig = configs[defaultNetwork];
-const defaultMagic = magicGenerator(configs[defaultNetwork]);
-const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider as any);
+export const defaultConfig = configs[defaultNetwork];
+export const defaultMagic = magicGenerator(configs[defaultNetwork]);
+export const defaultWeb3 = new Web3(magicGenerator(configs[defaultNetwork]).rpcProvider as any);
 
-const initialState: TWeb3 = {
+export const initialWeb3State: TWeb3 = {
   wallet: '',
   accessToken: '',
   magicToken: '',
@@ -123,7 +126,7 @@ export function clearUserNonce() {
   return {type: CLEAR_USER_NONCE};
 }
 
-export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): TWeb3 => {
+export const web3Reducer = (state: TWeb3 = initialWeb3State, action: TWeb3Action): TWeb3 => {
   switch (action.type) {
     case CREATE_WEB3: {
       return {
@@ -196,20 +199,21 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
   }
 };
 
-function contractGenerator(web3: Web3, {abi, address}: ConfigContract): Contract {
+export function contractGenerator(web3: Web3, {abi, address}: ConfigContract): Contract {
   return new web3.eth.Contract(abi, address);
 }
 
 export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
   try {
-    let config = yield selectConfig();
-    const profile = yield selectProfile();
-    const isConnected = yield selectNetInfo();
+    let config = yield select(getConfig);
+    const profile = yield select(getProfile);
+    const isConnected = yield select(getNetInfo);
     if (newNetwork) {
       yield put(resetWeb3Data());
       config = configs[newNetwork];
     }
     const magic: any = magicGenerator(config);
+    console.log(magic.rpcProvider, 'magic.rpcProvider');
     const web3 = new Web3(magic.rpcProvider);
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);
@@ -222,7 +226,7 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
       yield put(getBalance());
     }
   } catch (error) {
-    console.log(error, 'update web3 error');
+    console.log(error, 'create web3 error');
   }
 }
 
@@ -230,11 +234,8 @@ export function* watchChangeNetwork(action: TWeb3Action) {
   try {
     const {newNetwork} = action;
     yield put(createWeb3(newNetwork));
-    if (newNetwork === BlockchainNetwork.MaticMain) {
-      yield put(changeCheckMetaData(true));
-    }
   } catch (error) {
-    console.log(error, 'update web3 error');
+    console.log(error, 'change network error');
   }
 }
 
@@ -250,56 +251,56 @@ export function asyncGetAccounts(web3: Web3) {
   });
 }
 
-export function* watchStoreMagicToken(store, action: TWeb3Action) {
+export function* watchStoreMagicToken(action: TWeb3Action) {
   try {
     const {web3, magicToken, loginData} = action.storeMagicToken;
     yield put(resetBalance());
     console.log('[[[try]]]');
     const web3Accounts = yield asyncGetAccounts(web3);
     if (!web3Accounts) {
-      return Promise.reject(new Error('There is no web3 accounts'));
+      return Promise.reject('There is no web3 accounts').catch(() => {});
     }
-    const wallet = web3Accounts[0];
-    const isConnect = yield selectNetInfo();
-    if (isConnect) {
+    const [wallet] = web3Accounts;
+    const isConnected = yield select(getNetInfo);
+    if (isConnected) {
       yield put(userNonceActions.load({wallet, magicToken, loginData}));
-      const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActions.loadSuccess);
+      const {payload: userNoncePayload}: TUserNonceSuccessAction = yield take(userNonceActionTypes.loadSuccess);
 
       const signature = yield web3.eth.sign(userNoncePayload.message, wallet);
-
       yield put(userSignActions.load({wallet, signature}));
-      const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActions.loadSuccess);
+      const {payload: credentials}: TUserSignSuccessAction = yield take(userSignActionTypes.loadSuccess);
 
       yield put(
         updateMagicToken({
           wallet,
-          accessToken: credentials.loginToken,
-          userId: credentials.userId,
+          accessToken: credentials.access_token,
+          userId: userNoncePayload.userId,
           magicToken,
         }),
       );
-      yield put(profileActions.load({userId: credentials.userId, accessToken: credentials.loginToken}));
+      yield put(profileActions.load());
       yield put(getBalance());
     } else {
       yield put(networkDisconnect());
     }
   } catch (error: any) {
     console.log('[[[[catch]]]]');
-    let {error: {message = t('loginFailed.message')} = {}} = error;
+    let {error: {message = 'loginFailed.message'} = {}} = error;
     if (error.message) {
       message = error.message;
     }
     yield showSagaAlert({
-      title: t('loginFailed.title'),
+      title: 'loginFailed.title',
       message,
       mode: AlertMode.Error,
+      alertOptions: {translate: true},
     });
   }
 }
 
-export function* web3Sagas(store: TStoreRedux) {
+export function* web3Sagas() {
   yield takeEvery(CHANGE_NETWORK, watchChangeNetwork);
-  yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken, store);
+  yield takeEvery(STORE_MAGIC_TOKEN, watchStoreMagicToken);
   yield takeEvery(CREATE_WEB3, watchCreateWeb3);
 }
 
@@ -308,6 +309,7 @@ export type TUseUserWeb3 = TReduxState['web3'] & {
   resetWeb3Data: () => void;
   storeMagicToken: (magicToken: string, loginData?: UserNonceForm['loginData']) => void;
   createWeb3: () => void;
+  clearUserNonce: () => void;
 };
 
 export function useUserWeb3(): TUseUserWeb3 {
@@ -336,41 +338,64 @@ export function useUserWeb3(): TUseUserWeb3 {
     [dispatch, web3],
   );
 
+  const handleClearUserNonce = useCallback(() => {
+    dispatch(clearUserNonce());
+  }, [dispatch]);
+
   return {
     ...web3,
     changeNetwork: handleChangeNetwork,
     resetWeb3Data: handleResetWeb3Data,
     storeMagicToken: handleStoreMagicToken,
     createWeb3: handleCreateWeb3,
+    clearUserNonce: handleClearUserNonce,
   };
 }
 
-export const useWeb3 = () => useAppSelector(state => state.web3.web3);
-export const useConfig = () => useAppSelector(state => state.web3.config);
-export const useMagic = () => useAppSelector(state => state.web3.magic);
-export const useWalletWeb3 = () => useAppSelector(state => state.web3.web3);
-export const useTreeFactory = () => useAppSelector(state => state.web3.treeFactory);
-export const usePlanter = () => useAppSelector(state => state.web3.planter);
-export const usePlanterFund = () => useAppSelector(state => state.web3.planterFund);
+export const getTreeFactory = (state: TReduxState) => state.web3.treeFactory;
+export const useTreeFactory = () => useAppSelector(getTreeFactory);
+
+export const getPlanter = (state: TReduxState) => state.web3.planter;
+export const usePlanter = () => useAppSelector(getPlanter);
+
+export const getPlanterFund = (state: TReduxState) => state.web3.planterFund;
+export const usePlanterFund = () => useAppSelector(getPlanterFund);
 
 export const useWalletAccount = (): string => {
-  return useAppSelector(state => state.web3.wallet);
+  return useAppSelector(getWallet);
 };
 export const useWalletAccountTorus = (): Account | null => {
-  const web3 = useWeb3();
-  return web3.eth.accounts.wallet.length ? web3.eth.accounts.wallet[0] : null;
+  const web3 = useWalletWeb3();
+  return web3?.eth?.accounts?.wallet?.length ? web3?.eth?.accounts?.wallet[0] : null;
 };
-export const useAccessToken = () => useAppSelector(state => state.web3.accessToken);
-export const useUserId = () => useAppSelector(state => state.web3.userId);
 
+export const getUserId = (state: TReduxState) => state.web3.userId;
+export const useUserId = () => useAppSelector(getUserId);
+
+export const getConfig = (state: TReduxState) => state.web3.config;
+export const useConfig = () => useAppSelector(getConfig);
 export function* selectConfig() {
-  return yield select((state: TReduxState) => state.web3.config);
+  return yield select(getConfig);
 }
 
+export const useAccessToken = () => useAppSelector(getAccessToken);
+export const getAccessToken = (state: TReduxState) => state.web3.accessToken;
+export function* selectAccessToken() {
+  return yield select(getAccessToken);
+}
+export const getWeb3 = (state: TReduxState) => state.web3.web3;
+export const useWalletWeb3 = () => useAppSelector(getWeb3);
 export function* selectWeb3() {
-  return yield select((state: TReduxState) => state.web3.web3);
+  return yield select(getWeb3);
 }
 
+export const getMagic = (state: TReduxState) => state.web3.magic;
+export const useMagic = () => useAppSelector(getMagic);
+export function* selectMagic() {
+  return yield select(getMagic);
+}
+
+export const getWallet = (state: TReduxState) => state.web3.wallet;
 export function* selectWallet() {
-  return yield select((state: TReduxState) => state.web3.wallet);
+  return yield select(getWallet);
 }

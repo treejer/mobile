@@ -4,14 +4,15 @@ import {put, select, take, takeEvery} from 'redux-saga/effects';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {getApiLevel, getBuildNumber, getSystemVersion} from 'react-native-device-info';
 
-import {handleSagaFetchError} from 'utilities/helpers/fetch';
-import {TReduxState} from '../../store';
-import {profileActions} from '../profile/profile';
-import {createWeb3, UPDATE_WEB3} from '../web3/web3';
-import {startWatchConnection, UPDATE_WATCH_CONNECTION} from '../netInfo/netInfo';
-import {countriesActions} from '../countris/countries';
 import {version} from '../../../../package.json';
-import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {handleSagaFetchError} from 'utilities/helpers/fetch';
+import {TReduxState} from 'ranger-redux/store';
+import {profileActions, profileActionsTypes} from 'ranger-redux/modules/profile/profile';
+import {createWeb3, getAccessToken, UPDATE_WEB3} from 'ranger-redux/modules/web3/web3';
+import {startWatchConnection, UPDATE_WATCH_CONNECTION} from 'ranger-redux/modules/netInfo/netInfo';
+import {getSettings} from 'ranger-redux/modules/settings/settings';
+import {processBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.action';
+import {checkAppVersion} from 'ranger-redux/modules/appInfo/appInfo';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -35,12 +36,12 @@ export const initInitialState: InitState = {
   loading: true,
 };
 
-const reducerAction = {
-  [INIT_APP]: (state: InitState) => ({
+export const reducerAction = {
+  [INIT_APP]: (state: InitState, _action: InitAction) => ({
     ...state,
     loading: true,
   }),
-  [INIT_APP_COMPLETED]: (state: InitState) => ({
+  [INIT_APP_COMPLETED]: (state: InitState, _action: InitAction) => ({
     ...state,
     loading: false,
   }),
@@ -59,18 +60,18 @@ export function* initSagas() {
 
 export function* watchInitApp() {
   try {
+    yield put(checkAppVersion());
+    yield put(processBrowserPlatform());
     yield put(startWatchConnection());
     yield take(UPDATE_WATCH_CONNECTION);
     yield put(createWeb3());
     yield take(UPDATE_WEB3);
-    yield put(countriesActions.load());
     console.log('started');
-    const {accessToken, userId, config}: TReduxState['web3'] = yield select((state: TReduxState) => state.web3);
-    if (accessToken && userId) {
-      yield put(profileActions.load({accessToken, userId}));
-      if (config.isMainnet) {
-        yield put(changeCheckMetaData(true));
-      }
+    const accessToken: string = yield select(getAccessToken);
+    console.log(accessToken);
+    if (accessToken) {
+      yield put(profileActions.load());
+      yield take([profileActionsTypes.loadSuccess, profileActionsTypes.loadFailure]);
       yield put(initAppCompleted());
     } else {
       console.log('going to end');
@@ -104,7 +105,7 @@ export function useInit(): UseInit {
 }
 
 export function* sessionInfo() {
-  const language = yield select((state: TReduxState) => state.settings.locale);
+  const {locale}: TReduxState['settings'] = yield select(getSettings);
   const osMethod = Platform.select({
     android: getApiLevel,
     ios: getSystemVersion,
@@ -122,7 +123,7 @@ export function* sessionInfo() {
   const build = yield buildMethod();
 
   return {
-    language,
+    language: locale,
     platform: Platform.OS,
     os,
     build,

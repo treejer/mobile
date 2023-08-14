@@ -26,9 +26,10 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {useTreeUpdateInterval} from 'utilities/hooks/useTreeUpdateInterval';
 import Invite from 'screens/Profile/screens/MyProfile/Invite';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
-import {UserStatus, useProfile} from 'ranger-redux/modules/profile/profile';
+import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
+import {TUserStatus} from 'webServices/profile/profile';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -75,10 +76,10 @@ function MyProfile(props: MyProfileProps) {
 
   const {sendEvent} = useAnalytics();
 
-  const {profile, loading, status, dispatchProfile, handleLogout} = useProfile();
+  const {profile, loading, dispatchProfile, handleLogout} = useProfile();
 
-  const isVerified = profile?.isVerified;
-
+  const isVerified = profile?.userStatus === TUserStatus.Verified;
+  console.log(profile?.userStatus, 'userStatus');
   const isConnected = useNetInfoConnected();
 
   const skipStats = !wallet || !isVerified;
@@ -129,7 +130,9 @@ function MyProfile(props: MyProfileProps) {
   const planterProjectedBalance =
     Number(planterData?.balanceProjected) > 0 ? parseBalance(planterData?.balanceProjected.toString() || '0') : 0;
 
+  console.log(isVerified, 'is');
   const avatarStatus = isVerified ? 'active' : 'inactive';
+  console.log(avatarStatus, 'avatar status');
   const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder
@@ -241,7 +244,7 @@ function MyProfile(props: MyProfileProps) {
                 {wallet ? <ProfileMagicWallet wallet={wallet} /> : null}
                 <Spacer times={5} />
 
-                {!route.params?.hideVerification && status === UserStatus.Unverified && !hasRefer && (
+                {!route.params?.hideVerification && profile?.userStatus === TUserStatus.NotVerified && !hasRefer && (
                   <ProfileGroupButton>
                     <Button
                       textAlign="center"
@@ -262,7 +265,7 @@ function MyProfile(props: MyProfileProps) {
                 )}
 
                 <View style={[globalStyles.alignItemsCenter, {paddingVertical: 16}]}>
-                  {profile.isVerified ? (
+                  {isVerified ? (
                     <>
                       <ProfileGroupButton>
                         <Button
@@ -295,14 +298,14 @@ function MyProfile(props: MyProfileProps) {
                       <Spacer times={4} />
                     </>
                   ) : null}
-                  {(status === UserStatus.Pending || Boolean(route.params?.hideVerification)) && (
+                  {(profile?.userStatus === TUserStatus.Pending || Boolean(route.params?.hideVerification)) && (
                     <>
                       <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
                       <Spacer times={6} />
                     </>
                   )}
 
-                  {!route.params?.hideVerification && status === UserStatus.Unverified && hasRefer && (
+                  {!route.params?.hideVerification && profile?.userStatus === TUserStatus.NotVerified && hasRefer && (
                     <>
                       <TouchableOpacity
                         style={styles.getVerifiedRefer}

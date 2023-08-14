@@ -29,7 +29,9 @@ export function CustomToast(props: ToastContainerProps) {
                 <Spacer times={2} />
               </>
             ) : null}
-            <Text style={[styles.text, styles.title]}>{toastOptions.title}</Text>
+            <Text style={[styles.text, styles.title]}>
+              {toastOptions.translate ? t(toastOptions.title, toastOptions.tParams?.title) : toastOptions.title}
+            </Text>
           </View>
           <Spacer />
         </>
@@ -43,7 +45,7 @@ export function CustomToast(props: ToastContainerProps) {
             </>
           ) : null}
           <Text style={styles.text}>
-            {toastOptions.translate ? t(toastOptions.message as string) : toastOptions.message}
+            {toastOptions.translate ? t(toastOptions.message, toastOptions.tParams?.message) : toastOptions.message}
           </Text>
         </View>
       )}

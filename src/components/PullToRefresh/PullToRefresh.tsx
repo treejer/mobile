@@ -2,7 +2,7 @@ import React from 'react';
 
 interface PullToRefreshProps {
   children: JSX.Element | JSX.Element[];
-  onRefresh: () => Promise<any>;
+  onRefresh?: () => Promise<any>;
   disabled?: boolean;
 }
 

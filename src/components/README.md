@@ -37,4 +37,14 @@
 - [UpdateModal](./UpdateModal): modal for check app version and show update message
 - [UserCard](./UserCard): user avatar, name
 - [WebCam](./WebCam): open webcam and image cropper on the web
+- [WebImagePickerCropper](./WebImagePickerCropper): image cropper on the web
 - [Withdraw](./Withdraw): withdraw and transfer screen components
+- [StartPlantButton](./StartPlantButton): dynamic plant button
+- [TreeListV2](./TreeList): verified and not verified tree list and item
+- [Tabs](./Tabs): Tab context
+- [Common](./Common): useful components
+- [OptimizedList](./OptimizedList): optimized list for better performance
+- [HeaderFixedButtons](./HeaderFixedButtons): fixed buttons in all the app pages
+- [Filter](./Filter): filtering
+- [Draft](./Draft): draft system components
+- [LockedSubmissionFixed](./LockedSubmissionField): locked field for permissions

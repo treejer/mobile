@@ -16,6 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
       "ranger-redux/*": ["./src/redux/*"],
@@ -25,7 +26,9 @@
       "constants/*": ["./src/constants/*"],
       "utilities/*": ["./src/utilities/*"],
       "navigation/*": ["./src/navigation/*"],
-      "types": ["./src/types"]
+      "types": ["./src/types"],
+      "ranger-testUtils/*": ["./src/testUtils/*"],
+      "webServices/*": ["./src/webServices/*"]
     }
   },
   "exclude": ["__mocks__/*", "node_modules", "babel.config.js", "metro.config.js", "jest.config.js"],

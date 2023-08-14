@@ -14,6 +14,7 @@ export namespace GetMeQueryPartialData {
     mobileCountry?: string | null;
     mobileVerifiedAt?: string | null;
     isVerified?: boolean | null;
+    plantingNonce?: number | null;
   }
 }
 export interface GetMeQueryPartialData {
@@ -34,6 +35,7 @@ export namespace GetMeQueryData {
     mobileCountry?: string | null;
     mobileVerifiedAt?: string | null;
     isVerified: boolean;
+    plantingNonce: number;
   }
 }
 export interface GetMeQueryData {

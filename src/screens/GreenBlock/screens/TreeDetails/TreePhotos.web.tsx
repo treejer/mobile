@@ -49,7 +49,7 @@ export function TreePhotos(props: TreePhotosProps) {
                 margin: 'auto',
               }}
               resizeMode="cover"
-              source={{uri: item.image}}
+              source={{uri: item.preview ? URL.createObjectURL(item.preview) : item.image}}
             />
           </div>
         ))}

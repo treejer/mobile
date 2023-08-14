@@ -6,6 +6,8 @@ import createSagaMiddleware from 'redux-saga';
 import logger from 'redux-logger';
 
 import {reduxLogger} from 'services/config';
+import {checkUserVersion} from 'utilities/helpers/appVersion';
+import {CHECK_APP_VERSION} from 'ranger-redux/modules/appInfo/appInfo';
 import appReducer from './reducer';
 import saga from './saga';
 
@@ -19,17 +21,39 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
   'treeFactory',
   'planter',
   'planterFund',
-  'countries',
 ]);
 
 const persistConfig = {
   key: 'RangerTreejerPersist',
   storage: AsyncStorage,
-  whitelist: ['settings', 'web3', 'profile', 'contracts', 'offlineMap', 'recentPlaces'],
+  whitelist: [
+    'appInfo',
+    'settings',
+    'web3',
+    'profile',
+    'contracts',
+    'offlineMap',
+    'recentPlaces',
+    'draftedJourneys',
+    'countries',
+    'plantedTrees',
+    'updatedTrees',
+    'assignedTrees',
+  ],
   transforms: [saveSubsetBlacklistFilter],
 };
 
-const persistedReducer = persistReducer(persistConfig, appReducer);
+const persistedReducer = persistReducer(persistConfig, (state, action: {type: string; payload: any}) => {
+  if (action.type === 'persist/REHYDRATE') {
+    return appReducer({...state, appInfo: {version: action?.payload?.appInfo?.version || ''}}, action);
+  }
+  if (action.type === CHECK_APP_VERSION) {
+    if (!state.appInfo.version || checkUserVersion(state.appInfo.version)) {
+      return appReducer(undefined, action);
+    }
+  }
+  return appReducer(state, action);
+});
 
 export const sagaMiddleware = createSagaMiddleware();
 const middlewares: Array<Middleware> = [sagaMiddleware];

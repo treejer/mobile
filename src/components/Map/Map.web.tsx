@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import {mapboxPublicToken} from 'services/config';
-import {locationType} from 'screens/TreeSubmission/components/MapMarking/MapMarking.web';
+import {locationType} from 'screens/TreeSubmissionV2/components/MapMarkingV2/MapMarkingV2.web';
 
 const options = {
   enableHighAccuracy: true,

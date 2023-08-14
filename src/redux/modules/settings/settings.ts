@@ -1,21 +1,22 @@
 import {select} from 'redux-saga/effects';
+
 import {TReduxState} from '../../store';
-import {defaultLocale} from 'services/config';
+import {checkMetadataCheckingReleaseDate, defaultLocale} from 'services/config';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 
 export type TSettings = {
   onBoardingDone: boolean;
   locale: string;
   useBiconomy: boolean;
-  releaseDate: number;
+  checkMetadataReleaseDate: number;
   checkMetaData: boolean;
   showSupportChat: boolean;
 };
 
-const initialState: TSettings = {
+export const initialSettingsState: TSettings = {
   onBoardingDone: false,
   locale: defaultLocale,
-  releaseDate: 1672159176038,
+  checkMetadataReleaseDate: checkMetadataCheckingReleaseDate,
   useBiconomy: true,
   checkMetaData: true,
   showSupportChat: false,
@@ -65,7 +66,7 @@ export function setShowSupportChat(showSupportChat: boolean) {
   return {type: SET_SHOW_SUPPORT_CHAT, showSupportChat};
 }
 
-export const settingsReducer = (state: TSettings = initialState, action: TSettingsAction): TSettings => {
+export const settingsReducer = (state: TSettings = initialSettingsState, action: TSettingsAction): TSettings => {
   switch (action.type) {
     case MARK_ONBOARDING_DONE: {
       return {
@@ -160,3 +161,5 @@ export function useSettings(): TUseSettings {
 export function* selectSettings() {
   return yield select((state: TReduxState) => state.settings);
 }
+
+export const getSettings = (state: TReduxState) => state.settings;

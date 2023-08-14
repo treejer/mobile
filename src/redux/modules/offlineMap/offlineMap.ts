@@ -1,14 +1,16 @@
+import {useCallback} from 'react';
 import {put, select, takeEvery} from 'redux-saga/effects';
 import MapboxGL from '@rnmapbox/maps';
-import {AlertMode} from 'utilities/helpers/alert';
-import {TReduxState, TStoreRedux} from 'ranger-redux/store';
-import {getAreaName} from 'utilities/helpers/maps';
+
 import {mapboxPrivateToken, offlineSubmittingMapName} from 'services/config';
+import {AlertMode} from 'utilities/helpers/alert';
+import {getAreaName} from 'utilities/helpers/maps';
 import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
-import {useCallback} from 'react';
-import {selectNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
-import OfflinePack from '@rnmapbox/maps/lib/typescript/modules/offline/OfflinePack';
-import {OfflineProgressStatus} from '@rnmapbox/maps/lib/typescript/modules/offline/offlineManager';
+import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {TReduxState, TStoreRedux} from 'ranger-redux/store';
+
+import OfflinePack from '@rnmapbox/maps/lib/module/modules/offline/OfflinePack';
+import {OfflineProgressStatus} from '@rnmapbox/maps/lib/module/modules/offline/offlineManager';
 import {OfflinePackError} from '@rnmapbox/maps/javascript/modules/offline/offlineManager';
 
 export type Position = number[];
@@ -78,7 +80,7 @@ export const deleteOfflineMapPack = (name: string) => ({
   name,
 });
 
-export function offlineMap(
+export function offlineMapReducer(
   state: TOfflineMapState = offlineMapInitialState,
   action: TOfflineMapAction,
 ): TOfflineMapState {
@@ -124,11 +126,11 @@ export function offlineMap(
 
 export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPack, silent}: TOfflineMapAction) {
   try {
-    const isConnected: boolean = yield selectNetInfo();
+    const isConnected: boolean = yield select(getNetInfo);
     const {bounds, name, coords} = downloadingMapPack || {};
 
     if (isConnected && bounds) {
-      const packs = yield select((state: TReduxState) => state.offlineMap.packs);
+      const packs = yield select(getOfflineMapPacks);
       const areaName = yield getAreaName(coords, mapboxPrivateToken);
       const hasArea = packs.find(item => item.areaName === areaName);
       if (hasArea) {
@@ -193,6 +195,8 @@ export function* watchCreateOfflineMapPack(store: TStoreRedux, {downloadingMapPa
 export function* offlineMapSagas(store: TStoreRedux) {
   yield takeEvery(CREATE_OFFLINE_MAP_PACK, watchCreateOfflineMapPack, store);
 }
+
+export const getOfflineMapPacks = (state: TReduxState) => state.offlineMap.packs;
 
 export function useOfflineMap() {
   const state = useAppSelector(state => state.offlineMap);

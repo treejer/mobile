@@ -1,5 +1,5 @@
-query PlanterTreesQuery($address: String!, $first: Int = 5, $orderBy: String, $orderDirection: String, $skip: Int = 0) {
-  trees(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: {planter: $address})@type(name: "Tree") {
+query PlanterTreesQuery($address: String!, $pendingIds: [String], $first: Int = 5, $orderBy: String, $orderDirection: String, $skip: Int = 0) {
+  trees(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: {planter: $address, id_not_in: $pendingIds})@type(name: "Tree") {
     id
     treeSpecs
     planter @type(name: "planter") {

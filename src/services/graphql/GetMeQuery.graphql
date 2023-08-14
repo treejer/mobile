@@ -1,5 +1,5 @@
 query GetMe {
-    user @rest(type: "User", path: "/user/getme/user") {
+    user @rest(type: "User", path: "/users/me") {
         id
         firstName
         lastName
@@ -12,5 +12,6 @@ query GetMe {
         mobileCountry
         mobileVerifiedAt
         isVerified
+        plantingNonce
     }
 }

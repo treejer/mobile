@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import Cropper from 'react-easy-crop';
 import {useTranslation} from 'react-i18next';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
@@ -11,13 +11,14 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 const bottomSheetSpace = 80;
 
 interface WebCamProps {
+  testID?: string;
   handleDone: (image: string, croppedAreaPixels: number | null, rotation: number) => void;
   handleDismiss: () => void;
   aspect?: number;
 }
 
 function WebCam(props: WebCamProps) {
-  const {handleDone, handleDismiss, aspect = 3 / 4} = props;
+  const {testID, handleDone, handleDismiss, aspect = 3 / 4} = props;
 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -53,7 +54,7 @@ function WebCam(props: WebCamProps) {
   );
 
   return (
-    <View style={{flex: 1, position: 'relative', paddingTop: top, paddingBottom: bottom}}>
+    <View testID={testID} style={{flex: 1, position: 'relative', paddingTop: top, paddingBottom: bottom}}>
       {image ? (
         <Cropper
           image={image}
