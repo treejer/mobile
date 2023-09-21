@@ -14,7 +14,7 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
   const {filters, sort = {signer: -1, nonce: -1}, resolve, reject} = payload || {};
   try {
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.UpdatedTrees));
-    const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/verification/me', {
+    const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/me', {
       configUrl: 'treejerNestApiUrl',
       params: {
         skip: page,

@@ -14,18 +14,15 @@ export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
   const {filters, sort = {signer: -1, nonce: -1}, reject, resolve} = payload || {};
   try {
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.AssignedTrees));
-    const res: FetchResult<TAssignedTreesRes> = yield sagaFetch<TAssignedTreesRes>(
-      '/assigned_requests/verification/me',
-      {
-        configUrl: 'treejerNestApiUrl',
-        params: {
-          skip: page,
-          limit: perPage,
-          filters: filters ? JSON.stringify(filters) : undefined,
-          sort: sort ? JSON.stringify(sort) : undefined,
-        },
+    const res: FetchResult<TAssignedTreesRes> = yield sagaFetch<TAssignedTreesRes>('/assigned_requests/me', {
+      configUrl: 'treejerNestApiUrl',
+      params: {
+        skip: page,
+        limit: perPage,
+        filters: filters ? JSON.stringify(filters) : undefined,
+        sort: sort ? JSON.stringify(sort) : undefined,
       },
-    );
+    });
     if (res?.result?.count) {
       yield put(setPaginationTotal(PaginationName.AssignedTrees, res.result.count));
     }
