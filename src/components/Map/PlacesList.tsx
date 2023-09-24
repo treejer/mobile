@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import Spacer from 'components/Spacer';
@@ -7,6 +7,7 @@ import {TPlace} from 'components/Map/types';
 import {PlaceItem} from 'components/Map/PlaceItem';
 import {colors} from 'constants/values';
 import {TUserLocation} from 'utilities/hooks/usePlantTreePermissions';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 export type TPlacesListProps = {
   isEmpty: boolean;
@@ -23,7 +24,7 @@ export function PlacesList(props: TPlacesListProps) {
   const {t} = useTranslation();
 
   return (
-    <ScrollView style={[styles.container, {height}]}>
+    <ScrollView autoHeight={height} style={[styles.container]}>
       {isRecent && !isEmpty ? (
         <>
           <Spacer />

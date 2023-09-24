@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo} from 'react';
-import {Dimensions, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
@@ -19,6 +19,7 @@ import {TreePhotos} from 'screens/GreenBlock/screens/TreeDetails/TreePhotos';
 import {isWeb} from 'utilities/helpers/web';
 import {getStaticMapboxUrl} from 'utilities/helpers/getStaticMapUrl';
 import {useDeleteTreeEvent} from 'ranger-redux/modules/submitTreeEvents/deleteTreeEvent';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 const {width} = Dimensions.get('window');
 

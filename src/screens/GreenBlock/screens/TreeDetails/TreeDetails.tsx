@@ -1,15 +1,5 @@
 import React, {useCallback, useMemo} from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
 import {useTranslation} from 'react-i18next';
@@ -44,6 +34,7 @@ import {useConfig} from 'ranger-redux/modules/web3/web3';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.reducer';
 import {useAlertModal} from 'components/Common/AlertModalProvider';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 interface Props {}
 
@@ -233,6 +224,7 @@ function TreeDetails(_: Props) {
     <SafeAreaView style={[globalStyles.screenView, globalStyles.fill]}>
       <ScreenTitle testID="screen-title-cpt" goBack rightContent={<Avatar size={40} type="active" />} />
       <ScrollView
+        //TODO: check scroll view
         showsVerticalScrollIndicator={false}
         style={[globalStyles.screenView, globalStyles.fill]}
         refreshControl={

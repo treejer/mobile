@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
@@ -30,6 +30,7 @@ import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 import {TUserStatus} from 'webServices/profile/profile';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>

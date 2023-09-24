@@ -100,7 +100,6 @@ export function ActivityItem(props: TActivityItemProps) {
       [ActivityStatus.AssignedTreeVerified]: colors.green,
       [ActivityStatus.TreeUpdatedVerified]: colors.green,
       [ActivityStatus.TreeAssigned]: colors.green,
-      [ActivityStatus.RejectedByOrganization]: colors.red,
       gray: colors.gray,
     }),
     [],

@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import Card from 'components/Card/Card';
 import {SelectNetwork} from 'components/SwitchNetwork/SelectNetwork';
@@ -9,6 +9,7 @@ import {colors} from 'constants/values';
 import {BlockchainNetwork} from 'services/config';
 import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useUserWeb3, useConfig} from 'ranger-redux/modules/web3/web3';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 export function SwitchNetwork() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -55,7 +56,7 @@ export function SwitchNetwork() {
           <View style={{flex: 1, justifyContent: 'center'}}>
             <View style={{flex: 0.8, flexDirection: 'row', justifyContent: 'center'}}>
               <View style={{flex: 0.8, backgroundColor: colors.khakiDark, borderRadius: 8, padding: 24}}>
-                <ScrollView>
+                <ScrollView autoHeight>
                   {confirming ? (
                     <ConfirmationNetwork
                       network={confirming}

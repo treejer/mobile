@@ -29,6 +29,7 @@ import {useSettings} from 'ranger-redux/modules/settings/settings';
 import {useContracts} from 'ranger-redux/modules/contracts/contracts';
 import {useConfig, useMagic, usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modules/web3/web3';
 import {TUserStatus} from 'webServices/profile/profile';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 export function TransferScreen() {
   const requiredBalance = useMemo(() => 500000000000000000, []);
@@ -244,53 +245,55 @@ export function TransferScreen() {
           style={[globalStyles.screenView, globalStyles.fill]}
           refreshControl={isWeb() ? undefined : <RefreshControl refreshing={loading} onRefresh={handleRefetch} />}
         >
-          <View style={{flex: 1}}>
-            {isWeb() && <Spacer times={4} />}
-            <View style={styles.container}>
-              <WithdrawSection
-                history={txHistory}
-                loading={loading}
-                handleWithdraw={handleWithdrawPlanterBalance}
-                planterWithdrawableBalance={planterWithdrawableBalance}
-                daiBalance={daiBalance}
-                redeeming={redeeming}
-              />
-            </View>
-            {!dai && !planterWithdrawableBalance ? (
-              <View style={globalStyles.alignItemsCenter}>
-                <Spacer times={8} />
-                <FilterList
-                  categories={historyCategories}
-                  filters={filters}
-                  onFilterOption={handleSelectFilterOption}
-                />
-                <Spacer />
-                <TransactionList
-                  disabled={isWeb()}
-                  showHeader={true}
+          <ScrollView onlyWeb={true}>
+            <View style={{flex: 1}}>
+              {isWeb() && <Spacer times={4} />}
+              <View style={styles.container}>
+                <WithdrawSection
                   history={txHistory}
-                  onRefresh={refetchTxHistory}
-                  refreshing={txHistoryRefetching || txHistoryQuery.loading}
-                  onLoadMore={txHistoryLoadMore}
+                  loading={loading}
+                  handleWithdraw={handleWithdrawPlanterBalance}
+                  planterWithdrawableBalance={planterWithdrawableBalance}
+                  daiBalance={daiBalance}
+                  redeeming={redeeming}
                 />
               </View>
-            ) : (
-              !!daiBalance && (
-                <TransferForm
-                  hasHistory={!!txHistory?.length}
-                  daiBalance={dai}
-                  userWallet={wallet}
-                  fee={fee}
-                  submitting={submitting}
-                  handleSubmitTransaction={submitTransaction}
-                  handleEstimateGasPrice={estimateGasPrice}
-                  handleCancelTransaction={cancelTransaction}
-                />
-              )
-            )}
-            <Spacer times={10} />
-            {height && Platform.OS === 'android' ? <View style={{height}} /> : null}
-          </View>
+              {!dai && !planterWithdrawableBalance ? (
+                <View style={globalStyles.alignItemsCenter}>
+                  <Spacer times={8} />
+                  <FilterList
+                    categories={historyCategories}
+                    filters={filters}
+                    onFilterOption={handleSelectFilterOption}
+                  />
+                  <Spacer />
+                  <TransactionList
+                    disabled={isWeb()}
+                    showHeader={true}
+                    history={txHistory}
+                    onRefresh={refetchTxHistory}
+                    refreshing={txHistoryRefetching || txHistoryQuery.loading}
+                    onLoadMore={txHistoryLoadMore}
+                  />
+                </View>
+              ) : (
+                !!daiBalance && (
+                  <TransferForm
+                    hasHistory={!!txHistory?.length}
+                    daiBalance={dai}
+                    userWallet={wallet}
+                    fee={fee}
+                    submitting={submitting}
+                    handleSubmitTransaction={submitTransaction}
+                    handleEstimateGasPrice={estimateGasPrice}
+                    handleCancelTransaction={cancelTransaction}
+                  />
+                )
+              )}
+              <Spacer times={10} />
+              {height && Platform.OS === 'android' ? <View style={{height}} /> : null}
+            </View>
+          </ScrollView>
         </KeyboardAwareScrollView>
       </PullToRefresh>
     </SafeAreaView>

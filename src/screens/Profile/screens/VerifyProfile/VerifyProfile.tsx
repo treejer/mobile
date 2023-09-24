@@ -234,11 +234,10 @@ function VerifyProfile(props: Props) {
     //@ts-ignore
     formData.append('latitude', input.latitude);
     formData.append('file', {
-      //@ts-ignore
       uri: input.file.uri,
       type: input.file.file.type === 'image/jpg' ? 'image/jpeg' : input.file.file.type,
       name: input.file.file.name,
-    });
+    } as any);
 
     dispatchVerifyProfile(formData as any);
   });

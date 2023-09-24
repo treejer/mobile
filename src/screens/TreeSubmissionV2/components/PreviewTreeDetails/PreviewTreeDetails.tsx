@@ -4,7 +4,6 @@ import {
   Dimensions,
   Image,
   Linking,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -27,6 +26,7 @@ import {useProfile} from 'ranger-redux/modules/profile/profile';
 import {useTreeDetails} from 'ranger-redux/modules/trees/treeDetails';
 import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import {Hex2Dec} from 'utilities/helpers/hex';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 const {width} = Dimensions.get('window');
 
@@ -128,6 +128,7 @@ export function PreviewTreeDetails(props: PreviewTreeDetailsProps) {
           </View>
         ) : (
           <ScrollView
+            //TODO: check scroll view
             showsVerticalScrollIndicator={false}
             style={[globalStyles.screenView, globalStyles.fill, globalStyles.p2]}
           >

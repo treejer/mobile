@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {CommonActions, useNavigation} from '@react-navigation/native';
@@ -26,6 +26,7 @@ import {useWalletAccount} from 'ranger-redux/modules/web3/web3';
 import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubmissionField';
 import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
+import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -190,7 +191,11 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         onClose={() => setShowPreview(false)}
       />
       <SafeAreaView style={[globalStyles.screenView, globalStyles.safeArea, globalStyles.fill]}>
-        <ScrollView style={[globalStyles.screenView, globalStyles.fill]} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          //TODO: check scroll view
+          style={[globalStyles.screenView, globalStyles.fill]}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={[globalStyles.p1, globalStyles.pt1, styles.webWidth]}>
             {isWeb() ? <Spacer /> : null}
             <CheckPermissionsV2

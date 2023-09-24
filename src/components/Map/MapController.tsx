@@ -34,7 +34,7 @@ export function MapController(props: TMapControllerProps) {
     }
     return () => {
       if (zoomRef.current) {
-        clearInterval(zoomRef.current);
+        clearInterval(zoomRef.current as any);
       }
     };
   }, [isHeld, zoomType]);
@@ -48,7 +48,7 @@ export function MapController(props: TMapControllerProps) {
     setIsHeld(false);
     setZoomType(null);
     if (zoomRef.current) {
-      clearInterval(zoomRef.current);
+      clearInterval(zoomRef.current as any);
     }
   }, []);
 
