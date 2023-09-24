@@ -16,6 +16,7 @@ export type AssignedTree = {
 
 export type TAssignedTreesRes = PaginationRes<NotVerifiedTree>;
 export type TAssignedTreesPayload = {
+  showError?: boolean;
   filters?: {signer: string; nonce: number};
   sort?: {signer: number; nonce: number};
   resolve?: (value?: unknown) => void;

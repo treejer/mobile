@@ -11,7 +11,7 @@ import {TReduxState} from 'ranger-redux/store';
 const AssignedTrees = new ReduxFetchState<TAssignedTreesRes, TAssignedTreesPayload, string>('assignedTrees');
 
 export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
-  const {filters, sort = {signer: -1, nonce: -1}, reject, resolve} = payload || {};
+  const {filters, sort = {signer: -1, nonce: -1}, reject, resolve, showError = true} = payload || {};
   try {
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.AssignedTrees));
     const res: FetchResult<TAssignedTreesRes> = yield sagaFetch<TAssignedTreesRes>('/assigned_requests/me', {
@@ -43,7 +43,7 @@ export function* watchAssignedTrees({payload}: TAssignedTreesAction) {
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(AssignedTrees.actions.loadFailure(message));
-    yield handleSagaFetchError(e);
+    yield handleSagaFetchError(e, {showErrorAlert: showError});
     reject?.();
   }
 }

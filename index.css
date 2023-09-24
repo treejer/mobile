@@ -11,9 +11,10 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom);
     left: 0;
     background-color: #faf8f0;
+    /*padding-bottom: env(safe-area-inset-bottom);*/
 }
 
 #root {

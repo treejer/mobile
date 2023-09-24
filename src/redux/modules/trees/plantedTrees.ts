@@ -11,7 +11,7 @@ import {TReduxState} from 'ranger-redux/store';
 export const PlantedTrees = new ReduxFetchState<TPlantedTreesRes, TPlantedTreesPayload, string>('plantedTrees');
 
 export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
-  const {filters, sort = {signer: -1, nonce: -1}, resolve, reject} = payload || {};
+  const {filters, sort = {signer: -1, nonce: -1}, resolve, reject, showError = true} = payload || {};
   try {
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.PlantedTrees));
     const res: FetchResult<TPlantedTreesRes> = yield sagaFetch<TPlantedTreesRes>('/plant_requests/me', {
@@ -40,7 +40,7 @@ export function* watchPlantedTrees({payload}: TPlantedTreesAction) {
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(PlantedTrees.actions.loadFailure(message));
-    yield handleSagaFetchError(e);
+    yield handleSagaFetchError(e, {showErrorAlert: showError});
     reject?.();
   }
 }

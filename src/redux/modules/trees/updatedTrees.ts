@@ -11,7 +11,7 @@ import {TReduxState} from 'ranger-redux/store';
 const UpdatedTrees = new ReduxFetchState<TUpdatedTreesRes, TUpdatedTreesPayload, string>('updatedTrees');
 
 export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
-  const {filters, sort = {signer: -1, nonce: -1}, resolve, reject} = payload || {};
+  const {filters, sort = {signer: -1, nonce: -1}, resolve, reject, showError = true} = payload || {};
   try {
     const {page, perPage}: TPaginationItem = yield select(getPaginationByName(PaginationName.UpdatedTrees));
     const res: FetchResult<TUpdatedTreesRes> = yield sagaFetch<TUpdatedTreesRes>('/update_requests/me', {
@@ -40,7 +40,7 @@ export function* watchUpdatedTrees({payload}: TUpdatedTreesAction) {
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(UpdatedTrees.actions.loadFailure(message));
-    yield handleSagaFetchError(e);
+    yield handleSagaFetchError(e, {showErrorAlert: showError});
     reject?.();
   }
 }

@@ -26,9 +26,9 @@ export function useNotVerifiedTrees(
   const dispatch = useAppDispatch();
 
   const dispatchGetAll = useCallback(() => {
-    dispatch(plantedTreesActions.load());
-    dispatch(updatedTreesActions.load());
-    dispatch(assignedTreesActions.load());
+    dispatch(plantedTreesActions.load({showError: true}));
+    dispatch(updatedTreesActions.load({showError: false}));
+    dispatch(assignedTreesActions.load({showError: false}));
   }, [dispatch]);
 
   useEffect(() => {
