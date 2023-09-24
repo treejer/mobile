@@ -11,6 +11,7 @@ import {useAppDispatch, useAppSelector} from 'utilities/hooks/useStore';
 import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
 import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
 import {getBalance, resetBalance} from 'ranger-redux/modules/contracts/contracts';
+import {clearDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
 import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import {TUserSignSuccessAction, userSignActions, userSignActionTypes} from 'ranger-redux/modules/userSign/userSign';
 import {
@@ -78,6 +79,7 @@ export type TWeb3Action = {
     magicToken: string;
     loginData?: UserNonceForm['loginData'];
   };
+  removeWallet?: boolean;
 };
 
 export const CREATE_WEB3 = 'CREATE_WEB3';
@@ -94,8 +96,8 @@ export function changeNetwork(newNetwork: BlockchainNetwork) {
 }
 
 export const RESET_WEB3_DATA = 'RESET_WEB3_DATA';
-export function resetWeb3Data() {
-  return {type: RESET_WEB3_DATA};
+export function resetWeb3Data(removeWallet?: boolean) {
+  return {type: RESET_WEB3_DATA, removeWallet};
 }
 
 export const UPDATE_WEB3 = 'UPDATE_WEB3';
@@ -146,7 +148,7 @@ export const web3Reducer = (state: TWeb3 = initialWeb3State, action: TWeb3Action
         ...state,
         unlocked: false,
         accessToken: '',
-        wallet: '',
+        wallet: action.removeWallet ? '' : state.wallet,
       };
     }
     case UPDATE_WEB3: {
@@ -255,12 +257,18 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
   try {
     const {web3, magicToken, loginData} = action.storeMagicToken;
     yield put(resetBalance());
+    const oldWallet = yield select(getWallet);
     console.log('[[[try]]]');
     const web3Accounts = yield asyncGetAccounts(web3);
     if (!web3Accounts) {
       return Promise.reject('There is no web3 accounts').catch(() => {});
     }
     const [wallet] = web3Accounts;
+
+    if (wallet?.toLowerCase() !== oldWallet?.toLowerCase()) {
+      yield put(clearDraftedJourneys());
+    }
+
     const isConnected = yield select(getNetInfo);
     if (isConnected) {
       yield put(userNonceActions.load({wallet, magicToken, loginData}));

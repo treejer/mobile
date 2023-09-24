@@ -94,7 +94,6 @@ export function useProfile() {
           }
         }
 
-        dispatchClearDraftedJourneys();
         dispatchResetUpdateTree();
         dispatchResetPlantTree();
         dispatchResetAssignedTree();
