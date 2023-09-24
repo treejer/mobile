@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
@@ -15,6 +15,8 @@ import useNetInfoConnected from 'utilities/hooks/useNetInfo';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
 import {SearchBox} from 'components/Map/SearchBox';
 import {useCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
+import {getCurrentPositionAsyncWeb} from 'utilities/hooks/usePlantTreePermissions.web';
+import {BrowserName, useBrowserName} from 'utilities/hooks/useBrowserName';
 
 export type locationType = {
   lng: number;
@@ -34,9 +36,54 @@ export function MapMarkingV2(props: MapMarkingProps) {
   const {journey, dispatchSelectTreeLocation} = useCurrentJourney();
   const [accuracyInMeters, setAccuracyInMeters] = useState(0);
   const [location, setLocation] = useState<locationType | null>(null);
+  const [verifyUserLocation, setVerifyUserLocation] = useState<TUserLocation | null>(null);
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
   const isConnected = useNetInfoConnected();
+  const browserName = useBrowserName();
+
+  const handleLocate = useCallback(
+    (coordinates: number[], zoom?: number, duration?: number) => {
+      map.current.flyTo({
+        // * 1: longitude, 2: latitude
+        center: coordinates,
+        zoom: zoom || 12,
+        duration: duration || 1000,
+      });
+    },
+    [map],
+  );
+
+  const handleGetCurrentUserLocation = useCallback(
+    async (locateOfterSuccess?: boolean) => {
+      try {
+        const {latitude, longitude} = await getCurrentPositionAsyncWeb(t);
+        setVerifyUserLocation({longitude, latitude});
+        if (locateOfterSuccess) {
+          handleLocate([longitude, latitude], 16, 2000);
+        }
+      } catch (error: any) {
+        showAlert({
+          title: error?.code ? t('checkPermission.error.siteSettings') : t('checkPermission.error.unknownError'),
+          message: error?.code
+            ? browserName === BrowserName.Safari
+              ? t(`checkPermission.error.GPS.${error?.code}`, {message: error?.message})
+              : t(`checkPermission.error.${error?.code}`, {message: error?.message})
+            : t('checkPermission.error.unknownError'),
+          mode: AlertMode.Info,
+        });
+      }
+    },
+    [t, browserName, handleLocate],
+  );
+
+  useEffect(() => {
+    if (verifyProfile) {
+      (async () => {
+        await handleGetCurrentUserLocation();
+      })();
+    }
+  }, []);
 
   const handleZoom = useCallback(
     async (zoomType: TZoomType = TZoomType.In) => {
@@ -49,28 +96,20 @@ export function MapMarkingV2(props: MapMarkingProps) {
     [map],
   );
 
-  const handleLocateToUserLocation = useCallback(() => {
-    if (userLocation?.latitude && userLocation?.longitude) {
-      map.current.flyTo({
-        // * 1: longitude, 2: latitude
-        center: [userLocation?.longitude, userLocation?.latitude],
-        zoom: 16,
-        duration: 2000,
-      });
+  // * 1: longitude, 2: latitude
+  const handleLocateToUserLocation = useCallback(async () => {
+    if (verifyProfile) {
+      if (verifyUserLocation?.longitude && verifyUserLocation.latitude) {
+        handleLocate([verifyUserLocation?.longitude, verifyUserLocation?.latitude], 16, 2000);
+      } else {
+        await handleGetCurrentUserLocation(true);
+      }
+    } else {
+      if (userLocation?.latitude && userLocation?.longitude) {
+        handleLocate([userLocation?.longitude, userLocation?.latitude], 16, 2000);
+      }
     }
-  }, [map, userLocation]);
-
-  const handleLocate = useCallback(
-    (coordinates: number[]) => {
-      map.current.flyTo({
-        // * 1: longitude, 2: latitude
-        center: coordinates,
-        zoom: 12,
-        duration: 1000,
-      });
-    },
-    [map],
-  );
+  }, [userLocation, handleLocate, verifyUserLocation, verifyProfile, handleGetCurrentUserLocation]);
 
   const handleDismiss = useCallback(() => {
     navigation.goBack();
@@ -124,7 +163,9 @@ export function MapMarkingV2(props: MapMarkingProps) {
     <View style={styles.container}>
       <Map setLocation={setLocation} setAccuracyInMeters={setAccuracyInMeters} map={map} />
 
-      {location ? <SearchBox onLocate={handleLocate} userLocation={userLocation} /> : null}
+      {location ? (
+        <SearchBox onLocate={handleLocate} userLocation={verifyProfile ? verifyUserLocation : userLocation} />
+      ) : null}
       <View style={[styles.bottom, {width: '100%'}]}>
         {location && (
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

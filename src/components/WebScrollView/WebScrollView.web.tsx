@@ -38,11 +38,9 @@ export function ScrollView(props: ScrollViewProps) {
     }
   }, [autoHeight, dimensions]);
 
-  console.log(height, 'height is here');
-
   return (
     <RNScrollView {...restProps}>
-      <View style={[{height: height}]}>{children}</View>
+      <View style={[{height}]}>{children}</View>
     </RNScrollView>
   );
 }

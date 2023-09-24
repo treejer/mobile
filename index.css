@@ -7,11 +7,16 @@
     height: 100%;
 }
 
+html {
+    height: -webkit-fill-available;
+}
+
 body {
     position: fixed;
     top: 0;
     right: 0;
-    bottom: env(safe-area-inset-bottom);
+    height: 100vh;
+    height: -webkit-fill-available;
     left: 0;
     background-color: #faf8f0;
     /*padding-bottom: env(safe-area-inset-bottom);*/

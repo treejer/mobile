@@ -24,6 +24,8 @@ const config = {
       screens: {
         [Routes.MyProfile]: 'unverified-profile',
         [Routes.VerifyProfile]: 'profile/verify',
+        [Routes.SelectOnMapVerifyProfile]: 'profile/verify-map',
+        [Routes.VerifyPending]: 'profile/verify-pending',
       },
     },
     [Routes.VerifiedProfileTab]: {

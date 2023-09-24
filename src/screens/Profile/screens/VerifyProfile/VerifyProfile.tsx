@@ -310,11 +310,14 @@ function VerifyProfile(props: Props) {
 
   return (
     <SafeAreaView style={[globalStyles.fill, globalStyles.screenView]}>
-      <KeyboardAwareScrollView>
-        <ScreenTitle title={t('getVerified')} goBack />
+      <ScreenTitle title={t('getVerified')} goBack />
+      <Spacer times={4} />
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
+        style={[globalStyles.screenView, globalStyles.fill]}
+      >
         <View style={[globalStyles.screenView, globalStyles.fill, globalStyles.alignItemsCenter]}>
-          <Spacer times={4} />
-
           {profile?.userStatus === TUserStatus.Pending && (
             <>
               <Text style={globalStyles.textCenter}>{t('pendingVerification')}</Text>
