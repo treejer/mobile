@@ -1,8 +1,6 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {Dimensions, ScrollView as RNScrollView, View, ScrollViewProps as RNScrollViewProps} from 'react-native';
-
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+import React, {useMemo} from 'react';
+import {ScrollView as RNScrollView, View, ScrollViewProps as RNScrollViewProps} from 'react-native';
+import {useDimensions} from 'utilities/hooks/useDimensions';
 
 export type ScrollViewProps = React.PropsWithChildren<
   {
@@ -14,17 +12,7 @@ export type ScrollViewProps = React.PropsWithChildren<
 export function ScrollView(props: ScrollViewProps) {
   const {children, onlyWeb, autoHeight, showsVerticalScrollIndicator, ...restProps} = props;
 
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
-
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({window, screen}) => {
-      setDimensions({window, screen});
-    });
-    return () => subscription?.remove();
-  });
+  const dimensions = useDimensions();
 
   const height = useMemo(() => {
     if (autoHeight === false || autoHeight === undefined) {

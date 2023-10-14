@@ -9,21 +9,33 @@
 
 html {
     height: -webkit-fill-available;
+    height: -moz-fill-available;
+    overscroll-behavior: none;
 }
 
 body {
-    position: fixed;
-    top: 0;
-    right: 0;
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+
+
+    /*padding-bottom: env(safe-area-inset-bottom);*/
+
+
     height: 100vh;
     height: -webkit-fill-available;
-    left: 0;
+    height: -moz-fill-available;
+    overflow: hidden;
     background-color: #faf8f0;
-    /*padding-bottom: env(safe-area-inset-bottom);*/
 }
 
 #root {
     max-width: 768px;
+    height: 100%;
+    height: -webkit-fill-available;
+    height: -moz-fill-available;
     margin: auto;
     box-shadow: 0 0 40px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;

@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import {mapboxPublicToken} from 'services/config';
 import {locationType} from 'screens/TreeSubmissionV2/components/MapMarkingV2/MapMarkingV2.web';
+import {useDimensions} from 'utilities/hooks/useDimensions';
 
 const options = {
   enableHighAccuracy: true,
@@ -24,17 +25,21 @@ interface MapProps {
 
 const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: any) => {
   const mapContainer = useRef<any>(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
+  const [locationDetail, setLocationDetail] = useState({
+    lng: -79.9,
+    lat: 42.35,
+    zoom: 9,
+  });
+
+  const {window} = useDimensions();
 
   useEffect(() => {
     if (mapRef.current) return;
     mapRef.current = new mapboxgl.Map({
       container: mapContainer.current as unknown as HTMLElement,
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [lng, lat],
-      zoom,
+      center: [locationDetail.lng, locationDetail.lat],
+      zoom: locationDetail.zoom,
     });
 
     // * mapbox-gl locate to user location control and user heading
@@ -77,9 +82,11 @@ const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: an
     if (!mapRef.current) return;
     mapRef.current.on('move', () => {
       const center = mapRef.current.getCenter();
-      setLng(center.lng);
-      setLat(center.lat);
-      setZoom(mapRef.current.getZoom().toFixed(2));
+      setLocationDetail({
+        lng: center.lng,
+        lat: center.lat,
+        zoom: mapRef.current.getZoom().toFixed(2),
+      });
       if (setLocation) {
         setLocation({
           lng: center.lng,
@@ -88,10 +95,9 @@ const Map = forwardRef(({setLocation, setAccuracyInMeters}: MapProps, mapRef: an
       }
     });
   }, []);
-
   return (
     <View>
-      <div ref={mapContainer} style={{height: '100vh', width: '100vw'}} />
+      <div ref={mapContainer} style={{height: window.height, maxWidth: '768px'}} />
     </View>
   );
 });
