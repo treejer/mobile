@@ -18,10 +18,10 @@ export function* watchTreeDetails({payload}: TTreeDetailAction) {
   } catch (e: any) {
     const {message} = handleFetchError(e);
     yield put(TreeDetails.actions.loadFailure(message));
+    yield handleSagaFetchError(e, {showErrorAlert: !inSubmission});
     if (inSubmission) {
       yield put(setSubmitJourneyLoading(false));
     }
-    yield handleSagaFetchError(e);
   }
 }
 

@@ -17,7 +17,7 @@
     "ios-permissions": "npx react-native setup-ios-permissions && cd ios && pod install && cd .."
   },
   "dependencies": {
-    "@apollo/client": "3.7.10",
+    "@apollo/client": "3.8.6",
     "@biconomy/mexa": "2.0.38",
     "@expo/config-plugins": "6.0.1",
     "@expo/webpack-config": "18.0.1",

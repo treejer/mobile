@@ -116,12 +116,12 @@ function MyProfile(props: MyProfileProps) {
   }, []);
 
   const onRefetch = () =>
-    new Promise((resolve: any, reject: any) => {
+    new Promise(resolve => {
       return (async () => {
         getBalance();
         await getPlanter();
-        await dispatchProfile();
-        resolve();
+        dispatchProfile();
+        resolve('dispatched');
       })();
     });
 

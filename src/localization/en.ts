@@ -560,8 +560,8 @@ export const en = {
     titles: {
       plantSingle: 'Submit a new Tree',
       plantNursery: 'Submit a new Nursery',
-      updateSingle: 'Update #{{treeId}} tree',
-      updateNursery: 'Update #{{treeId}} nursery',
+      updateSingle: 'Update #{{treeId}} Tree',
+      updateNursery: 'Update #{{treeId}} Nursery',
       draft: 'Name this {{submissionType}} to remember better',
       changeSettings: 'If you want to change settings, submission information must be entered again.',
     },

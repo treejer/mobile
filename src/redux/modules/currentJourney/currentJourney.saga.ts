@@ -15,20 +15,21 @@ import {TTreeDetailRes} from 'webServices/trees/treeDetail';
 import {navigationRef} from 'navigation/navigationRef';
 import {Routes} from 'navigation/Navigation';
 import {TReduxState} from 'ranger-redux/store';
+import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
+import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
+import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
+import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
+import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
 import {plantedTreesActions, plantedTreesActionTypes} from 'ranger-redux/modules/trees/plantedTrees';
 import {updatedTreesActions, updatedTreesActionTypes} from 'ranger-redux/modules/trees/updatedTrees';
 import {assignedTreesActions, assignedTreesActionTypes} from 'ranger-redux/modules/trees/assignedTrees';
-import {getConfig, getMagic, getWallet, TWeb3} from 'ranger-redux/modules/web3/web3';
 import {treeDetailsActions, treeDetailsActionTypes} from 'ranger-redux/modules/trees/treeDetails';
 import {assignedTreeActions, assignedTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/assignedTree';
 import {updateTreeActions, updateTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/updateTree';
 import {plantTreeActions, plantTreeActionTypes} from 'ranger-redux/modules/submitTreeEvents/plantTree';
-import {removeDraftedJourney} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
-import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
-import {BrowserPlatformState, getBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.reducer';
-import {changeCheckMetaData, getSettings, TSettings} from 'ranger-redux/modules/settings/settings';
-import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
+import {TCurrentJourney} from 'ranger-redux/modules/currentJourney/currentJourney.reducer';
 import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney.action';
 
 export const getCurrentJourney = (state: TReduxState) => state.currentJourney;
@@ -72,6 +73,10 @@ export function* watchAssignJourneyTreePhoto({
     }
 
     yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
+    if ((journey.canUpdateLocation || !journey.isUpdate) && !journey.location) {
+      //@ts-ignore
+      navigationRef()?.navigate(Routes.SelectOnMap_V2);
+    }
   } catch (e: any) {
     yield showSagaAlert({
       title: i18next.t(e?.title),
@@ -123,11 +128,24 @@ export function* watchSubmitJourney() {
     const magic: TWeb3['magic'] = yield select(getMagic);
     const config: TWeb3['config'] = yield select(getConfig);
     const wallet: string = yield select(getWallet);
+    const isConnected: string = yield select(getNetInfo);
+
+    if (!isConnected) {
+      return yield showSagaAlert({
+        message: 'netInfo.filter',
+        mode: AlertMode.Error,
+      });
+    }
 
     let treeDetail: TTreeDetailRes | undefined = undefined;
     if (treeIdToUpdate || treeIdToPlant) {
-      yield put(treeDetailsActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string}));
-      const {payload} = yield take(treeDetailsActionTypes.loadSuccess);
+      yield put(
+        treeDetailsActions.load({id: (isUpdate ? treeIdToUpdate : treeIdToPlant) as string, inSubmission: true}),
+      );
+      const {payload} = yield take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]);
+      if (typeof payload === 'string') {
+        yield Promise.reject(new Error(payload));
+      }
       treeDetail = yield payload;
     }
 
@@ -140,19 +158,19 @@ export function* watchSubmitJourney() {
       jsonData = yield updateTreeJSON(config.ipfsGetURL, {
         journey,
         tree: treeDetail,
-        photoUploadHash: photoUploadResult.Hash,
+        photoUploadHash: photoUploadResult?.Hash,
       });
     } else {
       if (treeIdToPlant && treeDetail?.treeSpecsEntity != null) {
         jsonData = yield assignedTreeJSON(config.ipfsGetURL, {
           journey,
           tree: treeDetail,
-          photoUploadHash: photoUploadResult.Hash,
+          photoUploadHash: photoUploadResult?.Hash,
         });
       } else {
         jsonData = yield newTreeJSON(config.ipfsGetURL, {
           journey,
-          photoUploadHash: photoUploadResult.Hash,
+          photoUploadHash: photoUploadResult?.Hash,
         });
       }
     }
@@ -168,13 +186,13 @@ export function* watchSubmitJourney() {
         requestParams: {
           treeId: Number(treeIdToUpdate),
           nonce: +profile?.plantingNonce!,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
         },
       });
       yield put(
         updateTreeActions.load({
           signature,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
           treeSpecsJSON: JSON.stringify(jsonData),
           treeId: Number(treeIdToUpdate),
         }),
@@ -194,13 +212,13 @@ export function* watchSubmitJourney() {
           countryCode: 0,
           birthDate: currentTimeStamp,
           nonce: +profile?.plantingNonce!,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
         },
       });
       yield put(
         assignedTreeActions.load({
           signature,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
           treeSpecsJSON: JSON.stringify(jsonData),
           birthDate: currentTimeStamp,
           treeId: Number(treeIdToPlant),
@@ -220,13 +238,13 @@ export function* watchSubmitJourney() {
           countryCode: 0,
           birthDate: currentTimeStamp,
           nonce: +profile?.plantingNonce!,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
         },
       });
       yield put(
         plantTreeActions.load({
           signature,
-          treeSpecs: metaDataUploadResult.Hash,
+          treeSpecs: metaDataUploadResult?.Hash,
           treeSpecsJSON: JSON.stringify(jsonData),
           birthDate: currentTimeStamp,
         }),

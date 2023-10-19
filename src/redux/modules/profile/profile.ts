@@ -75,24 +75,24 @@ export function useProfile() {
   const handleLogout = useCallback(
     async (userPressed?: boolean) => {
       try {
-        if (userPressed) {
-          try {
-            if (drafts.length > 0) {
-              const isMoreThanOne = drafts.length > 1;
-              const treeText = isMoreThanOne ? 'trees' : 'tree';
-              const treeThereText = isMoreThanOne ? 'they are' : 'it is';
-
-              await asyncAlert(
-                t('myProfile.attention'),
-                t('myProfile.looseTree', {treesLength: drafts.length, treeText, treeThereText}),
-                {text: t('myProfile.logoutAndLoose')},
-                {text: t('cancel')},
-              );
-            }
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        }
+        // if (userPressed) {
+        //   try {
+        //     if (drafts.length > 0) {
+        //       const isMoreThanOne = drafts.length > 1;
+        //       const treeText = isMoreThanOne ? 'trees' : 'tree';
+        //       const treeThereText = isMoreThanOne ? 'they are' : 'it is';
+        //
+        //       await asyncAlert(
+        //         t('myProfile.attention'),
+        //         t('myProfile.looseTree', {treesLength: drafts.length, treeText, treeThereText}),
+        //         {text: t('myProfile.logoutAndLoose')},
+        //         {text: t('cancel')},
+        //       );
+        //     }
+        //   } catch (e) {
+        //     return Promise.reject(e);
+        //   }
+        // }
 
         dispatchResetUpdateTree();
         dispatchResetPlantTree();

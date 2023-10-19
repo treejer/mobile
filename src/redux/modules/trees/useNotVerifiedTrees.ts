@@ -12,6 +12,7 @@ import {TAssignedTreesPayload} from 'webServices/trees/assignedTrees';
 
 export function useNotVerifiedTrees(
   fetchOnMount?: boolean,
+  showAlert?: boolean,
   status: NotVerifiedTreeStatus = NotVerifiedTreeStatus.Plant,
 ) {
   const {data: plantedTrees, ...plantedTreesState} = useAppSelector(state => state.plantedTrees);
@@ -26,7 +27,7 @@ export function useNotVerifiedTrees(
   const dispatch = useAppDispatch();
 
   const dispatchGetAll = useCallback(() => {
-    dispatch(plantedTreesActions.load({showError: true}));
+    dispatch(plantedTreesActions.load({showError: showAlert}));
     dispatch(updatedTreesActions.load({showError: false}));
     dispatch(assignedTreesActions.load({showError: false}));
   }, [dispatch]);

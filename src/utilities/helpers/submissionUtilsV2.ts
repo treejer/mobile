@@ -102,6 +102,7 @@ export async function generateTreeFactorySignature({
 
       return resolve(signature);
     } catch (e: any) {
+      console.log(e, 'error in generateTreeFactorySignature');
       return reject(e);
     }
   });

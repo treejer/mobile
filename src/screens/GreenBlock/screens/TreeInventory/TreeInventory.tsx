@@ -27,6 +27,7 @@ import {useRefocusEffect} from 'utilities/hooks/useRefocusEffect';
 import {SubmittedTreeListV2} from 'components/TreeListV2/SubmittedTreeListV2';
 import {NotVerifiedTreeList} from 'components/TreeListV2/NotVerifiedTreeList';
 import {useNotVerifiedTrees} from 'ranger-redux/modules/trees/useNotVerifiedTrees';
+import {useNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
 
 export enum TreeItemUI {
   WithDetail = 'WithDetail',
@@ -66,7 +67,13 @@ export function TreeInventory(props: TreeInventoryProps) {
 
   const [notVerifiedTreeFilter] = notVerifiedTreeFilters;
 
-  const {planted, updated, assigned, current: notVerifiedTrees} = useNotVerifiedTrees(true, notVerifiedTreeFilter);
+  const {isConnected} = useNetInfo();
+  const {
+    planted,
+    updated,
+    assigned,
+    current: notVerifiedTrees,
+  } = useNotVerifiedTrees(true, isConnected, notVerifiedTreeFilter);
 
   const {
     submittedTrees,

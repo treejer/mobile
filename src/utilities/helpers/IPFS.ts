@@ -1,4 +1,4 @@
-interface IPFSUploadResponse {
+export interface IPFSUploadResponse {
   Hash: string;
   Name: string;
   Size: number;
