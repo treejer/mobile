@@ -82,11 +82,11 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       handleNavigateToSubmission();
     },
     [
+      closeAlertModal,
+      dispatchClearJourney,
       dispatchRemoveDraftedJourney,
       dispatchSetDraftAsCurrentJourney,
       handleNavigateToSubmission,
-      closeAlertModal,
-      dispatchClearJourney,
     ],
   );
 

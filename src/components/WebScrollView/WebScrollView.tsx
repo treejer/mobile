@@ -12,7 +12,7 @@ export function ScrollView(props: ScrollViewProps) {
   const {children, onlyWeb, showsVerticalScrollIndicator, ...restProps} = props;
 
   if (onlyWeb) {
-    return children;
+    return <>{children}</>;
   }
 
   return (

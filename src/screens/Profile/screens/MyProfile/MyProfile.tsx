@@ -6,7 +6,7 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import IoIcon from 'react-native-vector-icons/Ionicons';
 import ADIcon from 'react-native-vector-icons/AntDesign';
 
-import {Routes, UnVerifiedUserNavigationProp, VerifiedUserNavigationProp} from 'navigation/index';
+import {Routes, type UnVerifiedUserNavigationProp, type VerifiedUserNavigationProp} from 'navigation/index';
 import RefreshControl from 'components/RefreshControl/RefreshControl';
 import ShimmerPlaceholder from 'components/ShimmerPlaceholder';
 import Button from 'components/Button';
@@ -41,7 +41,7 @@ function MyProfile(props: MyProfileProps) {
   const {t} = useTranslation();
 
   const requiredBalance = useMemo(() => 500000000000000000, []);
-  const [minBalance, setMinBalance] = useState<number>(requiredBalance);
+  const [_minBalance, setMinBalance] = useState<number>(requiredBalance);
   const planterFundContract = usePlanterFund();
   const {getBalance, loading: contractsLoading} = useContracts();
   useTreeUpdateInterval();
@@ -109,14 +109,12 @@ function MyProfile(props: MyProfileProps) {
   );
 
   useEffect(() => {
-    // if (wallet && isConnected) {
     getPlanter().then(() => {});
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onRefetch = () =>
-    new Promise(resolve => {
+  const onRefetch = useCallback(() => {
+    return new Promise(resolve => {
       return (async () => {
         getBalance();
         await getPlanter();
@@ -124,6 +122,7 @@ function MyProfile(props: MyProfileProps) {
         resolve('dispatched');
       })();
     });
+  }, [dispatchProfile, getBalance, getPlanter]);
 
   const planterWithdrawableBalance =
     Number(planterData?.balance) > 0 ? parseBalance(planterData?.balance.toString() || '0') : 0;
@@ -155,28 +154,28 @@ function MyProfile(props: MyProfileProps) {
   const handleNavigateSupport = () => {
     sendEvent('Support');
     // return Linking.openURL('https://discuss.treejer.com/group/planters');
-    // @ts-ignore
+    // @ts-expect-error
     navigation.navigate(Routes.Support);
   };
 
   const handleNavigateActivity = () => {
-    // @ts-ignore
+    // @ts-expect-error
     navigation.navigate(Routes.Activity);
   };
 
   const handleNavigateOfflineMap = () => {
     sendEvent('offlinemap');
-    // @ts-ignore
+    // @ts-expect-error
     navigation.navigate(Routes.OfflineMap);
   };
 
   const handleNavigateSettings = () => {
-    // @ts-ignore
+    // @ts-expect-error
     navigation.navigate(Routes.Settings);
   };
 
   const handleNavigateWithdraw = () => {
-    // @ts-ignore
+    // @ts-expect-error
     navigation.navigate(Routes.Withdraw);
   };
 
@@ -232,12 +231,12 @@ function MyProfile(props: MyProfileProps) {
                       <Text style={styles.statLabel}>{t('plantedTrees')}</Text>
                     </View>
 
-                    {/*<Spacer times={6} />*/}
+                    {/* <Spacer times={6} /> */}
 
-                    {/*<View style={styles.statContainer}>*/}
-                    {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text>*/}
-                    {/*  <Text style={styles.statLabel}>ETH Earning</Text>*/}
-                    {/*</View>*/}
+                    {/* <View style={styles.statContainer}> */}
+                    {/*  <Text style={styles.statValue}>{planterWithdrawableBalance.toFixed(5)}</Text> */}
+                    {/*  <Text style={styles.statLabel}>ETH Earning</Text> */}
+                    {/* </View> */}
                   </Card>
                 )}
                 <Spacer times={4} />
@@ -257,7 +256,7 @@ function MyProfile(props: MyProfileProps) {
                       onPress={() => {
                         sendEvent('get_verified');
                         if (profile) {
-                          // @ts-ignore
+                          // @ts-expect-error
                           navigation.navigate(Routes.VerifyProfile);
                         }
                       }}
@@ -313,7 +312,7 @@ function MyProfile(props: MyProfileProps) {
                         onPress={() => {
                           sendEvent('get_verified');
                           if (profile) {
-                            // @ts-ignore
+                            // @ts-expect-error
                             navigation.navigate(Routes.VerifyProfile);
                           }
                         }}
@@ -339,17 +338,17 @@ function MyProfile(props: MyProfileProps) {
                     </>
                   )}
 
-                  {/*{!route.params?.unVerified && !isWeb() ? (*/}
-                  {/*  <>*/}
-                  {/*    <Button*/}
-                  {/*      style={styles.button}*/}
-                  {/*      caption={t('offlineMap.title')}*/}
-                  {/*      variant="tertiary"*/}
-                  {/*      onPress={handleNavigateOfflineMap}*/}
-                  {/*    />*/}
-                  {/*    <Spacer times={4} />*/}
-                  {/*  </>*/}
-                  {/*) : null}*/}
+                  {/* {!route.params?.unVerified && !isWeb() ? ( */}
+                  {/*  <> */}
+                  {/*    <Button */}
+                  {/*      style={styles.button} */}
+                  {/*      caption={t('offlineMap.title')} */}
+                  {/*      variant="tertiary" */}
+                  {/*      onPress={handleNavigateOfflineMap} */}
+                  {/*    /> */}
+                  {/*    <Spacer times={4} /> */}
+                  {/*  </> */}
+                  {/* ) : null} */}
 
                   {planterData?.planterType && !!wallet ? (
                     <>
@@ -440,11 +439,6 @@ function MyProfile(props: MyProfileProps) {
 const styles = StyleSheet.create({
   button: {
     flex: 1,
-  },
-  helpWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
   },
   maxWidthWrapper: {
     alignItems: 'center',

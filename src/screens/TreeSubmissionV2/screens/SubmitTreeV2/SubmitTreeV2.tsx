@@ -74,7 +74,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         }),
       );
     }
-  }, []);
+  }, [journey.isSingle, journey.isUpdate, navigation]);
 
   const handleSelectPhoto = useCallback(
     (photoArgs: TOnSelectTree) => {
@@ -111,7 +111,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     } else {
       handleOpenDraftModal(DraftType.Offline);
     }
-  }, [isConnected, handleOpenDraftModal, dispatchSubmitJourney, sendEvent]);
+  }, [isConnected, sendEvent, journey.isUpdate, dispatchSubmitJourney, handleOpenDraftModal]);
 
   const handleClearJourney = useCallback(
     (resetStack?: boolean) => {
@@ -140,7 +140,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
         setDraftState(null);
       }
     },
-    [dispatchDraftJourney, dispatchClearJourney, draftState],
+    [journey, draftState, dispatchDraftJourney, dispatchClearJourney],
   );
 
   const canSubmit = useMemo(
@@ -150,6 +150,8 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
 
   const submissionTitle = useMemo(
     () => (journey.isUpdate ? 'update' : 'plant') + (journey.isSingle ? 'Single' : 'Nursery'),
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -287,14 +289,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: colors.tooBlack,
-  },
-  redText: {
-    color: colors.red,
-    fontSize: 12,
-  },
-  greenText: {
-    color: colors.green,
-    fontSize: 12,
   },
   cantPlantContainer: {
     backgroundColor: colors.khaki,
