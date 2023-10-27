@@ -3,7 +3,7 @@
     "name": "RangerTreejer",
     "scheme": "ranger-treejer",
     "slug": "RangerTreejerV2",
-    "version": "1.0.0-beta.2",
+    "version": "1.0.0-beta.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
