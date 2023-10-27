@@ -218,6 +218,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
             {isWeb() ? <Spacer /> : null}
             <CheckPermissionsV2
               testID="check-permissions-box"
+              submitLoading={!!journey.submitLoading}
               lockSettings={canSubmit}
               onUnLock={() => setOpenSettingsAlert(true)}
               plantTreePermissions={plantTreePermissions}

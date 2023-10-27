@@ -21,11 +21,12 @@ export type TCheckPermissionsProps = {
   testID?: string;
   plantTreePermissions: TUsePlantTreePermissions;
   lockSettings: boolean;
+  submitLoading: boolean;
   onUnLock: () => void;
 };
 
 export function CheckPermissionsV2(props: TCheckPermissionsProps) {
-  const {testID, lockSettings, onUnLock, plantTreePermissions} = props;
+  const {testID, lockSettings, submitLoading, plantTreePermissions, onUnLock} = props;
   const {cantProceed, isChecking, isGranted} = plantTreePermissions;
 
   const [openSettings, setOpenSettings] = useState(false);
@@ -39,7 +40,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
     if (lockSettings) {
       sharedStylesValue.value = {height: 94};
     }
-  }, [lockSettings]);
+  }, [lockSettings, sharedStylesValue]);
 
   const {t} = useTranslation();
 
@@ -48,7 +49,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
       sharedStylesValue.value = {height: prevState ? 94 : Platform.OS === 'android' ? 152 : 158};
       return !prevState;
     });
-  }, [sharedStylesValue.value]);
+  }, [sharedStylesValue]);
 
   const permissions: TPermissionItem['permission'][] = useMemo(
     () => permissionsList(props.plantTreePermissions),
@@ -121,7 +122,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
               </View>
               <TouchableOpacity
                 testID="toggle-settings-btn"
-                onPress={lockSettings ? onUnLock : handleToggleSettingsBox}
+                onPress={submitLoading ? undefined : lockSettings ? onUnLock : handleToggleSettingsBox}
               >
                 <IoIcon
                   testID="settings-chevron-icon"
@@ -166,13 +167,6 @@ const styles = StyleSheet.create({
   },
   flexRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  spaceAround: {
-    justifyContent: 'space-around',
-  },
-  flexCenter: {
-    justifyContent: 'center',
     alignItems: 'center',
   },
   flexBetween: {
