@@ -50,6 +50,7 @@ import * as actionsList from 'ranger-redux/modules/currentJourney/currentJourney
 import {pendingTreeIdsActions, pendingTreeIdsActionTypes} from 'ranger-redux/modules/trees/pendingTreeIds';
 import * as navigation from 'navigation/navigationRef';
 import {Routes} from 'navigation/Navigation';
+import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
 
 describe('currentJourney sagas', () => {
   it('functions should be defined', () => {
@@ -71,7 +72,6 @@ describe('currentJourney sagas', () => {
     );
     assert.deepEqual(gen.next().value, takeEvery(actionsList.SUBMIT_JOURNEY_WATCHER, watchSubmitJourney));
   });
-
   describe('watchAssignJourneyTreePhoto', () => {
     it('watchAssignJourneyTreePhoto success, with location', () => {
       const photoLocation = {
@@ -147,8 +147,10 @@ describe('currentJourney sagas', () => {
       //@ts-ignore
       next = gen.next(photoLocation);
       assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
+      //@ts-ignore
+      next = gen.next(photoLocation);
+      assert.deepEqual(next.value, undefined);
     });
-
     it('watchAssignJourneyTreePhoto success, without location', () => {
       const photoLocation = {
         latitude: 20000,
@@ -212,8 +214,8 @@ describe('currentJourney sagas', () => {
       //@ts-ignore
       next = gen.next(photoLocation);
       assert.deepEqual(next.value, put(actionsList.setTreePhoto({photo: onBoardingOne, photoLocation})));
+      expect(gen.next()).not.toBe(undefined);
     });
-
     it('watchAssignJourneyTreePhoto catch', () => {
       const photoLocation = {
         latitude: 0,
@@ -241,7 +243,6 @@ describe('currentJourney sagas', () => {
       assert.deepEqual(gen.throw(error).value, showSagaAlert(error));
     });
   });
-
   describe('watchSubmitJourney', () => {
     it('plant tree with draftId', () => {
       const gen = watchSubmitJourney();
@@ -264,6 +265,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockPlantJourneyWithDraftId,
         ...mockProfile,
@@ -271,6 +279,7 @@ describe('currentJourney sagas', () => {
         ...mockMagic,
         wallet: mockWallet,
       };
+
       assert.deepEqual(
         gen.next(selectedData).value,
         upload(mockConfig.ipfsPostURL, 'storage://file'),
@@ -393,6 +402,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockPlantJourneyWithoutDraftId,
         ...mockProfile,
@@ -517,6 +533,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockUpdateJourneyWithDraftId,
         ...mockProfile,
@@ -527,7 +550,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(selectedData).value,
-        put(treeDetailsActions.load({id: mockUpdateJourneyWithDraftId.treeIdToUpdate as string})),
+        put(treeDetailsActions.load({id: mockUpdateJourneyWithDraftId.treeIdToUpdate as string, inSubmission: true})),
         'should dispatch treeDetail (get tree detail)',
       );
 
@@ -543,7 +566,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next({payload: updatedTreeDetail}).value,
-        take(treeDetailsActionTypes.loadSuccess),
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
         'should wait to get tree detail',
       );
       assert.deepEqual(gen.next({payload: updatedTreeDetail}).value, updatedTreeDetail);
@@ -669,6 +692,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockUpdateJourneyWithoutDraftId,
         ...mockProfile,
@@ -679,7 +709,9 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(selectedData).value,
-        put(treeDetailsActions.load({id: mockUpdateJourneyWithoutDraftId.treeIdToUpdate as string})),
+        put(
+          treeDetailsActions.load({id: mockUpdateJourneyWithoutDraftId.treeIdToUpdate as string, inSubmission: true}),
+        ),
         'should dispatch treeDetail (get tree detail)',
       );
 
@@ -695,7 +727,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next({payload: updatedTreeDetail}).value,
-        take(treeDetailsActionTypes.loadSuccess),
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
         'should wait to get tree detail',
       );
 
@@ -817,6 +849,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockAssignedJourneyWithDraftId,
         ...mockProfile,
@@ -827,7 +866,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(selectedData).value,
-        put(treeDetailsActions.load({id: mockAssignedJourneyWithDraftId.treeIdToPlant as string})),
+        put(treeDetailsActions.load({id: mockAssignedJourneyWithDraftId.treeIdToPlant as string, inSubmission: true})),
         'should dispatch treeDetail (get tree detail)',
       );
 
@@ -843,7 +882,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next({payload: updatedTreeDetail}).value,
-        take(treeDetailsActionTypes.loadSuccess),
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
         'should wait to get tree detail',
       );
 
@@ -955,7 +994,6 @@ describe('currentJourney sagas', () => {
       assert.deepEqual(gen.next().value, put(clearJourney()), 'should clear current journey data');
       assert.deepEqual(gen.next().value, put(profileActions.load()), 'should dispatch profileAction.load');
     });
-
     it('assigned tree without draftId', () => {
       const gen = watchSubmitJourney();
 
@@ -982,6 +1020,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockAssignedJourneyWithoutDraftId,
         ...mockProfile,
@@ -992,7 +1037,9 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(selectedData).value,
-        put(treeDetailsActions.load({id: mockAssignedJourneyWithoutDraftId.treeIdToPlant as string})),
+        put(
+          treeDetailsActions.load({id: mockAssignedJourneyWithoutDraftId.treeIdToPlant as string, inSubmission: true}),
+        ),
         'should dispatch treeDetail (get tree detail)',
       );
 
@@ -1008,7 +1055,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next({payload: updatedTreeDetail}).value,
-        take(treeDetailsActionTypes.loadSuccess),
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
         'should wait to get tree detail',
       );
 
@@ -1116,7 +1163,6 @@ describe('currentJourney sagas', () => {
       assert.deepEqual(gen.next().value, put(clearJourney()), 'should clear current journey data');
       assert.deepEqual(gen.next().value, put(profileActions.load()), 'should dispatch profileAction.load');
     });
-
     it('assigned tree without draftId in mainnet', () => {
       const gen = watchSubmitJourney();
 
@@ -1143,6 +1189,13 @@ describe('currentJourney sagas', () => {
         select(getWallet),
         'should select wallet',
       );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
       const selectedData = {
         ...mockAssignedJourneyWithoutDraftId,
         ...mockProfile,
@@ -1153,7 +1206,9 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next(selectedData).value,
-        put(treeDetailsActions.load({id: mockAssignedJourneyWithoutDraftId.treeIdToPlant as string})),
+        put(
+          treeDetailsActions.load({id: mockAssignedJourneyWithoutDraftId.treeIdToPlant as string, inSubmission: true}),
+        ),
         'should dispatch treeDetail (get tree detail)',
       );
 
@@ -1169,7 +1224,7 @@ describe('currentJourney sagas', () => {
 
       assert.deepEqual(
         gen.next({payload: updatedTreeDetail}).value,
-        take(treeDetailsActionTypes.loadSuccess),
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
         'should wait to get tree detail',
       );
 
@@ -1278,6 +1333,120 @@ describe('currentJourney sagas', () => {
         gen.next().value,
         put(changeCheckMetaData(true)),
         'should dispatch changeCheckMetaData with true arg',
+      );
+    });
+    it('disconnected net info', () => {
+      const gen = watchSubmitJourney();
+
+      assert.deepEqual(gen.next().value, select(getCurrentJourney), 'should select current journey');
+      assert.deepEqual(gen.next(mockAssignedJourneyWithoutDraftId).value, select(getProfile), 'should select profile');
+      assert.deepEqual(
+        gen.next({...mockProfile, ...mockAssignedJourneyWithoutDraftId}).value,
+        select(getMagic),
+        'should select magic',
+      );
+      assert.deepEqual(
+        gen.next({...mockAssignedJourneyWithoutDraftId, ...mockProfile, ...mockMagic}).value,
+        select(getConfig),
+        'should select config',
+      );
+      assert.deepEqual(
+        gen.next({
+          ...mockAssignedJourneyWithoutDraftId,
+          ...mockProfile,
+          ...mockMainnetConfig,
+          ...mockMagic,
+          wallet: mockWallet,
+        }).value,
+        select(getWallet),
+        'should select wallet',
+      );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+      const isConnected = false;
+      assert.deepEqual(
+        gen.next(isConnected).value,
+        showSagaAlert({
+          message: 'netInfo.filter',
+          mode: AlertMode.Error,
+        }),
+        'should show error toast',
+      );
+      assert.deepEqual(gen.next().value, undefined);
+    });
+    it('treeDetails request error', () => {
+      const gen = watchSubmitJourney();
+
+      assert.deepEqual(gen.next().value, select(getCurrentJourney), 'should select current journey');
+      assert.deepEqual(gen.next(mockUpdateJourneyWithDraftId).value, select(getProfile), 'should select profile');
+      assert.deepEqual(
+        gen.next({...mockProfile, ...mockUpdateJourneyWithDraftId}).value,
+        select(getMagic),
+        'should select magic',
+      );
+      assert.deepEqual(
+        gen.next({...mockUpdateJourneyWithDraftId, ...mockProfile, ...mockMagic}).value,
+        select(getConfig),
+        'should select config',
+      );
+      assert.deepEqual(
+        gen.next({...mockUpdateJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getWallet),
+        'should select wallet',
+      );
+      assert.deepEqual(
+        gen.next({...mockPlantJourneyWithDraftId, ...mockProfile, ...mockConfig, ...mockMagic, wallet: mockWallet})
+          .value,
+        select(getNetInfo),
+        'should select netInfo',
+      );
+
+      const selectedData = {
+        ...mockUpdateJourneyWithDraftId,
+        ...mockProfile,
+        ...mockConfig,
+        ...mockMagic,
+        wallet: mockWallet,
+      };
+
+      assert.deepEqual(
+        gen.next(selectedData).value,
+        put(treeDetailsActions.load({id: mockUpdateJourneyWithDraftId.treeIdToUpdate as string, inSubmission: true})),
+        'should dispatch treeDetail (get tree detail)',
+      );
+
+      const errorMessage = 'error is here!';
+
+      assert.deepEqual(
+        gen.next({payload: errorMessage}).value,
+        take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]),
+        'should wait to get tree detail',
+      );
+      const error = {message: errorMessage};
+
+      const fn = jest.fn(() => {});
+
+      const _spy = jest.spyOn(Promise, 'reject').mockImplementation((message: string) => fn as any);
+
+      expect(gen.next({payload: errorMessage}).value).toEqual(fn);
+
+      assert.deepEqual(
+        gen.throw(error).value,
+        showSagaAlert({
+          message: error.message,
+          mode: AlertMode.Error,
+        }),
+        'should show error toast',
+      );
+      assert.deepEqual(
+        gen.next(error).value,
+        put(actionsList.setSubmitJourneyLoading(false)),
+        'set submission loading false',
       );
     });
   });

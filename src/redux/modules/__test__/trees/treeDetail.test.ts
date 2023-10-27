@@ -10,6 +10,7 @@ import {
 } from 'ranger-redux/modules/trees/treeDetails';
 import {treeDetailRes} from 'ranger-redux/modules/__test__/trees/treeDetail.mock';
 import {setSubmitJourneyLoading} from 'ranger-redux/modules/currentJourney/currentJourney.action';
+import {handleSagaFetchError} from 'utilities/helpers/fetch';
 
 describe('treeDetail module', () => {
   it('treeDetail module should be defined', () => {
@@ -53,6 +54,7 @@ describe('treeDetail module', () => {
       gen.next();
       const error = new Error('error is here');
       assert.deepEqual(gen.throw(error).value, put(treeDetailsActions.loadFailure(error.message)));
+      assert.deepEqual(gen.next().value, handleSagaFetchError(error as any));
       assert.deepEqual(gen.next().value, put(setSubmitJourneyLoading(false)));
     });
   });

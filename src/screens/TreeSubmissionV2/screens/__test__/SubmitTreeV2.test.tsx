@@ -66,16 +66,23 @@ const cantPlantMockQuery = [
     },
   },
 ];
+jest.mock('../../../../utilities/hooks/useUserRole', () => {
+  return {
+    useUserRole: () => ({
+      hasRole: true,
+      loading: false,
+    }),
+  };
+});
 
 describe('SubmitTreeV2 component', () => {
   it('SubmitTreeV2 component should be defined', () => {
     expect(SubmitTreeV2).toBeDefined();
     expect(typeof SubmitTreeV2).toBe('function');
   });
+
   describe('SubmitTreeV2, cant plant', () => {
     let getElementByTestId, queryElementByTestId;
-
-    console.log(cantPlantMockQuery);
 
     beforeEach(() => {
       const element = render(
@@ -111,9 +118,7 @@ describe('SubmitTreeV2 component', () => {
     });
   });
   describe('SubmitTreeV2, cant plant in update', () => {
-    let getElementByTestId, queryElementByTestId;
-
-    console.log(cantPlantMockQuery);
+    let queryElementByTestId;
 
     beforeEach(() => {
       const element = render(
@@ -129,7 +134,6 @@ describe('SubmitTreeV2 component', () => {
         },
         cantPlantMockQuery as any,
       );
-      getElementByTestId = element.getByTestId;
       queryElementByTestId = element.queryByTestId;
     });
 

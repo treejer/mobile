@@ -51,8 +51,7 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
   const {checkExistAnyDraftOfTree, dispatchRemoveDraftedJourney, dispatchSetDraftAsCurrentJourney} =
     useDraftedJourneys();
   const {dispatchStartPlantAssignedTree, dispatchClearJourney} = useCurrentJourney();
-
-  const {openAlertModal, closeAlertModal} = useAlertModal();
+  const {closeAlertModal, handleOpenModalDraft} = useAlertModal();
 
   const handleNavigateToSubmission = useCallback(() => {
     navigation.dispatch(
@@ -95,38 +94,10 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       if (tree.id) {
         if (tree.treeStatus == 2) {
           if (checkExistAnyDraftOfTree(tree?.id)) {
-            openAlertModal({
-              title: {
-                text: 'treeInventoryV2.existInDraft',
-                tParams: {
-                  id: Hex2Dec(tree?.id).toString(),
-                },
-                props: {
-                  style: styles.modalTitle,
-                },
-              },
-              buttons: [
-                {
-                  text: 'reset',
-                  onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
-                  btnProps: {
-                    style: styles.resetBtn,
-                  },
-                  textProps: {
-                    style: styles.whiteText,
-                  },
-                },
-                {
-                  text: 'continue',
-                  onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
-                  btnProps: {
-                    style: styles.continueBtn,
-                  },
-                  textProps: {
-                    style: styles.whiteText,
-                  },
-                },
-              ],
+            handleOpenModalDraft({
+              treeId: tree?.id,
+              onReset: () => handleContinueDraftedJourney(tree?.id as string, true),
+              onContinue: () => handleContinueDraftedJourney(tree?.id as string, false),
             });
           } else {
             dispatchClearJourney();
@@ -149,13 +120,13 @@ export function SubmittedTreeListV2(props: SubmittedTreeListV2Props) {
       }
     },
     [
-      dispatchClearJourney,
       checkExistAnyDraftOfTree,
-      navigation,
-      openAlertModal,
-      handleNavigateToSubmission,
+      handleOpenModalDraft,
       handleContinueDraftedJourney,
+      dispatchClearJourney,
       dispatchStartPlantAssignedTree,
+      handleNavigateToSubmission,
+      navigation,
     ],
   );
 
@@ -254,17 +225,5 @@ const styles = StyleSheet.create({
   list: {
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  modalTitle: {
-    fontSize: 12,
-  },
-  whiteText: {
-    color: colors.white,
-  },
-  resetBtn: {
-    backgroundColor: colors.yellow,
-  },
-  continueBtn: {
-    backgroundColor: colors.green,
   },
 });

@@ -36,11 +36,9 @@ import {useDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJo
 import {useAlertModal} from 'components/Common/AlertModalProvider';
 import {ScrollView} from 'components/WebScrollView/WebScrollView';
 
-interface Props {}
-
 const {width} = Dimensions.get('window');
 
-function TreeDetails(_: Props) {
+function TreeDetails() {
   const navigation = useNavigation<NavigationProp<GreenBlockRouteParamList>>();
   const {
     params: {tree},
@@ -51,7 +49,7 @@ function TreeDetails(_: Props) {
   const {checkExistAnyDraftOfTree, dispatchSetDraftAsCurrentJourney, dispatchRemoveDraftedJourney} =
     useDraftedJourneys();
   const {dispatchSetTreeDetailToUpdate, dispatchClearJourney} = useCurrentJourney();
-  const {openAlertModal, closeAlertModal} = useAlertModal();
+  const {handleOpenModalDraft, closeAlertModal} = useAlertModal();
 
   const {sendEvent} = useAnalytics();
 
@@ -171,38 +169,10 @@ function TreeDetails(_: Props) {
     }
     if (tree?.id) {
       if (checkExistAnyDraftOfTree(tree?.id)) {
-        openAlertModal({
-          title: {
-            text: 'treeInventoryV2.existInDraft',
-            tParams: {
-              id: Hex2Dec(tree?.id).toString(),
-            },
-            props: {
-              style: styles.modalTitle,
-            },
-          },
-          buttons: [
-            {
-              text: 'reset',
-              onPress: () => handleContinueDraftedJourney(tree?.id as string, true),
-              btnProps: {
-                style: styles.resetBtn,
-              },
-              textProps: {
-                style: styles.whiteText,
-              },
-            },
-            {
-              text: 'continue',
-              onPress: () => handleContinueDraftedJourney(tree?.id as string, false),
-              btnProps: {
-                style: styles.continueBtn,
-              },
-              textProps: {
-                style: styles.whiteText,
-              },
-            },
-          ],
+        handleOpenModalDraft({
+          treeId: tree?.id,
+          onReset: () => handleContinueDraftedJourney(tree?.id as string, true),
+          onContinue: () => handleContinueDraftedJourney(tree?.id as string, false),
         });
       } else {
         dispatchClearJourney();
@@ -399,16 +369,10 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   updateButton: {
-    // position: 'absolute',
     alignItems: 'center',
     left: 0,
     right: 0,
     marginTop: -40,
-  },
-  treeImage: {
-    width: 120,
-    height: 120,
-    alignSelf: 'center',
   },
   titleLine: {
     height: 2,
@@ -417,18 +381,6 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignSelf: 'center',
-  },
-  modalTitle: {
-    fontSize: 12,
-  },
-  whiteText: {
-    color: colors.white,
-  },
-  resetBtn: {
-    backgroundColor: colors.yellow,
-  },
-  continueBtn: {
-    backgroundColor: colors.green,
   },
 });
 

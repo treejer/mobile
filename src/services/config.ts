@@ -1,4 +1,3 @@
-/* eslint-disable no-process-env, @typescript-eslint/no-var-requires */
 import {AbiDefinition} from 'apollo-link-ethereum';
 import {ImageURISource} from 'react-native';
 import {version} from '../../package.json';
@@ -18,6 +17,7 @@ export enum ContractType {
   PlanterFund = 'PlanterFund',
   DAI = 'Dai',
   MarketPlace = 'MarketPlace',
+  AccessRestriction = 'AccessRestriction',
 }
 
 export interface ConfigContract {
@@ -37,6 +37,7 @@ export interface StorageKeys {
   blockchainNetwork: string;
   treeUpdateInterval: string;
   resetStorage: string;
+  hasRole: string;
 }
 
 export enum BlockchainNetwork {
@@ -110,6 +111,10 @@ const config: Config = {
         address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_MARKET_PLACE_ADDRESS || '',
         abi: require('../abis/MarketPlace.json'),
       },
+      AccessRestriction: {
+        address: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_AR_ADDRESS || '',
+        abi: require('../abis/AccessRestriction.json'),
+      },
     },
     biconomyAddress: process.env.REACT_NATIVE_MATIC_MAIN_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_MATIC_MAIN_WEB3_NETWORK_ID || 3),
@@ -157,6 +162,10 @@ const config: Config = {
       MarketPlace: {
         address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_MARKET_PLACE_ADDRESS || '',
         abi: require('../abis/MarketPlace.json'),
+      },
+      AccessRestriction: {
+        address: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_AR_ADDRESS || '',
+        abi: require('../abis/AccessRestriction.json'),
       },
     },
     biconomyAddress: process.env.REACT_NATIVE_MATIC_TEST_CONTRACT_BICONOMY_ADDRESS || '',
@@ -206,6 +215,10 @@ const config: Config = {
         address: process.env.REACT_NATIVE_GOERLI_CONTRACT_MARKET_PLACE_ADDRESS || '',
         abi: require('../abis/MarketPlace.json'),
       },
+      AccessRestriction: {
+        address: process.env.REACT_NATIVE_GOERLI_CONTRACT_AR_ADDRESS || '',
+        abi: require('../abis/AccessRestriction.json'),
+      },
     },
     biconomyAddress: process.env.REACT_NATIVE_GOERLI_CONTRACT_BICONOMY_ADDRESS || '',
     networkId: Number(process.env.REACT_NATIVE_GOERLI_WEB3_NETWORK_ID || 3),
@@ -250,6 +263,7 @@ export const storageKeys: StorageKeys = {
   blockchainNetwork: '__TREEJER_BLOCKCHAIN_NETWORK',
   treeUpdateInterval: '__TREEJER_TREE_UPDATE_INTERVAL',
   resetStorage: `__TREEJER_RESET_${version}`,
+  hasRole: '__TREEJER_HAS_ROLE',
 };
 
 export const rangerUrl = 'https://ranger.treejer.com';

@@ -27,6 +27,7 @@ import {LockedSubmissionField} from 'components/LockedSubmissionField/LockedSubm
 import {RenderIf} from 'components/Common/RenderIf';
 import Spacer from 'components/Spacer';
 import {ScrollView} from 'components/WebScrollView/WebScrollView';
+import {useUserRole} from 'utilities/hooks/useUserRole';
 
 export type SubmitTreeV2Props = {
   plantTreePermissions: TUsePlantTreePermissions;
@@ -57,6 +58,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     dispatchRemoveJourneyLocation,
   } = useCurrentJourney();
   const {dispatchDraftJourney, dispatchSaveDraftedJourney, dispatchRemoveDraftedJourney} = useDraftedJourneys();
+  const userRole = useUserRole();
 
   const {sendEvent} = useAnalytics();
 
@@ -155,6 +157,16 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
     [],
   );
 
+  if (!userRole.hasRole && !userRole.loading) {
+    return (
+      <View testID="cant-plant-view" style={styles.cantPlantContainer}>
+        <Text style={styles.cantPlantTitle}>{t('submitTreeV2.cantPlant.wrongRole')}</Text>
+        <Spacer times={4} />
+        <Text style={styles.cantPlantDesc}>{t('submitTreeV2.cantPlant.wrongRoleDesc')}</Text>
+      </View>
+    );
+  }
+
   if (canPlant === false && !journey.isUpdate) {
     return (
       <View testID="cant-plant-view" style={styles.cantPlantContainer}>
@@ -239,7 +251,7 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
                   <Spacer times={2} />
                   <Text
                     testID="update-location-text"
-                    style={styles[journey?.canUpdateLocation ? 'greenText' : 'redText']}
+                    style={journey?.canUpdateLocation ? styles.greenText : styles.redText}
                   >
                     {t(`submitTreeV2.${journey?.canUpdateLocation ? 'canUpdate' : 'cantUpdate'}`)}
                   </Text>
@@ -289,6 +301,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: colors.tooBlack,
+  },
+  greenText: {
+    color: colors.green,
+  },
+  redText: {
+    color: colors.red,
   },
   cantPlantContainer: {
     backgroundColor: colors.khaki,

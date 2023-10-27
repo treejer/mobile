@@ -14,9 +14,11 @@ import {
 } from 'ranger-redux/modules/__test__/contracts/contracts.mock';
 import {getProfile, profileActions} from 'ranger-redux/modules/profile/profile';
 import {getNetInfo} from 'ranger-redux/modules/netInfo/netInfo';
+import {getWallet} from 'ranger-redux/modules/web3/web3';
 import {mockProfile} from 'ranger-redux/modules/__test__/currentJourney/currentJourney.mock';
 import {getBalance, resetBalance} from 'ranger-redux/modules/contracts/contracts';
 import {changeCheckMetaData} from 'ranger-redux/modules/settings/settings';
+import {clearDraftedJourneys} from 'ranger-redux/modules/draftedJourneys/draftedJourneys.action';
 import {userNonceActions, userNonceActionTypes} from 'ranger-redux/modules/userNonce/userNonce';
 import {userSignActions, userSignActionTypes} from 'ranger-redux/modules/userSign/userSign';
 import {AllTheProviders} from 'ranger-testUtils/testingLibrary';
@@ -49,6 +51,13 @@ describe('web3 actions', () => {
     };
     expect(web3.resetWeb3Data()).toEqual(expectedAction);
   });
+  it('reset web3 data remove wallet', () => {
+    const expectedAction = {
+      type: web3.RESET_WEB3_DATA,
+      removeWallet: true,
+    };
+    expect(web3.resetWeb3Data(true)).toEqual(expectedAction);
+  });
   it('update web3', () => {
     const updateWeb3 = {
       config: web3.defaultConfig,
@@ -57,6 +66,7 @@ describe('web3 actions', () => {
       treeFactory: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.TreeFactory),
       planter: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.Planter),
       planterFund: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.PlanterFund),
+      accessRestriction: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.AccessRestriction),
     };
     const expectedAction = {
       type: web3.UPDATE_WEB3,
@@ -149,9 +159,22 @@ describe('web3 reducer', () => {
       ...web3.initialWeb3State,
       unlocked: false,
       accessToken: '',
+      wallet: 'Wallet',
+    };
+    expect(web3.web3Reducer({...web3.initialWeb3State, wallet: 'Wallet'}, web3.resetWeb3Data() as any)).toEqual(
+      expectedState,
+    );
+  });
+  it('should handle RESET_WEB_DATA remove wallet', () => {
+    const expectedState = {
+      ...web3.initialWeb3State,
+      unlocked: false,
+      accessToken: '',
       wallet: '',
     };
-    expect(web3.web3Reducer(web3.initialWeb3State, web3.resetWeb3Data() as any)).toEqual(expectedState);
+    expect(web3.web3Reducer({...web3.initialWeb3State, wallet: 'Wallet'}, web3.resetWeb3Data(true) as any)).toEqual(
+      expectedState,
+    );
   });
   it('should handle UPDATE_WEB3', () => {
     const payload = {
@@ -161,6 +184,7 @@ describe('web3 reducer', () => {
       treeFactory: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.TreeFactory),
       planter: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.Planter),
       planterFund: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.PlanterFund),
+      accessRestriction: web3.contractGenerator(web3.defaultWeb3, web3.defaultConfig.contracts.AccessRestriction),
     };
     const expectedState = {
       ...web3.initialWeb3State,
@@ -271,6 +295,10 @@ describe('web3 saga functions', () => {
       const treeFactory = web3.contractGenerator(newWeb3, config[BlockchainNetwork.Goerli].contracts.TreeFactory);
       const planter = web3.contractGenerator(newWeb3, config[BlockchainNetwork.Goerli].contracts.Planter);
       const planterFund = web3.contractGenerator(newWeb3, config[BlockchainNetwork.Goerli].contracts.PlanterFund);
+      const accessRestriction = web3.contractGenerator(
+        newWeb3,
+        config[BlockchainNetwork.Goerli].contracts.AccessRestriction,
+      );
       assert.deepEqual(
         JSON.stringify(gen.next().value),
         JSON.stringify(
@@ -282,6 +310,7 @@ describe('web3 saga functions', () => {
               treeFactory,
               planter,
               planterFund,
+              accessRestriction,
             }),
           ),
         ),
@@ -307,6 +336,7 @@ describe('web3 saga functions', () => {
       const treeFactory = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.TreeFactory);
       const planter = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.Planter);
       const planterFund = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.PlanterFund);
+      const accessRestriction = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.AccessRestriction);
       assert.deepEqual(
         JSON.stringify(gen.next(true).value),
         JSON.stringify(
@@ -318,6 +348,7 @@ describe('web3 saga functions', () => {
               treeFactory,
               planter,
               planterFund,
+              accessRestriction,
             }),
           ),
         ),
@@ -344,6 +375,7 @@ describe('web3 saga functions', () => {
       const treeFactory = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.TreeFactory);
       const planter = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.Planter);
       const planterFund = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.PlanterFund);
+      const accessRestriction = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.AccessRestriction);
       assert.deepEqual(
         JSON.stringify(gen.next(false).value),
         JSON.stringify(
@@ -355,6 +387,7 @@ describe('web3 saga functions', () => {
               treeFactory,
               planter,
               planterFund,
+              accessRestriction,
             }),
           ),
         ),
@@ -381,6 +414,7 @@ describe('web3 saga functions', () => {
       const treeFactory = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.TreeFactory);
       const planter = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.Planter);
       const planterFund = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.PlanterFund);
+      const accessRestriction = web3.contractGenerator(newWeb3, mainnetMockConfig.contracts.AccessRestriction);
       assert.deepEqual(
         JSON.stringify(gen.next(true).value),
         JSON.stringify(
@@ -392,6 +426,7 @@ describe('web3 saga functions', () => {
               treeFactory,
               planter,
               planterFund,
+              accessRestriction,
             }),
           ),
         ),
@@ -437,7 +472,9 @@ describe('web3 saga functions', () => {
         storeMagicToken: {web3: mockWeb3, magicToken: 'MAGIC_TOKEN', loginData: {}},
       } as any);
       assert.deepEqual(gen.next().value, put(resetBalance()));
-      assert.deepEqual(gen.next().value, web3.asyncGetAccounts(mockWeb3 as any));
+      assert.deepEqual(gen.next().value, select(getWallet));
+      // @ts-ignore
+      assert.deepEqual(gen.next('WALLET').value, web3.asyncGetAccounts(mockWeb3 as any));
       // @ts-ignore
       assert.deepEqual(gen.next(['WALLET']).value, select(getNetInfo));
       assert.deepEqual(
@@ -467,12 +504,60 @@ describe('web3 saga functions', () => {
       assert.deepEqual(gen.next().value, put(profileActions.load()));
       assert.deepEqual(gen.next().value, put(getBalance()));
     });
+    it('watchStoreMagicToken success clearDraftedJourneys', () => {
+      const gen = web3.watchStoreMagicToken({
+        storeMagicToken: {web3: mockWeb3, magicToken: 'MAGIC_TOKEN', loginData: {}},
+      } as any);
+      assert.deepEqual(gen.next().value, put(resetBalance()));
+      assert.deepEqual(gen.next().value, select(getWallet));
+
+      // @ts-ignore
+      assert.deepEqual(gen.next('WALLET').value, web3.asyncGetAccounts(mockWeb3 as any));
+      // @ts-ignore
+      assert.deepEqual(gen.next(['NEW_WALLET']).value, put(clearDraftedJourneys()));
+
+      assert.deepEqual(gen.next().value, select(getNetInfo));
+
+      assert.deepEqual(
+        //@ts-ignore
+        gen.next(true).value,
+        put(userNonceActions.load({wallet: 'NEW_WALLET', magicToken: 'MAGIC_TOKEN', loginData: {}})),
+      );
+      assert.deepEqual(gen.next().value, take(userNonceActionTypes.loadSuccess));
+      assert.deepEqual(
+        //@ts-ignore
+        gen.next({payload: {message: 'MESSAGE', userId: '', access_token: 'ACCESS_TOKEN'}}).value,
+        mockWeb3.eth.sign('MESSAGE', 'NEW_WALLET'),
+      );
+      assert.deepEqual(
+        //@ts-ignore
+        gen.next('signature').value,
+        put(userSignActions.load({wallet: 'NEW_WALLET', signature: 'signature'})),
+      );
+      assert.deepEqual(gen.next().value, take(userSignActionTypes.loadSuccess));
+      assert.deepEqual(
+        //@ts-ignore
+        gen.next({payload: {access_token: 'ACCESS_TOKEN', message: 'MESSAGE', userId: ''}}).value,
+        put(
+          web3.updateMagicToken({
+            magicToken: 'MAGIC_TOKEN',
+            userId: '',
+            accessToken: 'ACCESS_TOKEN',
+            wallet: 'NEW_WALLET',
+          }),
+        ),
+      );
+      assert.deepEqual(gen.next().value, put(profileActions.load()));
+      assert.deepEqual(gen.next().value, put(getBalance()));
+    });
     it('watchStoreMagicToken failure disconnected', () => {
       const gen = web3.watchStoreMagicToken({
         storeMagicToken: {web3: mockWeb3, magicToken: 'MAGIC_TOKEN', loginData: {}},
       } as any);
       assert.deepEqual(gen.next().value, put(resetBalance()));
-      assert.deepEqual(gen.next().value, web3.asyncGetAccounts(mockWeb3 as any));
+      assert.deepEqual(gen.next().value, select(getWallet));
+      // @ts-ignore
+      assert.deepEqual(gen.next('WALLET').value, web3.asyncGetAccounts(mockWeb3 as any));
       // @ts-ignore
       assert.deepEqual(gen.next(['WALLET']).value, select(getNetInfo));
       // @ts-ignore
@@ -484,7 +569,9 @@ describe('web3 saga functions', () => {
       } as any);
       const spy = jest.spyOn(Promise, 'reject');
       assert.deepEqual(gen.next().value, put(resetBalance()));
-      assert.deepEqual(gen.next().value, web3.asyncGetAccounts(mockWeb3AccountsError as any));
+      assert.deepEqual(gen.next().value, select(getWallet));
+      // @ts-ignore
+      assert.deepEqual(gen.next('WALLET').value, web3.asyncGetAccounts(mockWeb3AccountsError as any));
       //@ts-ignore
       gen.next(undefined);
       expect(spy).toHaveBeenCalled();

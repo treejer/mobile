@@ -9,20 +9,17 @@ export function useTreeUpdateInterval() {
 
   const treeFactory = useTreeFactory();
 
-  const handleGetUpdateInterval = useCallback(() => {
-    treeFactory.methods
-      .treeUpdateInterval()
-      .call()
-      .then(async data => {
-        setTreeUpdateInterval(data);
-        try {
-          await AsyncStorage.setItem(
-            storageKeys.treeUpdateInterval,
-            JSON.stringify({data, expireDate: new Date().setFullYear(new Date().getFullYear() + 1)}),
-          );
-        } catch (e) {}
-      })
-      .catch(e => console.log(e, 'e is here'));
+  const handleGetUpdateInterval = useCallback(async () => {
+    try {
+      const newTreeUpdateInterval = await treeFactory.methods.treeUpdateInterval().call();
+      setTreeUpdateInterval(newTreeUpdateInterval);
+      await AsyncStorage.setItem(
+        storageKeys.treeUpdateInterval,
+        JSON.stringify({data: newTreeUpdateInterval, expireDate: new Date().setFullYear(new Date().getFullYear() + 1)}),
+      );
+    } catch (e: any) {
+      console.log(e, 'error in get update interval');
+    }
   }, [treeFactory?.methods]);
 
   useEffect(() => {
@@ -38,16 +35,17 @@ export function useTreeUpdateInterval() {
             setTreeUpdateInterval(Number(data));
           } else {
             await AsyncStorage.removeItem(storageKeys.treeUpdateInterval);
-            handleGetUpdateInterval();
+            await handleGetUpdateInterval();
           }
         } else {
-          handleGetUpdateInterval();
+          await handleGetUpdateInterval();
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e, 'error in read update interval from async storage');
+      }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // useEffect(() => {}, [treeFactory.methods]);
 
   return treeUpdateInterval;
 }

@@ -16,6 +16,10 @@ export const mockConfig = {
       abi: [],
       address: 'ADDRESS',
     },
+    AccessRestriction: {
+      abi: [],
+      address: 'ADDRESS',
+    },
   },
 };
 export const mockWeb3 = {

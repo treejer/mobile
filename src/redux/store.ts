@@ -21,6 +21,7 @@ const saveSubsetBlacklistFilter = createBlacklistFilter('web3', [
   'treeFactory',
   'planter',
   'planterFund',
+  'accessRestriction',
 ]);
 
 const persistConfig = {

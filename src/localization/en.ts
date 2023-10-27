@@ -554,6 +554,8 @@ export const en = {
     cantPlant: {
       supplyCapReached: 'You reached your supply cap limit.',
       contactSupport: 'Please contact customer support to plant more trees!',
+      wrongRole: 'Wrong access level',
+      wrongRoleDesc: 'Please contract customer support.',
     },
     selectPhoto: 'Select the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',
     changePhoto: 'Change the tree photo from\n<Camera>Camera</Camera> or <Gallery>Gallery</Gallery>',

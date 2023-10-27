@@ -31,6 +31,7 @@ import {usePlanterFund, useWalletAccount, useWalletWeb3} from 'ranger-redux/modu
 import {ProfileGroupButton} from 'components/Profile/ProfileGroupButton';
 import {TUserStatus} from 'webServices/profile/profile';
 import {ScrollView} from 'components/WebScrollView/WebScrollView';
+import {useUserRole} from 'utilities/hooks/useUserRole';
 
 export type MyProfileProps =
   | VerifiedUserNavigationProp<Routes.MyProfile>
@@ -45,6 +46,7 @@ function MyProfile(props: MyProfileProps) {
   const planterFundContract = usePlanterFund();
   const {getBalance, loading: contractsLoading} = useContracts();
   useTreeUpdateInterval();
+  useUserRole();
 
   // const user = useCurrentUser();
   // console.log(user, 'user>++');
@@ -130,9 +132,7 @@ function MyProfile(props: MyProfileProps) {
   const planterProjectedBalance =
     Number(planterData?.balanceProjected) > 0 ? parseBalance(planterData?.balanceProjected.toString() || '0') : 0;
 
-  console.log(isVerified, 'is');
   const avatarStatus = isVerified ? 'active' : 'inactive';
-  console.log(avatarStatus, 'avatar status');
   const profileLoading = loading || !profile;
   const avatarMarkup = profileLoading ? (
     <ShimmerPlaceholder

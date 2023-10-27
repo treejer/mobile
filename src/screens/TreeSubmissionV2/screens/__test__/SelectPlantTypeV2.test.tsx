@@ -6,6 +6,15 @@ import {SelectPlantTypeV2} from 'screens/TreeSubmissionV2/screens/SelectPlantTyp
 import {TestSubmissionStack} from 'ranger-testUtils/components/TestSubmissionStack/TestSubmissionStack';
 import {Routes} from 'navigation/Navigation';
 
+jest.mock('../../../../utilities/hooks/useUserRole', () => {
+  return {
+    useUserRole: () => ({
+      hasRole: true,
+      loading: false,
+    }),
+  };
+});
+
 describe('SelectPlantTypeV2 screen', () => {
   it('select plant type page should be defined', () => {
     expect(SelectPlantTypeV2).toBeDefined();

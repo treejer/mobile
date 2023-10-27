@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {colors} from 'constants/values';
 import globalStyles from 'constants/styles';
 import Card from 'components/Card';
+import {Hex2Dec} from 'utilities/helpers/hex';
 
 export type TTitle = {text: string; tParams?: any; props?: TextProps};
 export type TButton = {text: string; onPress: () => void; btnProps?: TouchableOpacityProps; textProps?: TextProps};
@@ -142,9 +143,6 @@ export function AlertModalProvider(props: AlertModalProviderProps) {
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-  },
   cancelBtn: {
     position: 'absolute',
     top: 10,
@@ -174,6 +172,68 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 120 / 2,
   },
+  modalTitle: {
+    fontSize: 12,
+  },
+  whiteText: {
+    color: colors.white,
+  },
+  resetBtn: {
+    backgroundColor: colors.yellow,
+  },
+  continueBtn: {
+    backgroundColor: colors.green,
+  },
 });
+export type THandleOpenModalDraftArgs = {
+  treeId: string;
+  onContinue: () => void;
+  onReset: () => void;
+};
+export function useAlertModal() {
+  const alertModal = useContext(AlertModalContext);
 
-export const useAlertModal = () => useContext(AlertModalContext);
+  const handleOpenModalDraft = useCallback(
+    ({treeId, onReset, onContinue}: THandleOpenModalDraftArgs) => {
+      alertModal.openAlertModal({
+        title: {
+          text: 'treeInventoryV2.existInDraft',
+          tParams: {
+            id: Hex2Dec(treeId).toString(),
+          },
+          props: {
+            style: styles.modalTitle,
+          },
+        },
+        buttons: [
+          {
+            text: 'reset',
+            onPress: onReset,
+            btnProps: {
+              style: styles.resetBtn,
+            },
+            textProps: {
+              style: styles.whiteText,
+            },
+          },
+          {
+            text: 'continue',
+            onPress: onContinue,
+            btnProps: {
+              style: styles.continueBtn,
+            },
+            textProps: {
+              style: styles.whiteText,
+            },
+          },
+        ],
+      });
+    },
+    [alertModal],
+  );
+
+  return {
+    ...alertModal,
+    handleOpenModalDraft,
+  };
+}

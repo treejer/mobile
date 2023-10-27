@@ -144,7 +144,7 @@ export function* watchSubmitJourney() {
       );
       const {payload} = yield take([treeDetailsActionTypes.loadSuccess, treeDetailsActionTypes.loadFailure]);
       if (typeof payload === 'string') {
-        yield Promise.reject(new Error(payload));
+        yield Promise.reject({message: payload});
       }
       treeDetail = yield payload;
     }

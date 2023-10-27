@@ -35,6 +35,7 @@ export type TWeb3 = {
   treeFactory: Contract;
   planter: Contract;
   planterFund: Contract;
+  accessRestriction: Contract;
 };
 
 export const defaultConfig = configs[defaultNetwork];
@@ -55,6 +56,7 @@ export const initialWeb3State: TWeb3 = {
   treeFactory: contractGenerator(defaultWeb3, defaultConfig.contracts.TreeFactory),
   planter: contractGenerator(defaultWeb3, defaultConfig.contracts.Planter),
   planterFund: contractGenerator(defaultWeb3, defaultConfig.contracts.PlanterFund),
+  accessRestriction: contractGenerator(defaultWeb3, defaultConfig.contracts.AccessRestriction),
 };
 
 export type TWeb3Action = {
@@ -66,6 +68,7 @@ export type TWeb3Action = {
     treeFactory: Contract;
     planter: Contract;
     planterFund: Contract;
+    accessRestriction: Contract;
   };
   updateMagicToken: {
     accessToken: string;
@@ -220,7 +223,8 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);
     const planterFund = contractGenerator(web3, config.contracts.PlanterFund);
-    yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund}));
+    const accessRestriction = contractGenerator(web3, config.contracts.AccessRestriction);
+    yield put(updateWeb3({config, magic, web3, treeFactory, planter, planterFund, accessRestriction}));
     if (config.isMainnet) {
       yield put(changeCheckMetaData(true));
     }
@@ -264,6 +268,8 @@ export function* watchStoreMagicToken(action: TWeb3Action) {
       return Promise.reject('There is no web3 accounts').catch(() => {});
     }
     const [wallet] = web3Accounts;
+
+    console.log(wallet, oldWallet);
 
     if (wallet?.toLowerCase() !== oldWallet?.toLowerCase()) {
       yield put(clearDraftedJourneys());
@@ -406,4 +412,10 @@ export function* selectMagic() {
 export const getWallet = (state: TReduxState) => state.web3.wallet;
 export function* selectWallet() {
   return yield select(getWallet);
+}
+
+export const getAccessRestriction = (state: TReduxState) => state.web3.accessRestriction;
+export const useAccessRestriction = () => useAppSelector(getAccessRestriction);
+export function* selectAccessRestriction() {
+  return yield select(getAccessRestriction);
 }

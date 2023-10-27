@@ -36,7 +36,7 @@ export function NotVerifiedTreeList(props: NotVerifiedTreeListProps) {
 
   const handleNavigate = useCallback(
     (tree: NotVerifiedTree) => {
-      //@ts-ignore
+      // @ts-ignore
       navigation.navigate(Routes.NotVerifiedTreeDetails, {tree, tree_id: tree.treeId || tree.nonce});
     },
     [navigation],
@@ -138,17 +138,5 @@ const styles = StyleSheet.create({
   list: {
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  modalTitle: {
-    fontSize: 12,
-  },
-  whiteText: {
-    color: colors.white,
-  },
-  resetBtn: {
-    backgroundColor: colors.yellow,
-  },
-  continueBtn: {
-    backgroundColor: colors.green,
   },
 });
