@@ -6,8 +6,7 @@ import createSagaMiddleware from 'redux-saga';
 import logger from 'redux-logger';
 
 import {reduxLogger} from 'services/config';
-import {checkUserVersion} from 'utilities/helpers/appVersion';
-import {CHECK_APP_VERSION} from 'ranger-redux/modules/appInfo/appInfo';
+import {RESET_REDUX_PERSIST} from 'ranger-redux/modules/appInfo/appInfo';
 import appReducer from './reducer';
 import saga from './saga';
 
@@ -45,13 +44,8 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, (state, action: {type: string; payload: any}) => {
-  if (action.type === 'persist/REHYDRATE') {
-    return appReducer({...state, appInfo: {version: action?.payload?.appInfo?.version || ''}}, action);
-  }
-  if (action.type === CHECK_APP_VERSION) {
-    if (!state.appInfo.version || checkUserVersion(state.appInfo.version)) {
-      return appReducer(undefined, action);
-    }
+  if (action.type === RESET_REDUX_PERSIST) {
+    return appReducer(undefined, action);
   }
   return appReducer(state, action);
 });

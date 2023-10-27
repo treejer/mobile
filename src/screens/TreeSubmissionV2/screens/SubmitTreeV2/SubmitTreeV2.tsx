@@ -81,10 +81,14 @@ export function SubmitTreeV2(props: SubmitTreeV2Props) {
   const handleSelectPhoto = useCallback(
     (photoArgs: TOnSelectTree) => {
       if (userLocation) {
-        dispatchSelectTreePhoto({...photoArgs, userLocation});
+        dispatchSelectTreePhoto({
+          ...photoArgs,
+          userLocation,
+          isLocationGranted: plantTreePermissions.isLocationGranted,
+        });
       }
     },
-    [dispatchSelectTreePhoto, userLocation],
+    [dispatchSelectTreePhoto, plantTreePermissions.isLocationGranted, userLocation],
   );
 
   const handleNavigateToMap = useCallback(() => {
@@ -332,6 +336,6 @@ const styles = StyleSheet.create({
   webWidth: {
     width: '100%',
     maxWidth: isWeb() ? 468 : undefined,
-    margin: 'auto',
+    marginHorizontal: 'auto',
   },
 });

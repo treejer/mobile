@@ -44,6 +44,7 @@ export function* watchAssignJourneyTreePhoto({
   userLocation,
   imageBase64,
   fromGallery,
+  isLocationGranted,
 }: AssignJourneyTreePhotoAction) {
   try {
     const {checkMetaData}: TSettings = yield select(getSettings);
@@ -73,7 +74,7 @@ export function* watchAssignJourneyTreePhoto({
     }
 
     yield put(actionsList.setTreePhoto({photo, photoLocation: photoCoords}));
-    if ((journey.canUpdateLocation || !journey.isUpdate) && !journey.location) {
+    if ((journey.canUpdateLocation || !journey.isUpdate) && !journey.location && isLocationGranted) {
       //@ts-ignore
       navigationRef()?.navigate(Routes.SelectOnMap_V2);
     }

@@ -26,11 +26,13 @@ import {plantedTreesSagas} from 'ranger-redux/modules/trees/plantedTrees';
 import {updatedTreesSagas} from 'ranger-redux/modules/trees/updatedTrees';
 import {assignedTreesSagas} from 'ranger-redux/modules/trees/assignedTrees';
 import {pendingTreeIdsSagas} from 'ranger-redux/modules/trees/pendingTreeIds';
+import {appInfoSagas} from 'ranger-redux/modules/appInfo/appInfo';
 
 export default function* root(store: TStoreRedux) {
   yield all([
     paginationSagas(),
     initSagas(),
+    appInfoSagas(),
     web3Sagas(),
     currentJourneySagas(),
     draftedJourneysSagas(),

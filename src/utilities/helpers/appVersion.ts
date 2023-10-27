@@ -11,3 +11,7 @@ export function checkUpdateVersion(newVersion: string) {
 export function checkUserVersion(userVersion: string) {
   return versionToNumber(userVersion) < versionToNumber(version);
 }
+
+export function checkPersistedVersion(newVersion: string, oldVersion: string) {
+  return versionToNumber(newVersion) > versionToNumber(oldVersion);
+}

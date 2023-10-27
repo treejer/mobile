@@ -100,7 +100,9 @@ export const setSubmitJourneyLoading = (loading: boolean) => ({
 export type AssignJourneyTreePhotoPayload = Pick<
   CurrentJourneyAction,
   'imageBase64' | 'photo' | 'photoLocation' | 'userLocation' | 'fromGallery'
->;
+> & {
+  isLocationGranted: boolean;
+};
 export const ASSIGN_JOURNEY_TREE_PHOTO_WATCHER = 'ASSIGN_JOURNEY_TREE_PHOTO_WATCHER';
 export const assignJourneyTreePhotoWatcher = ({
   photo,
@@ -108,6 +110,7 @@ export const assignJourneyTreePhotoWatcher = ({
   userLocation,
   fromGallery,
   imageBase64,
+  isLocationGranted,
 }: AssignJourneyTreePhotoPayload) => ({
   type: ASSIGN_JOURNEY_TREE_PHOTO_WATCHER,
   photo,
@@ -115,6 +118,7 @@ export const assignJourneyTreePhotoWatcher = ({
   userLocation,
   fromGallery,
   imageBase64,
+  isLocationGranted,
 });
 
 export type AssignJourneyTreeLocationPayload = Pick<CurrentJourneyAction, 'location'>;

@@ -12,7 +12,9 @@ import {createWeb3, getAccessToken, UPDATE_WEB3} from 'ranger-redux/modules/web3
 import {startWatchConnection, UPDATE_WATCH_CONNECTION} from 'ranger-redux/modules/netInfo/netInfo';
 import {getSettings} from 'ranger-redux/modules/settings/settings';
 import {processBrowserPlatform} from 'ranger-redux/modules/browserPlatform/browserPlatform.action';
-import {checkAppVersion} from 'ranger-redux/modules/appInfo/appInfo';
+// import {appInfoActions, appInfoActionTypes, getAppInfo, resetReduxPersist} from 'ranger-redux/modules/appInfo/appInfo';
+// import {AppInfoRes} from 'webServices/appInfo/appInfo';
+// import {checkPersistedVersion, checkUpdateVersion} from 'utilities/helpers/appVersion';
 
 export const INIT_APP = 'INIT_APP';
 export const initApp = () => ({
@@ -48,7 +50,7 @@ export const reducerAction = {
 };
 
 export function initReducer(state: InitState = initInitialState, action: InitAction) {
-  if (reducerAction.hasOwnProperty(action.type)) {
+  if (Object.prototype.hasOwnProperty.call(reducerAction, action.type)) {
     return reducerAction[action.type](state, action);
   }
   return state;
@@ -60,7 +62,16 @@ export function* initSagas() {
 
 export function* watchInitApp() {
   try {
-    yield put(checkAppVersion());
+    // const latestVersion: AppInfoRes = yield select(getAppInfo);
+    // yield put(appInfoActions.load());
+    // const {payload: appInfo} = yield take(appInfoActionTypes.loadSuccess);
+    // console.log(latestVersion, appInfo, 'hehehe');
+    // if (
+    //   !latestVersion?.forceUpdate?.version ||
+    //   checkPersistedVersion(appInfo?.forceUpdate?.version, latestVersion?.forceUpdate?.version)
+    // ) {
+    //   yield put(resetReduxPersist());
+    // }
     yield put(processBrowserPlatform());
     yield put(startWatchConnection());
     yield take(UPDATE_WATCH_CONNECTION);
