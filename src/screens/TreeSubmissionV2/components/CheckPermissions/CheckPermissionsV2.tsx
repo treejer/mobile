@@ -123,6 +123,7 @@ export function CheckPermissionsV2(props: TCheckPermissionsProps) {
               <TouchableOpacity
                 testID="toggle-settings-btn"
                 onPress={submitLoading ? undefined : lockSettings ? onUnLock : handleToggleSettingsBox}
+                activeOpacity={submitLoading ? 1 : undefined}
               >
                 <IoIcon
                   testID="settings-chevron-icon"

@@ -7,6 +7,7 @@ import {
   mockPlantTreePermissionsGranted,
 } from 'screens/TreeSubmissionV2/components/__test__/mock';
 import {colors} from 'constants/values';
+import {stylesToOneObject} from 'utilities/helpers/stylesToOneObject';
 
 describe('CheckPermissions component', () => {
   it('CheckPermissions component should exist', () => {
@@ -22,6 +23,7 @@ describe('CheckPermissions component', () => {
         <CheckPermissionsV2
           testID="check-permissions-box"
           onUnLock={() => {}}
+          submitLoading={false}
           lockSettings={false}
           plantTreePermissions={mockPlantTreePermissionsBlocked}
         />,
@@ -68,6 +70,7 @@ describe('CheckPermissions component', () => {
           testID="check-permissions-box"
           onUnLock={() => {}}
           lockSettings={false}
+          submitLoading={false}
           plantTreePermissions={mockPlantTreePermissionsGranted}
         />,
         maticReducers,
@@ -105,6 +108,7 @@ describe('CheckPermissions component', () => {
             testID="check-permissions-box"
             onUnLock={() => {}}
             lockSettings={true}
+            submitLoading={false}
             plantTreePermissions={mockPlantTreePermissionsGranted}
           />,
           maticReducers,
@@ -163,6 +167,7 @@ describe('CheckPermissions component', () => {
             testID="check-permissions-box"
             onUnLock={() => {}}
             lockSettings={false}
+            submitLoading={false}
             plantTreePermissions={mockPlantTreePermissionsChecking}
           />,
           maticReducers,
@@ -200,6 +205,65 @@ describe('CheckPermissions component', () => {
 
         expect(settingsBox).toBeFalsy();
         expect(settingsCpt).toBeFalsy();
+      });
+    });
+    describe('check permissions = submitLoading', () => {
+      let getElementByTestId, queryElementByTestId;
+
+      beforeEach(async () => {
+        const element = render(
+          <CheckPermissionsV2
+            testID="check-permissions-box"
+            onUnLock={() => {}}
+            lockSettings={true}
+            submitLoading={true}
+            plantTreePermissions={mockPlantTreePermissionsGranted}
+          />,
+          maticReducers,
+        );
+        getElementByTestId = element.getByTestId;
+        queryElementByTestId = element.queryByTestId;
+      });
+
+      it('permission box title', () => {
+        const permissionBoxTitle = getElementByTestId('permission-box-title');
+        const permissionBoxIcon = getElementByTestId('permission-box-icon');
+
+        expect(permissionBoxTitle.props.children).toBe('permissionBox.allGranted');
+        expect(permissionBoxIcon.props.name).toBe('check-circle');
+      });
+
+      it('permissions list length must be 3', () => {
+        const permissionsList = queryElementByTestId('permissions-list');
+
+        expect(permissionsList).toBeFalsy();
+      });
+
+      it('guide in footer should be invisible', () => {
+        const guideText = queryElementByTestId('permission-box-guide');
+
+        expect(guideText).toBeFalsy();
+      });
+
+      it('submission settings elements should be defined', async () => {
+        const settingsBox = getElementByTestId('permission-box-plant-settings');
+        const openSettingsText = getElementByTestId('permission-box-open-settings-text');
+        const toggleSettingsBtn = getElementByTestId('toggle-settings-btn');
+        const settingsIcon = getElementByTestId('settings-icon');
+        const chevronIcon = getElementByTestId('settings-chevron-icon');
+        const settingsCpt = getElementByTestId('submission-settings-cpt');
+
+        expect(settingsBox).toBeTruthy();
+        expect(openSettingsText).toBeTruthy();
+        expect(settingsIcon).toBeTruthy();
+        expect(chevronIcon).toBeTruthy();
+        expect(settingsCpt).toBeTruthy();
+
+        expect(toggleSettingsBtn.props.accessibilityState.disabled).toBeFalsy();
+        expect(stylesToOneObject(toggleSettingsBtn.props.style).opacity).toBe(1);
+        expect(settingsIcon.props.name).toBe('settings-outline');
+        expect(openSettingsText.props.children).toBe('permissionBox.submissionSettings');
+        expect(chevronIcon.props.name).toBe('lock-closed');
       });
     });
   });
